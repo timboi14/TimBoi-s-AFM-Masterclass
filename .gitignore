@@ -1,0 +1,20 @@
+# Claude Code local settings & third-party skill cache (uipro-cli)
+.claude/
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Node (if ever added)
+node_modules/
+npm-debug.log*
+
+# Local downloads / installers
+*.msi
+*.exe

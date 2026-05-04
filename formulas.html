@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Formula Sheet · TimBoi's Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { fontFamily: { display:['Bebas Neue','sans-serif'], sans:['Inter','system-ui','sans-serif'] } } } }</script>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="aurora"></div>
+<div class="pitch-grid"></div>
+
+<div class="container-app">
+
+<nav class="nav">
+  <div class="crest">TBA</div>
+  <div class="nav-brand">
+    <div class="title">Formula Sheet</div>
+    <div class="subtitle">TimBoi's Academy — print it. Pin it. Know it cold by exam day.</div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="topic.html?t=adviser"><i class="fa-solid fa-list"></i> Topics</a>
+    <a href="cards.html"><i class="fa-solid fa-clone"></i> Cards</a>
+    <a href="mock.html"><i class="fa-solid fa-stopwatch"></i> Mock</a>
+    <a href="formulas.html" class="active"><i class="fa-solid fa-square-root-variable"></i> Formulas</a>
+    <a href="exam-skills.html"><i class="fa-solid fa-trophy"></i> Skills</a>
+  </div>
+</nav>
+
+<section class="card card-padding mt-4 no-print">
+  <div class="flex flex-wrap items-center gap-3">
+    <div class="badge badge-primary">PRINT-READY</div>
+    <p class="muted">CTRL+P / ⌘+P. Pin it on your fridge.</p>
+    <button class="btn btn-primary ml-auto" onclick="window.print()"><i class="fa-solid fa-print"></i> Print this sheet</button>
+  </div>
+  <div class="grid-4 mt-4">
+    <div class="stat"><div class="label">Points</div><div class="value" id="m-points">0</div></div>
+    <div class="stat"><div class="label">Tier</div><div class="value" id="m-level">1<small>Academy</small></div></div>
+    <div class="stat"><div class="label">Streak</div><div class="value" id="m-streak">0<small>days</small></div></div>
+    <div class="stat"><div class="label">Drills</div><div class="value" id="m-solved">0<small>/?</small></div></div>
+  </div>
+</section>
+
+<h2 class="section-title"><i class="fa-solid fa-square-root-variable"></i> Master formula sheet</h2>
+<div class="grid-2" id="f-grid"></div>
+
+<h2 class="section-title"><i class="fa-solid fa-table"></i> Z-table (one-tail vs two-tail)</h2>
+<section class="card card-padding">
+<pre class="formula" style="margin:0">
+  Confidence       z (one-tail)        z (two-tail)
+  90%              1.282                1.645
+  95%              1.645                1.960
+  97.5%            1.960                2.241
+  99%              2.326                2.576
+  99.5%            2.576                2.807
+</pre>
+<p class="muted mt-3">For VaR, use ONE-tail. 95% → 1.645. 99% → 2.326. Always state it.</p>
+</section>
+
+<h2 class="section-title"><i class="fa-solid fa-key"></i> Spot the trap</h2>
+<section class="card card-padding">
+<ul class="space-y-2 text-[14px] leading-relaxed">
+  <li><b class="gold">NPV inflation:</b> Real with real, nominal with nominal. NEVER mix.</li>
+  <li><b class="gold">Tax timing:</b> 1-yr lag means tax CF appears one year after the operating profit. Last year extends one beyond project life.</li>
+  <li><b class="gold">Working capital:</b> Incremental investment each year. RELEASE total at end of project.</li>
+  <li><b class="gold">FX bid/offer:</b> Bank gives the worse rate to you. Importer (buying $) gets the LOW $/£; exporter (selling $) gets the HIGH $/£.</li>
+  <li><b class="gold">FRA:</b> Borrower buys at OFFER (higher). Settlement on the difference, principal does NOT change hands.</li>
+  <li><b class="gold">Swap QSD:</b> Side with bigger absolute fixed advantage borrows fixed; the other floats.</li>
+  <li><b class="gold">APV:</b> Base @ ungeared Ke. Tax shield + subsidy @ Kd (pre-tax). Subsidy benefit must be (1−T).</li>
+  <li><b class="gold">Real options:</b> Pa = PV inflows. Pe = capex (or scrap for abandon). σ from industry analogue.</li>
+  <li><b class="gold">VaR:</b> z(95%)=1.645, z(99%)=2.326. T-day = 1-day × √T.</li>
+  <li><b class="gold">Valuation:</b> FCFF→WACC→EV→subtract debt. FCFE→Ke→equity. Don\'t double-discount.</li>
+</ul>
+</section>
+
+<hr class="div"/>
+<p class="center muted"><span class="gold">Print → laminate → carry → glance daily. — Coach TimBoi</span></p>
+</div>
+
+<!-- COACH -->
+<button class="coach" id="coach"><i class="fa-solid fa-user-graduate"></i></button>
+<div class="coach-bubble" id="coach-bubble"></div>
+
+<!-- NAME -->
+<div class="name-overlay" id="name-overlay">
+  <div class="name-card">
+    <h2>TIMBOI'S ACADEMY</h2>
+    <p class="muted mt-2 mb-4">Pick your fan name.</p>
+    <input id="name-input" class="input" type="text" maxlength="24" placeholder="e.g. Sonny_07" />
+    <button class="btn btn-primary btn-lg w-full mt-4 justify-center" id="name-go">Kick off</button>
+  </div>
+</div>
+
+<script src="content.js"></script>
+<script src="shared.js"></script>
+<script>
+document.getElementById('f-grid').innerHTML = FORMULAS.map(f=>`
+  <div class="card card-padding">
+    <h3 class="font-display text-[20px] gold tracking-wide">${f.area}</h3>
+    <pre class="formula mt-2">${f.items.join('\n')}</pre>
+  </div>`).join('');
+</script>
+</body>
+</html>
