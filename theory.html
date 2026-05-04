@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>64 Theory Q&A · TimBoi's Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{display:['Bebas Neue','sans-serif'],sans:['Inter','system-ui','sans-serif']}}}}</script>
+<link rel="stylesheet" href="shared.css">
+<style>
+.qa-card{
+  background:hsl(var(--card)); border:1px solid hsl(var(--border));
+  border-radius:14px; margin-bottom:10px; overflow:hidden;
+  transition:border-color 200ms, transform 200ms;
+}
+.qa-card:hover{border-color:hsl(var(--primary)/0.5); transform:translateY(-2px)}
+.qa-card.open{border-color:hsl(var(--primary))}
+.qa-q{
+  padding:14px 16px; cursor:pointer; display:flex; align-items:flex-start; gap:12px;
+  font-weight:600; font-size:14px; line-height:1.55;
+}
+.qa-q .num{
+  font-family:'Bebas Neue',sans-serif; letter-spacing:1px;
+  background:hsl(var(--primary)); color:hsl(var(--primary-foreground));
+  padding:3px 10px; border-radius:6px; font-size:13px; flex-shrink:0;
+}
+.qa-q .arrow{margin-left:auto; transition:transform 200ms; color:hsl(var(--muted-foreground))}
+.qa-card.open .qa-q .arrow{transform:rotate(180deg); color:hsl(var(--primary))}
+.qa-a{
+  display:none; padding:0 16px 16px;
+  font-size:13.5px; line-height:1.7; color:hsl(var(--card-foreground));
+  white-space:pre-wrap;
+}
+.qa-card.open .qa-a{display:block; animation:fade-in 200ms ease}
+.qa-a b{color:hsl(var(--primary))}
+.cat-pill{cursor:pointer; padding:6px 12px; font-size:12px; font-weight:700; letter-spacing:0.5px}
+.search-input{
+  width:100%; padding:12px 16px 12px 44px;
+  background:hsl(var(--card)); color:hsl(var(--foreground));
+  border:1px solid hsl(var(--border)); border-radius:12px;
+  font-size:15px; outline:none; transition:border 200ms, box-shadow 200ms;
+}
+.search-input:focus{border-color:hsl(var(--ring)); box-shadow:0 0 0 3px hsla(43,96%,56%,0.18)}
+.search-wrap{position:relative}
+.search-wrap i{position:absolute; left:16px; top:50%; transform:translateY(-50%); color:hsl(var(--muted-foreground))}
+.cat-counts{font-size:11px; color:hsl(var(--muted-foreground)); margin-left:6px}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<div class="pitch-grid"></div>
+
+<div class="container-app">
+
+<nav class="nav">
+  <div class="crest">TBA</div>
+  <div class="nav-brand">
+    <div class="title">64 Theory Q&amp;A · the discussion-mark goldmine</div>
+    <div class="subtitle">TimBoi's Academy · ACCA AFM frequently-asked theory bank · search & filter</div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="topic.html?t=adviser"><i class="fa-solid fa-list"></i> Topics</a>
+    <a href="theory.html" class="active"><i class="fa-solid fa-book"></i> Theory</a>
+    <a href="cards.html"><i class="fa-solid fa-clone"></i> Cards</a>
+    <a href="mock.html"><i class="fa-solid fa-stopwatch"></i> Mock</a>
+    <a href="formulas.html"><i class="fa-solid fa-square-root-variable"></i> Formulas</a>
+    <a href="exam-skills.html"><i class="fa-solid fa-trophy"></i> Skills</a>
+  </div>
+</nav>
+
+<section class="card card-padding card-glow mt-4">
+  <div class="flex flex-wrap items-end gap-4">
+    <div class="flex-1 min-w-[260px]">
+      <div class="badge badge-outline mb-2"><i class="fa-solid fa-circle text-[8px] gold"></i> 64 Q&amp;A bank</div>
+      <h1 class="font-display text-[36px] leading-none tracking-wide gold">Discussion marks gold</h1>
+      <p class="muted mt-3 max-w-prose">
+        Every AFM paper has 30+ marks of discussion. Generic answers fail.
+        These 64 frequently-asked theory questions are sourced from real ACCA past papers.
+        Search by keyword. Filter by category. <b class="gold">Memorise the bullet points</b>.
+      </p>
+    </div>
+    <div class="grid-4" style="grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; min-width:220px">
+      <div class="stat"><div class="label">Q&amp;A</div><div class="value">64<small>cards</small></div></div>
+      <div class="stat"><div class="label">Categories</div><div class="value">11<small>tags</small></div></div>
+    </div>
+  </div>
+
+  <div class="mt-5 search-wrap">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="search" type="text" class="search-input" placeholder="Search e.g. 'synergy', 'BSOP', 'Mudaraba', 'duration'..." />
+  </div>
+
+  <div class="tabs-list mt-4" id="cat-pills" style="flex-wrap:wrap"></div>
+</section>
+
+<div id="qa-list" class="mt-4"></div>
+
+<hr class="div"/>
+<p class="center muted">
+  <span class="gold">"Application is everything. NAME · EXPLAIN · APPLY." — Coach TimBoi</span>
+</p>
+</div>
+
+<button class="coach" id="coach"><i class="fa-solid fa-user-graduate"></i></button>
+<div class="coach-bubble" id="coach-bubble"></div>
+
+<div class="name-overlay" id="name-overlay">
+  <div class="name-card">
+    <h2>TIMBOI'S ACADEMY</h2>
+    <p class="muted mt-2 mb-4">Pick your fan name.</p>
+    <input id="name-input" class="input" type="text" maxlength="24" placeholder="e.g. Sonny_07" />
+    <button class="btn btn-primary btn-lg w-full mt-4 justify-center" id="name-go">Kick off</button>
+  </div>
+</div>
+
+<script src="content.js"></script>
+<script src="shared.js"></script>
+<script>
+const CATS = [
+  {id:'all',     label:'All',                icon:'fa-asterisk'},
+  {id:'bsop',    label:'BSOP & Real Options', icon:'fa-bolt'},
+  {id:'apv',     label:'APV',                 icon:'fa-sitemap'},
+  {id:'risk',    label:'Risk · VaR',          icon:'fa-shield-halved'},
+  {id:'val',     label:'Valuation · Dividends', icon:'fa-coins'},
+  {id:'mna',     label:'M&A · Restructuring', icon:'fa-handshake'},
+  {id:'fx',      label:'FX hedging',          icon:'fa-money-bill-transfer'},
+  {id:'ir',      label:'IR · Swaps · Collars', icon:'fa-percent'},
+  {id:'islam',   label:'Islamic finance',     icon:'fa-mosque'},
+  {id:'behav',   label:'Behavioural · Reporting', icon:'fa-brain'},
+  {id:'treasury',label:'Treasury · IMF',      icon:'fa-building-columns'},
+  {id:'misc',    label:'Other',               icon:'fa-ellipsis'},
+];
+let activeCat = 'all';
+let searchTerm = '';
+
+function renderPills(){
+  const counts = {all: THEORY_QA.length};
+  THEORY_QA.forEach(qa=>{ counts[qa.cat] = (counts[qa.cat]||0)+1; });
+  document.getElementById('cat-pills').innerHTML = CATS.map(c=>`
+    <button class="tab cat-pill ${c.id===activeCat?'active':''}" data-cat="${c.id}">
+      <i class="fa-solid ${c.icon}"></i> ${c.label}<span class="cat-counts">${counts[c.id]||0}</span>
+    </button>`).join('');
+  document.querySelectorAll('[data-cat]').forEach(b=>{
+    b.onclick = ()=>{ activeCat = b.dataset.cat; renderPills(); renderList(); beep(540,0.04,'sine',0.04); };
+  });
+}
+
+function renderList(){
+  const term = searchTerm.toLowerCase();
+  const list = THEORY_QA
+    .map((qa,i)=>({...qa, i}))
+    .filter(qa=> activeCat==='all' || qa.cat===activeCat)
+    .filter(qa=> !term || qa.q.toLowerCase().includes(term) || qa.a.toLowerCase().includes(term));
+  if(list.length === 0){
+    document.getElementById('qa-list').innerHTML = `<div class="card card-padding text-center muted">No results. Try a different keyword.</div>`;
+    return;
+  }
+  document.getElementById('qa-list').innerHTML = list.map(qa=>`
+    <div class="qa-card" data-idx="${qa.i}">
+      <div class="qa-q">
+        <span class="num">${String(qa.i+1).padStart(2,'0')}</span>
+        <span style="flex:1">${highlight(qa.q, term)}</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="qa-a">${highlight(escapeHTML(qa.a), term).replace(/\\n/g,'\n')}</div>
+    </div>`).join('');
+  document.querySelectorAll('.qa-card').forEach(card=>{
+    card.querySelector('.qa-q').onclick = ()=>{
+      card.classList.toggle('open');
+      if(card.classList.contains('open')){
+        beep(660,0.04,'sine',0.04);
+        const idx = parseInt(card.dataset.idx,10);
+        if(!state.notesRead.includes('theory_'+idx)){
+          state.notesRead.push('theory_'+idx);
+          state.points += 5;
+          save(); renderMeters();
+        }
+      }
+    };
+  });
+}
+
+function highlight(html, term){
+  if(!term) return html;
+  const re = new RegExp('('+term.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')+')','gi');
+  return html.replace(re, '<mark style="background:hsla(43,96%,56%,0.35);color:inherit;padding:0 2px;border-radius:2px">$1</mark>');
+}
+
+document.getElementById('search').oninput = (e)=>{ searchTerm = e.target.value; renderList(); };
+
+renderPills();
+renderList();
+</script>
+</body>
+</html>

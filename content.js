@@ -1903,6 +1903,430 @@ const DAILY_PLAN = [
   {week:'Week 12', focus:'Mock + Islamic + ESG + final formula scan. Sleep.', topics:['islam','mock','exam']}
 ];
 
+/* ============================================================
+   SEP/DEC 2025 REAL PAST PAPER (Drimpton, Marnhall, Passmore)
+   Source: ACCA published sample answers
+   ============================================================ */
+const SEP_DEC_2025 = {
+  Q1: {
+    ref:'Sep/Dec 2025 · Q1 · 50 marks',
+    title:'Drimpton Co — Edricer subsidiary investment (CTA / ESG)',
+    duration: 90 * 60,
+    scenario:`<b>Drimpton Co</b> manufactures air-conditioning units in Comptia (currency $). It plans to set up a subsidiary in <b>Edricer</b>, a country in the Central Trade Area (CTA, currency P "peso"). Comptia is NOT in the CTA.
+<br><br>
+<b>Sales (units, 000s):</b> Yr1 80 · Yr2 110 · Yr3 150 · Yr4 160<br>
+<b>Contribution before component costs:</b> P200/unit Yr1, inflated by Edricer inflation thereafter<br>
+<b>Component costs from Drimpton:</b> $12/unit Yr1, inflated at Comptia rate. Drimpton earns 60% pre-tax contribution on these.<br>
+<b>Fixed costs (P000):</b> 3,200 / 3,360 / 3,562 / 3,776<br>
+<b>Investment:</b> P30m. TAD 25% RB, no allowance Yr4 (sale proceeds = TWDV at end of Yr3).<br>
+<b>Working capital (P000, start of yr):</b> 1,440 / 2,080 / 3,000 / 3,390. Released end of Yr4.<br>
+<b>Inflation:</b> Edricer/CTA 4/5/6/6%. Comptia 7/6/5/4%.<br>
+<b>Spot:</b> P6.2000 = $1.<br>
+<b>Lost sales</b> from Drimpton = 11% of subsidiary sales × $70 (yr1) inflated at Comptia rate, 40% margin.<br>
+<b>Tax:</b> Edricer 20%, Comptia 28% (paid same year). Bi-lateral treaty allows offset.<br>
+<b>Cost of capital:</b> 10%.<br>
+<b>ESG:</b> Investors split. Some focus on financial; others on full sustainability. Drimpton's board fears product impact (emissions, energy use) and labour-cost differential between Comptia & Edricer.`,
+    requirements:[
+      {marks:5, text:'<b>(a)</b> Explain the advantages for Drimpton Co of establishing a manufacturing subsidiary within the CTA.'},
+      {marks:20, text:'<b>(b)(i)</b> Estimate the NPV of the investment in Edricer.'},
+      {marks:6, text:'<b>(b)(ii)</b> Recommend whether on financial grounds the investment should be undertaken and discuss the assumptions made.'},
+      {marks:9, text:'<b>(b)(iii)</b> Discuss issues which Drimpton faces concerning ESG and recommend actions to overcome them.'},
+      {marks:10, text:'Professional skills — communication, analysis & evaluation, scepticism, commercial acumen.'}
+    ],
+    model:
+`================================================================
+PART (a) — ADVANTAGES OF CTA SUBSIDIARY (5 marks) ────────────────
+Cost & logistical:
+ • Lower labour cost in Edricer; access to local workforce.
+ • Distribution costs lower; shorter delivery times.
+ • Working-capital cycle shorter.
+ • Economies of scale if demand expands.
+
+Single-market access:
+ • No physical barriers between CTA countries.
+ • Single set of technical/legal standards (lower compliance).
+ • No discriminatory practices vs CTA competitors.
+ • Stable monetary union → currency & policy alignment.
+ • Avoids tariffs/restrictions imposed on non-CTA countries.
+ • Builds local contacts & market understanding.
+
+================================================================
+PART (b)(i) — NPV (20 marks) ─────────────────────────────────────
+W1: Exchange rates via PPP (counter Edricer / base Comptia):
+ Yr1: 6.20 × 1.04/1.07 = 6.0262
+ Yr2: 6.0262 × 1.05/1.06 = 5.9693
+ Yr3: 5.9693 × 1.06/1.05 = 6.0262
+ Yr4: 6.0262 × 1.06/1.04 = 6.1421
+
+W2: Local contribution before component costs (P000)
+ Yr1: 80 × 200          = 16,000
+ Yr2: 110 × 200 × 1.05  = 23,100
+ Yr3: 150 × 200 × 1.05·1.06 = 33,390
+ Yr4: 160 × 200 × 1.05·1.06² = 37,753
+
+W3: Component sales ($000) → contribution 60%
+ Yr1: 80 × 12 = 960   → contrib 576
+ Yr2: 110 × 12 × 1.06 = 1,399 → contrib 839
+ Yr3: 150 × 12 × 1.06·1.05 = 2,003 → contrib 1,202
+ Yr4: 160 × 12 × 1.06·1.05·1.04 = 2,222 → contrib 1,333
+ Component PURCHASE in P000 = $ × exchange rate
+ → 5,785 / 8,351 / 12,070 / 13,648
+
+W4: TAD on P30m at 25% RB
+ Yr1 7,500 (NBV 22,500) · Yr2 5,625 (16,875) · Yr3 4,219 (12,656)
+ Yr4: nil (sale = TWDV)
+
+W5: Edricer tax on (CF before tax − TAD) at 20%
+ Yr1: PBT 7,015; TAD 7,500; loss 485 → tax credit 97
+ Yr2: PBT 11,389; TAD 5,625; profit 5,764 → tax 1,153
+ Yr3: PBT 17,758; TAD 4,219; profit 13,539 → tax 2,708
+ Yr4: PBT 20,329; TAD 0 → tax 4,066
+
+W6: Comptia additional tax on profits (8% net of treaty)
+ Convert taxable to $; apply 8%:
+ Yr1 6 (credit) · Yr2 (77) · Yr3 (180) · Yr4 (265)
+
+W7: Lost contribution to Drimpton ($000)
+ Per unit margin = $70 × 0.40 = $28
+ Volume lost = 11% × subsidiary sales
+ Yr1 80 × 28 × 0.11 = 246; ·1.06 → 359; ·1.05 → 514; ·1.04 → 570
+ Tax saving on lost contribution at 28%: 69 / 101 / 144 / 160
+
+PROJECT NET CASH FLOWS (P000 → $000 via exchange rate)
+ Yr0  $-5,071
+ Yr1  +1,318
+ Yr2  +1,830
+ Yr3  +2,748
+ Yr4  +5,545
+
+DISCOUNT @ 10%:
+ PV = -5,071 + 1,198 + 1,512 + 2,064 + 3,787
+    = +$3,490 ($000)
+
+NPV = +$3,490,000 → POSITIVE → ACCEPT (subject to ESG/scenario)
+
+================================================================
+PART (b)(ii) — RECOMMENDATION & ASSUMPTIONS (6 marks) ─────────────
+Recommend ACCEPT financial grounds; conduct scenario analysis on
+longer time horizon and different ESG policies.
+
+Assumptions to flag:
+ • Sales doubling Yr1→Yr4 — depends on CTA demand & competitive position.
+ • Contribution margin given (no Comptia comparison provided).
+ • Cost of capital — assumes business risk = current; country risk?
+ • Realisable value = TWDV — may not reflect commercial reality.
+ • Subsidiary likely to continue past Yr4 (Yr4 sales still rising).
+ • PPP holds in shorter term (often fails — interest rates, sentiment).
+ • Tax rates & bi-lateral treaty stable.
+
+→ Recommend SENSITIVITY ANALYSIS on key drivers.
+
+================================================================
+PART (b)(iii) — ESG ISSUES & ACTIONS (9 marks) ───────────────────
+ISSUES:
+ 1) Investor conflict — some focus on financials, others on
+    sustainability. Hard to reconcile. Risk of dis-investment.
+ 2) Cost impact — if same wage policy applied in Edricer
+    (better-than-average), cost saving rationale weakens.
+ 3) Future regulation — CTA may tighten emissions rules.
+ 4) Existential threat — air-con units cause emissions;
+    alternative cooling tech may erode demand.
+
+ACTIONS:
+ • Board to formulate consistent business-wide ESG plan;
+   disclose objectives in external reports.
+ • Consult with investors & stakeholders (governance pillar).
+ • Pay above-average Edricer wage (still cheaper than Comptia);
+   provide training/benefits — social pillar.
+ • Source components locally in CTA where possible to cut
+   transport emissions.
+ • Differentiate by redesigning units for lower energy use.
+ • Long-term — diversify into more sustainable cooling tech.
+
+================================================================
+PROFESSIONAL SKILLS (10 marks) ────────────────────────────────────
+ • Communication: report format, exec summary, recommendation.
+ • Analysis & evaluation: NPV calc + scenario hooks.
+ • Scepticism: PPP holding for 4 yrs; sales doubling; ESG cost.
+ • Commercial acumen: CTA strategic fit; differentiation strategy.
+
+================================================================
+HEADLINE: ACCEPT, NPV +$3.49m, conditional on ESG strategy + scenario tests.
+================================================================`
+  },
+  Q2: {
+    ref:'Sep/Dec 2025 · Q2 · 25 marks',
+    title:'Halstock Co + Marnhall Co — fitness-clubs M&A',
+    duration: 45 * 60,
+    scenario:`<b>Halstock Co</b> (high-price/quality fitness clubs) plans to acquire <b>Marnhall Co</b> (lower-price gym chain owned 90% by Olympic medal-winner Gerd Marnhall). Halstock equity MV $210m. Marnhall valued at $145.8m (FCF growth 5%).
+<br><br>
+Combined revenue forecast ($m): Yr1 230 · Yr2 242 · Yr3 255 · Yr4 269 (Yr5 onward = Yr4).
+Post-tax operating CFs = 22% of revenue. Additional non-current asset investment $7.5m at end Yr1; then $0.45 per $1 revenue increase Yr2-4. Yr5+ same as Yr4.
+PV of post-tax revenue & cost synergies = $18.6m.
+Post-acquisition cost of capital 11%; target D/E 15:85. Cash offer $160m for Marnhall equity. Halstock shareholders expect ≥15% gain.`,
+    requirements:[
+      {marks:9, text:'<b>(a)</b> Calculate the % gain in Halstock\'s shares with and without expected synergies.'},
+      {marks:5, text:'<b>(b)</b> Discuss concerns NEDs may raise about the calculations.'},
+      {marks:6, text:'<b>(c)</b> Recommend actions to overcome the barriers to synergy identified by the chair.'},
+      {marks:5, text:'Professional skills — analysis, scepticism, commercial acumen.'}
+    ],
+    model:
+`================================================================
+PART (a) — % GAIN IN HALSTOCK SHARES (9 marks) ───────────────────
+COMBINED FCF FORECAST ($m):
+ Yr  Rev  Op CF (22%)  Reinv      FCF
+  1  230    50.6       (7.5)     43.1
+  2  242    53.2       (5.4)     47.8
+  3  255    56.1       (5.9)     50.2
+  4  269    59.2       (6.3)     52.9
+  5+ 269    59.2       (6.3)     52.9 perpetuity
+
+DF 11% yrs 1-4: 0.901 / 0.812 / 0.731 / 0.659
+TV factor yr 5+: (1/0.11) − 3.102 = 5.989
+
+PV explicit:  38.8 + 38.8 + 36.7 + 34.9 = 149.2
+PV TV (yr5+): 52.9 × 5.989 = 316.8
+Total combined enterprise value = $466.0m
+
+WITH synergies: 466.0 + 18.6 = $484.6m
+Equity value (85%): 484.6 × 0.85 = $411.9m
+Additional value created = 411.9 − 145.8 − 210.0 = $56.1m
+Gain to Marnhall holders = $160 − $145.8 = $14.2m
+Gain to Halstock holders = 56.1 − 14.2 = $41.9m
+% gain on $210m = 41.9 / 210 = 20.0% ✓ (> 15% target)
+
+WITHOUT synergies:
+Equity (85%): 466 × 0.85 = $396.1m
+Additional value = 396.1 − 145.8 − 210 = $40.3m
+Halstock gain = 40.3 − 14.2 = $26.1m
+% gain = 26.1 / 210 = 12.4% (BELOW 15% target)
+
+================================================================
+PART (b) — NED CONCERNS (5 marks) ────────────────────────────────
+ • 5% growth rate doubtful — Marnhall has falling satisfaction.
+ • Combined revenue growth assumes Marnhall club price rises;
+   chair fears price-sensitive customers walk.
+ • 22% margin (Halstock's current) hard to maintain with
+   Marnhall integration (better-paid staff).
+ • Reinvestment may UNDERSTATE need at Marnhall clubs.
+ • Equity value depends on 15:85 gearing actually being achieved.
+ • Synergies may not materialise — knowledge-sharing hard to value.
+
+================================================================
+PART (c) — OVERCOME BARRIERS TO SYNERGY (6 marks) ────────────────
+1) Decide on Gerd's role — short-term involvement may help
+   transition, but entrench old ways. Use as marketing figurehead.
+2) Establish clear integration plan — appoint senior member
+   accountable; flexible if staff issues emerge.
+3) Marketing — sell upgrade to Marnhall customers; maintain
+   fee structure short-term to keep them; reassure Halstock base.
+4) HR audit — assess Marnhall staff quality; identify leaders;
+   training programme to align with Halstock service standards.
+5) Team-working culture — second staff between clubs; combine
+   co-located clubs into single facility (saves overhead).
+6) Frequent communication — corporate objectives, structure,
+   teamwork emphasis to motivate Marnhall employees.
+
+================================================================
+PROFESSIONAL SKILLS (5 marks)
+ • Analysis: synergy calc both with & without.
+ • Scepticism: stress-test growth, margin, gearing assumptions.
+ • Commercial acumen: integration plan, marketing strategy.
+================================================================`
+  },
+  Q3: {
+    ref:'Sep/Dec 2025 · Q3 · 25 marks',
+    title:'Passmore Co — R202m receivable hedge (forward / futures / option)',
+    duration: 45 * 60,
+    scenario:`<b>Passmore Co</b> (US semiconductors) has just made a major sale in India: 202m rupees (R) on 31 August. Today is 1 February. Considering forward, futures or traded options.
+<br><br>
+<b>Spot R/$:</b> 69.9547 - 70.2414
+<b>7-month forward:</b> 70.5252 - 70.8500
+<br><br>
+<b>R Futures (R5m, R/$1):</b> March 70.4576 · June 70.6874 · September 70.9550
+<br><br>
+<b>R Options</b> (R5m, exercise R70.8000/$1, premium US cents per R100):
+<br>March: Calls 2.61 / Puts 2.20
+<br>June: Calls 2.69 / Puts 2.31
+<br>September: Calls 2.97 / Puts 2.42
+<br><br>
+Assume futures and options mature at month end. Basis decays linearly to zero. No basis risk. Options are exercised.`,
+    requirements:[
+      {marks:12, text:'<b>(a)</b> Recommend an appropriate hedging strategy for R202m receivable. Show all calcs.'},
+      {marks:8, text:'<b>(b)</b> Advise on how the treasury department can make a positive financial contribution to Passmore Co.'},
+      {marks:5, text:'Professional skills — analysis, scepticism, commercial acumen.'}
+    ],
+    model:
+`================================================================
+PART (a) — HEDGING STRATEGY (12 marks) ───────────────────────────
+FORWARD CONTRACT
+  R/$ forward bid (we sell R/buy $) = 70.85
+  $ received = R202m / 70.85 = $2,851,094
+
+FUTURES — sell September R futures
+  Contracts = R202m / R5m = 40.4 → 40 contracts
+  Today (1 Feb) basis:
+    spot 70.2414 − Sep future 70.9550 = −0.7136
+  Time to maturity: Feb→Sep = 8 months; receipt 31 Aug → 7 mo
+  Unexpired basis on receipt date = −0.7136 × 1/8 = −0.0892
+  Lock-in rate = 70.9550 − 0.0892 = 70.8658
+  Expected receipt = R202m / 70.8658 = $2,850,458
+
+OPTIONS — buy R September put options at strike R70.8000
+  Receiving R, want to sell R/buy $. We hold the option to
+  EXERCISE PUT on R = sell R at the strike.
+  Contracts = 40 (as above)
+  Premium = 40 × R5m × $0.000242 = $48,400
+  Outcome (assume exercised):
+    R received converted at strike: R5m × 40 / 70.8 = $2,824,859
+    Less premium                                       (48,400)
+                                                    $2,776,459
+
+COMPARISON ($):
+  Forward    2,851,094  ★ HIGHEST
+  Futures    2,850,458  (basis of $636 lower)
+  Options    2,776,459  (~$75k cost of insurance)
+
+DECISION: forward contract — highest receipt, no basis risk,
+100% hedge, simple and tailored.
+
+DISCUSSION:
+ • Forward must be fulfilled (rigid).
+ • Futures: regulated/CCP, but margin & basis risk.
+ • Options: walk-away if R appreciates — but premium cost
+   $75k and forecast spot moving the OTHER way (forward
+   higher than spot, so R expected to weaken not strengthen).
+
+================================================================
+PART (b) — TREASURY VALUE ADDITION (8 marks) ─────────────────────
+Up to 2 marks per well-developed point:
+1) NETTING — net intercompany receivables/payables; cut
+   transaction costs and bank charges.
+2) POOLING — pool investment & borrowing in bulk; better
+   rates, broader investment access.
+3) INTERNAL TRANSFERS — surplus subsidiaries finance cash-needy
+   ones, avoiding expensive external markets.
+4) TAX MINIMISATION — transfer pricing, intercompany loan
+   arrangements, dividend timing; minimise overall tax.
+5) ADVICE — investment strategy for short-term funds; advice
+   on SPVs & cheaper bond issuance via low-risk cash flows.
+
+================================================================
+PROFESSIONAL SKILLS (5 marks)
+ • Analysis: 3 instruments costed and ranked.
+ • Scepticism: assumption "no basis risk" + "exercised" optimistic.
+ • Commercial acumen: forward simplest match for trading firm.
+================================================================`
+  }
+};
+
+/* ============================================================
+   HOT TOPICS — Super Secret Sauce (Mar 2026 sitting prep)
+   ============================================================ */
+const HOT_TOPICS = [
+  {tag:'CORE PROFORMA', title:'International investment appraisal', body:'Drimpton (Sep/Dec 25), every year. Sales doubling, PPP forwards, dual-tax with treaty, ESG overlay.', link:'mock.html', why:'Tested 8 of last 10 sittings'},
+  {tag:'STAR', title:'Project VaR & multi-period scaling', body:'z(95%)=1.645 · z(99%)=2.326 · √T scaling. State result as a sentence with confidence + horizon.', link:'topic.html?t=risk', why:'Star-topic since Mar/Jun 23'},
+  {tag:'REAL OPTIONS', title:'BSOP for delay / expand / abandon / equity-as-call', body:'Pa = PV inflows. Pe = capex. Higher σ → higher option. NPV + Option = total value.', link:'topic.html?t=real', why:'Q3 of every paper since 22'},
+  {tag:'BLOCKBUSTER', title:'M&A with synergy + barriers (Halstock/Marnhall style)', body:'Floor = stand-alone. Ceiling = + synergy − integration. Bid sits between. Mention all three.', link:'topic.html?t=mna', why:'Sep/Dec 25 25-marker'},
+  {tag:'TREASURY', title:'FX hedge — forward vs futures vs option', body:'Bank gives the WORSE rate. Lock-in rate via basis. Premium FV. Recommend with reasoning.', link:'topic.html?t=fx', why:'Sep/Dec 25 Q3'},
+  {tag:'IR', title:'Interest-rate swap / FRA / collar', body:'QSD direction. Borrower buys FRA at OFFER. Collar = buy put + sell call. Draw the diagram.', link:'topic.html?t=ir', why:'June 25 Q3'},
+  {tag:'APV', title:'APV with subsidised loan + tax shield', body:'Base @ ungeared Ke. Side-effects @ Kd. Subsidy benefit × (1−T). Issue costs.', link:'topic.html?t=apv', why:'Dec 19, Sep/Dec 23'},
+  {tag:'BONDS', title:'Spot yield curve + bond duration', body:'Forward yields from spot: (1+s2)² = (1+s1)(1+f). Macaulay = weighted-avg time. Mod = Mac/(1+y).', link:'topic.html?t=val', why:'Hot topic per Sir Taha'},
+  {tag:'BEHAVIOURAL', title:'NAME · EXPLAIN · APPLY for each bias', body:'Anchoring · Hubris (Roll) · Auction fever · Loss aversion. Tie to scenario figures.', link:'topic.html?t=behav', why:'Mar/Jun 24 Q2'},
+  {tag:'ESG (NEW)', title:'Issue · Action · Outcome — three sentences', body:'Don\'t define ESG. Pick scenario fact, recommend feasible action, link to financial outcome.', link:'exam-skills.html', why:'Sep/Dec 25 onward — every paper'},
+  {tag:'RECONSTRUCTION', title:'Capital reconstruction & SOFP changes', body:'Liquidation priority order. 6-step fairness test. Conejo Co Dec 17 was the template.', link:'topic.html?t=mna', why:'Hot topic'},
+  {tag:'ISLAMIC', title:'Sukuk · Murabaha · Mudaraba · Ijara', body:'Asset-backed, no riba. Sukuk holders own cash flows but not assets. Mudaraba = profit share, capital-only loss.', link:'topic.html?t=islam', why:'4-mark discussion easy mark'}
+];
+
+/* ============================================================
+   64 FREQUENTLY-ASKED THEORY Q&A
+   Source: ACCA past-paper sample answers · grouped by category
+   Each card: q (question), a (key bullets/marks-earning answer),
+   cat (filter category)
+   ============================================================ */
+const THEORY_QA = [
+  // BLACK-SCHOLES & REAL OPTIONS
+  {cat:'bsop', q:'How does a DECREASE in each BSOP determinant change a CALL price?', a:'• Security price ↓ → call ↓ (less profitable to exercise)\n• Exercise price ↓ → call ↑ (more profit on exercise)\n• Risk-free rate ↓ → call ↓ (lower opportunity benefit of holding option vs underlying)\n• Time to expiry ↓ → call ↓ (less time premium)\n• Volatility ↓ → call ↓ (less chance of being ITM)'},
+  {cat:'bsop', q:'How can BSOP value the EQUITY and DEBT of a company?', a:'Equity = call option on firm assets (Merton). Inputs:\n• Pa = fair value of assets\n• Pe = redemption value of equivalent zero-coupon debt\n• t = time to debt maturity · r = Rf · σ = asset volatility\nDebt value = risk-free bond − put option on assets, OR via put-call parity from equity value.'},
+  {cat:'bsop', q:'BSOP assumptions (5)?', a:'• European-style option only\n• Lognormal share-price distribution; continuous trading\n• Unrestricted short-selling\n• No taxes / transaction costs\n• No dividends during option life'},
+  {cat:'bsop', q:'How can REAL OPTIONS help NPV decisions?', a:'NPV assumes a now-or-never decision; real options recognise managerial flexibility (delay, expand, abandon, switch). Captures TIME VALUE of flexibility plus intrinsic value. Risks/uncertainties become opportunities — upside captured, downside avoided. Adjusted NPV = traditional NPV + option value.'},
+  {cat:'bsop', q:'When do we use BSOP for company valuation (not just options)?', a:'Useful when conventional methods don\'t reflect risk fully — e.g. unlisted companies with unpredictable growth, distressed-debt valuation, valuing equity as a call written by lenders. Five inputs: asset value, debt face, time, volatility, Rf.'},
+  {cat:'bsop', q:'High GAMMA on a long call — what does it mean?', a:'Gamma = ΔDelta/ΔUnderlying. Highest when option is at-the-money and close to expiry. So a high-gamma long call is ATM with short time to expiry — very price-sensitive to underlying.'},
+  {cat:'bsop', q:'Using DELTA as hedge ratio — how many contracts?', a:'Delta = ΔOption/ΔUnderlying. To hedge $1 of underlying with delta=0.8, need 1/0.8 = 1.25 option contracts. Inverse of delta = hedge ratio.'},
+
+  // ISLAMIC FINANCE
+  {cat:'islam', q:'Islamic finance vs conventional — main differences?', a:'• Wealth from legitimate trade & asset-backed investment (no money-from-money)\n• Investment must have social/ethical benefit\n• Risk shared\n• No haram industries\nForbidden: riba (interest), gharar (uncertainty), maysir (speculation).\nKey instruments: Murabaha (cost-plus), Sukuk (asset-backed bond), Ijara (lease), Mudaraba (profit-share), Musharaka (JV).'},
+  {cat:'islam', q:'Mudaraba contract — explain.', a:'Partnership: rabb-ul-mal (capital owner) + mudarib (manager). Profits split per agreed ratio. Losses ONLY borne by capital provider; mudarib loses time/effort only. No interest. Bank does NOT interfere with day-to-day management.'},
+  {cat:'islam', q:'Salam vs Futures — key differences?', a:'Salam: full payment at start, deliver later. Price/quantity/quality fixed → no uncertainty.\nFutures: marked-to-market daily (uncertain CFs), standard size & expiry (imperfect hedge), only key grades covered.\nSalam Sharia-compliant; futures may breach gharar/maysir rules.'},
+
+  // M&A & RESTRUCTURING
+  {cat:'mna', q:'Why may a firm switch from organic growth to acquisition?', a:'• Quicker access to products/markets/tech/expertise\n• Horizontal: eliminate competitor, scale economies\n• Vertical: secure supply/value chain\n• Saturated markets → little room for organic\n• Avoid building expertise from scratch\nBalanced against: integration risk, premium overpayment, culture clash.'},
+  {cat:'mna', q:'Three types of synergy?', a:'• REVENUE — cross-sell, pricing power, longer competitive moat (hardest to defend)\n• COST — scale & scope economies, eliminate duplication, bulk purchasing\n• FINANCIAL — lower WACC, internal capital market, debt capacity, tax-loss utilisation'},
+  {cat:'mna', q:'Reduce risk that an acquisition fails to add value — what actions?', a:'• Post-audit recent deals (learn from failures)\n• Proper due diligence; reasonable valuation inputs\n• Synergy targets allocated to senior managers; tracked\n• Clear maximum premium; walk-away discipline\n• NEDs scrutinise the rationale\n• Integration plan + retention strategy for key staff\n• Cultural integration recognised, not assumed'},
+  {cat:'mna', q:'Sell-off vs MBI — both unbundling, what differs?', a:'BOTH dispose non-core. Sell-off: sell to third party for cash/value; lose control; redeploy proceeds. MBI: sell to external mgmt team who then run it; equity stake; suits situations where new mgmt can run better.'},
+  {cat:'mna', q:'Reverse takeover vs IPO — when is each appropriate?', a:'IPO: conventional listing, marketing, prospectus. Reverse takeover: private firm buys listed shell, gains listing without IPO.\nReverse cheaper, faster, certain. But: shell may have hidden liabilities (DD!); no IPO marketing means weaker investor following → harder follow-on raises.\nUse reverse if speed/certainty matter; IPO if raising large capital and want analyst coverage.'},
+  {cat:'mna', q:'Why is synergy often OVERESTIMATED?', a:'• Cheap-credit waves drive bidding competition → premiums rise\n• Conflicts of interest — deal advisers earn from completion\n• Management overconfidence; reluctance to admit mistake\n• Agency costs — managers pursue size over value\n• Integration difficulties (culture, systems)\nFixes: synergy ownership, separate evaluation from advisers, due diligence.'},
+  {cat:'mna', q:'Mandatory bid · equal treatment · squeeze-out — purpose?', a:'All protect minority shareholders.\nMANDATORY BID: at trigger %, acquirer must offer ALL shareholders the highest price already paid.\nEQUAL TREATMENT: same terms to minority as to controlling sellers.\nSQUEEZE-OUT: at high % (typically 80-95%), acquirer can FORCE remaining minority to sell at fair price → 100% control.'},
+  {cat:'mna', q:'Mandatory bid + poison pills + crown jewels — defence effectiveness?', a:'Mandatory bid + equal treatment PROTECT minorities.\nPoison pill: existing holders buy more at discount once bidder hits trigger → makes target costly. Crown jewels: dispose key assets → unattractive.\nLIMITS: shareholders must approve (often refuse → premium foregone); selling crown jewels weakens long-term competitiveness.'},
+  {cat:'mna', q:'Sell-off vs Demerger — advantages?', a:'BOTH restructure, may unlock "reverse synergy".\nSell-off: sale to third party → CASH realised, control lost.\nDemerger: NO change in ownership, new co created and assets transferred, original shareholders get shares in both. No cash raised but reduces conglomerate discount.'},
+  {cat:'mna', q:'Why do many real-world acquisitions fail?', a:'• Lack of industrial/commercial fit\n• Lack of goal congruence\n• "Cheap" purchases hide turnaround costs\n• Paying too much (premium beyond synergy)\n• Failure to integrate effectively (culture, systems, opposition)'},
+  {cat:'mna', q:'Why does synergy exist (sources)?', a:'ECONOMIC EFFICIENCY: scale (fixed costs, equipment), scope (advertising, distribution), vertical control of supply.\nFINANCIAL: lower σ of returns → better credit; tax-loss/shield use.\nMARKET POWER: pricing power post-merger.'},
+  {cat:'mna', q:'MBO disposal benefits to PARENT?', a:'• Costs less than third-party sale\n• Quickest method to raise funds\n• Less internal resistance — staff/managers cooperate\n• Retain trading relationship (supplier/customer)\n• Higher price possible — mgmt know value\n• Reputation boost with internal/external stakeholders'},
+
+  // FX HEDGING
+  {cat:'fx', q:'Exchange-traded vs OTC options — pros/cons?', a:'Exchange: ready availability, transparent pricing, no negotiation, lower transaction costs, regulated/CCP, American-style.\nOTC: tailored size & expiry, longer terms available, wider product range, but counterparty risk.'},
+  {cat:'fx', q:'Forward contract vs OTC option — when to choose?', a:'Forward: no premium upfront, simple, certain budgeting. BUT must be fulfilled (locked even if FX moves your way).\nOption: keeps upside, can lapse. BUT premium cost.\nUse forward if certain about CFs; option if uncertain (tenders, contingent deals).'},
+  {cat:'fx', q:'Money-market hedge vs exchange-traded derivatives?', a:'MMH: replicates forward via spot+money markets; cost-effective if good market access; cumbersome to set up & reverse.\nExchange derivatives: rapid, easily closed; standard contract size → imperfect hedge; basis risk; margin requirements; options need premium.'},
+  {cat:'fx', q:'Economic exposure — what is it and how managed?', a:'Long-term value change due to unexpected FX moves. Hard to hedge with derivatives (amount unknown). Manage via INTERNATIONAL DIVERSIFICATION of activities, flexibility in production location, raw-material sources, financing.'},
+  {cat:'fx', q:'PPP and economic exposure — connection?', a:'PPP says exchange rates adjust to relative inflation differentials → "law of one price" holds long-term. Economic exposure if PPP fails (e.g. permanent shifts due to relative competitive position changes — UK£/US$ over decades). Where PPP fails, cash flows from foreign customers decline materially.'},
+
+  // IR HEDGING / SWAPS
+  {cat:'ir', q:'Swaps for IR hedging — pros/cons?', a:'PROS: low transaction cost, fixed swap into floating (or vice versa); OTC tailored size & period; comparative advantage savings; longer than other derivatives.\nCONS: counterparty risk; cannot easily reverse; locked into commitment if rates move favourably.'},
+  {cat:'ir', q:'IR swaps & currency swaps — value to corporate finance manager?', a:'• Cheaper finance via comparative advantage (fixed/float gap)\n• FX hedging up to 10 years (longer than forward market)\n• Restructure capital profile without redeeming/reissuing\n• Access markets where direct borrowing not possible (rating)\n• Customisable: amortising, zero-coupon, callable, swaptions'},
+  {cat:'ir', q:'Currency swap advantages and risks?', a:'PROS: long-term FX hedging; cheaper than long forwards; arbitrage (relative funding advantage); access to currencies otherwise blocked; restructure debt profile; bypass exchange controls.\nRISKS: counterparty default; political/sovereign; basis risk (floating-floating); FX risk if no hedge underlies.'},
+  {cat:'ir', q:'Collar — main advantage and disadvantage vs option?', a:'PRO: lower cost — premium received from sold option offsets premium paid on bought option (often near-zero net cost).\nCON: caps the upside — gain on favourable underlying move is limited or surrendered.'},
+  {cat:'ir', q:'Basis risk — what is it?', a:'Basis = futures price − spot price. At maturity = 0. If contract closed early, basis non-zero → imperfect hedge. Magnitude of basis residual = risk you carry.'},
+
+  // BEHAVIOURAL / REPORTING
+  {cat:'behav', q:'Triple Bottom Line reporting — what is it?', a:'Quantitative summary of social, financial AND environmental performance. Decisions must grow each pillar without sacrificing the others. Enhances shareholder value if benefits > costs of reporting.'},
+  {cat:'behav', q:'Integrated Reporting objectives?', a:'• Improve quality of information for capital providers\n• Cohesive approach to corporate reporting\n• Accountability & stewardship over 6 capitals (financial, manufactured, intellectual, human, social, natural)\n• Support integrated thinking across short/medium/long-term'},
+  {cat:'behav', q:'Behavioural finance vs rational decisions?', a:'Sewell: psychology influences finance practitioners and markets. Rational: clear stable preferences, utility maximising, full info. Reality: bounded rationality, emotion, social pressure, info overload. Decisions vary on same facts at different times.'},
+  {cat:'behav', q:'Key behavioural-finance biases?', a:'• ANCHORING — irrelevant reference (asking price)\n• GAMBLER\'S FALLACY — past changes future probability\n• HERD — mimicking large group\n• OVERREACTION & AVAILABILITY — over-react to recent news\n• HUBRIS — overconfidence in own ability\n• LOSS AVERSION — pain ~2× pleasure\n• ENTRAPMENT — sunk-cost throw-good-after-bad'},
+
+  // APV / WACC / CAPITAL STRUCTURE
+  {cat:'apv', q:'APV vs NPV — when to use APV?', a:'NPV: discount project CFs at single rate (often WACC). APV: separate project (Ke ungeared) and financing side-effects (Kd).\nUse APV when:\n• Capital structure changes due to investment\n• Complex tax / tax holidays\n• Subsidised loans, grants, issue costs\n• Different risk profile from parent'},
+  {cat:'apv', q:'Why may APV be preferred over NPV?', a:'Separating CFs allocates the right discount rate to each cash flow risk. Managers see which part of the project creates value (operations vs financing). Subsidies, tax shields and issue costs become explicit. Useful for LBOs, project finance, M&A.'},
+
+  // RISK / PORTFOLIO / VAR / YIELD
+  {cat:'risk', q:'Diversified portfolio — what benefit?', a:'Portfolio theory: diversification removes UNSYSTEMATIC (firm-specific) risk; only SYSTEMATIC remains. ~15-20 stocks → ~95% benefit. Companies invest in markets shareholders can\'t (e.g. emerging markets) → adds further diversification beyond shareholder portfolio.'},
+  {cat:'risk', q:'Upward-sloping yield curve — reasons?', a:'• Future expectations: short-rates expected to rise → curve slopes up\n• Liquidity preference: investors demand premium for longer maturity\n• Market segmentation / preferred habitat: banks at short end, pension funds at long end → demand-supply mismatch'},
+  {cat:'risk', q:'VaR calc — how to interpret?', a:'VaR = z × σ × value (one-tail). z(95%)=1.645, z(99%)=2.326. T-day = 1-day × √T.\nINTERPRET: "We are X% confident losses won\'t exceed £Y over T days." Quote the z-value explicitly.'},
+  {cat:'risk', q:'Business risk vs financial risk — relationship?', a:'BUSINESS: from operations (industry, demand, costs).\nFINANCIAL: from capital structure (gearing, FX, IR, liquidity).\nHigh business risk → less appetite for financial risk (and vice versa).\nManage via: mitigation (transfer/hedge/insure) and diversification.'},
+  {cat:'risk', q:'Capital rationing — single vs multi-period?', a:'Single period (one constrained year): rank divisible projects by PROFITABILITY INDEX = NPV / Investment. Allocate to highest PI first.\nMulti-period: PI fails (multiple constraints) → use LINEAR PROGRAMMING to maximise total NPV subject to all constraints.'},
+  {cat:'risk', q:'Capital Investment Monitoring System — features and benefits?', a:'CIMS sets plan, budget, milestones, risk register. Then monitors actuals vs plan, sets contingency plans.\nBenefits: project meets expectations, completed on time, risks managed proactively, communication device, re-assess if environment changes.'},
+  {cat:'risk', q:'Duration as bond price-sensitivity measure?', a:'Macaulay D = weighted average time to receive CFs. Higher coupon = lower D.\nΔP/P = −D × Δi / (1 + i)\nUseful for SMALL changes only (linear approx). Real bond price–yield curve is convex → duration UNDERSTATES gain/overstates loss for big rate moves. Doesn\'t handle yield-curve shape changes.'},
+
+  // TREASURY / GOVERNANCE / GLOBAL
+  {cat:'treasury', q:'Treasury staffing — why need experienced staff?', a:'Day-to-day work needs judgement (which lender/instrument); poor decisions = opportunity cost. Monitor international markets, political risk. Set policies aligned with risk appetite. Knowledge of law/tax/accounting saves penalties. Strategic advice on M&A/financing/cost of capital.'},
+  {cat:'treasury', q:'IMF role and significance to multinationals?', a:'Bretton Woods 1945. BoP support; conditional loans 3-5yr (austerity reforms). Beneficial: reduces FX volatility, facilitates trade. Costly: short-term deflation, smaller markets. Tensions: capital-flow freedom vs gov\'t money-supply control. Up to 25% quota unconditional; further tranches conditional.'},
+  {cat:'treasury', q:'Are derivatives a "time bomb" or hedging tool?', a:'Both views compatible. Hedge: offsets underlying risk. Speculation: increases risk (no underlying need). Buffett worries about speculative use + historic cost accounting hiding losses. IAS 39 fair-value mitigates but volatility remains. Treasury cost-centre = no spec; profit-centre = blurred lines.'},
+  {cat:'treasury', q:'Money-laundering — global response?', a:'• International task force on money laundering\n• Recommendations for nation-states to adopt\n• Legislation: criminal justice/law enforcement, financial regulation, international cooperation'},
+  {cat:'treasury', q:'Regional vs national vs global treasury function?', a:'Regional vs national: fewer duplicate roles, specialists, pooled cash, located in financial centres.\nRegional vs global: local expertise, time-zone alignment, better local market knowledge, more responsive to subsidiaries.'},
+  {cat:'treasury', q:'Borrowing — domestic banks vs Euromarkets?', a:'Domestic: smaller loans, more regulation, wider spreads, often secured, banks scrutinise → signal credit standing.\nEuromarkets: very large unsecured loans, lower regulation/spreads, often slightly cheaper, syndication possible.'},
+
+  // VALUATION / DIVIDENDS
+  {cat:'val', q:'Increase in dividends — benefit shareholders?', a:'M&M: irrelevant in perfect markets. Real-world factors:\n• Tax — capital gains often lower rate than dividends\n• Brokerage fees if shares need to be sold for income\n• Internal finance cheaper than external (issue costs)\n• Information asymmetry — dividend signals confidence\n• Investment opportunities: many positive NPV → retain; few → return cash'},
+  {cat:'val', q:'Share buyback vs dividend — benefits?', a:'Buyback: shareholder chooses (controls cash & tax timing); reduces share count → EPS rises; positive market signal; share price often rises.\nDividend: forced cash receipt → tax bill, transaction costs to reinvest. Buyback gives flexibility.'},
+
+  // OTHER
+  {cat:'misc', q:'Stakeholder recognition — why important in investment decisions?', a:'• Identifies risk/disruption sources (env. groups, legal action)\n• Mendelow matrix: power × interest = influence\n• Identifies conflict areas → resolve disagreement\n• Ethical/reputational case (society can withdraw support)\n• Deep-green view: failing to recognise = bad governance'},
+  {cat:'misc', q:'EU free trade area — benefits?', a:'• Remove trade barriers; free movement of capital/labour\n• Common legal & technical standards → lower compliance\n• No discrimination; competitive level playing field\n• Common external tariffs (block non-members)\n• Easier due diligence with logistics across members\n• Access to EU-only grants'},
+  {cat:'misc', q:'Credit rating criteria — how assess?', a:'• INDUSTRY RISK — economic resilience, cyclicality\n• EARNINGS PROTECTION — diversity, margins, ROCE\n• FINANCIAL FLEXIBILITY — alternatives available, covenants\n• MANAGEMENT — strategy, succession, qualifications, KPI hits'},
+  {cat:'misc', q:'Dark pool networks — what & why?', a:'Anonymous trading away from public scrutiny. Order details hidden until trade done. Reasons: avoid moving share price, lower fees (mid-price, broker-dealer pools).\nCriticism: reduces market efficiency. Defenders: prevents large trades from artificially moving price.'},
+  {cat:'misc', q:'Portfolio vs Organisational restructuring?', a:'PORTFOLIO: acquisitions, disposals, divestments, demergers, MBOs/MBIs (which businesses).\nORGANISATIONAL: restructure divisions, processes, governance (how organised).\nBOTH aim to increase performance + value. Diversified shareholders may NOT benefit from conglomerate diversification.'},
+  {cat:'misc', q:'BSOP for company valuation — circumstances?', a:'When conventional methods miss risk — unlisted, unpredictable growth, distressed debt. Equity = call on assets (limited liability = walk-away put). Five inputs: assets fair value, debt face (zero-coupon equivalent), time, σ of assets, Rf.'}
+];
+
 /* Flat list for global progress meter */
 const QUESTIONS = Object.values(TOPICS).flatMap(t => t.drills);
 window.TOPICS = TOPICS;
@@ -1911,3 +2335,6 @@ window.NEWS = NEWS;
 window.FORMULAS = FORMULAS;
 window.EXAM_SKILLS = EXAM_SKILLS;
 window.DAILY_PLAN = DAILY_PLAN;
+window.SEP_DEC_2025 = SEP_DEC_2025;
+window.HOT_TOPICS = HOT_TOPICS;
+window.THEORY_QA = THEORY_QA;

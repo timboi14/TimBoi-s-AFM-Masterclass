@@ -59,6 +59,7 @@
   <div class="nav-links">
     <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
     <a href="topic.html?t=adviser"><i class="fa-solid fa-list"></i> Topics</a>
+    <a href="theory.html"><i class="fa-solid fa-book"></i> Theory</a>
     <a href="cards.html"><i class="fa-solid fa-clone"></i> Cards</a>
     <a href="mock.html" class="active"><i class="fa-solid fa-stopwatch"></i> Mock</a>
     <a href="formulas.html"><i class="fa-solid fa-square-root-variable"></i> Formulas</a>
@@ -72,6 +73,16 @@
   <p class="muted mt-2">Best mock score: <b id="mock-best" class="text-white">0</b> · Personal best to beat.</p>
 
   <div class="grid-2 mt-5">
+    <div class="card card-padding card-glow" style="border-color:hsl(43 96% 56%); box-shadow:0 0 0 1px hsl(43 96% 56%/0.4), 0 30px 60px -30px hsl(43 96% 56%/0.45)">
+      <div class="badge badge-primary mb-2"><i class="fa-solid fa-fire"></i> SEP/DEC 2025 · REAL EXAM</div>
+      <h3 class="font-display text-[22px] gold tracking-wide">Drimpton · Marnhall · Passmore</h3>
+      <p class="muted mt-2 leading-relaxed">The actual Sep/Dec 2025 ACCA paper. Pick a question, sit it timed, reveal the official model answer at the end.</p>
+      <div class="btn-row mt-3" style="gap:6px">
+        <button class="btn btn-primary" data-real="Q1"><i class="fa-solid fa-trophy"></i> Drimpton (50m)</button>
+        <button class="btn btn-outline" data-real="Q2">Marnhall (25m)</button>
+        <button class="btn btn-outline" data-real="Q3">Passmore (25m)</button>
+      </div>
+    </div>
     <div class="card card-padding card-glow">
       <div class="badge badge-primary mb-2">FULL MOCK · 50 marks · 90 min</div>
       <h3 class="font-display text-[22px] gold tracking-wide">Section A — Lillywhite Plc</h3>
@@ -281,6 +292,28 @@ document.getElementById('start-full').onclick = startFull;
 document.getElementById('start-quickfire').onclick = startQuickfire;
 document.getElementById('start-sb').onclick = ()=> startSB(sbSel.value);
 document.getElementById('start-weak').onclick = startWeak;
+document.querySelectorAll('[data-real]').forEach(b=>{
+  b.onclick = ()=> startReal(b.dataset.real);
+});
+
+function startReal(qKey){
+  const q = SEP_DEC_2025[qKey]; if(!q) return;
+  mode='real';
+  document.getElementById('pre-card').style.display='none';
+  document.getElementById('mock-pane').style.display='block';
+  const reqs = q.requirements.map(r=>`<div class="req-block">${r.text} <span class="muted" style="float:right">[${r.marks} marks]</span></div>`).join('');
+  document.getElementById('mock-body').innerHTML = `
+    <div class="badge badge-primary mb-2"><i class="fa-solid fa-fire"></i> ${q.ref}</div>
+    <h2 class="font-display text-[26px] tracking-wide leading-tight gold">${q.title}</h2>
+    <div class="scenario mt-3">${q.scenario}</div>
+    <div class="mt-4">${reqs}</div>`;
+  document.getElementById('model-text').textContent = q.model;
+  mockEnd = Date.now() + q.duration*1000;
+  clearInterval(mockTimer); mockTimer = setInterval(tickClock, 1000); tickClock();
+  beep(880,0.18,'triangle',0.10); chant();
+  award(30, 'real exam kickoff');
+  loadScratch('real-'+qKey);
+}
 
 function startFull(){
   mode='full';
