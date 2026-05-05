@@ -34,9 +34,6 @@ export function HomePage() {
   const cd = useCountdown();
 
   const fanName = state.fanName || 'Fan';
-  useEffect(() => {
-    if (!state.fanName) store.set({ fanName: 'Fan' });
-  }, [state.fanName]);
 
   const todaysMission = useMemo(() => {
     const idx = (cd.d + state.streak) % TOPIC_LIST.length;

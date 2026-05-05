@@ -63,18 +63,34 @@ export interface State {
 
 const listeners = new Set<() => void>();
 
+/**
+ * Cached snapshot. useSyncExternalStore requires getSnapshot to return a
+ * stable reference between calls when nothing changed, otherwise React
+ * sees a "new" object every render and infinite-loops with error #185.
+ * We rebuild the snapshot only when set() / reset() runs.
+ */
+let snapshot: State = readSnapshot();
+
+function readSnapshot(): State {
+  return {
+    fanName: readStr(KEY.fanName, ''),
+    points: readNum(KEY.points, 0),
+    streak: readNum(KEY.streak, 0),
+    drills: readNum(KEY.drills, 0),
+    notesRead: readArr(KEY.notesRead),
+    theoryRead: readArr(KEY.theoryRead),
+    weakAreas: readArr(KEY.weakAreas),
+    lastVisit: readStr(KEY.lastVisit, ''),
+  };
+}
+function rebuildAndNotify() {
+  snapshot = readSnapshot();
+  listeners.forEach((fn) => fn());
+}
+
 export const store = {
   get(): State {
-    return {
-      fanName: readStr(KEY.fanName, ''),
-      points: readNum(KEY.points, 0),
-      streak: readNum(KEY.streak, 0),
-      drills: readNum(KEY.drills, 0),
-      notesRead: readArr(KEY.notesRead),
-      theoryRead: readArr(KEY.theoryRead),
-      weakAreas: readArr(KEY.weakAreas),
-      lastVisit: readStr(KEY.lastVisit, ''),
-    };
+    return snapshot;
   },
   set(patch: Partial<State>) {
     if (patch.fanName !== undefined) localStorage.setItem(KEY.fanName, patch.fanName);
@@ -85,22 +101,22 @@ export const store = {
     if (patch.theoryRead) localStorage.setItem(KEY.theoryRead, JSON.stringify(patch.theoryRead));
     if (patch.weakAreas) localStorage.setItem(KEY.weakAreas, JSON.stringify(patch.weakAreas));
     if (patch.lastVisit !== undefined) localStorage.setItem(KEY.lastVisit, patch.lastVisit);
-    // tier auto-derived from points
     const points = readNum(KEY.points, 0);
     localStorage.setItem(KEY.tier, tierFor(points).tier);
-    listeners.forEach((fn) => fn());
+    rebuildAndNotify();
   },
   subscribe(fn: () => void) {
     listeners.add(fn);
-    return () => listeners.delete(fn);
+    return () => {
+      listeners.delete(fn);
+    };
   },
   reset() {
     Object.values(KEY).forEach((k) => localStorage.removeItem(k));
-    listeners.forEach((fn) => fn());
+    rebuildAndNotify();
   },
-  /** Award points for a correct drill, with streak multiplier. */
-  awardCorrect(driIlld: string, base = 100) {
-    const cur = this.get();
+  awardCorrect(_id: string, base = 100) {
+    const cur = snapshot;
     const mult = 1 + Math.min(cur.streak * 0.05, 0.5);
     this.set({
       points: cur.points + Math.round(base * mult),
@@ -108,23 +124,21 @@ export const store = {
     });
   },
   awardShown(_id: string) {
-    const cur = this.get();
-    this.set({ points: cur.points + 50 });
+    this.set({ points: snapshot.points + 50 });
   },
   markNoteRead(id: string) {
-    const cur = this.get();
+    const cur = snapshot;
     if (cur.notesRead.includes(id)) return;
     this.set({ notesRead: [...cur.notesRead, id], points: cur.points + 5 });
   },
   markTheoryRead(id: string) {
-    const cur = this.get();
+    const cur = snapshot;
     if (cur.theoryRead.includes(id)) return;
     this.set({ theoryRead: [...cur.theoryRead, id], points: cur.points + 5 });
   },
-  /** Bump streak if last visit was different day; reset if gap > 1 day. */
   bumpStreak() {
     const today = new Date().toISOString().slice(0, 10);
-    const cur = this.get();
+    const cur = snapshot;
     if (cur.lastVisit === today) return;
     if (!cur.lastVisit) {
       this.set({ streak: 1, lastVisit: today });
@@ -138,6 +152,8 @@ export const store = {
 };
 
 import { useSyncExternalStore } from 'react';
+const getSnapshot = () => snapshot;
+const subscribe = (fn: () => void) => store.subscribe(fn);
 export function useStore(): State {
-  return useSyncExternalStore(store.subscribe, store.get, store.get);
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
