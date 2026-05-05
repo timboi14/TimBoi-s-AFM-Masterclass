@@ -18,3 +18,12 @@ npm-debug.log*
 # Local downloads / installers
 *.msi
 *.exe
+
+# Build output
+dist/
+
+# Vite cache
+.vite/
+
+# TypeScript build info
+*.tsbuildinfo

@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0a0f1e;
+  --surface: #111827;
+  --primary: #00c853;
+  --accent: #ffd600;
+  --text: #f0f4ff;
+  --muted: #6b7280;
+  --danger: #ef4444;
+  --card-bg: #1a2235;
+  --border: #243049;
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+html, body { min-height: 100%; }
+body {
+  background:
+    radial-gradient(1200px 600px at 90% -10%, rgba(255,214,0,0.08), transparent 60%),
+    radial-gradient(1000px 500px at -10% 110%, rgba(0,200,83,0.10), transparent 60%),
+    linear-gradient(180deg, #0a0f1e 0%, #0d1426 100%);
+  background-attachment: fixed;
+  font-feature-settings: "ss01", "cv11";
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
+
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@layer components {
+  .pitch-grid {
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 50%, transparent 100%);
+  }
+
+  .floodlight {
+    background:
+      radial-gradient(60% 80% at 50% 0%, rgba(255,214,0,0.18), transparent 70%),
+      radial-gradient(60% 80% at 50% 100%, rgba(0,200,83,0.14), transparent 70%);
+  }
+
+  .card-base {
+    @apply bg-card border border-border rounded-2xl;
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%);
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-bg hover:bg-primary-light;
+    box-shadow: 0 12px 28px -10px rgba(0,200,83,0.55);
+  }
+  .btn-accent {
+    @apply btn bg-accent text-bg hover:bg-accent-light;
+    box-shadow: 0 12px 28px -10px rgba(255,214,0,0.55);
+  }
+  .btn-outline { @apply btn border border-border text-text hover:border-primary hover:bg-primary/10; }
+  .btn-ghost { @apply btn text-muted hover:text-text hover:bg-white/5; }
+
+  .scoreboard-led {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    text-shadow: 0 0 12px currentColor, 0 0 28px currentColor;
+    letter-spacing: 0.05em;
+  }
+
+  .stadium-num {
+    font-family: 'Anton', 'Bebas Neue', sans-serif;
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
