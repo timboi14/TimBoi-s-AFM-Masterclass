@@ -151,7 +151,7 @@ function FormulasTab({ topic }: { topic: ReturnType<typeof getTopic> }) {
           <Card className="group cursor-help">
             <Pill variant="primary" className="mb-2">{f.category}</Pill>
             <h4 className="font-display text-xl tracking-wide uppercase">{f.name}</h4>
-            <div className="mt-3 p-3.5 rounded-lg bg-bg/60 border border-border font-mono text-accent text-[15px] overflow-x-auto whitespace-nowrap">
+            <div className="mt-3 p-3.5 rounded-lg bg-slate-50 border border-border font-mono text-accent text-[15px] overflow-x-auto whitespace-nowrap">
               {f.formula}
             </div>
             <motion.div
@@ -195,7 +195,7 @@ function WorkedTab({ topic }: { topic: ReturnType<typeof getTopic> }) {
               <div className="text-accent text-[11px] uppercase tracking-[0.18em] font-bold">{s.label}</div>
               <div className="text-text/85 text-[14px] leading-relaxed">{s.detail}</div>
               {s.calc && (
-                <div className="mt-1 inline-block p-2 rounded bg-bg/60 border border-border font-mono text-primary text-[13.5px]">
+                <div className="mt-1 inline-block p-2 rounded bg-slate-50 border border-border font-mono text-primary text-[13.5px]">
                   {s.calc}
                 </div>
               )}
@@ -304,7 +304,7 @@ function DrillCard({ drill }: { drill: Drill }) {
             className="overflow-hidden"
           >
             {drill.workings.length > 0 && (
-              <div className="mt-4 p-3.5 rounded-lg bg-bg/60 border border-border font-mono text-[13px] grid gap-1">
+              <div className="mt-4 p-3.5 rounded-lg bg-slate-50 border border-border font-mono text-[13px] grid gap-1">
                 {drill.workings.map((w, i) => (
                   <div key={i} className="text-text/80">{w}</div>
                 ))}

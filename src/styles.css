@@ -3,32 +3,33 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0a0f1e;
-  --surface: #111827;
-  --primary: #00c853;
-  --accent: #ffd600;
-  --text: #f0f4ff;
-  --muted: #6b7280;
-  --danger: #ef4444;
-  --card-bg: #1a2235;
-  --border: #243049;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --card-bg: #ffffff;
+  --primary: #00a347;
+  --accent: #f5b800;
+  --text: #0a0f1e;
+  --muted: #64748b;
+  --danger: #dc2626;
+  --border: #e2e8f0;
 }
 
 * { -webkit-tap-highlight-color: transparent; }
 html, body { min-height: 100%; }
 body {
   background:
-    radial-gradient(1200px 600px at 90% -10%, rgba(255,214,0,0.08), transparent 60%),
-    radial-gradient(1000px 500px at -10% 110%, rgba(0,200,83,0.10), transparent 60%),
-    linear-gradient(180deg, #0a0f1e 0%, #0d1426 100%);
+    radial-gradient(900px 500px at 90% -10%, rgba(245,184,0,0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(0,163,71,0.08), transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
   background-attachment: fixed;
+  color: var(--text);
   font-feature-settings: "ss01", "cv11";
 }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
+::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.15); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(15,23,42,0.30); }
 
 *:focus-visible {
   outline: 2px solid var(--accent);
@@ -39,21 +40,22 @@ body {
 @layer components {
   .pitch-grid {
     background-image:
-      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgba(15,23,42,0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15,23,42,0.05) 1px, transparent 1px);
     background-size: 56px 56px;
     mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 50%, transparent 100%);
   }
 
   .floodlight {
     background:
-      radial-gradient(60% 80% at 50% 0%, rgba(255,214,0,0.18), transparent 70%),
-      radial-gradient(60% 80% at 50% 100%, rgba(0,200,83,0.14), transparent 70%);
+      radial-gradient(60% 80% at 50% 0%, rgba(245,184,0,0.10), transparent 70%),
+      radial-gradient(60% 80% at 50% 100%, rgba(0,163,71,0.08), transparent 70%);
   }
 
   .card-base {
     @apply bg-card border border-border rounded-2xl;
-    background-image: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 40%);
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -12px rgba(15,23,42,0.08);
+    background-image: linear-gradient(180deg, rgba(255,255,255,1), rgba(248,250,252,0.4) 100%);
   }
 
   .pill {
@@ -64,19 +66,19 @@ body {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200;
   }
   .btn-primary {
-    @apply btn bg-primary text-bg hover:bg-primary-light;
-    box-shadow: 0 12px 28px -10px rgba(0,200,83,0.55);
+    @apply btn bg-primary text-white hover:bg-primary-dark;
+    box-shadow: 0 8px 20px -6px rgba(0,163,71,0.45);
   }
   .btn-accent {
-    @apply btn bg-accent text-bg hover:bg-accent-light;
-    box-shadow: 0 12px 28px -10px rgba(255,214,0,0.55);
+    @apply btn bg-accent text-ink hover:bg-accent-dark;
+    box-shadow: 0 8px 20px -6px rgba(245,184,0,0.45);
   }
-  .btn-outline { @apply btn border border-border text-text hover:border-primary hover:bg-primary/10; }
-  .btn-ghost { @apply btn text-muted hover:text-text hover:bg-white/5; }
+  .btn-outline { @apply btn border border-border text-text hover:border-primary hover:bg-primary/5; }
+  .btn-ghost { @apply btn text-muted hover:text-text hover:bg-slate-100; }
 
   .scoreboard-led {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    text-shadow: 0 0 12px currentColor, 0 0 28px currentColor;
+    text-shadow: 0 0 12px currentColor, 0 0 24px currentColor;
     letter-spacing: 0.05em;
   }
 
@@ -85,6 +87,14 @@ body {
     letter-spacing: 0.04em;
     line-height: 0.95;
   }
+
+  .muted { color: var(--muted); }
+}
+
+/* Print styles for formulas page */
+@media print {
+  body { background: white !important; }
+  .no-print { display: none !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -59,7 +59,7 @@ export function FormulasPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search formulas, e.g. WACC, parity, beta..."
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-bg/70 border border-border focus:border-primary focus:outline-none text-text placeholder:text-muted"
+                className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-50 border border-border focus:border-primary focus:outline-none text-text placeholder:text-muted"
               />
             </div>
             <button className="btn-outline" onClick={() => setPrintMode(!printMode)}>
@@ -88,7 +88,7 @@ export function FormulasPage() {
                   <motion.div key={f.name} variants={fadeUp}>
                     <Card className={cn(printMode && 'bg-white text-black border-gray-300')}>
                       <h3 className="font-display text-lg tracking-wide uppercase">{f.name}</h3>
-                      <div className="mt-2 p-3.5 rounded-lg bg-bg/60 border border-border font-mono text-accent text-[14px] overflow-x-auto whitespace-nowrap">
+                      <div className="mt-2 p-3.5 rounded-lg bg-slate-50 border border-border font-mono text-accent text-[14px] overflow-x-auto whitespace-nowrap">
                         {f.formula}
                       </div>
                       {f.variables.length > 0 && (

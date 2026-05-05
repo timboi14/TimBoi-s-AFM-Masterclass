@@ -45,10 +45,10 @@ export function SectionTitle({
   return (
     <motion.h2
       variants={fadeUp}
-      className="font-display text-3xl tracking-wide flex items-center gap-3 uppercase mt-10 mb-5"
+      className="font-display text-3xl tracking-wide flex items-center gap-3 uppercase mt-10 mb-5 text-ink"
     >
       {icon && <i className={cn('text-primary', icon)} />}
-      <span className="bg-gradient-to-b from-text to-text/70 bg-clip-text text-transparent">{children}</span>
+      <span>{children}</span>
       {badge}
       {rightSlot && <span className="ml-auto text-sm font-body normal-case tracking-normal text-muted">{rightSlot}</span>}
     </motion.h2>
@@ -66,9 +66,9 @@ export function Pill({
   variant?: 'outline' | 'primary' | 'accent' | 'danger';
 }) {
   const variantCls = {
-    outline: 'border border-border text-text',
-    primary: 'bg-primary text-bg',
-    accent: 'bg-accent text-bg',
+    outline: 'border border-border bg-white text-text',
+    primary: 'bg-primary text-white',
+    accent: 'bg-accent text-ink',
     danger: 'bg-danger text-white',
   }[variant];
   return <span className={cn('pill', variantCls, className)}>{children}</span>;
@@ -81,12 +81,12 @@ export function CoachTip({ title, children }: { title: string; children: ReactNo
       initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      className="relative my-4 rounded-xl border-2 border-dashed border-accent/50 bg-accent/[0.06] p-4"
+      className="relative my-4 rounded-xl border-2 border-dashed border-accent/60 bg-accent/[0.10] p-4"
     >
-      <div className="absolute -top-3 left-4 px-2.5 py-0.5 rounded-md bg-accent text-bg font-bold text-[11px] uppercase tracking-widest">
+      <div className="absolute -top-3 left-4 px-2.5 py-0.5 rounded-md bg-accent text-ink font-bold text-[11px] uppercase tracking-widest">
         <i className="fa-solid fa-chalkboard-user mr-1.5" /> {title}
       </div>
-      <p className="text-[14px] leading-relaxed text-text mt-1">{children}</p>
+      <p className="text-[14px] leading-relaxed text-ink mt-1">{children}</p>
     </motion.div>
   );
 }

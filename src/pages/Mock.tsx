@@ -138,7 +138,7 @@ export function MockPage() {
                 Reveal model answers and mark scheme afterwards. Andrew Mower style coaching note based on score band.
               </p>
             </div>
-            <div className="rounded-xl border-2 border-border bg-bg/70 p-4 min-w-[200px] text-center">
+            <div className="rounded-xl border-2 border-border bg-slate-50 p-4 min-w-[200px] text-center">
               <div className="text-[10px] uppercase tracking-[0.2em] text-muted mb-1">Exam timer</div>
               <div className={cn('font-mono text-3xl', exam.secs < 300 ? 'text-danger animate-pulse' : 'text-accent', 'scoreboard-led')}>
                 {fmt(Math.max(0, exam.secs))}
@@ -184,7 +184,7 @@ export function MockPage() {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-3 p-4 rounded-xl border border-border bg-bg/40">
+                    <div className="mt-3 p-4 rounded-xl border border-border bg-slate-50">
                       <p className="text-text/90 leading-relaxed">{q.brief}</p>
                       <div className="mt-3 grid gap-1.5">
                         {q.requirements.map((r, i) => (

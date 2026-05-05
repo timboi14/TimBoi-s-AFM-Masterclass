@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn';
 const NAV = [
   { to: '/', label: 'Home', icon: 'fa-house' },
   { to: '/topic/adviser', label: 'Topics', icon: 'fa-list', match: '/topic' },
+  { to: '/practice', label: 'Practice', icon: 'fa-stopwatch-20', match: '/practice' },
   { to: '/theory', label: 'Theory', icon: 'fa-book' },
   { to: '/cards', label: 'Cards', icon: 'fa-clone' },
   { to: '/mock', label: 'Mock', icon: 'fa-stopwatch' },
@@ -20,10 +21,9 @@ export function Layout() {
   const t = tierFor(state.points);
 
   useEffect(() => {
-    store.bumpStreak();
-  }, []);
+    if (state.fanName) store.bumpStreak();
+  }, [state.fanName]);
 
-  // scroll to top on route change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
@@ -34,13 +34,13 @@ export function Layout() {
       <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 pb-32">
         <header className="pt-5 pb-3 flex flex-wrap items-center gap-3">
           <NavLink to="/" className="flex items-center gap-3 group">
-            <div className="relative w-12 h-12 grid place-items-center rounded-xl bg-card border border-accent/30 overflow-hidden">
+            <div className="relative w-12 h-12 grid place-items-center rounded-xl bg-ink overflow-hidden border border-ink/30">
               <span className="font-display text-[16px] text-accent tracking-wider">TBA</span>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-accent/10 to-primary/0 group-hover:via-accent/20 transition-colors" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-accent/10 to-primary/0 group-hover:via-accent/30 transition-colors" />
             </div>
             <div>
-              <div className="font-display text-2xl tracking-wider leading-none">
-                TIMBOI&apos;S <span className="text-accent">ACADEMY</span>
+              <div className="font-display text-2xl tracking-wider leading-none text-ink">
+                TIMBOI&apos;S <span className="text-primary">ACADEMY</span>
               </div>
               <div className="text-[11px] text-muted uppercase tracking-[0.18em] mt-1">
                 ACCA AFM Pass Engine, Match-day energy
@@ -48,14 +48,14 @@ export function Layout() {
             </div>
           </NavLink>
 
-          <div className="ml-auto hidden md:flex items-center gap-3">
-            <span className="pill border border-border">
-              <i className="fa-solid fa-fire text-accent" /> Streak {state.streak}
+          <div className="ml-auto hidden md:flex items-center gap-2">
+            <span className="pill border border-border bg-white">
+              <i className="fa-solid fa-fire text-accent-dark" /> Streak {state.streak}
             </span>
-            <span className="pill border border-border">
+            <span className="pill border border-border bg-white">
               <i className="fa-solid fa-bolt text-primary" /> {state.points} pts
             </span>
-            <span className="pill border border-accent/40 text-accent">
+            <span className="pill border border-accent/50 bg-accent/10 text-accent-dark">
               {t.emoji} {t.tier}
             </span>
           </div>
@@ -72,7 +72,7 @@ export function Layout() {
                 to={item.to}
                 className={cn(
                   'relative inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap',
-                  isActive ? 'text-bg bg-accent' : 'text-muted hover:text-text hover:bg-white/5'
+                  isActive ? 'text-white' : 'text-muted hover:text-ink hover:bg-slate-100'
                 )}
               >
                 <i className={`fa-solid ${item.icon}`} />
@@ -80,7 +80,7 @@ export function Layout() {
                 {isActive && (
                   <motion.span
                     layoutId="nav-active"
-                    className="absolute inset-0 rounded-lg bg-accent z-[-1]"
+                    className="absolute inset-0 rounded-lg bg-primary z-[-1] shadow-glow"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -102,7 +102,7 @@ export function Layout() {
         </AnimatePresence>
 
         <footer className="mt-16 pt-8 border-t border-border text-center text-muted text-sm">
-          <p className="font-display text-accent tracking-widest text-base">
+          <p className="font-display text-primary tracking-widest text-base">
             TECHNIQUE BEATS KNOWLEDGE ON EXAM DAY.
           </p>
           <p className="mt-2">

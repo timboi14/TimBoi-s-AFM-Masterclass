@@ -48,15 +48,15 @@ export function HomePage() {
 
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
-      {/* SCOREBOARD HERO */}
+      {/* SCOREBOARD HERO — light theme: ink-on-white card with primary/accent accents */}
       <motion.section
         variants={fadeUp}
-        className="relative overflow-hidden rounded-3xl border border-border bg-card"
+        className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-bg to-accent/15" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-accent/[0.10]" />
         <div className="absolute inset-0 pitch-grid opacity-40" />
-        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-accent/20 blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-primary/25 blur-3xl" />
+        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-accent/30 blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-primary/20 blur-3xl" />
 
         <div className="relative p-6 md:p-10">
           <div className="flex flex-wrap items-start gap-6">
@@ -65,15 +65,15 @@ export function HomePage() {
                 <span className="pill bg-danger text-white">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" /> LIVE
                 </span>
-                <span className="pill border border-border text-accent">Match-day brief</span>
+                <span className="pill border border-border bg-white text-ink">Match-day brief</span>
               </div>
-              <h1 className="font-display text-4xl md:text-6xl leading-[0.95] tracking-wide uppercase">
+              <h1 className="font-display text-4xl md:text-6xl leading-[0.95] tracking-wide uppercase text-ink">
                 Welcome back,{' '}
-                <span className="text-accent" style={{ textShadow: '0 0 24px rgba(255,214,0,0.45)' }}>
+                <span className="text-primary" style={{ textShadow: '0 0 24px rgba(0,163,71,0.25)' }}>
                   {fanName}
                 </span>
               </h1>
-              <p className="mt-4 text-text/80 max-w-lg leading-relaxed">
+              <p className="mt-4 text-ink/80 max-w-lg leading-relaxed">
                 Today, train like Andrew Mower is in the dugout. Open one fixture, finish one drill, ship the
                 technique. Generic answers fail; quote scenario figures and lead with the recommendation.
               </p>
@@ -81,8 +81,8 @@ export function HomePage() {
                 <Link to={`/topic/${todaysMission.id}`} className="btn-primary">
                   <i className="fa-solid fa-bolt" /> Today&apos;s mission
                 </Link>
-                <Link to="/mock" className="btn-accent">
-                  <i className="fa-solid fa-stopwatch" /> Sit a mock
+                <Link to="/practice" className="btn-accent">
+                  <i className="fa-solid fa-stopwatch-20" /> Open practice centre
                 </Link>
                 <Link to="/exam-skills" className="btn-outline">
                   <i className="fa-solid fa-chalkboard-user" /> Coach&apos;s playbook
@@ -90,31 +90,31 @@ export function HomePage() {
               </div>
             </div>
 
-            {/* SCOREBOARD */}
-            <div className="rounded-2xl border border-border bg-bg/70 p-4 min-w-[280px]">
+            {/* SCOREBOARD: dark navy panel for the LED look on white page */}
+            <div className="rounded-2xl border border-ink/20 bg-ink p-4 min-w-[280px] text-white shadow-floodlight">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] uppercase tracking-[0.2em] text-muted">Scoreboard</span>
-                <span className="text-[11px] font-mono text-primary">{t.emoji} {t.tier}</span>
+                <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Scoreboard</span>
+                <span className="text-[11px] font-mono text-accent">{t.emoji} {t.tier}</span>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <ScoreCell label="Points" value={state.points} accent="primary" />
                 <ScoreCell label="Streak" value={state.streak} accent="accent" suffix="d" />
                 <ScoreCell label="Drills" value={state.drills} accent="primary" />
               </div>
-              <div className="mt-4 pt-3 border-t border-border">
+              <div className="mt-4 pt-3 border-t border-white/10">
                 <div className="flex items-baseline justify-between mb-2">
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-muted">Kick-off in</span>
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Kick-off in</span>
                   <span className="text-[11px] font-mono text-accent">JUNE 2026 SITTING</span>
                 </div>
                 <div className="flex items-end gap-1.5">
-                  <span className="stadium-num text-5xl text-accent scoreboard-led" style={{ color: '#ffd600' }}>
+                  <span className="stadium-num text-5xl scoreboard-led" style={{ color: '#f5b800' }}>
                     {cd.d}
                   </span>
-                  <span className="text-muted text-xs mb-1.5">days</span>
-                  <span className="stadium-num text-3xl text-text/80 scoreboard-led ml-3" style={{ color: '#f0f4ff' }}>
+                  <span className="text-white/60 text-xs mb-1.5">days</span>
+                  <span className="stadium-num text-3xl scoreboard-led ml-3" style={{ color: '#ffffff' }}>
                     {cd.h}
                   </span>
-                  <span className="text-muted text-xs mb-1">hrs</span>
+                  <span className="text-white/60 text-xs mb-1">hrs</span>
                 </div>
                 {t.next && (() => {
                   const prevMin = TIER_PREV_MIN(state.points);
@@ -122,10 +122,10 @@ export function HomePage() {
                   const pct = Math.max(0, Math.min(100, ((state.points - prevMin) / span) * 100));
                   return (
                     <div className="mt-3">
-                      <div className="text-[11px] text-muted mb-1">
+                      <div className="text-[11px] text-white/60 mb-1">
                         To {t.next.tier}: {Math.max(0, t.next.min - state.points)} pts
                       </div>
-                      <div className="h-1.5 rounded-full bg-white/[0.08] overflow-hidden">
+                      <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
                         <motion.div
                           className="h-full bg-gradient-to-r from-primary to-accent"
                           initial={{ width: 0 }}
@@ -373,13 +373,13 @@ const WEEKLY_PLAN: { label: string; body: string; topics: string[] }[] = [
 ];
 
 function ScoreCell({ label, value, accent, suffix }: { label: string; value: number; accent: 'primary' | 'accent'; suffix?: string }) {
-  const color = accent === 'primary' ? '#00c853' : '#ffd600';
+  const color = accent === 'primary' ? '#33d375' : '#f5b800';
   return (
-    <div className="rounded-xl border border-border bg-bg/40 px-3 py-2.5">
-      <div className="text-[10px] uppercase tracking-[0.18em] text-muted">{label}</div>
+    <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
+      <div className="text-[10px] uppercase tracking-[0.18em] text-white/60">{label}</div>
       <div className="stadium-num text-3xl scoreboard-led mt-1" style={{ color }}>
         {value}
-        {suffix && <span className="text-muted text-base ml-0.5">{suffix}</span>}
+        {suffix && <span className="text-white/40 text-base ml-0.5">{suffix}</span>}
       </div>
     </div>
   );

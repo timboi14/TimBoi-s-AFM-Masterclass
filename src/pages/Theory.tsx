@@ -47,7 +47,7 @@ export function TheoryPage() {
                 Search, filter, repeat. +5 points per first read.
               </p>
             </div>
-            <div className="flex gap-2 p-1 rounded-xl bg-bg/60 border border-border">
+            <div className="flex gap-2 p-1 rounded-xl bg-slate-50 border border-border">
               <button
                 className={cn('px-3.5 py-2 rounded-lg text-xs font-bold transition', mode === 'bullets' ? 'bg-primary text-bg' : 'text-muted hover:text-text')}
                 onClick={() => setModeP('bullets')}
@@ -70,7 +70,7 @@ export function TheoryPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search: synergy, BSOP, Mudaraba, ESG, M&M..."
-              className="w-full pl-11 pr-4 py-3 rounded-xl bg-bg/70 border border-border focus:border-accent focus:outline-none text-text placeholder:text-muted"
+              className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border border-border focus:border-accent focus:outline-none text-text placeholder:text-muted"
             />
           </div>
 
@@ -157,7 +157,7 @@ function CardItem({ card, mode, read }: { card: typeof THEORY[number]; mode: 'bu
                   animate={{ opacity: 1, rotateX: 0 }}
                   exit={{ opacity: 0, rotateX: 8 }}
                   transition={{ duration: 0.25 }}
-                  className="rounded-xl border border-border bg-bg/40 p-4"
+                  className="rounded-xl border border-border bg-slate-50 p-4"
                 >
                   {mode === 'bullets' ? (
                     <pre className="font-body whitespace-pre-wrap text-[13.5px] leading-relaxed text-text/90 m-0">{card.bullets}</pre>
