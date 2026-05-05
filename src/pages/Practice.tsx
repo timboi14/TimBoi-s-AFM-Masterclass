@@ -3,9 +3,23 @@ import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Pill, fadeUp, stagger } from '@/components/primitives';
 import { PRACTICE_SETS, type PracticeSet } from '@/data/practice';
+import { getSampleAnswer, type SampleLine } from '@/data/sample-answers';
 import { GoalBurst } from '@/components/Confetti';
 import { store } from '@/lib/store';
 import { cn } from '@/lib/cn';
+import {
+  compute,
+  display,
+  colLetter,
+  FN_CATALOG,
+  type Sheet,
+} from '@/lib/sheet-engine';
+import { askCoach, COACH_SUGGESTIONS, type CoachReply } from '@/lib/coach-ai';
+import {
+  ChatInput,
+  ChatInputSubmit,
+  ChatInputTextArea,
+} from '@/components/ui/chat-input';
 
 /* ─────────────────────────────────────────────
    1) PRACTICE INDEX (when no id is given)
@@ -19,7 +33,6 @@ export function PracticePage() {
 
 function PracticeIndex() {
   const [filter, setFilter] = useState<'all' | 'A' | 'B' | 1 | 2 | 3 | 4>('all');
-
   const list = useMemo(() => {
     if (filter === 'all') return PRACTICE_SETS;
     if (filter === 'A' || filter === 'B') return PRACTICE_SETS.filter((s) => s.section === filter);
@@ -31,12 +44,11 @@ function PracticeIndex() {
       <motion.div variants={fadeUp}>
         <Card className="!p-7 border-l-4 border-l-primary">
           <Pill variant="primary" className="mb-2">Practice exam centre</Pill>
-          <h1 className="font-display text-4xl tracking-wide uppercase">14 sets, 450 marks</h1>
+          <h1 className="font-display text-4xl tracking-wide uppercase text-ink">14 sets, 450 marks</h1>
           <p className="mt-2 max-w-2xl">
-            Football-themed practice questions in the format of the actual ACCA AFM CBE.
-            Multi-panel exam simulator with exhibits, scratchpad, word processor, spreadsheet, calculator,
-            hints on demand, and a full model-answer reveal with mark scheme. Sit one as a 25 or 50 mark
-            standalone, or stitch three together for a full 3h 15m mock.
+            Football-themed practice questions matching the live ACCA AFM CBE shell. Multi-panel exam simulator
+            with a real spreadsheet engine (NPV, IRR, BSCALL, WACC, UNGEAR functions), a Coach AI for stuck moments,
+            full-mark sample answers with line-by-line mark allocations, and the official mark scheme.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             {(
@@ -54,8 +66,8 @@ function PracticeIndex() {
                 key={String(f.v)}
                 onClick={() => setFilter(f.v as any)}
                 className={cn(
-                  'pill border border-border',
-                  filter === f.v && (f.v === 'A' ? 'bg-accent text-bg' : 'bg-primary text-bg')
+                  'pill border border-border bg-white',
+                  filter === f.v && (f.v === 'A' ? 'bg-accent text-bg border-accent' : 'bg-primary text-white border-primary')
                 )}
               >
                 {f.l}
@@ -74,10 +86,10 @@ function PracticeIndex() {
                   <Pill variant={s.section === 'A' ? 'accent' : 'primary'}>Section {s.section}</Pill>
                   <Pill>{s.marks} marks</Pill>
                   <Pill>Module {s.module}</Pill>
-                  <span className="font-display text-2xl tracking-wide uppercase">
+                  <span className="font-display text-2xl tracking-wide uppercase text-ink">
                     Set {s.number}: {s.club}
                   </span>
-                  <span className="ml-auto btn-outline group-hover:bg-primary group-hover:text-bg transition-colors">
+                  <span className="ml-auto btn-outline group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-colors">
                     <i className="fa-solid fa-play" /> Open simulator
                   </span>
                 </div>
@@ -93,9 +105,9 @@ function PracticeIndex() {
 }
 
 /* ─────────────────────────────────────────────
-   2) EXAM SIMULATOR (CBE-style multi-panel)
+   2) EXAM SIMULATOR
    ───────────────────────────────────────────── */
-type PanelKey = 'exhibits' | 'word' | 'sheet' | 'calc' | 'scratch' | 'hints' | 'mark';
+type PanelKey = 'exhibits' | 'word' | 'sheet' | 'calc' | 'scratch' | 'hints' | 'sample' | 'mark';
 
 function ExamSimulator({ set }: { set: PracticeSet }) {
   const [openPanels, setOpenPanels] = useState<Record<PanelKey, boolean>>({
@@ -105,30 +117,25 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
     calc: false,
     scratch: false,
     hints: false,
+    sample: false,
     mark: false,
   });
   const [secs, setSecs] = useState(set.minutes * 60);
   const [running, setRunning] = useState(false);
   const [activeExhibit, setActiveExhibit] = useState(set.exhibits[0]?.number || 1);
   const [activeReq, setActiveReq] = useState(0);
-  const [reveal, setReveal] = useState<Record<number, number>>({}); // requirement index -> hint step revealed
+  const [reveal, setReveal] = useState<Record<number, number>>({});
   const [showFullSolution, setShowFullSolution] = useState<Record<number, boolean>>({});
   const [burst, setBurst] = useState(false);
+  const [coachOpen, setCoachOpen] = useState(false);
 
-  // Persisted answers
   const sk = (key: string) => `tba_practice_${set.id}_${key}`;
   const [wp, setWp] = useState(() => localStorage.getItem(sk('word')) || '');
   const [scratch, setScratch] = useState(() => localStorage.getItem(sk('scratch')) || '');
-  const [sheet, setSheet] = useState<string[][]>(() => {
-    const raw = localStorage.getItem(sk('sheet'));
-    if (raw) try { return JSON.parse(raw); } catch {}
-    return Array.from({ length: 12 }, () => Array.from({ length: 6 }, () => ''));
-  });
+
   useEffect(() => { localStorage.setItem(sk('word'), wp); }, [wp, set.id]);
   useEffect(() => { localStorage.setItem(sk('scratch'), scratch); }, [scratch, set.id]);
-  useEffect(() => { localStorage.setItem(sk('sheet'), JSON.stringify(sheet)); }, [sheet, set.id]);
 
-  // Timer
   useEffect(() => {
     if (!running) return;
     if (secs <= 0) { setRunning(false); return; }
@@ -150,11 +157,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
     const req = set.requirements[i];
     if (!req) return;
     const cur = reveal[i] || 0;
-    if (cur === 0) {
-      setReveal((r) => ({ ...r, [i]: 1 }));
-    } else if (cur < req.solution.length) {
-      setReveal((r) => ({ ...r, [i]: Math.min(req.solution.length, cur + 1) }));
-    }
+    if (cur < req.solution.length) setReveal((r) => ({ ...r, [i]: Math.min(req.solution.length, cur + 1) }));
   };
 
   const completeAndAward = () => {
@@ -163,8 +166,8 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
   };
 
   return (
-    <div className="text-bg">
-      {/* HEADER BAR (mimics ACCA shell) */}
+    <div>
+      {/* HEADER BAR */}
       <div className="sticky top-0 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 mb-4 bg-white/95 backdrop-blur border-b border-primary/30">
         <div className="flex flex-wrap items-center gap-3 text-text">
           <Link to="/practice" className="btn-ghost !text-xs !py-1.5">
@@ -172,15 +175,22 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
           </Link>
           <Pill variant={set.section === 'A' ? 'accent' : 'primary'}>Section {set.section}</Pill>
           <Pill>{set.marks} marks</Pill>
-          <span className="font-display text-lg tracking-wider uppercase">
+          <span className="font-display text-lg tracking-wider uppercase text-ink hidden md:inline-block">
             Set {set.number}: {set.club}
           </span>
           <div className="ml-auto flex items-center gap-2 flex-wrap">
             <button
+              onClick={() => setCoachOpen(true)}
+              className="btn !py-1.5 !px-3 !text-xs bg-accent text-ink hover:bg-accent-dark"
+              title="Coach AI"
+            >
+              <i className="fa-solid fa-robot" /> Coach AI
+            </button>
+            <button
               onClick={() => setRunning(!running)}
               className={cn('btn !py-1.5 !px-3 !text-xs', running ? 'bg-danger text-white' : 'btn-primary')}
             >
-              <i className={`fa-solid ${running ? 'fa-stop' : 'fa-play'}`} /> {running ? 'Pause' : 'Start timer'}
+              <i className={`fa-solid ${running ? 'fa-stop' : 'fa-play'}`} /> {running ? 'Pause' : 'Start'}
             </button>
             <button
               onClick={() => { setSecs(set.minutes * 60); setRunning(false); }}
@@ -190,33 +200,32 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
               <i className="fa-solid fa-rotate-left" />
             </button>
             <span className={cn(
-              'font-mono text-xl scoreboard-led tracking-wider px-3 py-1 rounded-md border border-border bg-card',
-              secs < 300 && running && 'text-danger'
-            )} style={{ color: secs < 300 && running ? '#ef4444' : '#ffd600' }}>
+              'font-mono text-xl scoreboard-led tracking-wider px-3 py-1 rounded-md border border-ink/20 bg-ink',
+              secs < 300 && running && 'animate-pulse'
+            )} style={{ color: secs < 300 && running ? '#ef4444' : '#f5b800' }}>
               {fmt(secs)}
             </span>
           </div>
         </div>
 
-        {/* Tool-bar of panels */}
         <div className="mt-3 flex flex-wrap gap-1.5">
           <ToolBtn icon="fa-folder-open" label="Exhibits" active={openPanels.exhibits} onClick={() => togglePanel('exhibits')} />
           <ToolBtn icon="fa-pen-to-square" label="Word Processor" active={openPanels.word} onClick={() => togglePanel('word')} />
           <ToolBtn icon="fa-table-cells" label="Spreadsheet" active={openPanels.sheet} onClick={() => togglePanel('sheet')} />
           <ToolBtn icon="fa-calculator" label="Calculator" active={openPanels.calc} onClick={() => togglePanel('calc')} />
-          <ToolBtn icon="fa-note-sticky" label="Scratch Pad" active={openPanels.scratch} onClick={() => togglePanel('scratch')} />
+          <ToolBtn icon="fa-note-sticky" label="Scratch" active={openPanels.scratch} onClick={() => togglePanel('scratch')} />
           <ToolBtn icon="fa-lightbulb" label="Hints" active={openPanels.hints} onClick={() => togglePanel('hints')} accent />
+          <ToolBtn icon="fa-trophy" label="Sample Answer" active={openPanels.sample} onClick={() => togglePanel('sample')} accent />
           <ToolBtn icon="fa-list-check" label="Mark Scheme" active={openPanels.mark} onClick={() => togglePanel('mark')} accent />
         </div>
       </div>
 
       <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
-        {/* LEFT COLUMN: requirements + scenario */}
+        {/* LEFT */}
         <div className="grid gap-4">
-          {/* Scenario / requirements */}
           <Card>
             <Pill variant="primary" className="mb-2">{set.banner}</Pill>
-            <h2 className="font-display text-2xl tracking-wide uppercase">{set.club}: {set.topic}</h2>
+            <h2 className="font-display text-2xl tracking-wide uppercase text-ink">{set.club}: {set.topic}</h2>
             <p className="mt-2 text-[13.5px] leading-relaxed">{set.background}</p>
             <div className="mt-4 grid gap-2">
               <div className="text-[11px] uppercase tracking-[0.18em] text-muted font-bold">Requirements ({set.marks} marks)</div>
@@ -230,7 +239,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
                   )}
                 >
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className="font-mono text-xs text-accent">[{r.marks}]</span>
+                    <span className="font-mono text-xs text-accent-dark">[{r.marks}]</span>
                     <span className="font-bold text-[14px]">{r.label}</span>
                   </div>
                 </button>
@@ -242,12 +251,11 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
             </div>
           </Card>
 
-          {/* Exhibit viewer (always visible to mimic CBE multi-pane) */}
           {openPanels.exhibits && (
             <Card>
               <div className="flex items-center gap-2 mb-3">
                 <i className="fa-solid fa-folder-open text-primary" />
-                <span className="font-display text-lg tracking-wide uppercase">Exhibits</span>
+                <span className="font-display text-lg tracking-wide uppercase text-ink">Exhibits</span>
               </div>
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {set.exhibits.map((ex) => (
@@ -255,8 +263,8 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
                     key={ex.number}
                     onClick={() => setActiveExhibit(ex.number)}
                     className={cn(
-                      'pill border',
-                      activeExhibit === ex.number ? 'bg-primary text-bg border-primary' : 'border-border'
+                      'pill border bg-white',
+                      activeExhibit === ex.number ? 'bg-primary text-white border-primary' : 'border-border'
                     )}
                   >
                     {ex.number}. {ex.title}
@@ -266,10 +274,10 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
               {set.exhibits.map((ex) =>
                 ex.number === activeExhibit ? (
                   <div key={ex.number} className="p-3.5 rounded-lg bg-slate-50 border border-border">
-                    <div className="text-[11px] uppercase tracking-[0.18em] text-accent font-bold mb-1.5">
+                    <div className="text-[11px] uppercase tracking-[0.18em] text-accent-dark font-bold mb-1.5">
                       Exhibit {ex.number}
                     </div>
-                    <h4 className="font-bold mb-2">{ex.title}</h4>
+                    <h4 className="font-bold mb-2 text-ink">{ex.title}</h4>
                     <p className="text-[13px] leading-relaxed whitespace-pre-line">{ex.body}</p>
                   </div>
                 ) : null
@@ -278,13 +286,13 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
           )}
         </div>
 
-        {/* RIGHT COLUMN: workspace panels */}
+        {/* RIGHT */}
         <div className="grid gap-4">
           {openPanels.word && (
             <Card>
               <div className="flex items-center gap-2 mb-2">
                 <i className="fa-solid fa-pen-to-square text-primary" />
-                <span className="font-display text-lg tracking-wide uppercase">Word Processor</span>
+                <span className="font-display text-lg tracking-wide uppercase text-ink">Word Processor</span>
                 <span className="ml-auto text-[11px] text-muted">Auto-saved · {wp.length} chars</span>
               </div>
               <textarea
@@ -297,20 +305,20 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
             </Card>
           )}
 
-          {openPanels.sheet && <Spreadsheet sheet={sheet} setSheet={setSheet} />}
+          {openPanels.sheet && <SpreadsheetWS setId={set.id} />}
           {openPanels.calc && <Calculator />}
           {openPanels.scratch && (
             <Card>
               <div className="flex items-center gap-2 mb-2">
-                <i className="fa-solid fa-note-sticky text-accent" />
-                <span className="font-display text-lg tracking-wide uppercase">Scratch Pad</span>
+                <i className="fa-solid fa-note-sticky text-accent-dark" />
+                <span className="font-display text-lg tracking-wide uppercase text-ink">Scratch Pad</span>
               </div>
               <textarea
                 value={scratch}
                 onChange={(e) => setScratch(e.target.value)}
                 rows={6}
                 placeholder="Notes, working numbers, plan structure..."
-                className="w-full p-3 rounded-lg bg-accent/[0.04] border border-accent/40 focus:border-accent focus:outline-none font-mono text-[13px] resize-y"
+                className="w-full p-3 rounded-lg bg-accent/[0.06] border border-accent/40 focus:border-accent-dark focus:outline-none font-mono text-[13px] resize-y"
               />
             </Card>
           )}
@@ -318,29 +326,35 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
           {openPanels.hints && (
             <Card>
               <div className="flex items-center gap-2 mb-3">
-                <i className="fa-solid fa-lightbulb text-accent" />
-                <span className="font-display text-lg tracking-wide uppercase">Hints</span>
+                <i className="fa-solid fa-lightbulb text-accent-dark" />
+                <span className="font-display text-lg tracking-wide uppercase text-ink">Hints</span>
                 <span className="ml-auto text-[11px] text-muted">For requirement ({String.fromCharCode(97 + activeReq)})</span>
               </div>
-              <div className="p-3.5 rounded-lg bg-accent/[0.06] border border-accent/40">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-accent font-bold mb-1.5">
+              <div className="p-3.5 rounded-lg bg-accent/[0.10] border border-accent/40">
+                <div className="text-[11px] uppercase tracking-[0.18em] text-accent-dark font-bold mb-1.5">
                   <i className="fa-solid fa-compass mr-1" /> Approach
                 </div>
                 <p className="text-[13.5px] leading-relaxed">{set.requirements[activeReq]?.hint}</p>
               </div>
-              <div className="mt-3">
+              <div className="mt-3 flex gap-2 flex-wrap">
                 <button
                   className="btn-accent !text-xs !py-2"
                   onClick={() => askHint(activeReq)}
                   disabled={(reveal[activeReq] || 0) >= (set.requirements[activeReq]?.solution.length || 0)}
                 >
-                  <i className="fa-solid fa-eye" /> Reveal next solution step
+                  <i className="fa-solid fa-eye" /> Reveal next step
                 </button>
                 <button
-                  className="btn-outline !text-xs !py-2 ml-2"
+                  className="btn-outline !text-xs !py-2"
                   onClick={() => setShowFullSolution((s) => ({ ...s, [activeReq]: !s[activeReq] }))}
                 >
-                  <i className="fa-solid fa-bolt" /> {showFullSolution[activeReq] ? 'Hide' : 'Reveal full'} model
+                  <i className="fa-solid fa-bolt" /> {showFullSolution[activeReq] ? 'Hide' : 'Reveal full'} solution
+                </button>
+                <button
+                  className="btn-ghost !text-xs !py-2 ml-auto"
+                  onClick={() => setCoachOpen(true)}
+                >
+                  <i className="fa-solid fa-robot" /> Ask Coach AI
                 </button>
               </div>
               <div className="mt-3 grid gap-2">
@@ -363,24 +377,28 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
             </Card>
           )}
 
+          {openPanels.sample && (
+            <SampleAnswerPanel setId={set.id} reqIndex={activeReq} reqLabel={set.requirements[activeReq]?.label || ''} />
+          )}
+
           {openPanels.mark && (
             <Card className="relative overflow-visible">
               <GoalBurst play={burst} onDone={() => setBurst(false)} />
               <div className="flex items-center gap-2 mb-3">
-                <i className="fa-solid fa-list-check text-accent" />
-                <span className="font-display text-lg tracking-wide uppercase">Mark Scheme</span>
+                <i className="fa-solid fa-list-check text-accent-dark" />
+                <span className="font-display text-lg tracking-wide uppercase text-ink">Mark Scheme</span>
               </div>
               <table className="w-full text-[13px]">
                 <tbody>
                   {set.markScheme.map((m, i) => (
                     <tr key={i} className="border-b border-border/40 last:border-b-0">
                       <td className="py-1.5 pr-2">{m.item}</td>
-                      <td className="py-1.5 text-right font-mono text-accent">{m.marks}</td>
+                      <td className="py-1.5 text-right font-mono text-accent-dark">{m.marks}</td>
                     </tr>
                   ))}
-                  <tr className="border-t border-accent">
-                    <td className="py-2 font-bold">Total</td>
-                    <td className="py-2 text-right font-mono text-accent font-bold">{set.marks}</td>
+                  <tr className="border-t-2 border-primary">
+                    <td className="py-2 font-bold text-ink">Total</td>
+                    <td className="py-2 text-right font-mono text-primary font-bold">{set.marks}</td>
                   </tr>
                 </tbody>
               </table>
@@ -391,6 +409,9 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
           )}
         </div>
       </div>
+
+      {/* COACH AI DRAWER */}
+      <CoachDrawer open={coachOpen} onClose={() => setCoachOpen(false)} setContext={set.club + ' / ' + set.topic} />
     </div>
   );
 }
@@ -402,8 +423,8 @@ function ToolBtn({ icon, label, active, onClick, accent }: { icon: string; label
       className={cn(
         'inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-[12px] font-bold transition-colors border',
         active
-          ? (accent ? 'bg-accent text-bg border-accent' : 'bg-primary text-bg border-primary')
-          : 'border-border hover:border-primary/50'
+          ? (accent ? 'bg-accent text-ink border-accent' : 'bg-primary text-white border-primary')
+          : 'bg-white border-border hover:border-primary/50'
       )}
     >
       <i className={`fa-solid ${icon} text-[11px]`} />
@@ -412,93 +433,201 @@ function ToolBtn({ icon, label, active, onClick, accent }: { icon: string; label
   );
 }
 
-/* ── Mini Spreadsheet ──────────────────────────────────── */
-function Spreadsheet({ sheet, setSheet }: { sheet: string[][]; setSheet: (s: string[][]) => void }) {
-  const cols = sheet[0]?.length || 6;
-  const rows = sheet.length;
-  const colLetter = (i: number) => String.fromCharCode(65 + i);
+/* ─────────────────────────────────────────────
+   3) EXPANDABLE SPREADSHEET
+   ───────────────────────────────────────────── */
+function SpreadsheetWS({ setId }: { setId: string }) {
+  const sk = (key: string) => `tba_practice_${setId}_sheet_v2_${key}`;
+  const [sheet, setSheet] = useState<Sheet>(() => {
+    const raw = localStorage.getItem(sk('data'));
+    if (raw) try { return JSON.parse(raw); } catch {}
+    return Array.from({ length: 18 }, () => Array.from({ length: 8 }, () => ''));
+  });
+  const [active, setActive] = useState<{ r: number; c: number } | null>({ r: 0, c: 0 });
+  const [showFns, setShowFns] = useState(false);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => { localStorage.setItem(sk('data'), JSON.stringify(sheet)); }, [sheet, setId]);
 
   function update(r: number, c: number, v: string) {
-    const next = sheet.map((row) => [...row]);
-    next[r][c] = v;
-    setSheet(next);
+    setSheet((cur) => {
+      const next = cur.map((row) => [...row]);
+      while (next.length <= r) next.push(Array.from({ length: cur[0]?.length || 8 }, () => ''));
+      while (next[r].length <= c) next[r].push('');
+      next[r][c] = v;
+      return next;
+    });
+  }
+  function addRow() {
+    setSheet((cur) => [...cur, Array.from({ length: cur[0]?.length || 8 }, () => '')]);
+  }
+  function addCol() {
+    setSheet((cur) => cur.map((row) => [...row, '']));
+  }
+  function removeRow() {
+    setSheet((cur) => (cur.length > 1 ? cur.slice(0, -1) : cur));
+  }
+  function removeCol() {
+    setSheet((cur) => (cur[0]?.length > 1 ? cur.map((row) => row.slice(0, -1)) : cur));
+  }
+  function clearAll() {
+    if (!confirm('Clear the spreadsheet?')) return;
+    setSheet(Array.from({ length: 18 }, () => Array.from({ length: 8 }, () => '')));
   }
 
-  function compute(value: string): string {
-    if (!value.startsWith('=')) return value;
-    try {
-      const expr = value.slice(1)
-        .replace(/SUM\(([^)]+)\)/gi, (_m, range: string) => {
-          const m = range.match(/([A-Z])(\d+):([A-Z])(\d+)/);
-          if (!m) return '0';
-          const c1 = m[1].charCodeAt(0) - 65, r1 = +m[2] - 1, c2 = m[3].charCodeAt(0) - 65, r2 = +m[4] - 1;
-          let total = 0;
-          for (let r = r1; r <= r2; r++) for (let c = c1; c <= c2; c++) {
-            const v = parseFloat(sheet[r]?.[c] || '0'); if (!isNaN(v)) total += v;
-          }
-          return String(total);
-        })
-        .replace(/([A-Z])(\d+)/g, (_m, col: string, row: string) => {
-          const c = col.charCodeAt(0) - 65, r = +row - 1;
-          return String(parseFloat(sheet[r]?.[c] || '0') || 0);
-        });
-      // eslint-disable-next-line no-new-func
-      const result = Function('"use strict";return (' + expr + ')')();
-      return typeof result === 'number' ? Number(result.toFixed(4)).toString() : String(result);
-    } catch {
-      return '#ERR';
-    }
+  const cols = sheet[0]?.length || 0;
+  const rows = sheet.length;
+  const activeCell = active ? sheet[active.r]?.[active.c] || '' : '';
+  const activeRef = active ? `${colLetter(active.c)}${active.r + 1}` : '';
+  const activeComputed = active ? compute(sheet, activeCell) : null;
+
+  const fns = useMemo(() => {
+    if (!search.trim()) return FN_CATALOG;
+    const q = search.toLowerCase();
+    return FN_CATALOG.filter((f) => f.name.toLowerCase().includes(q) || f.desc.toLowerCase().includes(q));
+  }, [search]);
+
+  function insertFunction(sig: string) {
+    if (!active) return;
+    const fnCall = '=' + sig.split('(')[0] + '(';
+    update(active.r, active.c, fnCall);
   }
 
   return (
     <Card>
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex flex-wrap items-center gap-2 mb-2">
         <i className="fa-solid fa-table-cells text-primary" />
-        <span className="font-display text-lg tracking-wide uppercase">Spreadsheet</span>
-        <span className="ml-auto text-[11px] text-muted">Use =A1+B1, =SUM(A1:A5), basic Excel</span>
+        <span className="font-display text-lg tracking-wide uppercase text-ink">Spreadsheet</span>
+        <span className="ml-auto text-[11px] text-muted">{rows} x {cols}</span>
       </div>
-      <div className="overflow-x-auto">
+
+      {/* Formula bar */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="font-mono text-xs text-muted px-2 py-1 rounded bg-slate-100 min-w-[44px] text-center font-bold">
+          {activeRef}
+        </span>
+        <span className="font-mono text-xs text-muted">f<sub>x</sub></span>
+        <input
+          value={activeCell}
+          onChange={(e) => active && update(active.r, active.c, e.target.value)}
+          className="flex-1 px-2 py-1.5 rounded-md bg-white border border-border focus:border-primary focus:outline-none font-mono text-[13px]"
+          placeholder="Enter a value or =formula..."
+        />
+        <button
+          onClick={() => setShowFns(!showFns)}
+          className={cn('btn !py-1.5 !px-2 !text-xs', showFns ? 'btn-accent' : 'btn-outline')}
+        >
+          f<sub>x</sub>
+        </button>
+      </div>
+
+      {/* Active cell computed value */}
+      {active && activeCell && activeCell.startsWith('=') && (
+        <div className="mb-2 px-2 py-1 rounded bg-primary/[0.05] border border-primary/30 text-[12px] font-mono">
+          <span className="text-muted">= </span>
+          <span className={activeComputed?.ok ? 'text-primary' : 'text-danger'}>
+            {activeComputed?.ok ? display(sheet, active.r, active.c) : (activeComputed?.err || 'error')}
+          </span>
+        </div>
+      )}
+
+      {/* Function picker */}
+      <AnimatePresence>
+        {showFns && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden mb-3"
+          >
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search 30+ functions: NPV, IRR, BSCALL, WACC, UNGEAR..."
+              className="w-full px-3 py-2 rounded-md border border-border focus:border-primary focus:outline-none text-[13px] mb-2"
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 max-h-60 overflow-y-auto p-2 rounded-md bg-slate-50 border border-border">
+              {fns.map((f) => (
+                <button
+                  key={f.name}
+                  onClick={() => insertFunction(f.sig)}
+                  className="text-left p-2 rounded-md bg-white border border-border hover:border-primary text-[12px]"
+                >
+                  <div className="font-mono font-bold text-primary">{f.sig}</div>
+                  <div className="text-muted text-[11px] mt-0.5">{f.desc}</div>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Sheet */}
+      <div className="overflow-x-auto rounded-md border border-border">
         <table className="border-collapse text-[12px] font-mono">
           <thead>
             <tr>
-              <th className="w-8 bg-card border border-border" />
+              <th className="w-9 bg-slate-100 border border-border sticky left-0 z-10" />
               {Array.from({ length: cols }).map((_, c) => (
-                <th key={c} className="min-w-[80px] px-2 py-1 bg-card border border-border text-muted">{colLetter(c)}</th>
+                <th key={c} className="min-w-[100px] px-2 py-1 bg-slate-100 border border-border text-muted">{colLetter(c)}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {sheet.map((row, r) => (
               <tr key={r}>
-                <th className="w-8 bg-card border border-border text-muted text-center">{r + 1}</th>
-                {row.map((cell, c) => (
-                  <td key={c} className="border border-border p-0">
-                    <input
-                      value={cell}
-                      onChange={(e) => update(r, c, e.target.value)}
-                      onBlur={(e) => {
-                        if (e.target.value.startsWith('=')) {
-                          // compute on blur, but keep the formula as raw so user can edit
-                        }
-                      }}
-                      className="w-full px-2 py-1 bg-slate-50 focus:bg-primary/[0.05] outline-none focus:ring-1 ring-primary"
-                      title={cell.startsWith('=') ? `Computed: ${compute(cell)}` : ''}
-                    />
-                    {cell.startsWith('=') && (
-                      <div className="px-2 pb-1 text-[10px] text-primary">= {compute(cell)}</div>
-                    )}
-                  </td>
-                ))}
+                <th className="w-9 bg-slate-100 border border-border text-muted text-center sticky left-0 z-10">{r + 1}</th>
+                {row.map((cell, c) => {
+                  const isActive = active?.r === r && active?.c === c;
+                  const showValue = !isActive && cell.startsWith('=');
+                  const computed = showValue ? display(sheet, r, c) : null;
+                  return (
+                    <td key={c} className={cn('border border-border p-0', isActive && 'ring-2 ring-primary z-10 relative')}>
+                      <input
+                        value={cell}
+                        onFocus={() => setActive({ r, c })}
+                        onChange={(e) => update(r, c, e.target.value)}
+                        className={cn(
+                          'w-full px-2 py-1 outline-none',
+                          isActive ? 'bg-primary/[0.05]' : 'bg-white'
+                        )}
+                      />
+                      {showValue && (
+                        <div className="px-2 pb-1 -mt-1 text-[10px] text-primary font-mono truncate">
+                          {computed}
+                        </div>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        <button onClick={addRow} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> Row</button>
+        <button onClick={addCol} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> Column</button>
+        <button onClick={removeRow} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-minus" /> Row</button>
+        <button onClick={removeCol} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-minus" /> Column</button>
+        <button onClick={clearAll} className="btn-outline !text-xs !py-1.5 border-danger text-danger"><i className="fa-solid fa-trash" /> Clear</button>
+      </div>
+
+      <div className="mt-3 p-2.5 rounded-md bg-slate-50 border border-border text-[11px] text-muted">
+        <b>Tip:</b> click <code className="text-primary">f<sub>x</sub></code> for the full function library.
+        Built-ins include <code>NPV(rate, v1, v2, ...)</code>, <code>IRR(values)</code>, <code>MIRR</code>,{' '}
+        <code>BSCALL(S, K, r, T, sigma)</code>, <code>WACC(Ke, We, Kd, Wd)</code>,{' '}
+        <code>UNGEAR(Be, E, D, T)</code>, <code>REGEAR</code>, <code>CAPM</code>, <code>FISHER</code>,{' '}
+        <code>IRP</code>, <code>PPP</code>, <code>AF</code>, <code>PV</code>, <code>FV</code>, <code>PMT</code>.
+      </div>
     </Card>
   );
 }
 
-/* ── Calculator ──────────────────────────────────── */
+/* ─────────────────────────────────────────────
+   4) CALCULATOR
+   ───────────────────────────────────────────── */
 function Calculator() {
   const [expr, setExpr] = useState('');
   const [history, setHistory] = useState<{ e: string; v: string }[]>([]);
@@ -507,20 +636,20 @@ function Calculator() {
   function evalExpr() {
     if (!expr.trim()) return;
     try {
-      // eslint-disable-next-line no-new-func
-      const v = Function('"use strict"; const sqrt=Math.sqrt; const ln=Math.log; const log=Math.log10; const exp=Math.exp; return (' + expr + ')')();
-      const result = typeof v === 'number' ? Number(v.toFixed(6)).toString() : String(v);
+      const out = compute([['']], '=' + expr);
+      if (!out.ok) throw new Error(out.err);
+      const result = typeof out.v === 'number' ? Number(out.v.toFixed(6)).toString() : String(out.v);
       setHistory((h) => [{ e: expr, v: result }, ...h].slice(0, 8));
       setExpr(result);
-    } catch {
-      setHistory((h) => [{ e: expr, v: 'ERROR' }, ...h]);
+    } catch (e: any) {
+      setHistory((h) => [{ e: expr, v: e.message || 'ERROR' }, ...h]);
     }
   }
 
   const KEYS = [
-    ['7', '8', '9', '/', 'sqrt('],
-    ['4', '5', '6', '*', 'exp('],
-    ['1', '2', '3', '-', 'ln('],
+    ['7', '8', '9', '/', 'SQRT('],
+    ['4', '5', '6', '*', 'EXP('],
+    ['1', '2', '3', '-', 'LN('],
     ['0', '.', '(', ')', '+'],
   ];
   const press = (k: string) => {
@@ -532,15 +661,15 @@ function Calculator() {
     <Card>
       <div className="flex items-center gap-2 mb-2">
         <i className="fa-solid fa-calculator text-primary" />
-        <span className="font-display text-lg tracking-wide uppercase">Calculator</span>
-        <span className="ml-auto text-[11px] text-muted">+ - * / sqrt ln exp ()</span>
+        <span className="font-display text-lg tracking-wide uppercase text-ink">Calculator</span>
+        <span className="ml-auto text-[11px] text-muted">All sheet functions available</span>
       </div>
       <input
         ref={inputRef}
         value={expr}
         onChange={(e) => setExpr(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && evalExpr()}
-        placeholder="e.g. 1.27 * (1.045/1.030)^3"
+        placeholder="e.g. NPV(0.09, 8, 11, 14, 16, 18)"
         className="w-full p-2.5 rounded-lg bg-slate-50 border border-border focus:border-primary focus:outline-none font-mono"
       />
       <div className="grid grid-cols-5 gap-1.5 mt-2">
@@ -548,7 +677,7 @@ function Calculator() {
           <button
             key={k}
             onClick={() => press(k)}
-            className="py-2 rounded-md bg-card border border-border hover:bg-primary hover:text-bg hover:border-primary text-sm font-mono"
+            className="py-2 rounded-md bg-white border border-border hover:bg-primary hover:text-white hover:border-primary text-sm font-mono"
           >
             {k}
           </button>
@@ -561,7 +690,7 @@ function Calculator() {
         </button>
         <button
           onClick={evalExpr}
-          className="py-2 col-span-3 rounded-md bg-primary text-bg text-sm font-bold"
+          className="py-2 col-span-3 rounded-md bg-primary text-white text-sm font-bold"
         >
           =
         </button>
@@ -569,13 +698,246 @@ function Calculator() {
       {history.length > 0 && (
         <div className="mt-3 grid gap-1 text-[12px] font-mono max-h-32 overflow-y-auto">
           {history.map((h, i) => (
-            <div key={i} className="flex justify-between p-1.5 rounded bg-slate-100 border border-border/50">
+            <div key={i} className="flex justify-between p-1.5 rounded bg-slate-50 border border-border/50">
               <span className="text-muted truncate pr-2">{h.e}</span>
-              <span className="text-accent">{h.v}</span>
+              <span className="text-primary">{h.v}</span>
             </div>
           ))}
         </div>
       )}
     </Card>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   5) SAMPLE ANSWER PANEL (full-mark exam-style)
+   ───────────────────────────────────────────── */
+function SampleAnswerPanel({ setId, reqIndex, reqLabel }: { setId: string; reqIndex: number; reqLabel: string }) {
+  const sample = getSampleAnswer(setId, reqIndex);
+  if (!sample) {
+    return (
+      <Card>
+        <div className="flex items-center gap-2 mb-2">
+          <i className="fa-solid fa-trophy text-accent-dark" />
+          <span className="font-display text-lg tracking-wide uppercase text-ink">Sample Answer</span>
+        </div>
+        <p className="text-muted">
+          Full-mark sample answers are bundled for the most-tested requirements. For this requirement, use the
+          <b className="text-primary"> Hints</b> panel for the step-by-step solution, then ask the
+          <b className="text-accent-dark"> Coach AI</b> for additional structure tips.
+        </p>
+      </Card>
+    );
+  }
+  const tagColor = (t?: SampleLine['tag']) => {
+    switch (t) {
+      case 'calc': return 'border-primary text-primary';
+      case 'workings': return 'border-accent text-accent-dark';
+      case 'discuss': return 'border-blue-500 text-blue-700';
+      case 'recommend': return 'border-violet-600 text-violet-700';
+      case 'esg': return 'border-emerald-600 text-emerald-700';
+      case 'skill': return 'border-pink-500 text-pink-700';
+      default: return 'border-border text-muted';
+    }
+  };
+  return (
+    <Card className="relative">
+      <div className="flex items-center gap-2 mb-2">
+        <i className="fa-solid fa-trophy text-accent-dark" />
+        <span className="font-display text-lg tracking-wide uppercase text-ink">Full-mark Sample Answer</span>
+        <span className="ml-auto pill bg-accent text-ink !text-[10px]">Examiner-grade</span>
+      </div>
+      <div className="text-[11px] uppercase tracking-[0.18em] text-muted font-bold mb-1">For requirement</div>
+      <p className="text-[13px] mb-3 italic">{reqLabel}</p>
+
+      <div className="p-3 rounded-lg bg-accent/[0.06] border border-accent/40 mb-4">
+        <div className="text-[11px] uppercase tracking-[0.18em] text-accent-dark font-bold mb-1.5">
+          <i className="fa-solid fa-bullseye mr-1" /> What earns full marks
+        </div>
+        <p className="text-[13.5px] leading-relaxed">{sample.intro}</p>
+      </div>
+
+      <div className="grid gap-2">
+        {sample.lines.map((line, i) => (
+          <div key={i} className={cn('p-3 rounded-md border-l-4 bg-white text-[13px] leading-relaxed', tagColor(line.tag))}>
+            <div className="flex items-start justify-between gap-3">
+              <span>{line.text}</span>
+              {typeof line.marks === 'number' && (
+                <span className="font-mono text-xs px-2 py-0.5 rounded bg-primary text-white shrink-0">
+                  {line.marks}m
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 p-3 rounded-lg bg-primary/[0.06] border border-primary/30">
+        <div className="text-[11px] uppercase tracking-[0.18em] text-primary font-bold mb-1.5">
+          <i className="fa-solid fa-comment mr-1" /> Examiner commentary
+        </div>
+        <p className="text-[13px] leading-relaxed">{sample.notes}</p>
+      </div>
+
+      {sample.profSkills.length > 0 && (
+        <div className="mt-4">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-muted font-bold mb-2">Professional Skills marks</div>
+          <div className="grid gap-2">
+            {sample.profSkills.map((p, i) => (
+              <div key={i} className="p-2.5 rounded-md border border-border bg-slate-50 text-[13px]">
+                <div className="flex items-center gap-2">
+                  <span className="pill bg-pink-100 text-pink-700 !text-[10px]">{p.skill}</span>
+                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-pink-500 text-white shrink-0">
+                    {p.marks}m
+                  </span>
+                </div>
+                <p className="mt-1.5">{p.example}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   6) COACH AI DRAWER
+   ───────────────────────────────────────────── */
+interface ChatMsg { role: 'user' | 'coach'; text: string; }
+
+function CoachDrawer({ open, onClose, setContext }: { open: boolean; onClose: () => void; setContext?: string }) {
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open || messages.length > 0) return;
+    setMessages([
+      {
+        role: 'coach',
+        text:
+          `Coach AI here. Working with you on **${setContext || 'AFM'}**.\n\nAsk me anything about the question or general AFM technique. I cover NPV/APV/WACC, real options, FX and IR hedging, M&A, ESG marks, Islamic finance, behavioural biases, VaR, and Section A board paper structure.\n\nTry one of the suggestions below or paste a specific stuck point.`,
+      },
+    ]);
+  }, [open, setContext]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [messages, loading]);
+
+  const send = async (text?: string) => {
+    const msg = (text ?? input).trim();
+    if (!msg) return;
+    setInput('');
+    setMessages((m) => [...m, { role: 'user', text: msg }]);
+    setLoading(true);
+    try {
+      const reply: CoachReply = await askCoach(msg);
+      setMessages((m) => [...m, { role: 'coach', text: reply.text }]);
+    } catch (e: any) {
+      setMessages((m) => [...m, { role: 'coach', text: 'Coach AI hit an error. Try again.' }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
+          <motion.div
+            className="fixed top-0 right-0 bottom-0 z-50 w-full sm:w-[460px] bg-white border-l border-border shadow-floodlight flex flex-col"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+          >
+            <div className="p-4 border-b border-border flex items-center gap-2 bg-gradient-to-br from-accent/10 via-white to-primary/5">
+              <div className="w-9 h-9 rounded-full bg-accent grid place-items-center text-ink">
+                <i className="fa-solid fa-robot" />
+              </div>
+              <div>
+                <div className="font-display text-lg tracking-wide uppercase text-ink leading-none">Coach AI</div>
+                <div className="text-[11px] text-muted mt-0.5">Expert AFM tutor, online</div>
+              </div>
+              <button onClick={onClose} className="ml-auto btn-ghost !p-2">
+                <i className="fa-solid fa-xmark" />
+              </button>
+            </div>
+
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+              {messages.map((m, i) => (
+                <ChatBubble key={i} msg={m} />
+              ))}
+              {loading && (
+                <div className="flex items-center gap-2 text-muted text-sm">
+                  <span className="w-2 h-2 rounded-full bg-accent animate-bounce" />
+                  <span className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: '0.15s' }} />
+                  <span className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: '0.3s' }} />
+                  <span className="ml-1">Coach is thinking...</span>
+                </div>
+              )}
+              {!loading && messages.length <= 1 && (
+                <div className="grid gap-1.5 mt-4">
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-muted font-bold">Try asking</div>
+                  {COACH_SUGGESTIONS.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => send(s)}
+                      className="text-left p-2.5 rounded-lg border border-border hover:border-primary hover:bg-primary/[0.05] text-[13px]"
+                    >
+                      <i className="fa-solid fa-arrow-right text-primary mr-2 text-[10px]" /> {s}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-3 border-t border-border bg-white">
+              <ChatInput
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onSubmit={() => send()}
+                loading={loading}
+                onStop={() => setLoading(false)}
+              >
+                <ChatInputTextArea placeholder="Ask Coach AI anything about AFM..." />
+                <ChatInputSubmit className="bg-primary text-white hover:bg-primary-dark border-primary" />
+              </ChatInput>
+              <div className="text-[10px] text-muted text-center mt-2">
+                Coach AI runs locally with an AFM expert knowledge base. Set <code>VITE_COACH_API_URL</code> to plug in a remote LLM.
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function ChatBubble({ msg }: { msg: ChatMsg }) {
+  const isUser = msg.role === 'user';
+  const formatted = msg.text.replace(/\*\*(.*?)\*\*/g, '<b class="text-primary">$1</b>').replace(/`([^`]+)`/g, '<code class="bg-slate-100 px-1 rounded text-primary text-[12px]">$1</code>');
+  return (
+    <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
+      <div
+        className={cn(
+          'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-line',
+          isUser
+            ? 'bg-primary text-white rounded-br-sm'
+            : 'bg-slate-50 border border-border text-ink rounded-bl-sm'
+        )}
+        dangerouslySetInnerHTML={{ __html: formatted }}
+      />
+    </div>
   );
 }
