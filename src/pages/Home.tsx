@@ -119,23 +119,26 @@ export function HomePage() {
                   </span>
                   <span className="text-muted text-xs mb-1">hrs</span>
                 </div>
-                {t.next && (
-                  <div className="mt-3">
-                    <div className="text-[11px] text-muted mb-1">
-                      To {t.next.tier}: {t.next.min - state.points} pts
+                {t.next && (() => {
+                  const prevMin = TIER_PREV_MIN(state.points);
+                  const span = Math.max(1, t.next.min - prevMin);
+                  const pct = Math.max(0, Math.min(100, ((state.points - prevMin) / span) * 100));
+                  return (
+                    <div className="mt-3">
+                      <div className="text-[11px] text-muted mb-1">
+                        To {t.next.tier}: {Math.max(0, t.next.min - state.points)} pts
+                      </div>
+                      <div className="h-1.5 rounded-full bg-white/[0.08] overflow-hidden">
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-primary to-accent"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 1, ease: 'easeOut' }}
+                        />
+                      </div>
                     </div>
-                    <div className="h-1.5 rounded-full bg-white/8 overflow-hidden">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-primary to-accent"
-                        initial={{ width: 0 }}
-                        animate={{
-                          width: `${Math.min(100, ((state.points - (TIER_PREV_MIN(state.points))) / (t.next.min - TIER_PREV_MIN(state.points))) * 100)}%`,
-                        }}
-                        transition={{ duration: 1, ease: 'easeOut' }}
-                      />
-                    </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
             </div>
           </div>
