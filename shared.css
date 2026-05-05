@@ -62,13 +62,15 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover { background: hsl(var(--secondary)); }
 
-/* Stadium aurora background */
+/* Stadium aurora background — now mouse-responsive (see anim.js) */
 .aurora {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  --ax: 90%; --ay: -10%;
   background:
-    radial-gradient(800px 400px at 90% -10%, hsla(43,96%,56%,0.12), transparent 60%),
+    radial-gradient(800px 400px at var(--ax) var(--ay), hsla(43,96%,56%,0.16), transparent 60%),
     radial-gradient(900px 500px at -10% 110%, hsla(222,80%,40%,0.18), transparent 60%),
     radial-gradient(600px 300px at 50% 50%, hsla(226,48%,12%,0.6), transparent 70%);
+  transition: background 280ms ease-out;
 }
 .pitch-grid {
   position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.06;
@@ -829,4 +831,209 @@ hr.div { border: none; border-top: 1px dashed hsl(var(--border)); margin: 28px 0
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ============================================================
+   ANIMATION ENGINE — partner CSS for anim.js
+   Spotlight cursor · scroll reveal · sparkle · pulse · ribbons
+   ============================================================ */
+
+/* 1) MOUSE-FOLLOWING SPOTLIGHT on cards/fixtures/stats
+   Uses ::after to avoid conflict with .fixture::before existing gold glow */
+.has-spotlight {
+  position: relative;
+  --mx: -9999px; --my: -9999px; --mo: 0;
+}
+.has-spotlight::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(280px circle at var(--mx) var(--my),
+              hsla(43,96%,56%,0.14), transparent 55%);
+  opacity: var(--mo);
+  transition: opacity 220ms ease-out;
+  pointer-events: none;
+  z-index: 0;
+}
+.has-spotlight > * { position: relative; z-index: 1; }
+
+/* Stats get a sharper, smaller spotlight */
+.stat.has-spotlight::after {
+  background: radial-gradient(140px circle at var(--mx) var(--my),
+              hsla(43,96%,56%,0.22), transparent 60%);
+}
+
+/* Fixtures get a subtle gold edge glow when tilted */
+.fixture {
+  transform-origin: center;
+}
+.fixture:hover {
+  box-shadow:
+    0 32px 64px -24px hsl(0 0% 0% / 0.6),
+    0 0 0 1px hsla(43,96%,56%,0.3);
+}
+
+/* 2) SCROLL REVEAL */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 600ms cubic-bezier(.2,.8,.2,1),
+              transform 600ms cubic-bezier(.2,.8,.2,1);
+}
+.reveal.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 3) SPARKLE BURST particles (created by JS) */
+.spark {
+  opacity: 1;
+  transform: translate(0,0) scale(1);
+  transition: transform 700ms cubic-bezier(.2,.7,.2,1),
+              opacity 700ms ease-out;
+  box-shadow: 0 0 12px currentColor;
+}
+.spark.go {
+  transform: translate(var(--tx), var(--ty)) scale(0);
+  opacity: 0;
+}
+
+/* 4) PULSE on points/streak meter when state changes */
+@keyframes pulse-up-anim {
+  0% { transform: scale(1); color: hsl(var(--foreground)); }
+  35% { transform: scale(1.35); color: hsl(var(--primary)); text-shadow: 0 0 24px hsla(43,96%,56%,0.7); }
+  100% { transform: scale(1); color: hsl(var(--foreground)); text-shadow: none; }
+}
+.pulse-up { animation: pulse-up-anim 700ms ease-out; }
+
+/* 5) ANIMATED RIBBON shimmer on fixtures */
+.fixture .ribbon {
+  position: relative;
+  overflow: hidden;
+}
+.fixture .ribbon::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(110deg,
+              transparent 30%, hsla(0,0%,100%,0.4) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: ribbon-shimmer 4.5s ease-in-out infinite;
+}
+@keyframes ribbon-shimmer {
+  0%, 60% { transform: translateX(-100%); }
+  80%, 100% { transform: translateX(120%); }
+}
+
+/* 6) CREST badge breathing */
+.crest {
+  animation: crest-breathe 4s ease-in-out infinite;
+}
+@keyframes crest-breathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 hsla(43,96%,56%,0.4); }
+  50% { transform: scale(1.04); box-shadow: 0 0 0 6px hsla(43,96%,56%,0); }
+}
+
+/* 7) LIVE pill ping on news ticker — adds outer ping ring to existing .live */
+.news-strip .live { position: relative; }
+@keyframes live-ping {
+  0% { box-shadow: 0 0 0 0 hsla(0,75%,55%,0.7); }
+  70% { box-shadow: 0 0 0 10px hsla(0,75%,55%,0); }
+  100% { box-shadow: 0 0 0 0 hsla(0,75%,55%,0); }
+}
+.news-strip .live { animation: live-ping 1.8s ease-out infinite; border-radius: 6px; }
+
+/* 8) BUTTONS get a subtle hover-lift even without magnetic */
+.btn {
+  transition:
+    transform 200ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 200ms,
+    background 200ms,
+    color 200ms,
+    border-color 200ms;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary:hover {
+  box-shadow: 0 12px 24px -8px hsla(43,96%,56%,0.5);
+}
+
+/* 9) QA-CARD micro-bounce on open */
+.qa-card.open {
+  animation: qa-bounce 360ms cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes qa-bounce {
+  0% { transform: scale(0.99); }
+  60% { transform: scale(1.012); }
+  100% { transform: scale(1); }
+}
+
+/* 10) GOLD-text underline reveal on hover for nav links */
+.nav-links a {
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 12px; right: 12px; bottom: 4px;
+  height: 2px;
+  background: hsl(var(--primary));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 280ms cubic-bezier(.2,.8,.2,1);
+  border-radius: 999px;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after { transform: scaleX(1); }
+
+/* 11) PROGRESS bar shimmer */
+.progress-fill {
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+              transparent, hsla(255,255,255,0.25), transparent);
+  animation: progress-shimmer 2.4s ease-in-out infinite;
+}
+@keyframes progress-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* 12) FLASHCARD entrance */
+.flashcard {
+  animation: card-in 420ms cubic-bezier(.2,.8,.2,1);
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(20px) rotateY(-12deg); }
+  to { opacity: 1; transform: translateY(0) rotateY(0); }
+}
+
+/* 13) CONFETTI piece (used by shared.js confetti) gets gold ring */
+.confetti-piece {
+  filter: drop-shadow(0 0 6px hsla(43,96%,56%,0.5));
+}
+
+/* 14) COACH button float */
+.coach {
+  animation: coach-float 4s ease-in-out infinite;
+}
+@keyframes coach-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.coach:hover { animation-play-state: paused; }
+
+/* Reduced motion override for the new effects */
+@media (prefers-reduced-motion: reduce) {
+  .has-spotlight::before,
+  .fixture .ribbon::after,
+  .crest,
+  .news-strip .live::before,
+  .progress-fill::after,
+  .coach {
+    animation: none !important;
+  }
+  .reveal { opacity: 1; transform: none; }
 }
