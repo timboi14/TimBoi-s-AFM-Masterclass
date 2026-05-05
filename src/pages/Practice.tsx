@@ -441,28 +441,49 @@ function SpreadsheetWS({ setId }: { setId: string }) {
   const [sheet, setSheet] = useState<Sheet>(() => {
     const raw = localStorage.getItem(sk('data'));
     if (raw) try { return JSON.parse(raw); } catch {}
-    return Array.from({ length: 18 }, () => Array.from({ length: 8 }, () => ''));
+    // Start big: 40 rows x 14 columns. Comfortably holds a 7-year NPV proforma
+    // with 30+ working lines or a Section A multi-stage model.
+    return Array.from({ length: 40 }, () => Array.from({ length: 14 }, () => ''));
   });
   const [active, setActive] = useState<{ r: number; c: number } | null>({ r: 0, c: 0 });
   const [showFns, setShowFns] = useState(false);
   const [search, setSearch] = useState('');
+  const [fullscreen, setFullscreen] = useState(false);
+  const [zoom, setZoom] = useState(100); // percent
 
   useEffect(() => { localStorage.setItem(sk('data'), JSON.stringify(sheet)); }, [sheet, setId]);
+
+  // Lock body scroll while in full-screen
+  useEffect(() => {
+    if (fullscreen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setFullscreen(false); };
+      window.addEventListener('keydown', onKey);
+      return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+    }
+  }, [fullscreen]);
 
   function update(r: number, c: number, v: string) {
     setSheet((cur) => {
       const next = cur.map((row) => [...row]);
-      while (next.length <= r) next.push(Array.from({ length: cur[0]?.length || 8 }, () => ''));
+      while (next.length <= r) next.push(Array.from({ length: cur[0]?.length || 14 }, () => ''));
       while (next[r].length <= c) next[r].push('');
       next[r][c] = v;
       return next;
     });
   }
   function addRow() {
-    setSheet((cur) => [...cur, Array.from({ length: cur[0]?.length || 8 }, () => '')]);
+    setSheet((cur) => [...cur, Array.from({ length: cur[0]?.length || 14 }, () => '')]);
   }
   function addCol() {
     setSheet((cur) => cur.map((row) => [...row, '']));
+  }
+  function addRows(n: number) {
+    setSheet((cur) => [...cur, ...Array.from({ length: n }, () => Array.from({ length: cur[0]?.length || 14 }, () => ''))]);
+  }
+  function addCols(n: number) {
+    setSheet((cur) => cur.map((row) => [...row, ...Array.from({ length: n }, () => '')]));
   }
   function removeRow() {
     setSheet((cur) => (cur.length > 1 ? cur.slice(0, -1) : cur));
@@ -472,7 +493,7 @@ function SpreadsheetWS({ setId }: { setId: string }) {
   }
   function clearAll() {
     if (!confirm('Clear the spreadsheet?')) return;
-    setSheet(Array.from({ length: 18 }, () => Array.from({ length: 8 }, () => '')));
+    setSheet(Array.from({ length: 40 }, () => Array.from({ length: 14 }, () => '')));
   }
 
   const cols = sheet[0]?.length || 0;
@@ -493,17 +514,52 @@ function SpreadsheetWS({ setId }: { setId: string }) {
     update(active.r, active.c, fnCall);
   }
 
-  return (
-    <Card>
+  // Visible viewport size. The sheet is scrollable inside this container so
+  // you can see plenty of cells without disturbing the page scroll.
+  const viewportClass = fullscreen
+    ? 'h-[calc(100vh-220px)]'
+    : 'h-[640px]';
+  const cellWidth = Math.round(112 * (zoom / 100));   // base 112px per column
+  const headerHeight = 32;
+  const cellHeight = Math.round(28 * (zoom / 100));
+  const fontPx = Math.round(13 * (zoom / 100));
+
+  const body = (
+    <Card className={cn(fullscreen && '!rounded-none !border-0 !p-4 h-full overflow-y-auto')}>
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <i className="fa-solid fa-table-cells text-primary" />
         <span className="font-display text-lg tracking-wide uppercase text-ink">Spreadsheet</span>
-        <span className="ml-auto text-[11px] text-muted">{rows} x {cols}</span>
+        <span className="text-[11px] text-muted">{rows} rows · {cols} cols</span>
+        <div className="ml-auto flex items-center gap-1.5">
+          <button
+            onClick={() => setZoom(Math.max(60, zoom - 10))}
+            className="btn-outline !text-xs !py-1 !px-2"
+            title="Zoom out"
+          >
+            <i className="fa-solid fa-magnifying-glass-minus" />
+          </button>
+          <span className="font-mono text-xs text-muted w-10 text-center">{zoom}%</span>
+          <button
+            onClick={() => setZoom(Math.min(200, zoom + 10))}
+            className="btn-outline !text-xs !py-1 !px-2"
+            title="Zoom in"
+          >
+            <i className="fa-solid fa-magnifying-glass-plus" />
+          </button>
+          <button
+            onClick={() => setFullscreen(!fullscreen)}
+            className={cn('btn !text-xs !py-1 !px-2', fullscreen ? 'btn-accent' : 'btn-outline')}
+            title={fullscreen ? 'Exit full-screen (Esc)' : 'Full-screen'}
+          >
+            <i className={`fa-solid ${fullscreen ? 'fa-compress' : 'fa-expand'}`} />
+            <span className="hidden sm:inline">{fullscreen ? ' Exit' : ' Full screen'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Formula bar */}
       <div className="flex items-center gap-2 mb-2">
-        <span className="font-mono text-xs text-muted px-2 py-1 rounded bg-slate-100 min-w-[44px] text-center font-bold">
+        <span className="font-mono text-xs text-muted px-2 py-1 rounded bg-slate-100 min-w-[52px] text-center font-bold">
           {activeRef}
         </span>
         <span className="font-mono text-xs text-muted">f<sub>x</sub></span>
@@ -515,9 +571,9 @@ function SpreadsheetWS({ setId }: { setId: string }) {
         />
         <button
           onClick={() => setShowFns(!showFns)}
-          className={cn('btn !py-1.5 !px-2 !text-xs', showFns ? 'btn-accent' : 'btn-outline')}
+          className={cn('btn !py-1.5 !px-3 !text-xs', showFns ? 'btn-accent' : 'btn-outline')}
         >
-          f<sub>x</sub>
+          f<sub>x</sub> Functions
         </button>
       </div>
 
@@ -562,40 +618,64 @@ function SpreadsheetWS({ setId }: { setId: string }) {
         )}
       </AnimatePresence>
 
-      {/* Sheet */}
-      <div className="overflow-x-auto rounded-md border border-border">
-        <table className="border-collapse text-[12px] font-mono">
-          <thead>
+      {/* Sheet viewport: large fixed-height scroll container with sticky headers */}
+      <div className={cn('rounded-md border-2 border-border overflow-auto bg-white', viewportClass)} style={{ fontSize: fontPx }}>
+        <table className="border-collapse font-mono w-max">
+          <thead className="sticky top-0 z-20">
             <tr>
-              <th className="w-9 bg-slate-100 border border-border sticky left-0 z-10" />
+              <th
+                className="bg-slate-200 border border-border sticky left-0 z-30"
+                style={{ width: 48, height: headerHeight }}
+              />
               {Array.from({ length: cols }).map((_, c) => (
-                <th key={c} className="min-w-[100px] px-2 py-1 bg-slate-100 border border-border text-muted">{colLetter(c)}</th>
+                <th
+                  key={c}
+                  className="px-2 bg-slate-200 border border-border text-muted font-bold"
+                  style={{ width: cellWidth, height: headerHeight }}
+                >
+                  {colLetter(c)}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {sheet.map((row, r) => (
               <tr key={r}>
-                <th className="w-9 bg-slate-100 border border-border text-muted text-center sticky left-0 z-10">{r + 1}</th>
+                <th
+                  className="bg-slate-200 border border-border text-muted text-center sticky left-0 z-10 font-bold"
+                  style={{ width: 48, height: cellHeight }}
+                >
+                  {r + 1}
+                </th>
                 {row.map((cell, c) => {
                   const isActive = active?.r === r && active?.c === c;
                   const showValue = !isActive && cell.startsWith('=');
                   const computed = showValue ? display(sheet, r, c) : null;
                   return (
-                    <td key={c} className={cn('border border-border p-0', isActive && 'ring-2 ring-primary z-10 relative')}>
-                      <input
-                        value={cell}
-                        onFocus={() => setActive({ r, c })}
-                        onChange={(e) => update(r, c, e.target.value)}
-                        className={cn(
-                          'w-full px-2 py-1 outline-none',
-                          isActive ? 'bg-primary/[0.05]' : 'bg-white'
-                        )}
-                      />
-                      {showValue && (
-                        <div className="px-2 pb-1 -mt-1 text-[10px] text-primary font-mono truncate">
+                    <td
+                      key={c}
+                      className={cn('border border-border p-0 align-middle', isActive && 'outline outline-2 outline-primary z-10 relative')}
+                      style={{ width: cellWidth, height: cellHeight }}
+                    >
+                      {showValue ? (
+                        <button
+                          onClick={() => setActive({ r, c })}
+                          className="w-full h-full px-2 text-left text-primary font-mono truncate hover:bg-primary/[0.05]"
+                          title={cell}
+                        >
                           {computed}
-                        </div>
+                        </button>
+                      ) : (
+                        <input
+                          value={cell}
+                          onFocus={() => setActive({ r, c })}
+                          onChange={(e) => update(r, c, e.target.value)}
+                          className={cn(
+                            'w-full h-full px-2 outline-none',
+                            isActive ? 'bg-primary/[0.05]' : 'bg-white'
+                          )}
+                          style={{ fontSize: fontPx }}
+                        />
                       )}
                     </td>
                   );
@@ -608,21 +688,29 @@ function SpreadsheetWS({ setId }: { setId: string }) {
 
       <div className="mt-3 flex flex-wrap gap-1.5">
         <button onClick={addRow} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> Row</button>
+        <button onClick={() => addRows(10)} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> +10 rows</button>
         <button onClick={addCol} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> Column</button>
+        <button onClick={() => addCols(5)} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> +5 cols</button>
         <button onClick={removeRow} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-minus" /> Row</button>
         <button onClick={removeCol} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-minus" /> Column</button>
         <button onClick={clearAll} className="btn-outline !text-xs !py-1.5 border-danger text-danger"><i className="fa-solid fa-trash" /> Clear</button>
       </div>
 
       <div className="mt-3 p-2.5 rounded-md bg-slate-50 border border-border text-[11px] text-muted">
-        <b>Tip:</b> click <code className="text-primary">f<sub>x</sub></code> for the full function library.
-        Built-ins include <code>NPV(rate, v1, v2, ...)</code>, <code>IRR(values)</code>, <code>MIRR</code>,{' '}
-        <code>BSCALL(S, K, r, T, sigma)</code>, <code>WACC(Ke, We, Kd, Wd)</code>,{' '}
-        <code>UNGEAR(Be, E, D, T)</code>, <code>REGEAR</code>, <code>CAPM</code>, <code>FISHER</code>,{' '}
-        <code>IRP</code>, <code>PPP</code>, <code>AF</code>, <code>PV</code>, <code>FV</code>, <code>PMT</code>.
+        <b>Tip:</b> hit <kbd className="px-1.5 py-0.5 rounded bg-white border border-border font-mono text-[10px]">Full screen</kbd> for a maximised sheet (Esc to exit). Zoom shrinks or grows every cell.
+        Built-ins include <code className="text-primary">NPV</code>, <code className="text-primary">IRR</code>, <code className="text-primary">MIRR</code>, <code className="text-primary">BSCALL</code>, <code className="text-primary">WACC</code>, <code className="text-primary">UNGEAR</code>, <code className="text-primary">REGEAR</code>, <code className="text-primary">CAPM</code>, <code className="text-primary">FISHER</code>, <code className="text-primary">IRP</code>, <code className="text-primary">PPP</code>, <code className="text-primary">AF</code>, <code className="text-primary">PV</code>, <code className="text-primary">FV</code>, <code className="text-primary">PMT</code>.
       </div>
     </Card>
   );
+
+  if (fullscreen) {
+    return (
+      <div className="fixed inset-0 z-50 bg-white flex flex-col">
+        {body}
+      </div>
+    );
+  }
+  return body;
 }
 
 /* ─────────────────────────────────────────────
