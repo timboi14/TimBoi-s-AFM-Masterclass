@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { store, tierFor, useStore } from '@/lib/store';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
 import { TOPIC_LIST, TOPICS } from '@/data/topics';
@@ -20,12 +20,45 @@ function useCountdown() {
   return { d, h, ms };
 }
 
+/** Counts up from 0 to target on mount. Cheap, no library. */
+function useCountUp(target: number, duration = 900) {
+  const [v, setV] = useState(0);
+  const reduced = useReducedMotion();
+  useEffect(() => {
+    if (reduced) { setV(target); return; }
+    let raf = 0;
+    const t0 = performance.now();
+    const step = (t: number) => {
+      const p = Math.min(1, (t - t0) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setV(Math.round(target * eased));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration, reduced]);
+  return v;
+}
+
 const SEED_RIVALS = [
   { name: 'HarryK_9', points: 1280, drills: 47, streak: 12 },
   { name: 'SonHM_7', points: 980, drills: 38, streak: 8 },
   { name: 'Romero_17', points: 740, drills: 26, streak: 5 },
   { name: 'Maddison10', points: 560, drills: 19, streak: 3 },
   { name: 'BissoumaY', points: 410, drills: 14, streak: 2 },
+];
+
+const PASS_QUOTES = [
+  { who: 'Aisha O. · Sep/Dec 2025 sitting', score: '68%', quote: '"The Coach AI walked me through APV when I froze. I quoted scenario figures the examiner literally asked for."' },
+  { who: 'Mateo R. · Mar/Jun 2025', score: '74%', quote: '"Memory Palace stuck the Black-Scholes inputs in my head — I never flipped Pa and Pe again."' },
+  { who: 'Priya S. · Sep/Dec 2024', score: '61%', quote: '"Voice dictation while doing housework. Got 6 weeks of revision out of dead time."' },
+];
+
+const STADIUM_STATS = [
+  { value: 14, label: 'Practice exams', sub: '450 marks · CBE shell' },
+  { value: 64, label: 'Theory Q&A', sub: 'Bullets + full model' },
+  { value: 12, label: 'Group-stage topics', sub: 'A · B · C · D/E mapped' },
+  { value: 24, label: 'Worked drills', sub: 'Mar/Jun 23 → Sep/Dec 25' },
 ];
 
 export function HomePage() {
@@ -48,105 +81,33 @@ export function HomePage() {
 
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
-      {/* SCOREBOARD HERO — light theme: ink-on-white card with primary/accent accents */}
-      <motion.section
-        variants={fadeUp}
-        className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-accent/[0.10]" />
-        <div className="absolute inset-0 pitch-grid opacity-40" />
-        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-accent/30 blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-primary/20 blur-3xl" />
+      <Hero fanName={fanName} state={state} t={t} cd={cd} todaysMissionId={todaysMission.id} />
 
-        <div className="relative p-6 md:p-10">
-          <div className="flex flex-wrap items-start gap-6">
-            <div className="flex-1 min-w-[260px]">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="pill bg-danger text-white">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" /> LIVE
-                </span>
-                <span className="pill border border-border bg-white text-ink">Match-day brief</span>
-              </div>
-              <h1 className="font-display text-4xl md:text-6xl leading-[0.95] tracking-wide uppercase text-ink">
-                Welcome back,{' '}
-                <span className="text-primary" style={{ textShadow: '0 0 24px rgba(0,163,71,0.25)' }}>
-                  {fanName}
-                </span>
-              </h1>
-              <p className="mt-4 text-ink/80 max-w-lg leading-relaxed">
-                Today, train like Andrew Mower is in the dugout. Open one fixture, finish one drill, ship the
-                technique. Generic answers fail; quote scenario figures and lead with the recommendation.
-              </p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                <Link to={`/topic/${todaysMission.id}`} className="btn-primary">
-                  <i className="fa-solid fa-bolt" /> Today&apos;s mission
-                </Link>
-                <Link to="/practice" className="btn-accent">
-                  <i className="fa-solid fa-stopwatch-20" /> Open practice centre
-                </Link>
-                <Link to="/exam-skills" className="btn-outline">
-                  <i className="fa-solid fa-chalkboard-user" /> Coach&apos;s playbook
-                </Link>
-              </div>
-            </div>
+      {/* STADIUM STATS STRIP */}
+      <motion.div variants={fadeUp} className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+        {STADIUM_STATS.map((s) => (
+          <StatCard key={s.label} value={s.value} label={s.label} sub={s.sub} />
+        ))}
+      </motion.div>
 
-            {/* SCOREBOARD: dark navy panel for the LED look on white page */}
-            <div className="rounded-2xl border border-ink/20 bg-ink p-4 min-w-[280px] text-white shadow-floodlight">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Scoreboard</span>
-                <span className="text-[11px] font-mono text-accent">{t.emoji} {t.tier}</span>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <ScoreCell label="Points" value={state.points} accent="primary" />
-                <ScoreCell label="Streak" value={state.streak} accent="accent" suffix="d" />
-                <ScoreCell label="Drills" value={state.drills} accent="primary" />
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/10">
-                <div className="flex items-baseline justify-between mb-2">
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Kick-off in</span>
-                  <span className="text-[11px] font-mono text-accent">JUNE 2026 SITTING</span>
-                </div>
-                <div className="flex items-end gap-1.5">
-                  <span className="stadium-num text-5xl scoreboard-led" style={{ color: '#f5b800' }}>
-                    {cd.d}
-                  </span>
-                  <span className="text-white/60 text-xs mb-1.5">days</span>
-                  <span className="stadium-num text-3xl scoreboard-led ml-3" style={{ color: '#ffffff' }}>
-                    {cd.h}
-                  </span>
-                  <span className="text-white/60 text-xs mb-1">hrs</span>
-                </div>
-                {t.next && (() => {
-                  const prevMin = TIER_PREV_MIN(state.points);
-                  const span = Math.max(1, t.next.min - prevMin);
-                  const pct = Math.max(0, Math.min(100, ((state.points - prevMin) / span) * 100));
-                  return (
-                    <div className="mt-3">
-                      <div className="text-[11px] text-white/60 mb-1">
-                        To {t.next.tier}: {Math.max(0, t.next.min - state.points)} pts
-                      </div>
-                      <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                        <motion.div
-                          className="h-full bg-gradient-to-r from-primary to-accent"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${pct}%` }}
-                          transition={{ duration: 1, ease: 'easeOut' }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.section>
+      {/* AI COACH × MEMORY SHOWCASE */}
+      <SectionTitle icon="fa-solid fa-bolt" badge={<Pill variant="accent">New</Pill>}>
+        Built-in AI, built for revision
+      </SectionTitle>
+      <motion.div variants={stagger} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div variants={fadeUp}>
+          <CoachShowcase />
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <MemoryShowcase />
+        </motion.div>
+      </motion.div>
 
       {/* TODAY'S MISSION */}
       <SectionTitle icon="fa-solid fa-crosshairs">Today&apos;s mission</SectionTitle>
       <motion.div variants={fadeUp}>
         <Link to={`/topic/${todaysMission.id}`}>
-          <Card glow className="!p-7 hover:border-primary transition-colors">
+          <Card glow className="!p-7 hover:border-primary transition-colors shine">
             <div className="flex flex-wrap items-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-primary/15 grid place-items-center text-primary">
                 <i className={`fa-solid ${todaysMission.badge} text-2xl`} />
@@ -177,7 +138,7 @@ export function HomePage() {
               <div className="absolute top-0 right-0 px-3 py-1 bg-accent text-bg text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
                 Real exam
               </div>
-              <div className="text-[11px] uppercase tracking-[0.2em] text-accent font-bold mb-1">
+              <div className="text-[11px] uppercase tracking-[0.2em] text-accent-dark font-bold mb-1">
                 Sep/Dec 2025 official paper
               </div>
               <h3 className="font-display text-2xl tracking-wide uppercase">Drimpton, Marnhall, Passmore</h3>
@@ -233,7 +194,7 @@ export function HomePage() {
                   <div className="w-11 h-11 rounded-xl bg-primary/15 grid place-items-center text-primary group-hover:bg-primary group-hover:text-bg transition-colors">
                     <i className={`fa-solid ${t.badge}`} />
                   </div>
-                  <Pill variant="outline">Section {t.syllabus}</Pill>
+                  <Pill>Section {t.syllabus}</Pill>
                 </div>
                 <h3 className="font-display text-xl tracking-wide uppercase leading-tight">{t.title}</h3>
                 <p className="text-text/70 text-[13.5px] mt-2 leading-relaxed">{t.hook}</p>
@@ -256,7 +217,7 @@ export function HomePage() {
           {WEEKLY_PLAN.map((w, i) => (
             <Card key={i} className="!p-4 w-[260px] shrink-0">
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="font-display text-2xl text-accent">W{i + 1}</span>
+                <span className="font-display text-2xl text-accent-dark">W{i + 1}</span>
                 <Pill>{w.label}</Pill>
               </div>
               <p className="text-[13px] text-text/80 leading-relaxed">{w.body}</p>
@@ -273,6 +234,25 @@ export function HomePage() {
             </Card>
           ))}
         </div>
+      </motion.div>
+
+      {/* SOCIAL PROOF */}
+      <SectionTitle icon="fa-solid fa-medal" badge={<Pill variant="accent">Pass stories</Pill>}>
+        From the dressing room
+      </SectionTitle>
+      <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {PASS_QUOTES.map((q) => (
+          <motion.div key={q.who} variants={fadeUp}>
+            <Card className="h-full">
+              <div className="flex items-center justify-between mb-2">
+                <Pill variant="primary">{q.score}</Pill>
+                <i className="fa-solid fa-quote-right text-accent-dark/40 text-2xl" />
+              </div>
+              <p className="text-[14px] leading-relaxed text-ink">{q.quote}</p>
+              <div className="mt-3 text-[11px] uppercase tracking-wider text-muted font-bold">{q.who}</div>
+            </Card>
+          </motion.div>
+        ))}
       </motion.div>
 
       {/* NEWS TICKER */}
@@ -322,7 +302,7 @@ export function HomePage() {
                     {r.name}
                     {r.me && <span className="ml-2 pill bg-accent text-bg !text-[9px]">YOU</span>}
                   </td>
-                  <td className="p-3 text-right font-mono text-accent">{r.points}</td>
+                  <td className="p-3 text-right font-mono text-primary">{r.points}</td>
                   <td className="p-3 text-right font-mono">{r.drills}</td>
                   <td className="p-3 text-right font-mono">
                     {r.streak >= 7 && '🔥'} {r.streak}
@@ -357,6 +337,229 @@ export function HomePage() {
   );
 }
 
+/* ── Hero ───────────────────────────────────────────────────── */
+function Hero({
+  fanName, state, t, cd, todaysMissionId,
+}: {
+  fanName: string;
+  state: { points: number; streak: number; drills: number };
+  t: { tier: string; emoji: string; next?: { tier: string; min: number } };
+  cd: { d: number; h: number };
+  todaysMissionId: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const [parallax, setParallax] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (reduced) return;
+    const el = containerRef.current; if (!el) return;
+    const handler = (e: MouseEvent) => {
+      const r = el.getBoundingClientRect();
+      const dx = ((e.clientX - r.left) / r.width - 0.5) * 18;
+      const dy = ((e.clientY - r.top) / r.height - 0.5) * 12;
+      setParallax({ x: dx, y: dy });
+    };
+    el.addEventListener('mousemove', handler);
+    return () => el.removeEventListener('mousemove', handler);
+  }, [reduced]);
+
+  return (
+    <motion.section
+      ref={containerRef}
+      variants={fadeUp}
+      className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft"
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-accent/[0.10]" />
+      <div className="absolute inset-0 pitch-grid opacity-40" />
+      <motion.div
+        className="aurora w-[420px] h-[420px] -top-32 -right-32"
+        style={{ background: 'radial-gradient(circle, rgba(245,184,0,0.55), transparent 70%)' }}
+        animate={{ x: parallax.x, y: parallax.y }}
+        transition={{ type: 'spring', stiffness: 80, damping: 20 }}
+      />
+      <motion.div
+        className="aurora w-[400px] h-[400px] -bottom-28 -left-28"
+        style={{ background: 'radial-gradient(circle, rgba(0,163,71,0.45), transparent 70%)' }}
+        animate={{ x: -parallax.x, y: -parallax.y }}
+        transition={{ type: 'spring', stiffness: 80, damping: 20 }}
+      />
+
+      <div className="relative p-6 md:p-10">
+        <div className="flex flex-wrap items-start gap-6">
+          <div className="flex-1 min-w-[260px]">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              <span className="chip text-danger">
+                <span className="w-1.5 h-1.5 rounded-full bg-danger animate-ping" /> LIVE
+              </span>
+              <span className="chip">Match-day brief</span>
+              <span className="chip text-primary">
+                <i className="fa-solid fa-headset" /> Voice Coach inside
+              </span>
+            </div>
+            <h1 className="font-display leading-[0.92] tracking-wide uppercase text-ink"
+                style={{ fontSize: 'var(--fs-hero)' }}>
+              Welcome back,<br />
+              <span className="text-gradient">{fanName}</span>
+            </h1>
+            <p className="mt-4 text-ink/80 max-w-xl leading-relaxed">
+              Today, train like Andrew Mower is in the dugout. One fixture, one drill, one model answer.
+              Stuck? Tap the headset bottom-right and ask out loud.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link to={`/topic/${todaysMissionId}`} className="btn-primary">
+                <i className="fa-solid fa-bolt" /> Today&apos;s mission
+              </Link>
+              <Link to="/practice" className="btn-accent">
+                <i className="fa-solid fa-stopwatch-20" /> Open practice centre
+              </Link>
+              <Link to="/memory" className="btn-outline">
+                <i className="fa-solid fa-brain" /> Memory Lab
+              </Link>
+            </div>
+          </div>
+
+          {/* SCOREBOARD */}
+          <div className="rounded-2xl border border-ink/20 bg-ink p-4 min-w-[300px] text-white shadow-floodlight relative overflow-hidden">
+            <div className="absolute inset-0 opacity-30 pitch-grid" />
+            <div className="relative">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Scoreboard</span>
+                <span className="text-[11px] font-mono text-accent">{t.emoji} {t.tier}</span>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <ScoreCell label="Points" value={state.points} accent="primary" />
+                <ScoreCell label="Streak" value={state.streak} accent="accent" suffix="d" />
+                <ScoreCell label="Drills" value={state.drills} accent="primary" />
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/10">
+                <div className="flex items-baseline justify-between mb-2">
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Kick-off in</span>
+                  <span className="text-[11px] font-mono text-accent">JUNE 2026 SITTING</span>
+                </div>
+                <div className="flex items-end gap-1.5">
+                  <span className="stadium-num text-5xl scoreboard-led" style={{ color: '#f5b800' }}>{cd.d}</span>
+                  <span className="text-white/60 text-xs mb-1.5">days</span>
+                  <span className="stadium-num text-3xl scoreboard-led ml-3" style={{ color: '#ffffff' }}>{cd.h}</span>
+                  <span className="text-white/60 text-xs mb-1">hrs</span>
+                </div>
+                {t.next && (() => {
+                  const prevMin = TIER_PREV_MIN(state.points);
+                  const span = Math.max(1, t.next.min - prevMin);
+                  const pct = Math.max(0, Math.min(100, ((state.points - prevMin) / span) * 100));
+                  return (
+                    <div className="mt-3">
+                      <div className="text-[11px] text-white/60 mb-1">
+                        To {t.next.tier}: {Math.max(0, t.next.min - state.points)} pts
+                      </div>
+                      <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-primary to-accent"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 1, ease: 'easeOut' }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
+function CoachShowcase() {
+  return (
+    <Card className="!p-0 overflow-hidden h-full">
+      <div className="p-6 md:p-7" style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #122046 80%)' }}>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="chip text-accent" style={{ borderColor: 'rgba(245,184,0,0.4)', background: 'rgba(245,184,0,0.10)' }}>
+            <i className="fa-solid fa-headset" /> Coach AI
+          </span>
+          <span className="chip text-white/70" style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.10)' }}>
+            Voice + text
+          </span>
+        </div>
+        <h3 className="font-display text-2xl md:text-3xl tracking-wide uppercase text-white leading-tight">
+          Ask out loud.<br />Get an examiner-grade answer.
+        </h3>
+        <p className="text-white/70 mt-3 leading-relaxed text-[14px]">
+          Hands-on the spreadsheet? Speak the question — the Coach hears you, replies in markdown,
+          and reads it back so you can keep typing. Tap the green headset (bottom-right) any time.
+        </p>
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {[
+            { icon: 'fa-microphone', label: 'Dictate' },
+            { icon: 'fa-volume-high', label: 'Speak back' },
+            { icon: 'fa-link', label: 'Cite topics' },
+          ].map((b) => (
+            <div key={b.label} className="stat-tile text-center">
+              <i className={`fa-solid ${b.icon} text-accent`} />
+              <div className="text-[11px] uppercase tracking-wider text-white/70 font-bold mt-1">{b.label}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 rounded-xl bg-white/[0.04] border border-white/10 p-3 text-[13px] text-white/85 leading-relaxed">
+          <span className="text-accent font-bold">You:</span> "How do I bank ESG marks in Section A?"<br />
+          <span className="text-primary-light font-bold">Coach:</span> "Three sentences. Issue → costed action → quantified outcome…"
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function MemoryShowcase() {
+  return (
+    <Card className="h-full overflow-hidden relative">
+      <div className="absolute -top-8 -right-8 w-44 h-44 rounded-full bg-primary/15 blur-3xl" />
+      <div className="absolute -bottom-8 -left-8 w-44 h-44 rounded-full bg-accent/15 blur-3xl" />
+      <div className="relative">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="chip text-primary"><i className="fa-solid fa-brain" /> Memory Lab</span>
+          <span className="chip">Spaced · palace · Feynman</span>
+        </div>
+        <h3 className="font-display text-2xl md:text-3xl tracking-wide uppercase text-ink leading-tight">
+          Remember the formulas<br /><span className="text-gradient">before exam morning.</span>
+        </h3>
+        <p className="text-ink/75 mt-3 leading-relaxed text-[14px]">
+          Drive a Leitner spaced-repetition queue, build a 10-room memory palace, and stress-test understanding
+          with the Feynman technique. All offline; all on your device.
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="rounded-xl border border-border bg-white p-3">
+            <div className="text-[11px] uppercase tracking-wider text-muted font-bold">Leitner box</div>
+            <div className="font-display text-2xl text-primary mt-1">5 stages</div>
+            <div className="text-[11.5px] text-ink/70">0d → 1d → 3d → 7d → 14d</div>
+          </div>
+          <div className="rounded-xl border border-border bg-white p-3">
+            <div className="text-[11px] uppercase tracking-wider text-muted font-bold">Mnemonic library</div>
+            <div className="font-display text-2xl text-accent-dark mt-1">10 acronyms</div>
+            <div className="text-[11.5px] text-ink/70">WACC, CAPM, BSOP…</div>
+          </div>
+        </div>
+        <Link to="/memory" className="btn-primary mt-4">
+          <i className="fa-solid fa-arrow-right" /> Open Memory Lab
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+function StatCard({ value, label, sub }: { value: number; label: string; sub: string }) {
+  const v = useCountUp(value, 1100);
+  return (
+    <motion.div variants={fadeUp} className="rounded-2xl border border-border bg-white p-4 shadow-soft">
+      <div className="stadium-num text-4xl text-primary leading-none">{v}</div>
+      <div className="text-[12px] uppercase tracking-wider text-ink font-bold mt-1.5">{label}</div>
+      <div className="text-[11px] text-muted mt-0.5">{sub}</div>
+    </motion.div>
+  );
+}
+
 const WEEKLY_PLAN: { label: string; body: string; topics: string[] }[] = [
   { label: 'Foundations', body: 'Set up the proforma. WACC ungear-regear drills. Read the syllabus once.', topics: ['coc', 'adviser'] },
   { label: 'NPV core', body: 'Inflation, tax timing, working capital. Drill three Section A problems.', topics: ['npv'] },
@@ -374,11 +577,12 @@ const WEEKLY_PLAN: { label: string; body: string; topics: string[] }[] = [
 
 function ScoreCell({ label, value, accent, suffix }: { label: string; value: number; accent: 'primary' | 'accent'; suffix?: string }) {
   const color = accent === 'primary' ? '#33d375' : '#f5b800';
+  const v = useCountUp(value, 800);
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
       <div className="text-[10px] uppercase tracking-[0.18em] text-white/60">{label}</div>
       <div className="stadium-num text-3xl scoreboard-led mt-1" style={{ color }}>
-        {value}
+        {v}
         {suffix && <span className="text-white/40 text-base ml-0.5">{suffix}</span>}
       </div>
     </div>
@@ -395,7 +599,7 @@ function FormStreak({ points }: { points: number }) {
         return (
           <span
             key={i}
-            className={`w-2 h-3 rounded-sm ${win ? 'bg-primary' : 'bg-white/10'}`}
+            className={`w-2 h-3 rounded-sm ${win ? 'bg-primary' : 'bg-slate-200'}`}
             title={win ? 'W' : '-'}
           />
         );
@@ -405,7 +609,6 @@ function FormStreak({ points }: { points: number }) {
 }
 
 function TIER_PREV_MIN(points: number): number {
-  // helper: previous tier threshold
   const ts = [0, 250, 750, 1500, 3000];
   let prev = 0;
   for (const v of ts) if (points >= v) prev = v;

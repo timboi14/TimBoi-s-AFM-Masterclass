@@ -367,6 +367,36 @@ const KB: { match: RegExp; reply: () => CoachReply }[] = [
       cite: ['behav'],
     }),
   },
+  {
+    match: /\b(memori[sz]e|memory palace|loci|mnemon|recall technique|spaced repetition|leitner|feynman|active recall|chunking|dual coding|elaborat)/i,
+    reply: () => ({
+      text:
+        "**Six techniques that beat re-reading every time:**\n\n" +
+        "1. **Active recall:** close the notes, write the formula from memory, then check. The retrieval *is* the learning. Re-reading feels productive but the brain doesn't encode.\n" +
+        "2. **Spaced repetition (Leitner 5-box):** seen today -> 1d -> 3d -> 7d -> 14d. Each correct recall promotes the card; each miss demotes to box 1. The Cards page does this for you.\n" +
+        "3. **Feynman technique:** explain the concept in plain English to an imaginary 12-year-old. Where you stumble is exactly where understanding is missing. Try it on M&M2 right now.\n" +
+        "4. **Memory palace (method of loci):** anchor each formula to a room in a place you know. WACC at the front door, CAPM in the kitchen, Black-Scholes in the bedroom. Walk the route mentally on exam morning.\n" +
+        "5. **Chunking:** APV is one chunk, not nine steps. Group: base case + tax shield + issue costs + subsidy. Four chunks recall faster than nine separate facts.\n" +
+        "6. **Dual coding:** pair every formula with a doodle. Swap diagram = arrows. Yield curve = a hill. Real option = a fork in the road. Verbal + visual encoding doubles retrieval paths.\n\n" +
+        "Open the **Memory Lab** page for working palaces, mnemonic generators, and a Leitner box you can drive with one click.",
+      cite: [],
+    }),
+  },
+  {
+    match: /\b(explain.*(simple|like.*5|eli5|plain english|in plain|analog)|analogy|metaphor)/i,
+    reply: () => ({
+      text:
+        "**Plain-English explainer mode.** Pick one of these and ask again with 'ELI5' in front:\n\n" +
+        "- **WACC = the average rent your money pays.** Equity rent + debt rent, weighted by how much you borrowed each from. Tax discount on the debt rent because interest is deductible.\n" +
+        "- **APV = NPV with the receipts itemised.** First, what would the project be worth if 100% equity-financed? Then add the cash you save because the taxman lets you deduct interest. Then add or subtract any one-off financing perks.\n" +
+        "- **Real option = paying for the right to change your mind.** Like buying a refundable plane ticket. The flexibility itself has value, even if you never use it.\n" +
+        "- **VaR = the worst night you'd expect 1 in 100 nights.** Doesn't tell you how bad the *worst-ever* night is; just sets the threshold.\n" +
+        "- **Black-Scholes = an option-priced calculator.** Inputs: today's price, strike, time, volatility, rate. Outputs: a fair premium. The d1, d2, N() machinery just turns those five numbers into a price.\n" +
+        "- **M&M2 = adding debt makes equity riskier, but the tax shield more than pays you back, up to a point.**\n\n" +
+        "Want me to explain a *specific* AFM concept this way? Type: 'ELI5 [topic]'.",
+      cite: [],
+    }),
+  },
 ];
 
 const FALLBACK: CoachReply = {
@@ -417,5 +447,7 @@ export const COACH_SUGGESTIONS = [
   'Walk me through the 3-column M&A valuation',
   'How do I bank ESG marks in a Section A scenario?',
   'Show me a money market hedge for a USD payable',
-  'Explain the M&M2 ungear-regear process step by step',
+  'Explain M&M2 ungear-regear step by step',
+  'ELI5 the difference between APV and NPV',
+  'Teach me a memory palace for the AFM formulas',
 ];

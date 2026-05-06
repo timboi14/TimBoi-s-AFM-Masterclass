@@ -1,8 +1,9 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { store, useStore, tierFor } from '@/lib/store';
 import { cn } from '@/lib/cn';
+import { CoachVoice } from '@/components/CoachVoice';
 
 const NAV = [
   { to: '/', label: 'Home', icon: 'fa-house' },
@@ -10,6 +11,7 @@ const NAV = [
   { to: '/practice', label: 'Practice', icon: 'fa-stopwatch-20', match: '/practice' },
   { to: '/theory', label: 'Theory', icon: 'fa-book' },
   { to: '/cards', label: 'Cards', icon: 'fa-clone' },
+  { to: '/memory', label: 'Memory Lab', icon: 'fa-brain' },
   { to: '/mock', label: 'Mock', icon: 'fa-stopwatch' },
   { to: '/formulas', label: 'Formulas', icon: 'fa-square-root-variable' },
   { to: '/exam-skills', label: 'Skills', icon: 'fa-trophy' },
@@ -19,6 +21,7 @@ export function Layout() {
   const location = useLocation();
   const state = useStore();
   const t = tierFor(state.points);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     if (state.fanName) store.bumpStreak();
@@ -28,67 +31,85 @@ export function Layout() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <div className="min-h-screen relative">
       <div className="pointer-events-none fixed inset-0 z-0 pitch-grid floodlight" />
-      <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 pb-32">
-        <header className="pt-5 pb-3 flex flex-wrap items-center gap-3">
-          <NavLink to="/" className="flex items-center gap-3 group">
-            <div className="relative w-12 h-12 grid place-items-center rounded-xl bg-ink overflow-hidden border border-ink/30">
-              <span className="font-display text-[16px] text-accent tracking-wider">TBA</span>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-accent/10 to-primary/0 group-hover:via-accent/30 transition-colors" />
-            </div>
-            <div>
-              <div className="font-display text-2xl tracking-wider leading-none text-ink">
-                TIMBOI&apos;S <span className="text-primary">ACADEMY</span>
+
+      {/* Sticky glass header — premium feel */}
+      <div
+        className={cn(
+          'sticky top-0 z-30 transition-all duration-300',
+          scrolled ? 'glass border-b border-border/70 shadow-[0_4px_20px_-12px_rgba(15,23,42,0.20)]' : 'bg-transparent',
+        )}
+      >
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
+          <header className="py-3 flex flex-wrap items-center gap-3">
+            <NavLink to="/" className="flex items-center gap-3 group">
+              <div className="relative w-11 h-11 grid place-items-center rounded-xl bg-ink overflow-hidden border border-ink/30">
+                <span className="font-display text-[15px] text-accent tracking-wider">TBA</span>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-accent/10 to-primary/0 group-hover:via-accent/30 transition-colors" />
               </div>
-              <div className="text-[11px] text-muted uppercase tracking-[0.18em] mt-1">
-                ACCA AFM Pass Engine, Match-day energy
+              <div>
+                <div className="font-display text-xl md:text-2xl tracking-wider leading-none text-ink">
+                  TIMBOI&apos;S <span className="text-primary">ACADEMY</span>
+                </div>
+                <div className="text-[10.5px] text-muted uppercase tracking-[0.18em] mt-1">
+                  ACCA AFM Pass Engine · Match-day energy
+                </div>
               </div>
+            </NavLink>
+
+            <div className="ml-auto hidden md:flex items-center gap-2">
+              <span className="chip">
+                <i className="fa-solid fa-fire text-accent-dark" /> Streak {state.streak}
+              </span>
+              <span className="chip">
+                <i className="fa-solid fa-bolt text-primary" /> {state.points} pts
+              </span>
+              <span className="chip" style={{ borderColor: 'rgba(245,184,0,0.5)', background: 'rgba(245,184,0,0.10)', color: '#866900' }}>
+                {t.emoji} {t.tier}
+              </span>
             </div>
-          </NavLink>
+          </header>
 
-          <div className="ml-auto hidden md:flex items-center gap-2">
-            <span className="pill border border-border bg-white">
-              <i className="fa-solid fa-fire text-accent-dark" /> Streak {state.streak}
-            </span>
-            <span className="pill border border-border bg-white">
-              <i className="fa-solid fa-bolt text-primary" /> {state.points} pts
-            </span>
-            <span className="pill border border-accent/50 bg-accent/10 text-accent-dark">
-              {t.emoji} {t.tier}
-            </span>
-          </div>
-        </header>
+          <nav className="pb-2 flex items-center gap-1 overflow-x-auto -mx-1 px-1 marquee-mask">
+            {NAV.map((item) => {
+              const isActive = item.match
+                ? location.pathname.startsWith(item.match)
+                : location.pathname === item.to;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={cn(
+                    'relative inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap',
+                    isActive ? 'text-white' : 'text-muted hover:text-ink hover:bg-slate-100',
+                  )}
+                >
+                  <i className={`fa-solid ${item.icon}`} />
+                  {item.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-0 rounded-lg bg-primary z-[-1] shadow-glow"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </NavLink>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
 
-        <nav className="mb-6 flex items-center gap-1 overflow-x-auto pb-2 -mx-1 px-1">
-          {NAV.map((item) => {
-            const isActive = item.match
-              ? location.pathname.startsWith(item.match)
-              : location.pathname === item.to;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  'relative inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap',
-                  isActive ? 'text-white' : 'text-muted hover:text-ink hover:bg-slate-100'
-                )}
-              >
-                <i className={`fa-solid ${item.icon}`} />
-                {item.label}
-                {isActive && (
-                  <motion.span
-                    layoutId="nav-active"
-                    className="absolute inset-0 rounded-lg bg-primary z-[-1] shadow-glow"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </NavLink>
-            );
-          })}
-        </nav>
-
+      <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 pt-4 pb-32">
         <AnimatePresence mode="wait">
           <motion.main
             key={location.pathname}
@@ -108,8 +129,14 @@ export function Layout() {
           <p className="mt-2">
             Built for the June 2026 sitting. Mower-style technique, Spurs energy, zero filler.
           </p>
+          <p className="mt-2 text-[11px] uppercase tracking-wider text-muted/70">
+            Press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">/</kbd> anywhere to summon Coach AI
+          </p>
         </footer>
       </div>
+
+      {/* Global voice-enabled coach */}
+      <CoachVoice />
     </div>
   );
 }
