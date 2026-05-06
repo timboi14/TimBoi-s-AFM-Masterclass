@@ -5,7 +5,6 @@ import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitiv
 import {
   SH_WEEKS,
   SH_KEY_DATES,
-  SH_SUPPORT,
   SH_TECHNICAL_ARTICLES,
   getCurrentShWeek,
   type ShWeek,
@@ -188,65 +187,6 @@ export function CoursePage() {
       </SectionTitle>
       <motion.div variants={fadeUp}>
         <BlackboscaCompanion />
-      </motion.div>
-
-      {/* TUTOR + ASSISTANT SUPPORT */}
-      <SectionTitle icon="fa-solid fa-headset" badge={<Pill variant="accent">Course support</Pill>}>
-        Reach the tutors
-      </SectionTitle>
-      <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <motion.div variants={fadeUp}>
-          <Card className="h-full">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-primary/15 grid place-items-center text-primary">
-                <i className="fa-solid fa-chalkboard-user" />
-              </div>
-              <div>
-                <div className="font-display text-base uppercase tracking-wide text-ink">Lead Tutor</div>
-                <div className="text-[11px] uppercase tracking-wider text-muted font-bold">Course Expert</div>
-              </div>
-            </div>
-            <a href={SH_SUPPORT.expert.linkedin} target="_blank" rel="noreferrer" className="text-[13px] text-primary hover:underline">
-              <i className="fa-brands fa-linkedin mr-1.5" /> Tutor LinkedIn
-            </a>
-            <p className="mt-2 text-[12.5px] text-muted">Support tutors available alongside the lead.</p>
-          </Card>
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <Card className="h-full">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-accent/15 grid place-items-center text-accent-dark">
-                <i className="fa-brands fa-whatsapp" />
-              </div>
-              <div>
-                <div className="font-display text-base uppercase tracking-wide text-ink">WhatsApp</div>
-                <div className="text-[11px] uppercase tracking-wider text-muted font-bold">{SH_SUPPORT.whatsappNote}</div>
-              </div>
-            </div>
-            <a href={`https://wa.me/${SH_SUPPORT.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="text-[13px] text-primary hover:underline font-mono">
-              {SH_SUPPORT.whatsapp}
-            </a>
-            <p className="mt-2 text-[12.5px] text-muted">For technical and exam-technique questions.</p>
-          </Card>
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <Card className="h-full">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-sky-500/15 grid place-items-center text-sky-600">
-                <i className="fa-solid fa-robot" />
-              </div>
-              <div>
-                <div className="font-display text-base uppercase tracking-wide text-ink">Course Assistant</div>
-                <div className="text-[11px] uppercase tracking-wider text-muted font-bold">24/7 AI tutor</div>
-              </div>
-            </div>
-            <a href={SH_SUPPORT.assistant.url} target="_blank" rel="noreferrer" className="text-[13px] text-primary hover:underline">
-              learning.accaglobal.com
-            </a>
-            <p className="mt-2 text-[12.5px] text-muted">{SH_SUPPORT.assistant.note}</p>
-            <p className="mt-1 text-[11.5px] text-muted">For admin/access: <code>studyhubplus@accaglobal.com</code></p>
-          </Card>
-        </motion.div>
       </motion.div>
 
       {/* ACCA TECHNICAL ARTICLES BUTTON-RACK */}

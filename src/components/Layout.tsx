@@ -88,7 +88,7 @@ export function Layout() {
             </div>
           </header>
 
-          <nav className="pb-2 flex items-center gap-1 overflow-x-auto -mx-1 px-1 marquee-mask">
+          <nav className="pb-2 flex flex-wrap items-center gap-1 -mx-1 px-1">
             {NAV.map((item) => {
               const isActive = item.match
                 ? location.pathname.startsWith(item.match)
@@ -98,11 +98,11 @@ export function Layout() {
                   key={item.to}
                   to={item.to}
                   className={cn(
-                    'relative inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap',
+                    'relative inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-colors whitespace-nowrap',
                     isActive ? 'text-white' : 'text-muted hover:text-ink hover:bg-slate-100',
                   )}
                 >
-                  <i className={`fa-solid ${item.icon}`} />
+                  <i className={`fa-solid ${item.icon} text-[12px]`} />
                   {item.label}
                   {isActive && (
                     <motion.span
