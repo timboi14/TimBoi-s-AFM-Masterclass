@@ -8,7 +8,7 @@ import { SH_KEY_DATES } from '@/data/shplus';
 
 const NAV = [
   { to: '/', label: 'Home', icon: 'fa-house' },
-  { to: '/course', label: 'SH+ Course', icon: 'fa-graduation-cap' },
+  { to: '/course', label: 'Course', icon: 'fa-graduation-cap' },
   { to: '/topic/adviser', label: 'Topics', icon: 'fa-list', match: '/topic' },
   { to: '/practice', label: 'Practice', icon: 'fa-stopwatch-20', match: '/practice' },
   { to: '/theory', label: 'Theory', icon: 'fa-book' },
@@ -136,7 +136,7 @@ export function Layout() {
             TECHNIQUE BEATS KNOWLEDGE ON EXAM DAY.
           </p>
           <p className="mt-2">
-            Built for the June 2026 sitting. Mower-style technique, Spurs energy, zero filler.
+            Built for the June 2026 sitting. Examiner-style technique, Spurs energy, zero filler.
           </p>
           <p className="mt-2 text-[11px] uppercase tracking-wider text-muted/70">
             Press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">/</kbd> anywhere to summon Coach AI

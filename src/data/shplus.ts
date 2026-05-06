@@ -1,10 +1,8 @@
 /**
- * Study Hub+ AFM Resit Course (June 2026 sitting) integration data.
- * Source: official ACCA SH+ course outline, Andrew Mower (Expert Tutor).
- * URL: https://learning.accaglobal.com/ilp/pages/course.jsf?courseId=3221428
- *
- * Each week maps SH+ deliverables to TimBoi Academy resources so progress
- * in one platform reinforces the other.
+ * AFM Resit Course (June 2026 sitting) integration data.
+ * Mirrors the official course schedule the user is following so progress
+ * in one platform reinforces the other. User-facing copy is generic
+ * (no name-drops); internal field names retained for compatibility.
  */
 
 export interface ShWeek {
@@ -130,7 +128,7 @@ export const SH_WEEKS: ShWeek[] = [
 
 export const SH_KEY_DATES: { date: string; label: string; tone: 'info' | 'warn' | 'critical' }[] = [
   { date: '2026-04-16T23:59:00', label: 'Exam entry deadline', tone: 'warn' },
-  { date: '2026-04-20T05:00:00', label: 'SH+ Week 1 unlocks', tone: 'info' },
+  { date: '2026-04-20T05:00:00', label: 'Course Week 1 unlocks', tone: 'info' },
   { date: '2026-05-03T23:59:00', label: 'Week 1 homework due (Investment Appraisal)', tone: 'warn' },
   { date: '2026-05-10T23:59:00', label: 'Week 2 homework due (Hedging)', tone: 'warn' },
   { date: '2026-05-17T23:59:00', label: 'Week 3 homework due (Valuations 50m)', tone: 'warn' },
@@ -140,14 +138,14 @@ export const SH_KEY_DATES: { date: string; label: string; tone: 'info' | 'warn' 
 ];
 
 export const SH_SUPPORT = {
-  expert: { name: 'Andrew Mower', role: 'Course Expert Tutor', linkedin: 'https://www.linkedin.com/in/andrewmower/' },
-  tutors: ['Isaac Phiri', 'Charlotte Bowden'],
+  expert: { name: 'Lead Tutor', role: 'Course Expert', linkedin: 'https://www.linkedin.com/in/andrewmower/' },
+  tutors: ['Support Tutor 1', 'Support Tutor 2'],
   email: 'studyhubplus@accaglobal.com',
   whatsapp: '+44 7418 311387',
   whatsappNote: 'Responses typically within 24 hours',
   assistant: {
     url: 'https://learning.accaglobal.com/',
-    note: 'SH+ Assistant: 24/7 AI support inside the SH+ portal. First-time login uses your ACCA ID (omit any leading zero).',
+    note: '24/7 AI support inside the course portal. First-time login uses your ACCA ID (omit any leading zero).',
   },
 };
 
@@ -161,7 +159,7 @@ export const SH_TECHNICAL_ARTICLES = [
   { title: 'Answering a Question', topic: 'adviser' },
 ];
 
-/** Auto-detect which SH+ week the user is currently in. */
+/** Auto-detect which course week the user is currently in. */
 export function getCurrentShWeek(now = new Date()): { week: ShWeek | null; status: 'pre' | 'live' | 'post-course' | 'exam-week' } {
   const t = +now;
   const examT = +new Date('2026-06-05T09:00:00');

@@ -148,16 +148,16 @@ export const SPOTLIGHTS: Spotlight[] = [
       'A simple trick. ' +
       'At the end of every long answer, write four short bullets, one per skill, tied to the case. ' +
       'Four bullets in three minutes can earn four marks. ' +
-      'Andrew Mower calls this the deliberate skill trick and it is the highest yield habit in AFM revision.',
+      'Some tutors call this the deliberate skill trick and it is the highest yield habit in AFM revision.',
     ties: ['adviser'],
   },
   {
     id: 'just-keep-swimming',
     category: 'mindset',
     title: 'Just keep swimming',
-    hookLine: 'Mower\'s rule for stuck calculations.',
+    hookLine: 'The rule for stuck calculations.',
     body:
-      'Andrew Mower has a phrase he repeats in every AFM resit course. ' +
+      'A phrase repeated in every AFM resit course worth its salt. ' +
       'Just keep swimming. ' +
       'It comes from the moment in the exam where a calculation breaks. ' +
       'You hit a wall on the working capital figure, the discount factor will not balance, the spreadsheet returns an error. ' +
@@ -178,7 +178,7 @@ export const SPOTLIGHTS: Spotlight[] = [
     body:
       'The exam is one hundred marks in three hours and fifteen minutes, including reading. ' +
       'That gives you one point nine five minutes per mark in raw arithmetic. ' +
-      'Mower rounds it to one point eight to leave a safety buffer. ' +
+      'Coaches round it to one point eight to leave a safety buffer. ' +
       'A twenty five mark question is forty five minutes of work. ' +
       'A fifty mark Section A is ninety minutes. ' +
       'When the budget is up, you stop. ' +

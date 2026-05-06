@@ -85,7 +85,7 @@ export function HomePage() {
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <Hero fanName={fanName} state={state} t={t} cd={cd} todaysMissionId={todaysMission.id} />
 
-      {/* SH+ THIS WEEK WIDGET */}
+      {/* COURSE THIS WEEK WIDGET */}
       <motion.div variants={fadeUp} className="mt-4">
         <ShPlusWidget />
       </motion.div>
@@ -535,7 +535,7 @@ function Hero({
               <span className="text-gradient">{fanName}</span>
             </h1>
             <p className="mt-4 text-ink/80 max-w-xl leading-relaxed">
-              Today, train like Andrew Mower is in the dugout. One fixture, one drill, one model answer.
+              Today, train like the examiner is in the dugout. One fixture, one drill, one model answer.
               Stuck? Tap the headset bottom-right and ask out loud.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -622,11 +622,11 @@ function ShPlusWidget() {
           </div>
           <div className="flex-1 min-w-[260px]">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <Pill variant="primary"><i className="fa-solid fa-graduation-cap" /> Study Hub+</Pill>
+              <Pill variant="primary"><i className="fa-solid fa-graduation-cap" /> Resit Course</Pill>
               <Pill variant={status === 'live' ? 'accent' : 'outline'}>
                 {status === 'live' ? 'Live this week' : status === 'pre' ? 'Up next' : status === 'exam-week' ? 'Exam week' : 'Course complete'}
               </Pill>
-              <Pill>{week?.tutorScenarios.length ? `Tutor: ${week.tutorScenarios.join(' & ')}` : 'Andrew Mower'}</Pill>
+              {week?.tutorScenarios.length ? <Pill>{`Walkthroughs: ${week.tutorScenarios.join(' & ')}`}</Pill> : null}
             </div>
             <h3 className="font-display text-xl tracking-wide uppercase text-ink leading-tight">
               {week ? week.title : 'Course complete'}
@@ -654,7 +654,7 @@ function ShPlusWidget() {
           <div className="h-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${pctOfCourse}%` }} />
         </div>
         <div className="mt-1.5 flex items-center justify-between text-[11px] text-muted">
-          <span>SH+ progress · {pctOfCourse}% through the 5-week course</span>
+          <span>Progress · {pctOfCourse}% through the 5-week course</span>
           <span className="text-primary font-bold group-hover:underline">Open companion <i className="fa-solid fa-arrow-right" /></span>
         </div>
       </Card>

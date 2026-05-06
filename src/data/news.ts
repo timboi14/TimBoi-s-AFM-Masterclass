@@ -14,11 +14,11 @@ export interface NewsItem {
 
 export const NEWS: NewsItem[] = [
   {
-    tag: 'SH+ COURSE',
-    title: 'Week 1 of Mower\'s Resit Course is live: Investment Appraisal',
-    body: 'Walkthroughs of Colvin Co and Robson Co are unlocked. Self-review case is Blackbosca Co (Üskistan international expansion). Homework due Sunday 3 May 23:59. Use the SH+ Companion page to track exit criteria as you go.',
+    tag: 'COURSE',
+    title: 'Week 1 of the Resit Course is live: Investment Appraisal',
+    body: 'Two guided walkthroughs are unlocked plus the Blackbosca Co self-review (international expansion). Homework due Sunday 3 May 23:59. Use the Course Companion page to track exit criteria as you go.',
     topic: 'npv',
-    cta: 'Open SH+ Companion',
+    cta: 'Open Course Companion',
   },
   {
     tag: 'EXAMINER',

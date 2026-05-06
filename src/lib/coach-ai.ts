@@ -271,7 +271,7 @@ const KB: { match: RegExp; reply: () => CoachReply }[] = [
         "2. **Analysis & Evaluation:** compare alternatives in numbers AND words. Sensitivity analysis. Sub-conclusions.\n" +
         "3. **Scepticism:** stress-test assumptions. Flag bias. \"Synergy of £14m looks aggressive given...\". Question the forecast.\n" +
         "4. **Commercial Acumen:** industry context, implementation feasibility, stakeholder pushback, ESG and reputational dimensions.\n\n" +
-        "**Mower's deliberate-skill trick:** at the end of every long answer, write 4 short bullets, one per skill, tied to the case. 4 bullets in 3 minutes can earn 4 marks.\n\n" +
+        "**The deliberate-skill trick:** at the end of every long answer, write 4 short bullets, one per skill, tied to the case. 4 bullets in 3 minutes can earn 4 marks.\n\n" +
         "**Common pattern:** candidates who score 50%+ on technical work earn full Professional Skills marks 9 times out of 10. Candidates who scrape 40% on technical lose ~5 of these too.",
       cite: [],
     }),

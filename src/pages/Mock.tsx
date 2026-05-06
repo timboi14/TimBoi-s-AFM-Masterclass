@@ -135,7 +135,7 @@ export function MockPage() {
               <h1 className="font-display text-4xl tracking-wide uppercase">Sep/Dec 2025 official paper</h1>
               <p className="text-text/80 mt-2 max-w-2xl">
                 Sit the live ACCA paper. Three cases worth 100 marks. 3 hours 15 minutes.
-                Reveal model answers and mark scheme afterwards. Andrew Mower style coaching note based on score band.
+                Reveal model answers and mark scheme afterwards. Examiner-style coaching note based on score band.
               </p>
             </div>
             <div className="rounded-xl border-2 border-border bg-slate-50 p-4 min-w-[200px] text-center">
@@ -298,7 +298,7 @@ function ScoreSummary({ score }: { score: Record<string, number> }) {
             <div className="text-[12px] text-muted mt-2">Pass mark 50</div>
           </div>
         </div>
-        <CoachTip title="Coach Mower says">{band.note}</CoachTip>
+        <CoachTip title="Coach says">{band.note}</CoachTip>
       </Card>
     </motion.div>
   );

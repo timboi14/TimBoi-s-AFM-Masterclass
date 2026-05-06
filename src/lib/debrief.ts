@@ -13,7 +13,7 @@ export type SkillRating = 1 | 2 | 3 | 4 | 5;
 export interface DebriefSession {
   id: string;
   createdAt: number;
-  weekNum: number;            // SH+ week (0 = foundations)
+  weekNum: number;            // course week (0 = foundations)
   topic: string;              // free text
   marks: number;              // total marks for the question
   timeAllowedMin: number;
@@ -173,7 +173,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
     name: 'Time discipline',
     verdict: !overshoot && !undershoot ? 'strong' : 'weak',
     note: overshoot
-      ? `Took ${s.timeTakenMin}m vs target ${Math.round(expectedMin)}m. Mower's rule: 1.8 min/mark, then move on.`
+      ? `Took ${s.timeTakenMin}m vs target ${Math.round(expectedMin)}m. Rule of thumb: 1.8 min/mark, then move on.`
       : undershoot
       ? `Used only ${s.timeTakenMin}m vs target ${Math.round(expectedMin)}m. Likely under-developed answer.`
       : `Within target window (~${Math.round(expectedMin)}m for ${s.marks} marks).`,

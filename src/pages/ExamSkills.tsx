@@ -10,7 +10,7 @@ export function ExamSkillsPage() {
           <h1 className="font-display text-4xl tracking-wide uppercase">Technique &gt; Knowledge</h1>
           <p className="text-text/80 mt-2 max-w-2xl">
             Knowledge gets you to 50%. Technique gets you to 65. This page is the technique playbook,
-            distilled in the Andrew Mower style: structure the answer, lead with the recommendation,
+            distilled in the examiner-rewarded style: structure the answer, lead with the recommendation,
             quote scenario figures, defend with sensitivity. Memorise the templates.
           </p>
         </Card>
@@ -77,7 +77,7 @@ export function ExamSkillsPage() {
           </Card>
         </div>
 
-        <CoachTip title="Mower template">
+        <CoachTip title="Recommendation template">
           Drop these phrases into the start of every paragraph: "The first concept is [N]. This means [E].
           In the case, [A]." Each paragraph then earns 3 marks instead of 1. Memorise the rhythm.
         </CoachTip>
@@ -113,7 +113,7 @@ export function ExamSkillsPage() {
               <tr className="text-[11px] uppercase tracking-[0.16em] text-muted">
                 <th className="text-left p-3">Time</th>
                 <th className="text-left p-3">Activity</th>
-                <th className="text-left p-3">Mower note</th>
+                <th className="text-left p-3">Coach note</th>
               </tr>
             </thead>
             <tbody>

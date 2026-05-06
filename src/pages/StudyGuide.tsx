@@ -177,7 +177,7 @@ function MarkBudget() {
             />
           </Field>
           <p className="mt-3 text-[12px] text-muted">
-            Mower&apos;s rule: 1 mark ≈ 1.8 min (3h 15m for 100 marks). For calc-heavy parts, target 40-50% on the model, 50-60% on commentary.
+            Rule of thumb: 1 mark ≈ 1.8 min (3h 15m for 100 marks). For calc-heavy parts, target 40-50% on the model, 50-60% on commentary.
           </p>
         </div>
         <div className="space-y-3">

@@ -85,7 +85,7 @@ export const SAMPLE_ANSWERS: Record<string, SampleAnswer> = {
       { text: 'Player development pipeline: the academy operation could produce future first-team players or saleable assets, generating cash flows beyond Year 5. The horizon mismatch (5-year DCF vs 10-15 year talent payoffs) is a structural understatement.', marks: 2, tag: 'discuss' },
     ],
     notes:
-      'The marks come from arguing each non-financial factor, not listing them. Quantify where possible. Mower technique: name the factor, explain its mechanism, apply to Lilywhite scenario, name the next action.',
+      'The marks come from arguing each non-financial factor, not listing them. Quantify where possible. Coach technique: name the factor, explain its mechanism, apply to Lilywhite scenario, name the next action.',
     profSkills: [],
   },
 
@@ -169,7 +169,7 @@ export const SAMPLE_ANSWERS: Record<string, SampleAnswer> = {
       { text: 'Recommendation: use forward contracts for all three instalments at the locked rates above. If, between now and the player medical, there is genuine deal risk, hedge the August instalment alone with a 1.17 strike call (additional cost £121k, retains right to walk away from £14m payable). Lock in November and February once the deal is fully certain.', marks: 1, tag: 'recommend' },
     ],
     notes:
-      'The Mower template: state each strategy, evaluate against board criteria, recommend. The hybrid recommendation (option for August, forwards for the other two) is the differentiator from a textbook answer.',
+      'The recommendation template: state each strategy, evaluate against board criteria, recommend. The hybrid recommendation (option for August, forwards for the other two) is the differentiator from a textbook answer.',
     profSkills: [],
   },
 

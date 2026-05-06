@@ -78,18 +78,18 @@ export function CoursePage() {
         <div className="aurora w-72 h-72 -bottom-12 -left-12" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
-            <span className="chip text-primary"><i className="fa-solid fa-graduation-cap" /> Study Hub+ Companion</span>
-            <span className="chip">Resit Course · June 2026</span>
+            <span className="chip text-primary"><i className="fa-solid fa-graduation-cap" /> Resit Roadmap</span>
+            <span className="chip">June 2026 sitting</span>
             <span className="chip" style={{ borderColor: 'rgba(14,165,233,0.4)', background: 'rgba(14,165,233,0.10)', color: '#0369a1' }}>
-              Tutor: Andrew Mower
+              5 weeks · 1 mock
             </span>
           </div>
           <h1 className="font-display text-4xl md:text-5xl tracking-wide uppercase text-ink leading-[0.95]">
-            Your SH+ schedule,<br /><span className="text-gradient">mirrored & tracked.</span>
+            Your resit schedule,<br /><span className="text-gradient">mirrored & tracked.</span>
           </h1>
           <p className="mt-4 max-w-2xl text-ink/80 leading-relaxed">
-            Five weeks. Five Mower walkthroughs. One mock. Every SH+ deliverable mapped to TimBoi&apos;s
-            Academy fixtures, theory cards and examiner traps so the two platforms reinforce each other.
+            Five weeks. Four guided walkthroughs. One full mock. Every course deliverable mapped to
+            TimBoi&apos;s Academy fixtures, theory cards and examiner traps so the two reinforce each other.
           </p>
 
           <div className="mt-6 grid sm:grid-cols-3 gap-3">
@@ -184,14 +184,14 @@ export function CoursePage() {
 
       {/* BLACKBOSCA STUDY COMPANION (Week 1 self-review) */}
       <SectionTitle icon="fa-solid fa-microscope" badge={<Pill variant="primary">Week 1 self-review</Pill>}>
-        Blackbosca Co · Üskistan study companion
+        Self-review study companion
       </SectionTitle>
       <motion.div variants={fadeUp}>
         <BlackboscaCompanion />
       </motion.div>
 
       {/* TUTOR + ASSISTANT SUPPORT */}
-      <SectionTitle icon="fa-solid fa-headset" badge={<Pill variant="accent">SH+ support</Pill>}>
+      <SectionTitle icon="fa-solid fa-headset" badge={<Pill variant="accent">Course support</Pill>}>
         Reach the tutors
       </SectionTitle>
       <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -202,14 +202,14 @@ export function CoursePage() {
                 <i className="fa-solid fa-chalkboard-user" />
               </div>
               <div>
-                <div className="font-display text-base uppercase tracking-wide text-ink">{SH_SUPPORT.expert.name}</div>
-                <div className="text-[11px] uppercase tracking-wider text-muted font-bold">{SH_SUPPORT.expert.role}</div>
+                <div className="font-display text-base uppercase tracking-wide text-ink">Lead Tutor</div>
+                <div className="text-[11px] uppercase tracking-wider text-muted font-bold">Course Expert</div>
               </div>
             </div>
             <a href={SH_SUPPORT.expert.linkedin} target="_blank" rel="noreferrer" className="text-[13px] text-primary hover:underline">
-              <i className="fa-brands fa-linkedin mr-1.5" /> LinkedIn profile
+              <i className="fa-brands fa-linkedin mr-1.5" /> Tutor LinkedIn
             </a>
-            <p className="mt-2 text-[12.5px] text-muted">Support tutors: {SH_SUPPORT.tutors.join(', ')}</p>
+            <p className="mt-2 text-[12.5px] text-muted">Support tutors available alongside the lead.</p>
           </Card>
         </motion.div>
         <motion.div variants={fadeUp}>
@@ -236,7 +236,7 @@ export function CoursePage() {
                 <i className="fa-solid fa-robot" />
               </div>
               <div>
-                <div className="font-display text-base uppercase tracking-wide text-ink">SH+ Assistant</div>
+                <div className="font-display text-base uppercase tracking-wide text-ink">Course Assistant</div>
                 <div className="text-[11px] uppercase tracking-wider text-muted font-bold">24/7 AI tutor</div>
               </div>
             </div>
@@ -250,7 +250,7 @@ export function CoursePage() {
       </motion.div>
 
       {/* ACCA TECHNICAL ARTICLES BUTTON-RACK */}
-      <SectionTitle icon="fa-solid fa-newspaper" badge={<Pill>From SH+ Foundations</Pill>}>
+      <SectionTitle icon="fa-solid fa-newspaper" badge={<Pill>Curriculum scope</Pill>}>
         ACCA technical articles in scope
       </SectionTitle>
       <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -286,7 +286,7 @@ export function CoursePage() {
             "Just keep swimming."
           </p>
           <p className="mt-3 text-ink/70 max-w-xl mx-auto">
-            Mower&apos;s rule for stuck calculations. Move on, bank what you can, come back if time allows.
+            The rule for stuck calculations. Move on, bank what you can, come back if time allows.
             Own-figure marks add up.
           </p>
         </Card>
@@ -331,7 +331,7 @@ function ThisWeekCard({ week, now, live }: { week: ShWeek; now: Date; live: bool
           </div>
           <h3 className="font-display text-2xl tracking-wide uppercase text-ink">{week.title}</h3>
           <p className="text-[13.5px] text-muted mt-1">{week.topic}</p>
-          <p className="text-[13.5px] text-ink mt-2"><strong>Mower says:</strong> {week.mowerEmphasis}</p>
+          <p className="text-[13.5px] text-ink mt-2"><strong>Focus:</strong> {week.mowerEmphasis}</p>
         </div>
         <div className="text-right">
           <div className="text-[11px] uppercase tracking-wider text-muted font-bold">Homework due</div>
@@ -454,7 +454,7 @@ function WeekCard({ week, isCurrent, progress, onToggle }: { week: ShWeek; isCur
           </div>
           <div className="space-y-3">
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted font-bold mb-1.5">Mower&apos;s emphasis</div>
+              <div className="text-[11px] uppercase tracking-wider text-muted font-bold mb-1.5">Focus this week</div>
               <p className="text-[13px] text-ink leading-relaxed">{week.mowerEmphasis}</p>
             </div>
             <div>
@@ -499,8 +499,8 @@ function BlackboscaCompanion() {
         Blackbosca Co · Üskistan project
       </h3>
       <p className="mt-3 text-[14px] text-ink/85 leading-relaxed">
-        The SH+ self-review for Week 1. Use this companion as your debrief framework: attempt the question
-        cold first inside the SH+ Practice Platform, then map your answer to the structure below.
+        The Week 1 self-review. Use this companion as your debrief framework: attempt the question
+        cold first on the practice platform, then map your answer to the structure below.
       </p>
 
       <div className="mt-5 grid md:grid-cols-2 gap-5">
@@ -515,7 +515,7 @@ function BlackboscaCompanion() {
           </ul>
         </div>
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-primary font-bold mb-2">Answer structure (Mower technique)</div>
+          <div className="text-[11px] uppercase tracking-wider text-primary font-bold mb-2">Answer structure</div>
           <ol className="space-y-2 text-[13.5px] text-ink leading-relaxed list-decimal pl-5">
             <li><strong>Lead with recommendation</strong> in one sentence (proceed / reject / proceed-conditional).</li>
             <li><strong>Headline financials:</strong> NPV in £, IRR if computed, payback if relevant. One line each.</li>

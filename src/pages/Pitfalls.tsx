@@ -9,7 +9,7 @@ const FILTERS: { id: string; label: string; predicate: (p: PitfallEntry) => bool
   { id: 'all', label: 'All', predicate: () => true },
   { id: 'high', label: 'High mark risk', predicate: (p) => p.marksAtRisk === 'high' },
   { id: 'examiner', label: 'Examiner-flagged', predicate: (p) => p.source === 'examiner' },
-  { id: 'mower', label: 'Mower technique', predicate: (p) => p.source === 'mower' },
+  { id: 'coach', label: 'Coach technique', predicate: (p) => p.source === 'mower' },
 ];
 
 export function PitfallsPage() {

@@ -1,5 +1,5 @@
 /**
- * 12 fixtures covering AFM syllabus A to E. Mower-style content:
+ * 12 fixtures covering AFM syllabus A to E. Examiner-style content:
  * Name. Explain. Apply. Examiner-rewarded technique only. No filler.
  * No em dashes anywhere.
  */
@@ -77,7 +77,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'In Drimpton (Sep/Dec 25), candidates who wrote "I recommend Drimpton proceeds with the £45m project subject to..." scored materially higher than those who opened with "Net present value is..."',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Lead. Justify. Scope. Then add the scenario figure. Four sentences, one mark each.',
         },
       },
@@ -134,7 +134,7 @@ export const TOPICS: Record<string, Topic> = {
     matchday: 'MD 2',
     badge: 'fa-percent',
     papers: ['Sep/Dec 23 Q2', 'Mar/Jun 24 Q1'],
-    hook: 'Get the discount rate wrong and the whole NPV is wrong. Mower drills the M&M2 ungear-regear pattern relentlessly.',
+    hook: 'Get the discount rate wrong and the whole NPV is wrong. Drill the M&M2 ungear-regear pattern relentlessly.',
     notes: [
       {
         heading: 'Ungear and regear betas',
@@ -148,7 +148,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'In Marnhall (Sep/Dec 25), the proxy was found in a different industry but with comparable operating leverage. Candidates who used the wrong proxy lost the entire 8 marks for cost of capital.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Always show the formula, sub in the numbers, quote the result, then a one-line comment. Four lines, four marks.',
         },
       },
@@ -206,7 +206,7 @@ export const TOPICS: Record<string, Topic> = {
     matchday: 'MD 3',
     badge: 'fa-chart-line',
     papers: ['Sep/Dec 24 Q1', 'Sep/Dec 25 Q1 Drimpton'],
-    hook: 'The biggest mark earner on the paper. Mower says: pristine layout earns marks before the maths even starts.',
+    hook: 'The biggest mark earner on the paper. Pristine layout earns marks before the maths even starts.',
     notes: [
       {
         heading: 'The proforma layout',
@@ -220,7 +220,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'Drimpton (Sep/Dec 25) had three inflation rates. Candidates who used a single rate lost 6+ marks.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Show working notes (W1 to W4) below the proforma. Each W is a separate mark.',
         },
       },
@@ -290,7 +290,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'Subsidised loans almost always appear when APV is tested. Always net of tax.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Tabulate base NPV, then list each financing effect on its own line. Examiner can tick each one.',
         },
       },
@@ -349,7 +349,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'A pharma company spends £20m on R&D so it can spend £200m on commercial rollout. The R&D is buying a call option on the bigger spend.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Always say which type of option, then map Pa, Pe, t, sigma, r before doing any maths.',
         },
       },
@@ -422,7 +422,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'Passmore (Sep/Dec 25): MMH gave a slightly worse result than forward. Examiner expected the comparison and a recommendation.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Always tabulate forward, MMH, futures, options side by side. Recommend at the bottom.',
         },
       },
@@ -478,7 +478,7 @@ export const TOPICS: Record<string, Topic> = {
     matchday: 'MD 7',
     badge: 'fa-percent',
     papers: ['Mar/Jun 25 Q3', 'Sep/Dec 23 Q3'],
-    hook: 'FRAs, futures, swaps, collars, swaptions. Mower says: every IR question is a hedging table plus a swap diagram.',
+    hook: 'FRAs, futures, swaps, collars, swaptions. Every IR question is a hedging table plus a swap diagram.',
     notes: [
       {
         heading: 'FRA: lock the rate today for a future borrowing',
@@ -491,7 +491,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'A 3v9 FRA covers borrowing starting in 3 months for 6 months.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Show the FRA settlement separately from the actual interest payment. Examiner wants to see both.',
         },
       },
@@ -549,7 +549,7 @@ export const TOPICS: Record<string, Topic> = {
     matchday: 'MD 8',
     badge: 'fa-handshake',
     papers: ['Sep/Dec 25 Q2 Marnhall', 'Mar/Jun 25 Q1'],
-    hook: 'Stand-alone, with synergy, max bid. Mower drills: never confuse stand-alone value with the maximum bid.',
+    hook: 'Stand-alone, with synergy, max bid. Never confuse stand-alone value with the maximum bid.',
     notes: [
       {
         heading: 'Three valuations, three columns',
@@ -562,7 +562,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'Marnhall (Sep/Dec 25): synergy of 14m, sellers demanded a 30% premium on stand-alone of 80m, so 104m max bid was tight.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Tabulate three columns: Stand-alone, With Synergy, Max Bid. Recommend a bid at the bottom.',
         },
       },
@@ -632,7 +632,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'A common 2-mark loser: FCFE discounted at WACC.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'State the model, define the cash flow, then build the table. Header earns marks.',
         },
       },
@@ -694,7 +694,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'A construction project funded by sukuk gives investors a claim on rental income from the building, not interest on the loan principal.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'When asked to recommend an Islamic instrument, always state which one, why it suits the scenario, and one alternative.',
         },
       },
@@ -748,7 +748,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'A bank with 1-day 99% VaR of £4m will breach roughly 2 to 3 times per year on average.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Quote z explicitly, state one-tail, give a confidence interpretation. Three marks for three sentences.',
         },
       },
@@ -819,7 +819,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'A board that bid 30% above stand-alone value because they were "committed" is showing entrapment plus overconfidence.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: 'Three biases is enough. For each: name, one-sentence explanation, one-sentence scenario application.',
         },
       },
@@ -833,7 +833,7 @@ export const TOPICS: Record<string, Topic> = {
         ],
         apply: 'Drimpton (Sep/Dec 25): the £8m emissions abatement reduces NPV by £1.2m but secures the social licence to operate. Without it the project faces protests, delaying first revenue by 18 months.',
         coach: {
-          title: 'Mower technique',
+          title: 'Coach technique',
           body: '3 marks for 3 sentences. Issue, action, outcome. Memorise that pattern.',
         },
       },

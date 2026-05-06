@@ -110,7 +110,7 @@ export function DebriefIndexPage() {
         <motion.div variants={fadeUp}>
           <Card className="!p-6 text-center">
             <p className="text-ink/70 leading-relaxed">
-              No debriefs yet. Sit a 25-mark practice question, submit it on the SH+ Practice Platform,
+              No debriefs yet. Sit a 25-mark practice question, submit it on the practice platform,
               then paste your answer here for a structural review.
             </p>
             <button onClick={startNew} className="btn-primary mt-4 mx-auto">
@@ -258,7 +258,7 @@ export function DebriefNewPage() {
                     className="w-full px-3 py-2.5 rounded-xl border border-border bg-white text-[14px]"
                   />
                 </Field>
-                <Field label="SH+ week">
+                <Field label="Course week">
                   <select value={weekNum} onChange={(e) => setWeekNum(Number(e.target.value))} className="w-full px-3 py-2.5 rounded-xl border border-border bg-white text-[14px]">
                     {[0,1,2,3,4,5].map((w) => <option key={w} value={w}>{w === 0 ? 'Foundations' : `Week ${w}`}</option>)}
                   </select>
