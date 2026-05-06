@@ -305,7 +305,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
             </Card>
           )}
 
-          {openPanels.sheet && <SpreadsheetWS setId={set.id} />}
+          {/* Spreadsheet is rendered in a full-width docked section below to give it the entire page width */}
           {openPanels.calc && <Calculator />}
           {openPanels.scratch && (
             <Card>
@@ -410,6 +410,13 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
         </div>
       </div>
 
+      {/* SPREADSHEET DOCK — full page width, resizable height */}
+      {openPanels.sheet && (
+        <div className="mt-4">
+          <SpreadsheetWS setId={set.id} onClose={() => togglePanel('sheet')} />
+        </div>
+      )}
+
       {/* COACH AI DRAWER */}
       <CoachDrawer open={coachOpen} onClose={() => setCoachOpen(false)} setContext={set.club + ' / ' + set.topic} />
     </div>
@@ -436,7 +443,9 @@ function ToolBtn({ icon, label, active, onClick, accent }: { icon: string; label
 /* ─────────────────────────────────────────────
    3) EXPANDABLE SPREADSHEET
    ───────────────────────────────────────────── */
-function SpreadsheetWS({ setId }: { setId: string }) {
+type SheetMode = 'inline' | 'docked';
+
+function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void }) {
   const sk = (key: string) => `tba_practice_${setId}_sheet_v2_${key}`;
   const [sheet, setSheet] = useState<Sheet>(() => {
     const raw = localStorage.getItem(sk('data'));
@@ -448,21 +457,53 @@ function SpreadsheetWS({ setId }: { setId: string }) {
   const [active, setActive] = useState<{ r: number; c: number } | null>({ r: 0, c: 0 });
   const [showFns, setShowFns] = useState(false);
   const [search, setSearch] = useState('');
-  const [fullscreen, setFullscreen] = useState(false);
   const [zoom, setZoom] = useState(100); // percent
 
-  useEffect(() => { localStorage.setItem(sk('data'), JSON.stringify(sheet)); }, [sheet, setId]);
+  // Mode + resizable dock height
+  const [mode, setMode] = useState<SheetMode>(() => (localStorage.getItem('tba_sheet_mode') as SheetMode) || 'inline');
+  const [dockHeight, setDockHeight] = useState<number>(() => {
+    const stored = localStorage.getItem('tba_sheet_dock_h');
+    if (stored) return Math.max(220, Math.min(window.innerHeight - 120, parseInt(stored, 10) || 480));
+    return Math.round(window.innerHeight * 0.55);
+  });
 
-  // Lock body scroll while in full-screen
+  useEffect(() => { localStorage.setItem(sk('data'), JSON.stringify(sheet)); }, [sheet, setId]);
+  useEffect(() => { localStorage.setItem('tba_sheet_mode', mode); }, [mode]);
+  useEffect(() => { localStorage.setItem('tba_sheet_dock_h', String(dockHeight)); }, [dockHeight]);
+
+  // ESC to switch back to inline mode
   useEffect(() => {
-    if (fullscreen) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setFullscreen(false); };
-      window.addEventListener('keydown', onKey);
-      return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
-    }
-  }, [fullscreen]);
+    if (mode !== 'docked') return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMode('inline'); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mode]);
+
+  // Drag handle: resize the dock by pulling the top edge up or down
+  const dragRef = useRef<{ startY: number; startH: number } | null>(null);
+  function onDragStart(e: React.MouseEvent | React.TouchEvent) {
+    e.preventDefault();
+    const y = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
+    dragRef.current = { startY: y, startH: dockHeight };
+    const onMove = (ev: MouseEvent | TouchEvent) => {
+      if (!dragRef.current) return;
+      const cy = 'touches' in ev ? (ev as TouchEvent).touches[0].clientY : (ev as MouseEvent).clientY;
+      const delta = dragRef.current.startY - cy; // dragging UP increases height
+      const next = Math.max(220, Math.min(window.innerHeight - 80, dragRef.current.startH + delta));
+      setDockHeight(next);
+    };
+    const onEnd = () => {
+      dragRef.current = null;
+      window.removeEventListener('mousemove', onMove as any);
+      window.removeEventListener('mouseup', onEnd);
+      window.removeEventListener('touchmove', onMove as any);
+      window.removeEventListener('touchend', onEnd);
+    };
+    window.addEventListener('mousemove', onMove as any);
+    window.addEventListener('mouseup', onEnd);
+    window.addEventListener('touchmove', onMove as any, { passive: false });
+    window.addEventListener('touchend', onEnd);
+  }
 
   function update(r: number, c: number, v: string) {
     setSheet((cur) => {
@@ -514,23 +555,24 @@ function SpreadsheetWS({ setId }: { setId: string }) {
     update(active.r, active.c, fnCall);
   }
 
-  // Visible viewport size. The sheet is scrollable inside this container so
-  // you can see plenty of cells without disturbing the page scroll.
-  const viewportClass = fullscreen
-    ? 'h-[calc(100vh-220px)]'
-    : 'h-[640px]';
+  // Viewport sizing:
+  //  - inline: tall but bounded so it sits in the page flow at full width
+  //  - docked: docked to the bottom of the viewport, height set by user via drag handle
+  // Shell padding/header consumes ~150px of the dock height for chrome.
+  const inlineHeight = 720;
+  const sheetViewportPx = mode === 'docked' ? Math.max(120, dockHeight - 180) : inlineHeight;
   const cellWidth = Math.round(112 * (zoom / 100));   // base 112px per column
   const headerHeight = 32;
   const cellHeight = Math.round(28 * (zoom / 100));
   const fontPx = Math.round(13 * (zoom / 100));
 
   const body = (
-    <Card className={cn(fullscreen && '!rounded-none !border-0 !p-4 h-full overflow-y-auto')}>
+    <Card className={cn(mode === 'docked' && '!rounded-none !border-0 !shadow-none h-full flex flex-col')}>
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <i className="fa-solid fa-table-cells text-primary" />
         <span className="font-display text-lg tracking-wide uppercase text-ink">Spreadsheet</span>
         <span className="text-[11px] text-muted">{rows} rows · {cols} cols</span>
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex items-center gap-1.5 flex-wrap">
           <button
             onClick={() => setZoom(Math.max(60, zoom - 10))}
             className="btn-outline !text-xs !py-1 !px-2"
@@ -547,13 +589,22 @@ function SpreadsheetWS({ setId }: { setId: string }) {
             <i className="fa-solid fa-magnifying-glass-plus" />
           </button>
           <button
-            onClick={() => setFullscreen(!fullscreen)}
-            className={cn('btn !text-xs !py-1 !px-2', fullscreen ? 'btn-accent' : 'btn-outline')}
-            title={fullscreen ? 'Exit full-screen (Esc)' : 'Full-screen'}
+            onClick={() => setMode(mode === 'docked' ? 'inline' : 'docked')}
+            className={cn('btn !text-xs !py-1 !px-2', mode === 'docked' ? 'btn-accent' : 'btn-outline')}
+            title={mode === 'docked' ? 'Undock (Esc)' : 'Dock to bottom (resizable)'}
           >
-            <i className={`fa-solid ${fullscreen ? 'fa-compress' : 'fa-expand'}`} />
-            <span className="hidden sm:inline">{fullscreen ? ' Exit' : ' Full screen'}</span>
+            <i className={`fa-solid ${mode === 'docked' ? 'fa-window-maximize' : 'fa-window-restore'}`} />
+            <span className="hidden sm:inline">{mode === 'docked' ? ' Undock' : ' Dock'}</span>
           </button>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="btn-outline !text-xs !py-1 !px-2"
+              title="Close spreadsheet"
+            >
+              <i className="fa-solid fa-xmark" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -618,8 +669,11 @@ function SpreadsheetWS({ setId }: { setId: string }) {
         )}
       </AnimatePresence>
 
-      {/* Sheet viewport: large fixed-height scroll container with sticky headers */}
-      <div className={cn('rounded-md border-2 border-border overflow-auto bg-white', viewportClass)} style={{ fontSize: fontPx }}>
+      {/* Sheet viewport: scrollable container, sticky row + column headers */}
+      <div
+        className={cn('rounded-md border-2 border-border overflow-auto bg-white', mode === 'docked' && 'flex-1 min-h-0')}
+        style={{ fontSize: fontPx, height: mode === 'docked' ? undefined : sheetViewportPx }}
+      >
         <table className="border-collapse font-mono w-max">
           <thead className="sticky top-0 z-20">
             <tr>
@@ -697,17 +751,35 @@ function SpreadsheetWS({ setId }: { setId: string }) {
       </div>
 
       <div className="mt-3 p-2.5 rounded-md bg-slate-50 border border-border text-[11px] text-muted">
-        <b>Tip:</b> hit <kbd className="px-1.5 py-0.5 rounded bg-white border border-border font-mono text-[10px]">Full screen</kbd> for a maximised sheet (Esc to exit). Zoom shrinks or grows every cell.
-        Built-ins include <code className="text-primary">NPV</code>, <code className="text-primary">IRR</code>, <code className="text-primary">MIRR</code>, <code className="text-primary">BSCALL</code>, <code className="text-primary">WACC</code>, <code className="text-primary">UNGEAR</code>, <code className="text-primary">REGEAR</code>, <code className="text-primary">CAPM</code>, <code className="text-primary">FISHER</code>, <code className="text-primary">IRP</code>, <code className="text-primary">PPP</code>, <code className="text-primary">AF</code>, <code className="text-primary">PV</code>, <code className="text-primary">FV</code>, <code className="text-primary">PMT</code>.
+        <b>Tip:</b> hit <kbd className="px-1.5 py-0.5 rounded bg-white border border-border font-mono text-[10px]">Dock</kbd> to slide the sheet to the bottom of the screen, then drag the top edge up or down to balance it against the question above. Esc undocks. Zoom shrinks or grows every cell.
+        Built-ins: <code className="text-primary">NPV</code>, <code className="text-primary">IRR</code>, <code className="text-primary">MIRR</code>, <code className="text-primary">BSCALL</code>, <code className="text-primary">WACC</code>, <code className="text-primary">UNGEAR</code>, <code className="text-primary">REGEAR</code>, <code className="text-primary">CAPM</code>, <code className="text-primary">FISHER</code>, <code className="text-primary">IRP</code>, <code className="text-primary">PPP</code>, <code className="text-primary">AF</code>, <code className="text-primary">PV</code>, <code className="text-primary">FV</code>, <code className="text-primary">PMT</code>.
       </div>
     </Card>
   );
 
-  if (fullscreen) {
+  if (mode === 'docked') {
     return (
-      <div className="fixed inset-0 z-50 bg-white flex flex-col">
-        {body}
-      </div>
+      <>
+        {/* Spacer keeps page content (questions, exhibits) visible above the docked sheet */}
+        <div style={{ height: dockHeight }} aria-hidden />
+        <div
+          className="fixed left-0 right-0 bottom-0 z-40 bg-white border-t-2 border-primary shadow-floodlight flex flex-col"
+          style={{ height: dockHeight }}
+        >
+          {/* Drag handle */}
+          <div
+            onMouseDown={onDragStart as any}
+            onTouchStart={onDragStart as any}
+            className="h-3 cursor-row-resize bg-gradient-to-b from-primary/15 to-primary/0 border-b border-primary/30 flex items-center justify-center group"
+            title="Drag to resize. Pull up for more sheet, pull down for more question"
+          >
+            <span className="w-12 h-1 rounded-full bg-primary/40 group-hover:bg-primary transition-colors" />
+          </div>
+          <div className="flex-1 overflow-auto p-3">
+            {body}
+          </div>
+        </div>
+      </>
     );
   }
   return body;
