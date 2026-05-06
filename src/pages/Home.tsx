@@ -5,8 +5,10 @@ import { store, tierFor, useStore } from '@/lib/store';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
 import { TOPIC_LIST, TOPICS } from '@/data/topics';
 import { NEWS } from '@/data/news';
+import { SH_KEY_DATES, SH_WEEKS, getCurrentShWeek } from '@/data/shplus';
+import { cn } from '@/lib/cn';
 
-const EXAM_DATE = new Date('2026-06-01T09:00:00');
+const EXAM_DATE = new Date('2026-06-05T09:00:00');
 
 function useCountdown() {
   const [now, setNow] = useState(() => new Date());
@@ -82,6 +84,11 @@ export function HomePage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <Hero fanName={fanName} state={state} t={t} cd={cd} todaysMissionId={todaysMission.id} />
+
+      {/* SH+ THIS WEEK WIDGET */}
+      <motion.div variants={fadeUp} className="mt-4">
+        <ShPlusWidget />
+      </motion.div>
 
       {/* STADIUM STATS STRIP */}
       <motion.div variants={fadeUp} className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -496,7 +503,7 @@ function Hero({
               <div className="mt-4 pt-3 border-t border-white/10">
                 <div className="flex items-baseline justify-between mb-2">
                   <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Kick-off in</span>
-                  <span className="text-[11px] font-mono text-accent">JUNE 2026 SITTING</span>
+                  <span className="text-[11px] font-mono text-accent">5 JUNE 2026</span>
                 </div>
                 <div className="flex items-end gap-1.5">
                   <span className="stadium-num text-5xl scoreboard-led" style={{ color: '#f5b800' }}>{cd.d}</span>
@@ -530,6 +537,64 @@ function Hero({
         </div>
       </div>
     </motion.section>
+  );
+}
+
+function ShPlusWidget() {
+  const now = new Date();
+  const { week, status } = getCurrentShWeek(now);
+  const nextDate = SH_KEY_DATES.find((d) => +new Date(d.date) > +now);
+  const days = (iso: string) => Math.ceil((+new Date(iso) - +now) / 86_400_000);
+  const totalWeeks = SH_WEEKS.length;
+  const weekIdx = week ? SH_WEEKS.findIndex((w) => w.num === week.num) : 0;
+  const pctOfCourse = Math.round(((weekIdx + (status === 'live' ? 0.5 : status === 'pre' ? 0 : 1)) / totalWeeks) * 100);
+
+  return (
+    <Link to="/course">
+      <Card className="!p-5 hover:border-primary transition-colors group">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-accent text-white grid place-items-center font-display text-xl">
+            {week ? `W${week.num}` : '—'}
+          </div>
+          <div className="flex-1 min-w-[260px]">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <Pill variant="primary"><i className="fa-solid fa-graduation-cap" /> Study Hub+</Pill>
+              <Pill variant={status === 'live' ? 'accent' : 'outline'}>
+                {status === 'live' ? 'Live this week' : status === 'pre' ? 'Up next' : status === 'exam-week' ? 'Exam week' : 'Course complete'}
+              </Pill>
+              <Pill>{week?.tutorScenarios.length ? `Tutor: ${week.tutorScenarios.join(' & ')}` : 'Andrew Mower'}</Pill>
+            </div>
+            <h3 className="font-display text-xl tracking-wide uppercase text-ink leading-tight">
+              {week ? week.title : 'Course complete'}
+            </h3>
+            <p className="text-[13px] text-ink/75 mt-1 leading-relaxed">
+              {week ? week.mowerEmphasis : 'You sat the exam. Wait for results 13 July 2026.'}
+            </p>
+          </div>
+          <div className="text-right min-w-[140px]">
+            <div className="text-[10px] uppercase tracking-wider text-muted font-bold">Next deadline</div>
+            {nextDate ? (
+              <>
+                <div className={cn('font-display text-3xl leading-none mt-0.5',
+                  days(nextDate.date) <= 2 ? 'text-danger' : days(nextDate.date) <= 7 ? 'text-accent-dark' : 'text-primary')}>
+                  {days(nextDate.date)}d
+                </div>
+                <div className="text-[11px] text-ink/70 mt-1 leading-tight">{nextDate.label}</div>
+              </>
+            ) : (
+              <div className="text-[12px] text-muted">No deadlines remaining</div>
+            )}
+          </div>
+        </div>
+        <div className="mt-3 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${pctOfCourse}%` }} />
+        </div>
+        <div className="mt-1.5 flex items-center justify-between text-[11px] text-muted">
+          <span>SH+ progress · {pctOfCourse}% through the 5-week course</span>
+          <span className="text-primary font-bold group-hover:underline">Open companion <i className="fa-solid fa-arrow-right" /></span>
+        </div>
+      </Card>
+    </Link>
   );
 }
 

@@ -14,6 +14,13 @@ export interface NewsItem {
 
 export const NEWS: NewsItem[] = [
   {
+    tag: 'SH+ COURSE',
+    title: 'Week 1 of Mower\'s Resit Course is live: Investment Appraisal',
+    body: 'Walkthroughs of Colvin Co and Robson Co are unlocked. Self-review case is Blackbosca Co (Üskistan international expansion). Homework due Sunday 3 May 23:59. Use the SH+ Companion page to track exit criteria as you go.',
+    topic: 'npv',
+    cta: 'Open SH+ Companion',
+  },
+  {
     tag: 'EXAMINER',
     title: 'Sep/Dec 2025 examiner report: candidates still lose marks on Fisher',
     body: 'The latest examiner report flagged that "many candidates mixed real and nominal cash flows" and that scenario figures were not quoted in the recommendation. Lead with the recommendation. State whether you are working real or nominal in W1. Stay there.',

@@ -7,6 +7,7 @@ import { CoachVoice } from '@/components/CoachVoice';
 
 const NAV = [
   { to: '/', label: 'Home', icon: 'fa-house' },
+  { to: '/course', label: 'SH+ Course', icon: 'fa-graduation-cap' },
   { to: '/topic/adviser', label: 'Topics', icon: 'fa-list', match: '/topic' },
   { to: '/practice', label: 'Practice', icon: 'fa-stopwatch-20', match: '/practice' },
   { to: '/theory', label: 'Theory', icon: 'fa-book' },

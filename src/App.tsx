@@ -11,6 +11,7 @@ import { PracticePage } from '@/pages/Practice';
 import { MemoryPage } from '@/pages/Memory';
 import { WarRoomPage } from '@/pages/WarRoom';
 import { ExaminerPage } from '@/pages/Examiner';
+import { CoursePage } from '@/pages/Course';
 import { NameOverlay } from '@/NameOverlay';
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/memory" element={<MemoryPage />} />
           <Route path="/war-room" element={<WarRoomPage />} />
           <Route path="/examiner" element={<ExaminerPage />} />
+          <Route path="/course" element={<CoursePage />} />
           <Route path="/mock" element={<MockPage />} />
           <Route path="/formulas" element={<FormulasPage />} />
           <Route path="/exam-skills" element={<ExamSkillsPage />} />
