@@ -200,21 +200,19 @@ function MarkBudget() {
 }
 
 function SplitBar({ split, marks }: { split: { calc: number; app: number; rec: number; ps: number }; marks: number }) {
-  // Allocate marks proportionally then reconcile so they SUM exactly to `marks`.
-  // Without reconciliation rounded segments can total marks ± 1.
+  // Reconciled split — first three segments round normally; PS absorbs
+  // rounding error so the four marks ALWAYS sum to `marks`.
+  const calc = Math.round((split.calc / 100) * marks);
+  const app = Math.round((split.app / 100) * marks);
+  const rec = Math.round((split.rec / 100) * marks);
+  const ps = marks - calc - app - rec;
   const raw = [
-    { label: 'Calc', pct: split.calc, color: '#00a347' },
-    { label: 'Application', pct: split.app, color: '#f5b800' },
-    { label: 'Recommend', pct: split.rec, color: '#0ea5e9' },
-    { label: 'PS', pct: split.ps, color: '#a78bfa' },
+    { label: 'Calc', pct: split.calc, color: '#00a347', marks: calc },
+    { label: 'Application', pct: split.app, color: '#f5b800', marks: app },
+    { label: 'Recommend', pct: split.rec, color: '#0ea5e9', marks: rec },
+    { label: 'PS', pct: split.ps, color: '#a78bfa', marks: ps },
   ];
-  const allocated = raw.map((s) => Math.floor((s.pct / 100) * marks));
-  const remainder = marks - allocated.reduce((n, x) => n + x, 0);
-  // Distribute remainder to the segments with the largest fractional part
-  const fractions = raw.map((s, i) => ({ i, frac: ((s.pct / 100) * marks) - allocated[i] }))
-    .sort((a, b) => b.frac - a.frac);
-  for (let k = 0; k < remainder; k++) allocated[fractions[k].i] += 1;
-  const segments = raw.map((s, i) => ({ ...s, marks: allocated[i] }));
+  const segments = raw;
   return (
     <div>
       <div className="h-3 rounded-full overflow-hidden flex" role="img" aria-label="Mark allocation split">

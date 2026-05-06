@@ -7,6 +7,9 @@ import { TOPIC_LIST, TOPICS } from '@/data/topics';
 import { NEWS } from '@/data/news';
 import { SH_KEY_DATES, SH_WEEKS, getCurrentShWeek } from '@/data/shplus';
 import { siteStats } from '@/lib/site-stats';
+import { PITFALLS } from '@/data/pitfalls';
+import { SPOTLIGHTS } from '@/data/spotlights';
+import { PAPERS } from '@/data/papers';
 import { cn } from '@/lib/cn';
 
 const EXAM_DATE = new Date('2026-06-05T09:00:00');
@@ -170,6 +173,14 @@ export function HomePage() {
             </Card>
           </Link>
         </motion.div>
+      </motion.div>
+
+      {/* DAILY QUEST */}
+      <SectionTitle icon="fa-solid fa-medal" badge={<Pill variant="accent">+30 pts</Pill>}>
+        Today&apos;s quest
+      </SectionTitle>
+      <motion.div variants={fadeUp}>
+        <DailyQuest />
       </motion.div>
 
       {/* REVISION TOOLKIT */}
@@ -605,6 +616,87 @@ function Hero({
   );
 }
 
+function DailyQuest() {
+  const todayKey = `tba_quest_${new Date().toISOString().slice(0, 10)}`;
+  const [done, setDone] = useState<{ pitfall: boolean; spotlight: boolean; question: boolean; rewarded: boolean }>(() => {
+    if (typeof window === 'undefined') return { pitfall: false, spotlight: false, question: false, rewarded: false };
+    try { return { pitfall: false, spotlight: false, question: false, rewarded: false, ...JSON.parse(localStorage.getItem(todayKey) || '{}') }; }
+    catch { return { pitfall: false, spotlight: false, question: false, rewarded: false }; }
+  });
+
+  // Deterministic pick per day so the quest is consistent if user reloads
+  const seed = useMemo(() => {
+    const k = todayKey;
+    let h = 0; for (let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  }, [todayKey]);
+
+  const pitfall = PITFALLS[seed % PITFALLS.length];
+  const spotlight = SPOTLIGHTS[(seed >> 3) % SPOTLIGHTS.length];
+  const allQuestions = useMemo(() => PAPERS.flatMap((p) => p.questions.map((q) => ({ p, q }))), []);
+  const question = allQuestions[(seed >> 7) % allQuestions.length];
+
+  useEffect(() => {
+    try { localStorage.setItem(todayKey, JSON.stringify(done)); } catch {}
+    if (done.pitfall && done.spotlight && done.question && !done.rewarded) {
+      store.set({ points: store.get().points + 30 });
+      setDone((d) => ({ ...d, rewarded: true }));
+    }
+  }, [done, todayKey]);
+
+  const allDone = done.pitfall && done.spotlight && done.question;
+
+  return (
+    <Card className={cn('!p-5 transition-colors', allDone ? 'border-primary shadow-glow' : '')}>
+      <div className="flex items-baseline justify-between gap-3 mb-3">
+        <div className="text-[11px] uppercase tracking-wider text-muted font-bold">
+          {allDone ? 'Quest complete · +30 banked' : 'Three small wins, one fixed reward'}
+        </div>
+        <div className="font-mono text-[12px] text-primary">
+          {[done.pitfall, done.spotlight, done.question].filter(Boolean).length}/3
+        </div>
+      </div>
+      <div className="grid md:grid-cols-3 gap-3">
+        <Link to="/pitfalls" onClick={() => setDone((d) => ({ ...d, pitfall: true }))}
+          className={cn('rounded-xl border p-3 hover:border-primary transition-colors', done.pitfall ? 'border-primary bg-primary/5' : 'border-border bg-white')}>
+          <div className="flex items-center gap-2 mb-1.5 text-[10.5px] uppercase tracking-wider font-bold">
+            <span className={cn('w-4 h-4 rounded grid place-items-center', done.pitfall ? 'bg-primary text-white' : 'bg-slate-200 text-muted')}>
+              {done.pitfall ? <i className="fa-solid fa-check text-[8px]" /> : '1'}
+            </span>
+            <span className="text-danger">Read a pitfall</span>
+          </div>
+          <p className="text-[13px] leading-snug text-ink line-clamp-3">"{pitfall.symptom}"</p>
+        </Link>
+        <button onClick={() => setDone((d) => ({ ...d, spotlight: true }))}
+          className={cn('text-left rounded-xl border p-3 hover:border-primary transition-colors', done.spotlight ? 'border-primary bg-primary/5' : 'border-border bg-white')}>
+          <div className="flex items-center gap-2 mb-1.5 text-[10.5px] uppercase tracking-wider font-bold">
+            <span className={cn('w-4 h-4 rounded grid place-items-center', done.spotlight ? 'bg-primary text-white' : 'bg-slate-200 text-muted')}>
+              {done.spotlight ? <i className="fa-solid fa-check text-[8px]" /> : '2'}
+            </span>
+            <span className="text-accent-dark">Hear a spotlight</span>
+          </div>
+          <p className="text-[13px] font-bold text-ink leading-tight">{spotlight.title}</p>
+          <p className="text-[12px] text-muted mt-1 line-clamp-2">{spotlight.hookLine}</p>
+          <span className="mt-2 inline-flex items-center gap-1 text-[11px] text-primary font-bold">
+            <i className="fa-solid fa-headset" /> Open Coach to listen
+          </span>
+        </button>
+        <Link to={`/revision/papers/${question.p.id}/q/${question.q.number}`} onClick={() => setDone((d) => ({ ...d, question: true }))}
+          className={cn('rounded-xl border p-3 hover:border-primary transition-colors', done.question ? 'border-primary bg-primary/5' : 'border-border bg-white')}>
+          <div className="flex items-center gap-2 mb-1.5 text-[10.5px] uppercase tracking-wider font-bold">
+            <span className={cn('w-4 h-4 rounded grid place-items-center', done.question ? 'bg-primary text-white' : 'bg-slate-200 text-muted')}>
+              {done.question ? <i className="fa-solid fa-check text-[8px]" /> : '3'}
+            </span>
+            <span className="text-primary">Open one question</span>
+          </div>
+          <p className="text-[13px] font-bold text-ink leading-tight">{question.p.label} · Q{question.q.number}</p>
+          <p className="text-[12px] text-muted mt-1 line-clamp-2">{question.q.caseName || question.q.hookLine || `${question.q.marks} marks`}</p>
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
 function ShPlusWidget() {
   const now = new Date();
   const { week, status } = getCurrentShWeek(now);
@@ -629,9 +721,9 @@ function ShPlusWidget() {
               </Pill>
               {week?.tutorScenarios.length ? <Pill>{`Walkthroughs: ${week.tutorScenarios.join(' & ')}`}</Pill> : null}
             </div>
-            <h3 className="font-display text-xl tracking-wide uppercase text-ink leading-tight">
+            <h2 className="font-display text-xl tracking-wide uppercase text-ink leading-tight">
               {week ? week.title : 'Course complete'}
-            </h3>
+            </h2>
             <p className="text-[13px] text-ink/75 mt-1 leading-relaxed">
               {week ? week.mowerEmphasis : 'You sat the exam. Wait for results 13 July 2026.'}
             </p>

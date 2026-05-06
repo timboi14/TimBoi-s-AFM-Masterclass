@@ -245,8 +245,11 @@ export function CoachVoice() {
                   </div>
                   <div className="flex-1">
                     <div className="font-display text-lg tracking-wide uppercase text-white leading-none">Coach AI</div>
-                    <div className="text-[11px] text-white/60 tracking-wider uppercase mt-1">
-                      {speaking ? 'Speaking…' : listening ? 'Listening…' : 'AFM tactics on tap'}
+                    <div className="text-[11px] text-white/60 tracking-wider uppercase mt-1 inline-flex items-center gap-1.5">
+                      {speaking ? 'Speaking…' : listening ? 'Listening…' : 'On-device coach · curated AFM technique'}
+                      <span title="Runs entirely on your device. No live LLM call, no homework input, no data leaves your browser." className="cursor-help text-white/50 hover:text-white">
+                        <i className="fa-solid fa-circle-info" />
+                      </span>
                     </div>
                   </div>
                   {supportsTTS && (

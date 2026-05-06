@@ -9,6 +9,7 @@ import { SH_KEY_DATES } from '@/data/shplus';
 const NAV = [
   { to: '/', label: 'Home', icon: 'fa-house' },
   { to: '/course', label: 'Course', icon: 'fa-graduation-cap' },
+  { to: '/revision', label: 'Revision', icon: 'fa-folder-open', match: '/revision' },
   { to: '/topic/adviser', label: 'Topics', icon: 'fa-list', match: '/topic' },
   { to: '/practice', label: 'Practice', icon: 'fa-stopwatch-20', match: '/practice' },
   { to: '/theory', label: 'Theory', icon: 'fa-book' },
@@ -47,6 +48,13 @@ export function Layout() {
 
   return (
     <div className="min-h-screen relative">
+      {/* Skip link for keyboard / screen-reader users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-accent focus:text-ink focus:px-3 focus:py-2 focus:rounded-lg focus:font-bold focus:shadow-floodlight"
+      >
+        Skip to main content
+      </a>
       <div className="pointer-events-none fixed inset-0 z-0 pitch-grid floodlight" />
 
       <DeadlineBanner />
@@ -121,6 +129,8 @@ export function Layout() {
       <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 pt-4 pb-32">
         <AnimatePresence mode="wait">
           <motion.main
+            id="main-content"
+            tabIndex={-1}
             key={location.pathname}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
