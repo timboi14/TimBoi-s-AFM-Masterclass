@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { store, useStore, tierFor } from '@/lib/store';
 import { cn } from '@/lib/cn';
 import { CoachVoice } from '@/components/CoachVoice';
+import { SH_KEY_DATES } from '@/data/shplus';
 
 const NAV = [
   { to: '/', label: 'Home', icon: 'fa-house' },
@@ -13,6 +14,9 @@ const NAV = [
   { to: '/theory', label: 'Theory', icon: 'fa-book' },
   { to: '/cards', label: 'Cards', icon: 'fa-clone' },
   { to: '/memory', label: 'Memory Lab', icon: 'fa-brain' },
+  { to: '/study-guide', label: 'Tools', icon: 'fa-toolbox' },
+  { to: '/debrief', label: 'Debrief', icon: 'fa-clipboard-check' },
+  { to: '/pitfalls', label: 'Pitfalls', icon: 'fa-triangle-exclamation' },
   { to: '/mock', label: 'Mock', icon: 'fa-stopwatch' },
   { to: '/formulas', label: 'Formulas', icon: 'fa-square-root-variable' },
   { to: '/exam-skills', label: 'Skills', icon: 'fa-trophy' },
@@ -44,6 +48,8 @@ export function Layout() {
   return (
     <div className="min-h-screen relative">
       <div className="pointer-events-none fixed inset-0 z-0 pitch-grid floodlight" />
+
+      <DeadlineBanner />
 
       {/* Sticky glass header — premium feel */}
       <div
@@ -140,6 +146,28 @@ export function Layout() {
 
       {/* Global voice-enabled coach */}
       <CoachVoice />
+    </div>
+  );
+}
+
+/** Persistent banner when the next hard deadline is < 48h away. */
+function DeadlineBanner() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const next = SH_KEY_DATES.find((d) => +new Date(d.date) > +now);
+  if (!next) return null;
+  const hours = Math.round((+new Date(next.date) - +now) / 3_600_000);
+  if (hours > 48) return null;
+
+  const tone = next.tone === 'critical' ? 'bg-danger text-white' : 'bg-accent text-ink';
+  return (
+    <div className={cn('relative z-40 text-center text-[12.5px] py-2 px-4 font-bold', tone)}>
+      <i className="fa-solid fa-bell mr-2" />
+      {hours <= 24 ? `${hours}h to deadline:` : `~${Math.round(hours / 24)}d to deadline:`} {next.label}
     </div>
   );
 }

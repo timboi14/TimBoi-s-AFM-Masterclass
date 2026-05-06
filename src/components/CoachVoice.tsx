@@ -239,6 +239,13 @@ export function CoachVoice() {
                 </div>
               </div>
 
+              {/* Honour-rule disclaimer — always visible */}
+              <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 text-[11.5px] leading-snug text-amber-900">
+                <i className="fa-solid fa-shield-halved text-amber-700" /> <strong>Coach won&apos;t write your homework.</strong>
+                {' '}It teaches AFM technique, examiner patterns and memorisation. For your <em>own</em> attempts use the
+                <span className="font-bold"> Debrief </span> page.
+              </div>
+
               {/* Body */}
               <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#fafbfd]">
                 {messages.length === 0 && (

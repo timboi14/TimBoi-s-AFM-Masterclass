@@ -171,6 +171,70 @@ export function HomePage() {
         </motion.div>
       </motion.div>
 
+      {/* REVISION TOOLKIT */}
+      <SectionTitle icon="fa-solid fa-toolbox" badge={<Pill variant="primary">Revision loop</Pill>}>
+        Your study toolkit
+      </SectionTitle>
+      <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <motion.div variants={fadeUp}>
+          <Link to="/debrief">
+            <Card className="h-full hover:border-sky-500 transition-colors group">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-sky-500/15 grid place-items-center text-sky-600">
+                  <i className="fa-solid fa-clipboard-check" />
+                </div>
+                <h3 className="font-display text-lg uppercase tracking-wide text-ink">Debrief</h3>
+              </div>
+              <p className="text-[13px] text-ink/75 leading-relaxed">
+                Paste your <em>own</em> attempt. Get a structural critique against the eight markers the
+                examiner rewards. Won&apos;t rewrite, won&apos;t solve — only review.
+              </p>
+              <span className="text-[12px] text-primary font-bold mt-2 inline-block group-hover:underline">
+                Start a session <i className="fa-solid fa-arrow-right" />
+              </span>
+            </Card>
+          </Link>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <Link to="/study-guide">
+            <Card className="h-full hover:border-primary transition-colors group">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-primary/15 grid place-items-center text-primary">
+                  <i className="fa-solid fa-toolbox" />
+                </div>
+                <h3 className="font-display text-lg uppercase tracking-wide text-ink">Tools</h3>
+              </div>
+              <p className="text-[13px] text-ink/75 leading-relaxed">
+                Mark Budget calculator, keyboard-driven Timer with pivot log, four Answer-Plan canvases,
+                requirement-verb cards.
+              </p>
+              <span className="text-[12px] text-primary font-bold mt-2 inline-block group-hover:underline">
+                Open Study Guide <i className="fa-solid fa-arrow-right" />
+              </span>
+            </Card>
+          </Link>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <Link to="/pitfalls">
+            <Card className="h-full hover:border-danger transition-colors group border-l-4 border-l-danger">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-danger/15 grid place-items-center text-danger">
+                  <i className="fa-solid fa-triangle-exclamation" />
+                </div>
+                <h3 className="font-display text-lg uppercase tracking-wide text-ink">Pitfalls</h3>
+              </div>
+              <p className="text-[13px] text-ink/75 leading-relaxed">
+                34 traps catalogued. Symptom → why it loses marks → fix. Searchable, filterable by topic
+                and risk level.
+              </p>
+              <span className="text-[12px] text-primary font-bold mt-2 inline-block group-hover:underline">
+                Browse traps <i className="fa-solid fa-arrow-right" />
+              </span>
+            </Card>
+          </Link>
+        </motion.div>
+      </motion.div>
+
       {/* TODAY'S MISSION */}
       <SectionTitle icon="fa-solid fa-crosshairs">Today&apos;s mission</SectionTitle>
       <motion.div variants={fadeUp}>

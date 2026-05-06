@@ -12,6 +12,9 @@ import { MemoryPage } from '@/pages/Memory';
 import { WarRoomPage } from '@/pages/WarRoom';
 import { ExaminerPage } from '@/pages/Examiner';
 import { CoursePage } from '@/pages/Course';
+import { DebriefIndexPage, DebriefNewPage, DebriefViewPage } from '@/pages/Debrief';
+import { PitfallsPage } from '@/pages/Pitfalls';
+import { StudyGuidePage } from '@/pages/StudyGuide';
 import { NameOverlay } from '@/NameOverlay';
 
 export default function App() {
@@ -30,6 +33,11 @@ export default function App() {
           <Route path="/war-room" element={<WarRoomPage />} />
           <Route path="/examiner" element={<ExaminerPage />} />
           <Route path="/course" element={<CoursePage />} />
+          <Route path="/debrief" element={<DebriefIndexPage />} />
+          <Route path="/debrief/new" element={<DebriefNewPage />} />
+          <Route path="/debrief/:id" element={<DebriefViewPage />} />
+          <Route path="/pitfalls" element={<PitfallsPage />} />
+          <Route path="/study-guide" element={<StudyGuidePage />} />
           <Route path="/mock" element={<MockPage />} />
           <Route path="/formulas" element={<FormulasPage />} />
           <Route path="/exam-skills" element={<ExamSkillsPage />} />
