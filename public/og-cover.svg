@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0f1e"/>
+      <stop offset="1" stop-color="#122046"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.15" r="0.7">
+      <stop offset="0" stop-color="#f5b800" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#f5b800" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.15" cy="0.95" r="0.7">
+      <stop offset="0" stop-color="#00a347" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#00a347" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M 56 0 L 0 0 0 56" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <g font-family="Anton, Impact, Arial Black, sans-serif" fill="#ffffff">
+    <text x="80" y="200" font-size="42" letter-spacing="6" fill="#f5b800">TBA · ACCA AFM PASS ENGINE</text>
+    <text x="80" y="320" font-size="120" letter-spacing="2">TIMBOI'S</text>
+    <text x="80" y="440" font-size="120" letter-spacing="2" fill="#00c25a">ACADEMY.</text>
+  </g>
+  <g font-family="DM Sans, Inter, system-ui, sans-serif" fill="#ffffff" fill-opacity="0.85">
+    <text x="80" y="510" font-size="28">Examiner traps, technique, and the four habits that pass AFM.</text>
+    <text x="80" y="555" font-size="22" fill-opacity="0.6">Match-day energy · June 2026 sitting</text>
+  </g>
+
+  <g transform="translate(960, 90)" fill="none" stroke="#f5b800" stroke-width="3">
+    <circle cx="80" cy="80" r="78"/>
+    <circle cx="80" cy="80" r="6" fill="#f5b800"/>
+    <text x="80" y="220" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="20" fill="#f5b800" fill-opacity="0.85" stroke="none">5 JUNE 2026</text>
+  </g>
+</svg>

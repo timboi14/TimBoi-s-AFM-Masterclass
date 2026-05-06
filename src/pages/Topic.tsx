@@ -1,21 +1,26 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TOPICS, TOPIC_LIST, type Drill } from '@/data/topics';
 import { Card, CoachTip, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
 import { store, useStore } from '@/lib/store';
 import { GoalBurst } from '@/components/Confetti';
+import { TopicTabs, type TopicTab } from '@/components/TopicTabs';
 import { cn } from '@/lib/cn';
-
-const TABS = ['Notes', 'Formulas', 'Worked', 'Drills', 'Pitfalls'] as const;
-type Tab = (typeof TABS)[number];
 
 export function TopicPage() {
   const { id = 'adviser' } = useParams();
   const topic = TOPICS[id];
-  const [tab, setTab] = useState<Tab>('Notes');
 
   if (!topic) return <Navigate to="/" replace />;
+
+  const tabs: TopicTab[] = [
+    { id: 'notes', label: 'Notes', icon: 'fa-book-open', render: () => <NotesTab topic={topic} /> },
+    { id: 'formulas', label: 'Formulas', icon: 'fa-square-root-variable', render: () => <FormulasTab topic={topic} /> },
+    { id: 'worked', label: 'Worked', icon: 'fa-pen-ruler', render: () => <WorkedTab topic={topic} /> },
+    { id: 'drills', label: 'Drills', icon: 'fa-stopwatch-20', render: () => <DrillsTab topic={topic} /> },
+    { id: 'pitfalls', label: 'Pitfalls', icon: 'fa-triangle-exclamation', render: () => <PitfallsTab topic={topic} /> },
+  ];
 
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
@@ -43,47 +48,10 @@ export function TopicPage() {
         </Card>
       </motion.div>
 
-      {/* TAB STRIP */}
-      <motion.div variants={fadeUp} className="mt-6 flex flex-wrap gap-1.5 p-1 rounded-xl bg-card border border-border w-fit">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={cn(
-              'relative px-4 py-2 rounded-lg text-sm font-bold transition-colors',
-              tab === t ? 'text-bg' : 'text-muted hover:text-text'
-            )}
-          >
-            {tab === t && (
-              <motion.span
-                layoutId="topic-tab"
-                className="absolute inset-0 rounded-lg bg-accent z-0"
-                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              />
-            )}
-            <span className="relative z-10">{t}</span>
-          </button>
-        ))}
+      {/* ACCESSIBLE TABS */}
+      <motion.div variants={fadeUp} className="mt-6">
+        <TopicTabs tabs={tabs} defaultId="notes" />
       </motion.div>
-
-      {/* TAB BODY */}
-      <div className="mt-6">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={tab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.25 }}
-          >
-            {tab === 'Notes' && <NotesTab topic={topic} />}
-            {tab === 'Formulas' && <FormulasTab topic={topic} />}
-            {tab === 'Worked' && <WorkedTab topic={topic} />}
-            {tab === 'Drills' && <DrillsTab topic={topic} />}
-            {tab === 'Pitfalls' && <PitfallsTab topic={topic} />}
-          </motion.div>
-        </AnimatePresence>
-      </div>
 
       {/* NEXT FIXTURE */}
       <SectionTitle icon="fa-solid fa-forward">Next fixture</SectionTitle>

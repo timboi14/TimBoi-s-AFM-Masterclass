@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
+import { siteStats } from '@/lib/site-stats';
 import { cn } from '@/lib/cn';
 
 const WAR_KEY = 'tba_warroom_v1';
@@ -86,7 +87,7 @@ const FN_LIBRARY: { fn: string; usage: string; afm: string }[] = [
   { fn: 'SUMPRODUCT', usage: 'SUMPRODUCT(probs, outcomes)', afm: 'Expected NPV with discrete probabilities. Faster than IF chains.' },
 ];
 
-const COMMON_LOSERS: { topic: string; loss: string; fix: string }[] = [
+export const COMMON_LOSERS: { topic: string; loss: string; fix: string }[] = [
   { topic: 'NPV', loss: 'Mixing real cash flows with a nominal discount rate (Fisher trap)', fix: 'State whether you are working in real or nominal terms in W1. Stay consistent.' },
   { topic: 'NPV', loss: 'Treating tax-allowable depreciation as a cash outflow', fix: 'Depreciation is not cash. The tax SAVING on it (Dep × T) is the cash flow.' },
   { topic: 'WACC', loss: 'Using book values not market values for E and D weights', fix: 'Always market values unless told otherwise. Quote the source.' },
@@ -157,7 +158,7 @@ export function WarRoomPage() {
           </h1>
           <p className="mt-4 max-w-2xl text-ink/80 leading-relaxed">
             What to do tonight, what to do tomorrow morning, and what to do in the first and last minutes of the paper.
-            Plus the calculator shortcuts, command-word translations, and the 14 mistakes that cost candidates the pass.
+            Plus the calculator shortcuts, command-word translations, and the {siteStats.warRoomTraps} mistakes that cost candidates the pass.
           </p>
           <div className="mt-5 flex items-center gap-4">
             <div className="flex-1 max-w-xl">
@@ -320,7 +321,7 @@ export function WarRoomPage() {
       </motion.div>
 
       {/* Common losers */}
-      <SectionTitle icon="fa-solid fa-triangle-exclamation" badge={<Pill variant="danger">14 traps</Pill>}>
+      <SectionTitle icon="fa-solid fa-triangle-exclamation" badge={<Pill variant="danger">{siteStats.warRoomTraps} traps</Pill>}>
         Mistakes that cost the pass
       </SectionTitle>
       <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-3">

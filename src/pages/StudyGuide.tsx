@@ -200,25 +200,34 @@ function MarkBudget() {
 }
 
 function SplitBar({ split, marks }: { split: { calc: number; app: number; rec: number; ps: number }; marks: number }) {
-  const segments = [
+  // Allocate marks proportionally then reconcile so they SUM exactly to `marks`.
+  // Without reconciliation rounded segments can total marks ± 1.
+  const raw = [
     { label: 'Calc', pct: split.calc, color: '#00a347' },
     { label: 'Application', pct: split.app, color: '#f5b800' },
     { label: 'Recommend', pct: split.rec, color: '#0ea5e9' },
     { label: 'PS', pct: split.ps, color: '#a78bfa' },
   ];
+  const allocated = raw.map((s) => Math.floor((s.pct / 100) * marks));
+  const remainder = marks - allocated.reduce((n, x) => n + x, 0);
+  // Distribute remainder to the segments with the largest fractional part
+  const fractions = raw.map((s, i) => ({ i, frac: ((s.pct / 100) * marks) - allocated[i] }))
+    .sort((a, b) => b.frac - a.frac);
+  for (let k = 0; k < remainder; k++) allocated[fractions[k].i] += 1;
+  const segments = raw.map((s, i) => ({ ...s, marks: allocated[i] }));
   return (
     <div>
-      <div className="h-3 rounded-full overflow-hidden flex">
+      <div className="h-3 rounded-full overflow-hidden flex" role="img" aria-label="Mark allocation split">
         {segments.map((s) => (
-          <div key={s.label} style={{ width: `${s.pct}%`, background: s.color }} title={`${s.label} ${s.pct}%`} />
+          <div key={s.label} style={{ width: `${s.pct}%`, background: s.color }} title={`${s.label} ${s.pct}% · ${s.marks}m`} />
         ))}
       </div>
       <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11.5px]">
         {segments.map((s) => (
           <div key={s.label} className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm" style={{ background: s.color }} />
+            <span className="w-2.5 h-2.5 rounded-sm" style={{ background: s.color }} aria-hidden="true" />
             <span className="text-muted">{s.label}</span>
-            <span className="text-ink font-mono ml-auto">{Math.round((s.pct / 100) * marks)}m</span>
+            <span className="text-ink font-mono ml-auto">{s.marks}m</span>
           </div>
         ))}
       </div>

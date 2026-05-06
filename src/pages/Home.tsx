@@ -6,6 +6,7 @@ import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitiv
 import { TOPIC_LIST, TOPICS } from '@/data/topics';
 import { NEWS } from '@/data/news';
 import { SH_KEY_DATES, SH_WEEKS, getCurrentShWeek } from '@/data/shplus';
+import { siteStats } from '@/lib/site-stats';
 import { cn } from '@/lib/cn';
 
 const EXAM_DATE = new Date('2026-06-05T09:00:00');
@@ -57,10 +58,10 @@ const PASS_QUOTES = [
 ];
 
 const STADIUM_STATS = [
-  { value: 14, label: 'Practice exams', sub: '450 marks · CBE shell' },
-  { value: 64, label: 'Theory Q&A', sub: 'Bullets + full model' },
-  { value: 12, label: 'Group-stage topics', sub: 'A · B · C · D/E mapped' },
-  { value: 24, label: 'Worked drills', sub: 'Mar/Jun 23 → Sep/Dec 25' },
+  { value: siteStats.practiceSets, label: 'Practice exams', sub: `${siteStats.practiceMarks} marks · CBE shell` },
+  { value: siteStats.theoryCards, label: 'Theory Q&A', sub: 'Bullets + full model' },
+  { value: siteStats.topics, label: 'Group-stage topics', sub: 'A · B · C · D/E mapped' },
+  { value: siteStats.drills, label: 'Worked drills', sub: 'Mar/Jun 23 → Sep/Dec 25' },
 ];
 
 export function HomePage() {
@@ -127,14 +128,14 @@ export function HomePage() {
                   <span className="chip">SD24 → SD25</span>
                 </div>
                 <h3 className="font-display text-2xl tracking-wide uppercase text-ink leading-tight">
-                  7 cases. 24 traps.<br />Every one with the fix.
+                  {siteStats.examinerCases} cases. {siteStats.examinerTraps} traps.<br />Every one with the fix.
                 </h3>
                 <p className="mt-3 text-ink/75 text-[14px] leading-relaxed">
-                  Drimpton, Halstock, Passmore, Kampai, Northney, Zulla. The exact mistakes the examiner
-                  flagged, with the technique that earns the mark instead.
+                  The exact mistakes the examiner has flagged across recent sittings,
+                  with the technique that earns the mark instead.
                 </p>
                 <div className="mt-3 flex items-center gap-2">
-                  <Pill variant="primary">9 verbatim quotes</Pill>
+                  <Pill variant="primary">{siteStats.examinerQuotes} verbatim quotes</Pill>
                   <Pill>7-rule cheat-sheet</Pill>
                 </div>
                 <span className="btn-outline mt-4 inline-flex"><i className="fa-solid fa-arrow-right" /> Open Examiner Reports</span>
@@ -158,10 +159,10 @@ export function HomePage() {
                 </h3>
                 <p className="mt-3 text-ink/75 text-[14px] leading-relaxed">
                   Tonight&apos;s checklist, tomorrow&apos;s opening 10 minutes, the closing 5 minutes,
-                  command-word translator, CBE shortcuts, and the 14 mistakes that cost the pass.
+                  command-word translator, CBE shortcuts, and the {siteStats.warRoomTraps} mistakes that cost the pass.
                 </p>
                 <div className="mt-3 flex items-center gap-2">
-                  <Pill variant="danger">14 traps</Pill>
+                  <Pill variant="danger">{siteStats.warRoomTraps} traps</Pill>
                   <Pill variant="accent">8 spreadsheet shortcuts</Pill>
                 </div>
                 <span className="btn-outline mt-4 inline-flex"><i className="fa-solid fa-arrow-right" /> Open War Room</span>
@@ -224,8 +225,8 @@ export function HomePage() {
                 <h3 className="font-display text-lg uppercase tracking-wide text-ink">Pitfalls</h3>
               </div>
               <p className="text-[13px] text-ink/75 leading-relaxed">
-                34 traps catalogued. Symptom → why it loses marks → fix. Searchable, filterable by topic
-                and risk level.
+                {siteStats.pitfallsLibrary} traps catalogued. Symptom → why it loses marks → fix. Searchable,
+                filterable by topic and risk level.
               </p>
               <span className="text-[12px] text-primary font-bold mt-2 inline-block group-hover:underline">
                 Browse traps <i className="fa-solid fa-arrow-right" />
@@ -727,7 +728,7 @@ function MemoryShowcase() {
           </div>
           <div className="rounded-xl border border-border bg-white p-3">
             <div className="text-[11px] uppercase tracking-wider text-muted font-bold">Mnemonic library</div>
-            <div className="font-display text-2xl text-accent-dark mt-1">10 acronyms</div>
+            <div className="font-display text-2xl text-accent-dark mt-1">{siteStats.mnemonics} acronyms</div>
             <div className="text-[11.5px] text-ink/70">WACC, CAPM, BSOP…</div>
           </div>
         </div>

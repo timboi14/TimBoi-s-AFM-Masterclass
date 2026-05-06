@@ -16,11 +16,13 @@ import { DebriefIndexPage, DebriefNewPage, DebriefViewPage } from '@/pages/Debri
 import { PitfallsPage } from '@/pages/Pitfalls';
 import { StudyGuidePage } from '@/pages/StudyGuide';
 import { NameOverlay } from '@/NameOverlay';
+import { Onboarding } from '@/components/Onboarding';
 
 export default function App() {
   return (
     <BrowserRouter>
       <NameOverlay />
+      <Onboarding />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
 import { PITFALLS, type PitfallEntry } from '@/data/pitfalls';
 import { TOPICS } from '@/data/topics';
+import { SOURCE_LABELS } from '@/lib/source-labels';
 import { cn } from '@/lib/cn';
 
 const FILTERS: { id: string; label: string; predicate: (p: PitfallEntry) => boolean }[] = [
@@ -143,13 +144,13 @@ export function PitfallsPage() {
 
 function PitfallCard({ p }: { p: PitfallEntry }) {
   const riskColor = p.marksAtRisk === 'high' ? 'danger' : p.marksAtRisk === 'mid' ? 'accent' : 'outline';
-  const sourceIcon = p.source === 'examiner' ? 'fa-file-signature' : p.source === 'mower' ? 'fa-chalkboard-user' : p.source === 'acowtancy' ? 'fa-graduation-cap' : 'fa-shield-halved';
+  const meta = SOURCE_LABELS[p.source];
   return (
     <Card className="h-full !p-5">
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <Pill variant={riskColor}>{p.marksAtRisk === 'high' ? 'High risk' : p.marksAtRisk === 'mid' ? 'Mid risk' : 'Low risk'}</Pill>
-        <span className="chip text-muted">
-          <i className={`fa-solid ${sourceIcon}`} /> {p.source}
+        <span className="chip text-muted" title={meta.tooltip}>
+          <i className={`fa-solid ${meta.icon}`} aria-hidden="true" /> {meta.label}
         </span>
         <div className="ml-auto flex flex-wrap gap-1">
           {p.topics.map((t) => {

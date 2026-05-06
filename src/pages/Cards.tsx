@@ -123,10 +123,13 @@ export function CardsPage() {
         </Card>
       </motion.div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <h2 className="sr-only">Choose a deck</h2>
+      <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Flashcard decks">
         {DECKS.map((d) => (
           <button
             key={d.key}
+            role="tab"
+            aria-selected={deckKey === d.key}
             onClick={() => {
               setDeckKey(d.key);
               setIdx(0);
@@ -135,10 +138,12 @@ export function CardsPage() {
             }}
             className={cn('pill border border-border', deckKey === d.key && 'bg-primary text-bg')}
           >
-            <i className={`fa-solid ${d.icon}`} /> {d.label}
+            <i className={`fa-solid ${d.icon}`} aria-hidden="true" /> {d.label}
           </button>
         ))}
       </div>
+
+      <h3 className="sr-only">{DECKS.find((d) => d.key === deckKey)!.label} · card {idx + 1} of {cards.length}</h3>
 
       {/* progress */}
       <div className="mt-6 flex items-center gap-3">
