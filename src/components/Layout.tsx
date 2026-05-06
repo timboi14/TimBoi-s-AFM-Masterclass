@@ -15,6 +15,8 @@ const NAV = [
   { to: '/mock', label: 'Mock', icon: 'fa-stopwatch' },
   { to: '/formulas', label: 'Formulas', icon: 'fa-square-root-variable' },
   { to: '/exam-skills', label: 'Skills', icon: 'fa-trophy' },
+  { to: '/examiner', label: 'Examiner', icon: 'fa-file-signature' },
+  { to: '/war-room', label: 'War Room', icon: 'fa-shield-halved' },
 ];
 
 export function Layout() {

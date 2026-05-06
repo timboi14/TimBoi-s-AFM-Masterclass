@@ -103,6 +103,67 @@ export function HomePage() {
         </motion.div>
       </motion.div>
 
+      {/* EXAMINER × WAR ROOM */}
+      <SectionTitle icon="fa-solid fa-file-signature" badge={<Pill variant="danger">Mar 2026 pass rate 44%</Pill>}>
+        Don&apos;t lose the marks they keep flagging
+      </SectionTitle>
+      <motion.div variants={stagger} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div variants={fadeUp}>
+          <Link to="/examiner">
+            <Card className="h-full overflow-hidden relative hover:border-sky-500 transition-colors shine">
+              <div className="absolute -top-8 -right-8 w-44 h-44 rounded-full" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.20), transparent 70%)', filter: 'blur(20px)' }} />
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="chip" style={{ borderColor: 'rgba(14,165,233,0.4)', background: 'rgba(14,165,233,0.10)', color: '#0369a1' }}>
+                    <i className="fa-solid fa-file-signature" /> Examiner Reports
+                  </span>
+                  <span className="chip">SD24 → SD25</span>
+                </div>
+                <h3 className="font-display text-2xl tracking-wide uppercase text-ink leading-tight">
+                  7 cases. 24 traps.<br />Every one with the fix.
+                </h3>
+                <p className="mt-3 text-ink/75 text-[14px] leading-relaxed">
+                  Drimpton, Halstock, Passmore, Kampai, Northney, Zulla. The exact mistakes the examiner
+                  flagged, with the technique that earns the mark instead.
+                </p>
+                <div className="mt-3 flex items-center gap-2">
+                  <Pill variant="primary">9 verbatim quotes</Pill>
+                  <Pill>7-rule cheat-sheet</Pill>
+                </div>
+                <span className="btn-outline mt-4 inline-flex"><i className="fa-solid fa-arrow-right" /> Open Examiner Reports</span>
+              </div>
+            </Card>
+          </Link>
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <Link to="/war-room">
+            <Card className="h-full overflow-hidden relative hover:border-danger transition-colors shine border-l-4 border-l-danger">
+              <div className="absolute -bottom-8 -left-8 w-44 h-44 rounded-full" style={{ background: 'radial-gradient(circle, rgba(220,38,38,0.20), transparent 70%)', filter: 'blur(20px)' }} />
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="chip text-danger" style={{ borderColor: 'rgba(220,38,38,0.4)', background: 'rgba(220,38,38,0.10)' }}>
+                    <i className="fa-solid fa-shield-halved" /> War Room
+                  </span>
+                  <span className="chip">T-1 to submit</span>
+                </div>
+                <h3 className="font-display text-2xl tracking-wide uppercase text-ink leading-tight">
+                  The 24 hours<br />before exam day.
+                </h3>
+                <p className="mt-3 text-ink/75 text-[14px] leading-relaxed">
+                  Tonight&apos;s checklist, tomorrow&apos;s opening 10 minutes, the closing 5 minutes,
+                  command-word translator, CBE shortcuts, and the 14 mistakes that cost the pass.
+                </p>
+                <div className="mt-3 flex items-center gap-2">
+                  <Pill variant="danger">14 traps</Pill>
+                  <Pill variant="accent">8 spreadsheet shortcuts</Pill>
+                </div>
+                <span className="btn-outline mt-4 inline-flex"><i className="fa-solid fa-arrow-right" /> Open War Room</span>
+              </div>
+            </Card>
+          </Link>
+        </motion.div>
+      </motion.div>
+
       {/* TODAY'S MISSION */}
       <SectionTitle icon="fa-solid fa-crosshairs">Today&apos;s mission</SectionTitle>
       <motion.div variants={fadeUp}>
