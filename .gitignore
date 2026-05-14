@@ -27,3 +27,6 @@ dist/
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Scratch/working dirs
+.spec-blocks/
