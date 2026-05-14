@@ -33,11 +33,16 @@ export default {
         ping: { '0%': { transform: 'scale(1)', opacity: '0.85' }, '80%, 100%': { transform: 'scale(2.2)', opacity: '0' } },
         floodflicker: { '0%, 100%': { opacity: '0.95' }, '45%': { opacity: '1' }, '52%': { opacity: '0.6' }, '54%': { opacity: '1' } },
         scrollx: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(-50%)' } },
+        'mascot-bob': {
+          '0%, 100%': { transform: 'translateY(0) rotate(-2deg)' },
+          '50%': { transform: 'translateY(-6px) rotate(2deg)' },
+        },
       },
       animation: {
         ping: 'ping 1.6s cubic-bezier(0,0,0.2,1) infinite',
         floodflicker: 'floodflicker 6s ease-in-out infinite',
         scrollx: 'scrollx 38s linear infinite',
+        'mascot-bob': 'mascot-bob 3.2s ease-in-out infinite',
       },
     },
   },

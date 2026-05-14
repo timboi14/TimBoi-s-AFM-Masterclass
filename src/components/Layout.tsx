@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { store, useStore, tierFor } from '@/lib/store';
 import { cn } from '@/lib/cn';
 import { CoachVoice } from '@/components/CoachVoice';
+import { TabArtBanner, MascotBob } from '@/components/TabArt';
 import { SH_KEY_DATES } from '@/data/shplus';
 
 // Consolidated nav per design-system spec §11.1: hub pages group related sub-routes.
@@ -111,11 +112,14 @@ export function Layout() {
                   <i className={`fa-solid ${item.icon} text-[12px]`} />
                   {item.label}
                   {isActive && (
-                    <motion.span
-                      layoutId="nav-active"
-                      className="absolute inset-0 rounded-lg bg-primary z-[-1] shadow-glow"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
+                    <>
+                      <motion.span
+                        layoutId="nav-active"
+                        className="absolute inset-0 rounded-lg bg-primary z-[-1] shadow-glow"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                      <MascotBob size={28} className="ml-1 -mr-1" />
+                    </>
                   )}
                 </NavLink>
               );
@@ -125,6 +129,9 @@ export function Layout() {
       </div>
 
       <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 pt-4 pb-32">
+        {/* Spurs-themed banner art keyed to the current route. Hidden on mobile. */}
+        <TabArtBanner />
+
         <AnimatePresence mode="wait">
           <motion.main
             id="main-content"
