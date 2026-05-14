@@ -3,6 +3,14 @@ import { Link } from 'react-router-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { store, tierFor, useStore } from '@/lib/store';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
+import {
+  CenteredHero,
+  HeroGold,
+  PremiumDarkTile,
+  SectionShell,
+  StatStrip,
+  TonePill,
+} from '@/components/Blocks';
 import { TOPIC_LIST, TOPICS } from '@/data/topics';
 import { NEWS } from '@/data/news';
 import { SH_KEY_DATES, SH_WEEKS, getCurrentShWeek } from '@/data/shplus';
@@ -87,68 +95,96 @@ export function HomePage() {
 
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
-      <Hero fanName={fanName} state={state} t={t} cd={cd} todaysMissionId={todaysMission.id} />
+      {/* §12.3 Home tone sequence — section 1: white (welcoming) */}
+      <SectionShell tone="white" pad="lg">
+        <CenteredHero
+          eyebrow={
+            <>
+              <span aria-hidden>●</span> LIVE · MATCH-DAY BRIEF · {cd.d}d {cd.h}h to sitting
+            </>
+          }
+          headline={
+            <>
+              Welcome back, <HeroGold>{fanName}</HeroGold>.
+            </>
+          }
+          subline={
+            <>
+              Today, train like the examiner is in the dugout. One fixture, one drill, one model answer.
+              Stuck? Tap the headset bottom-right and ask out loud.
+            </>
+          }
+          actions={
+            <>
+              <TonePill as="link" to={`/topic/${todaysMission.id}`} variant="primary">
+                Today&apos;s mission
+              </TonePill>
+              <TonePill as="link" to="/practice" variant="secondary">
+                Open practice centre
+              </TonePill>
+            </>
+          }
+        />
 
-      {/* COURSE THIS WEEK WIDGET */}
-      <motion.div variants={fadeUp} className="mt-4">
-        <ShPlusWidget />
-      </motion.div>
+        {/* Course-this-week widget kept inline as a secondary surface */}
+        <div className="mt-10">
+          <ShPlusWidget />
+        </div>
+      </SectionShell>
 
-      {/* STADIUM STATS STRIP */}
-      <motion.div variants={fadeUp} className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-        {STADIUM_STATS.map((s) => (
-          <StatCard key={s.label} value={s.value} label={s.label} sub={s.sub} />
-        ))}
-      </motion.div>
+      {/* §12.3 section 2: mist exhale — stat strip */}
+      <SectionShell tone="mist" pad="md">
+        <StatStrip
+          stats={STADIUM_STATS.map((s) => ({
+            value: s.value,
+            label: s.label,
+            sub: s.sub,
+          }))}
+        />
+      </SectionShell>
 
-      {/* AI COACH × MEMORY SHOWCASE */}
-      <SectionTitle icon="fa-solid fa-bolt" badge={<Pill variant="accent">New</Pill>}>
-        Built-in AI, built for revision
-      </SectionTitle>
-      <motion.div variants={stagger} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div variants={fadeUp}>
-          <CoachShowcase />
+      {/* §12.3 section 3: white — Coach × Memory */}
+      <SectionShell tone="white" pad="lg">
+        <SectionTitle icon="fa-solid fa-bolt" badge={<Pill variant="accent">New</Pill>}>
+          Built-in AI, built for revision
+        </SectionTitle>
+        <motion.div variants={stagger} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <motion.div variants={fadeUp}>
+            <CoachShowcase />
+          </motion.div>
+          <motion.div variants={fadeUp}>
+            <MemoryShowcase />
+          </motion.div>
         </motion.div>
-        <motion.div variants={fadeUp}>
-          <MemoryShowcase />
-        </motion.div>
-      </motion.div>
+      </SectionShell>
 
-      {/* EXAMINER × WAR ROOM */}
-      <SectionTitle icon="fa-solid fa-file-signature" badge={<Pill variant="danger">Mar 2026 pass rate 44%</Pill>}>
-        Don&apos;t lose the marks they keep flagging
-      </SectionTitle>
-      <motion.div variants={stagger} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div variants={fadeUp}>
-          <Link to="/examiner">
-            <Card className="h-full overflow-hidden relative hover:border-sky-500 transition-colors shine">
-              <div className="absolute -top-8 -right-8 w-44 h-44 rounded-full" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.20), transparent 70%)', filter: 'blur(20px)' }} />
-              <div className="relative">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="chip" style={{ borderColor: 'rgba(14,165,233,0.4)', background: 'rgba(14,165,233,0.10)', color: '#0369a1' }}>
-                    <i className="fa-solid fa-file-signature" /> Examiner Reports
-                  </span>
-                  <span className="chip">SD24 → SD25</span>
-                </div>
-                <h3 className="font-display text-2xl tracking-wide uppercase text-ink leading-tight">
-                  {siteStats.examinerCases} cases. {siteStats.examinerTraps} traps.<br />Every one with the fix.
-                </h3>
-                <p className="mt-3 text-ink/75 text-[14px] leading-relaxed">
-                  The exact mistakes the examiner has flagged across recent sittings,
-                  with the technique that earns the mark instead.
-                </p>
-                <div className="mt-3 flex items-center gap-2">
-                  <Pill variant="primary">{siteStats.examinerQuotes} verbatim quotes</Pill>
-                  <Pill>7-rule cheat-sheet</Pill>
-                </div>
-                <span className="btn-outline mt-4 inline-flex"><i className="fa-solid fa-arrow-right" /> Open Examiner Reports</span>
-              </div>
-            </Card>
-          </Link>
-        </motion.div>
+      {/* §12.3 section 4: navy — Examiner Reports premium tile */}
+      <PremiumDarkTile
+        eyebrow={`${siteStats.examinerCases} cases · ${siteStats.examinerTraps} traps catalogued`}
+        headline={<>Don&apos;t lose the marks they keep flagging.</>}
+        subline={
+          <>
+            The exact mistakes the examiner has flagged across recent sittings, with the technique
+            that earns the mark instead. {siteStats.examinerQuotes} verbatim quotes, 7-rule cheat sheet.
+          </>
+        }
+        actions={
+          <>
+            <TonePill as="link" to="/examiner" variant="primary">
+              Open Examiner Reports
+            </TonePill>
+            <TonePill as="link" to="/scout" variant="secondary">
+              View scout report
+            </TonePill>
+          </>
+        }
+      />
+
+      {/* §12.3 section 5: mist — War Room standalone (Examiner now in PremiumDarkTile above) */}
+      <SectionShell tone="mist" pad="md">
         <motion.div variants={fadeUp}>
           <Link to="/war-room">
-            <Card className="h-full overflow-hidden relative hover:border-danger transition-colors shine border-l-4 border-l-danger">
+            <Card className="overflow-hidden relative hover:border-danger transition-colors shine border-l-4 border-l-danger">
               <div className="absolute -bottom-8 -left-8 w-44 h-44 rounded-full" style={{ background: 'radial-gradient(circle, rgba(220,38,38,0.20), transparent 70%)', filter: 'blur(20px)' }} />
               <div className="relative">
                 <div className="flex items-center gap-2 mb-3">
@@ -173,7 +209,7 @@ export function HomePage() {
             </Card>
           </Link>
         </motion.div>
-      </motion.div>
+      </SectionShell>
 
       {/* DAILY QUEST */}
       <SectionTitle icon="fa-solid fa-medal" badge={<Pill variant="accent">+30 pts</Pill>}>
