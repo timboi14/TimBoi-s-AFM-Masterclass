@@ -10,7 +10,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'og-cover.svg'],
       manifest: {
-        name: "TimBoi's Academy — ACCA AFM Pass Engine",
+        name: "TimBoi's Academy · ACCA AFM Pass Engine",
         short_name: 'TBA Academy',
         description: 'Match-day energy. Examiner traps, technique, and the four habits that pass AFM.',
         theme_color: '#0a0f1e',

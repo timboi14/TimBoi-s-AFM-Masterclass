@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Pill, fadeUp, stagger } from '@/components/primitives';
@@ -1086,7 +1086,6 @@ function CoachDrawer({ open, onClose, setContext }: { open: boolean; onClose: ()
 
 function ChatBubble({ msg }: { msg: ChatMsg }) {
   const isUser = msg.role === 'user';
-  const formatted = msg.text.replace(/\*\*(.*?)\*\*/g, '<b class="text-primary">$1</b>').replace(/`([^`]+)`/g, '<code class="bg-slate-100 px-1 rounded text-primary text-[12px]">$1</code>');
   return (
     <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
       <div
@@ -1096,8 +1095,29 @@ function ChatBubble({ msg }: { msg: ChatMsg }) {
             ? 'bg-primary text-white rounded-br-sm'
             : 'bg-slate-50 border border-border text-ink rounded-bl-sm'
         )}
-        dangerouslySetInnerHTML={{ __html: formatted }}
-      />
+      >
+        {renderChatMarkup(msg.text)}
+      </div>
     </div>
   );
+}
+
+/** Tokenise `**bold**` and `` `code` `` segments into React elements. No HTML strings ever cross the boundary. */
+function renderChatMarkup(text: string): ReactNode[] {
+  const tokens: ReactNode[] = [];
+  const re = /(\*\*([\s\S]+?)\*\*)|(`([^`\n]+)`)/g;
+  let lastIndex = 0;
+  let m: RegExpExecArray | null;
+  let key = 0;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > lastIndex) tokens.push(text.slice(lastIndex, m.index));
+    if (m[2] !== undefined) {
+      tokens.push(<b key={key++} className="text-primary">{m[2]}</b>);
+    } else if (m[4] !== undefined) {
+      tokens.push(<code key={key++} className="bg-slate-100 px-1 rounded text-primary text-[12px]">{m[4]}</code>);
+    }
+    lastIndex = re.lastIndex;
+  }
+  if (lastIndex < text.length) tokens.push(text.slice(lastIndex));
+  return tokens;
 }
