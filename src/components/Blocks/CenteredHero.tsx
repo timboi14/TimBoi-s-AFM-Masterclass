@@ -76,12 +76,13 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
 
       <motion.h1
         variants={v(16, 0.4, 0.5, prefersReduced)}
+        style={{
+          fontSize: slim ? 'clamp(2rem, 4.5vw, 3.5rem)' : 'var(--fs-display-xl)',
+          lineHeight: slim ? 1.05 : 'var(--lh-tight)',
+        }}
         className={cn(
-          'font-display uppercase tracking-[-0.005em] max-w-[18ch] m-0',
+          'font-display uppercase tracking-[-0.005em] max-w-[22ch] m-0',
           dark ? 'text-white' : 'text-[var(--navy-900)]',
-          slim
-            ? 'text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.05]'
-            : 'text-[var(--fs-display-xl)] leading-[var(--lh-tight)]',
         )}
       >
         {headline}
@@ -90,8 +91,12 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
       {subline && (
         <motion.p
           variants={v(12, 0.5, 0.45, prefersReduced)}
+          style={{
+            fontSize: 'var(--fs-subline)',
+            lineHeight: 'var(--lh-snug)',
+          }}
           className={cn(
-            'mt-4 max-w-[58ch] text-[var(--fs-subline)] leading-[var(--lh-snug)]',
+            'mt-4 max-w-[58ch]',
             dark ? 'text-[var(--mist-200)]' : 'text-[var(--mist-500)]',
           )}
         >

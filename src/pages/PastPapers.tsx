@@ -100,10 +100,16 @@ export function PastPapersPage() {
 function Stat({ n, label }: { n: number; label: string }) {
   return (
     <div className="flex flex-col items-center md:px-6 text-center">
-      <span className="font-display text-[var(--fs-display-md)] leading-none text-[var(--navy-900)]">
+      <span
+        style={{ fontSize: 'var(--fs-display-md)', lineHeight: 1 }}
+        className="font-display text-[var(--navy-900)]"
+      >
         {n}
       </span>
-      <span className="mt-2 text-[var(--fs-micro)] uppercase tracking-[0.08em] text-[var(--mist-500)] font-bold">
+      <span
+        style={{ fontSize: 'var(--fs-micro)' }}
+        className="mt-2 uppercase tracking-[0.08em] text-[var(--mist-500)] font-bold"
+      >
         {label}
       </span>
     </div>

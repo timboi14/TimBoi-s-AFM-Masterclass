@@ -52,7 +52,7 @@ export function StickySubNav({ title, anchors, cta, dark = false, appearAfter = 
     }
   });
 
-  const yTarget = !revealed || hidden ? -56 : 0;
+  const offscreen = !revealed || hidden;
   const transition = prefersReduced
     ? { duration: 0 }
     : { duration: 0.22, ease: [0.2, 0.8, 0.2, 1] as const };
@@ -70,11 +70,14 @@ export function StickySubNav({ title, anchors, cta, dark = false, appearAfter = 
   return (
     <motion.nav
       aria-label="Page sections"
-      initial={false}
-      animate={{ y: yTarget }}
+      initial={{ opacity: 0, y: -16 }}
+      animate={{ opacity: offscreen ? 0 : 1, y: offscreen ? -16 : 0 }}
       transition={transition}
       // Sits just below the Layout's primary nav (Layout header ≈ 96px tall on desktop).
-      style={{ top: 'var(--app-header-h, 96px)' }}
+      style={{
+        top: 'var(--app-header-h, 96px)',
+        pointerEvents: offscreen ? 'none' : 'auto',
+      }}
       className={cn(
         'fixed left-0 right-0 z-40 h-14 border-b',
         dark
