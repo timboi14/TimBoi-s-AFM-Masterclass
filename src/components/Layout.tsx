@@ -10,6 +10,7 @@ const NAV = [
   { to: '/', label: 'Home', icon: 'fa-house' },
   { to: '/course', label: 'Course', icon: 'fa-graduation-cap' },
   { to: '/revision', label: 'Revision', icon: 'fa-folder-open', match: '/revision' },
+  { to: '/past-papers', label: 'Past Papers', icon: 'fa-file-lines', match: '/past-papers' },
   { to: '/topic/adviser', label: 'Topics', icon: 'fa-list', match: '/topic' },
   { to: '/practice', label: 'Practice', icon: 'fa-stopwatch-20', match: '/practice' },
   { to: '/theory', label: 'Theory', icon: 'fa-book' },

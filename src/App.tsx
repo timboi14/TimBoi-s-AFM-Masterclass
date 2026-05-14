@@ -13,6 +13,7 @@ import { WarRoomPage } from '@/pages/WarRoom';
 import { ExaminerPage } from '@/pages/Examiner';
 import { CoursePage } from '@/pages/Course';
 import { RevisionDashboard, PapersIndex, PaperView, QuestionDeepDive, TopicsIndex, ProgressDashboard } from '@/pages/Revision';
+import { PastPapersPage } from '@/pages/PastPapers';
 import { DebriefIndexPage, DebriefNewPage, DebriefViewPage } from '@/pages/Debrief';
 import { PitfallsPage } from '@/pages/Pitfalls';
 import { StudyGuidePage } from '@/pages/StudyGuide';
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/revision/papers/:paperId" element={<PaperView />} />
           <Route path="/revision/papers/:paperId/q/:qNo" element={<QuestionDeepDive />} />
           <Route path="/revision/topics" element={<TopicsIndex />} />
+          <Route path="/past-papers" element={<PastPapersPage />} />
           <Route path="/progress" element={<ProgressDashboard />} />
           <Route path="/debrief" element={<DebriefIndexPage />} />
           <Route path="/debrief/new" element={<DebriefNewPage />} />
