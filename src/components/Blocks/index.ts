@@ -5,3 +5,6 @@ export { StickySubNav, type SubNavAnchor } from './StickySubNav';
 export { StatStrip, type StatItem } from './StatStrip';
 export { TwoUp, type TwoUpPanel } from './TwoUp';
 export { PremiumDarkTile } from './PremiumDarkTile';
+export { ThreeUpCardRow, type TripCard } from './ThreeUpCardRow';
+export { TabularList, type ListItem, type ListFilterChip } from './TabularList';
+export { Configurator, type ConfiguratorOption } from './Configurator';
