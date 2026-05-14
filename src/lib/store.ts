@@ -3,6 +3,8 @@
  * Keys are namespaced with the tba_ prefix.
  */
 
+import { safeFanName } from './safe-storage';
+
 const KEY = {
   fanName: 'tba_fanName',
   points: 'tba_points',
@@ -73,7 +75,8 @@ let snapshot: State = readSnapshot();
 
 function readSnapshot(): State {
   return {
-    fanName: readStr(KEY.fanName, ''),
+    // localStorage can be tampered with; clean fanName on read.
+    fanName: safeFanName(readStr(KEY.fanName, '')),
     points: readNum(KEY.points, 0),
     streak: readNum(KEY.streak, 0),
     drills: readNum(KEY.drills, 0),
@@ -93,7 +96,7 @@ export const store = {
     return snapshot;
   },
   set(patch: Partial<State>) {
-    if (patch.fanName !== undefined) localStorage.setItem(KEY.fanName, patch.fanName);
+    if (patch.fanName !== undefined) localStorage.setItem(KEY.fanName, safeFanName(patch.fanName));
     if (patch.points !== undefined) localStorage.setItem(KEY.points, String(Math.max(0, patch.points)));
     if (patch.streak !== undefined) localStorage.setItem(KEY.streak, String(Math.max(0, patch.streak)));
     if (patch.drills !== undefined) localStorage.setItem(KEY.drills, String(Math.max(0, patch.drills)));

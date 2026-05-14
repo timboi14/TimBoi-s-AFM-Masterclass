@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/lib/store';
+import { safeOnboarding, type SafeOnboarding } from '@/lib/safe-storage';
 
 const KEY = 'tba_onboarding_v1';
 
-interface OnbState { distance: 'tonight' | 'week' | 'month' | 'twoMonth'; dismissed: boolean; }
+type OnbState = SafeOnboarding;
 
 const PATHS: { id: OnbState['distance']; label: string; subtitle: string; icon: string; route: string; copy: string }[] = [
   {
@@ -32,7 +33,7 @@ const PATHS: { id: OnbState['distance']; label: string; subtitle: string; icon: 
 
 function load(): OnbState | null {
   if (typeof window === 'undefined') return null;
-  try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; }
+  return safeOnboarding(localStorage.getItem(KEY));
 }
 function save(s: OnbState) {
   try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {}

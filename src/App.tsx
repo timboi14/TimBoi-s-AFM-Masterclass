@@ -1,28 +1,57 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { HomePage } from '@/pages/Home';
-import { TopicPage } from '@/pages/Topic';
-import { TheoryPage } from '@/pages/Theory';
-import { CardsPage } from '@/pages/Cards';
-import { MockPage } from '@/pages/Mock';
-import { FormulasPage } from '@/pages/Formulas';
-import { ExamSkillsPage } from '@/pages/ExamSkills';
-import { PracticePage } from '@/pages/Practice';
-import { MemoryPage } from '@/pages/Memory';
-import { WarRoomPage } from '@/pages/WarRoom';
-import { ExaminerPage } from '@/pages/Examiner';
-import { CoursePage } from '@/pages/Course';
-import { RevisionDashboard, PapersIndex, PaperView, QuestionDeepDive, TopicsIndex, ProgressDashboard } from '@/pages/Revision';
-import { PastPapersPage } from '@/pages/PastPapers';
-import { PlaybookPage } from '@/pages/Playbook';
-import { TrainingPage } from '@/pages/Training';
-import { ScoutPage } from '@/pages/Scout';
-import { BootRoomPage } from '@/pages/BootRoom';
-import { DebriefIndexPage, DebriefNewPage, DebriefViewPage } from '@/pages/Debrief';
-import { PitfallsPage } from '@/pages/Pitfalls';
-import { StudyGuidePage } from '@/pages/StudyGuide';
 import { NameOverlay } from '@/NameOverlay';
 import { Onboarding } from '@/components/Onboarding';
+
+// Helper to lazy-load a page with a named export.
+const lazyNamed = <K extends string>(loader: () => Promise<Record<K, React.ComponentType<unknown>>>, name: K) =>
+  lazy(() => loader().then((m) => ({ default: m[name] })));
+
+// Home stays in the main bundle (it's the landing page; lazy here would just delay TTI).
+// Every other route ships in its own chunk.
+const TopicPage = lazyNamed(() => import('@/pages/Topic'), 'TopicPage');
+const TheoryPage = lazyNamed(() => import('@/pages/Theory'), 'TheoryPage');
+const CardsPage = lazyNamed(() => import('@/pages/Cards'), 'CardsPage');
+const MockPage = lazyNamed(() => import('@/pages/Mock'), 'MockPage');
+const FormulasPage = lazyNamed(() => import('@/pages/Formulas'), 'FormulasPage');
+const ExamSkillsPage = lazyNamed(() => import('@/pages/ExamSkills'), 'ExamSkillsPage');
+const PracticePage = lazyNamed(() => import('@/pages/Practice'), 'PracticePage');
+const MemoryPage = lazyNamed(() => import('@/pages/Memory'), 'MemoryPage');
+const WarRoomPage = lazyNamed(() => import('@/pages/WarRoom'), 'WarRoomPage');
+const ExaminerPage = lazyNamed(() => import('@/pages/Examiner'), 'ExaminerPage');
+const CoursePage = lazyNamed(() => import('@/pages/Course'), 'CoursePage');
+const RevisionDashboard = lazyNamed(() => import('@/pages/Revision'), 'RevisionDashboard');
+const PapersIndex = lazyNamed(() => import('@/pages/Revision'), 'PapersIndex');
+const PaperView = lazyNamed(() => import('@/pages/Revision'), 'PaperView');
+const QuestionDeepDive = lazyNamed(() => import('@/pages/Revision'), 'QuestionDeepDive');
+const TopicsIndex = lazyNamed(() => import('@/pages/Revision'), 'TopicsIndex');
+const ProgressDashboard = lazyNamed(() => import('@/pages/Revision'), 'ProgressDashboard');
+const PastPapersPage = lazyNamed(() => import('@/pages/PastPapers'), 'PastPapersPage');
+const PlaybookPage = lazyNamed(() => import('@/pages/Playbook'), 'PlaybookPage');
+const TrainingPage = lazyNamed(() => import('@/pages/Training'), 'TrainingPage');
+const ScoutPage = lazyNamed(() => import('@/pages/Scout'), 'ScoutPage');
+const BootRoomPage = lazyNamed(() => import('@/pages/BootRoom'), 'BootRoomPage');
+const DebriefIndexPage = lazyNamed(() => import('@/pages/Debrief'), 'DebriefIndexPage');
+const DebriefNewPage = lazyNamed(() => import('@/pages/Debrief'), 'DebriefNewPage');
+const DebriefViewPage = lazyNamed(() => import('@/pages/Debrief'), 'DebriefViewPage');
+const PitfallsPage = lazyNamed(() => import('@/pages/Pitfalls'), 'PitfallsPage');
+const StudyGuidePage = lazyNamed(() => import('@/pages/StudyGuide'), 'StudyGuidePage');
+
+function RouteFallback() {
+  return (
+    <div className="min-h-[40vh] grid place-items-center" aria-busy="true">
+      <div className="flex flex-col items-center gap-3">
+        <div
+          aria-hidden
+          className="w-10 h-10 rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary)] animate-spin"
+        />
+        <span className="text-[11px] uppercase tracking-[0.16em] text-muted font-bold">Loading…</span>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -32,35 +61,44 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/topic/:id" element={<TopicPage />} />
-          <Route path="/practice" element={<PracticePage />} />
-          <Route path="/practice/:id" element={<PracticePage />} />
-          <Route path="/theory" element={<TheoryPage />} />
-          <Route path="/cards" element={<CardsPage />} />
-          <Route path="/memory" element={<MemoryPage />} />
-          <Route path="/war-room" element={<WarRoomPage />} />
-          <Route path="/examiner" element={<ExaminerPage />} />
-          <Route path="/course" element={<CoursePage />} />
-          <Route path="/revision" element={<RevisionDashboard />} />
-          <Route path="/revision/papers" element={<PapersIndex />} />
-          <Route path="/revision/papers/:paperId" element={<PaperView />} />
-          <Route path="/revision/papers/:paperId/q/:qNo" element={<QuestionDeepDive />} />
-          <Route path="/revision/topics" element={<TopicsIndex />} />
-          <Route path="/past-papers" element={<PastPapersPage />} />
-          <Route path="/playbook" element={<PlaybookPage />} />
-          <Route path="/training" element={<TrainingPage />} />
-          <Route path="/scout" element={<ScoutPage />} />
-          <Route path="/boot-room" element={<BootRoomPage />} />
-          <Route path="/progress" element={<ProgressDashboard />} />
-          <Route path="/debrief" element={<DebriefIndexPage />} />
-          <Route path="/debrief/new" element={<DebriefNewPage />} />
-          <Route path="/debrief/:id" element={<DebriefViewPage />} />
-          <Route path="/pitfalls" element={<PitfallsPage />} />
-          <Route path="/study-guide" element={<StudyGuidePage />} />
-          <Route path="/mock" element={<MockPage />} />
-          <Route path="/formulas" element={<FormulasPage />} />
-          <Route path="/exam-skills" element={<ExamSkillsPage />} />
-          <Route path="*" element={<HomePage />} />
+          <Route
+            path="*"
+            element={
+              <Suspense fallback={<RouteFallback />}>
+                <Routes>
+                  <Route path="/topic/:id" element={<TopicPage />} />
+                  <Route path="/practice" element={<PracticePage />} />
+                  <Route path="/practice/:id" element={<PracticePage />} />
+                  <Route path="/theory" element={<TheoryPage />} />
+                  <Route path="/cards" element={<CardsPage />} />
+                  <Route path="/memory" element={<MemoryPage />} />
+                  <Route path="/war-room" element={<WarRoomPage />} />
+                  <Route path="/examiner" element={<ExaminerPage />} />
+                  <Route path="/course" element={<CoursePage />} />
+                  <Route path="/revision" element={<RevisionDashboard />} />
+                  <Route path="/revision/papers" element={<PapersIndex />} />
+                  <Route path="/revision/papers/:paperId" element={<PaperView />} />
+                  <Route path="/revision/papers/:paperId/q/:qNo" element={<QuestionDeepDive />} />
+                  <Route path="/revision/topics" element={<TopicsIndex />} />
+                  <Route path="/past-papers" element={<PastPapersPage />} />
+                  <Route path="/playbook" element={<PlaybookPage />} />
+                  <Route path="/training" element={<TrainingPage />} />
+                  <Route path="/scout" element={<ScoutPage />} />
+                  <Route path="/boot-room" element={<BootRoomPage />} />
+                  <Route path="/progress" element={<ProgressDashboard />} />
+                  <Route path="/debrief" element={<DebriefIndexPage />} />
+                  <Route path="/debrief/new" element={<DebriefNewPage />} />
+                  <Route path="/debrief/:id" element={<DebriefViewPage />} />
+                  <Route path="/pitfalls" element={<PitfallsPage />} />
+                  <Route path="/study-guide" element={<StudyGuidePage />} />
+                  <Route path="/mock" element={<MockPage />} />
+                  <Route path="/formulas" element={<FormulasPage />} />
+                  <Route path="/exam-skills" element={<ExamSkillsPage />} />
+                  <Route path="*" element={<HomePage />} />
+                </Routes>
+              </Suspense>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>
