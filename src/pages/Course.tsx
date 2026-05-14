@@ -3,6 +3,16 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
 import {
+  CenteredHero,
+  HeroGold,
+  SectionShell,
+  StatStrip,
+  StickySubNav,
+  TonePill,
+  type StatItem,
+  type SubNavAnchor,
+} from '@/components/Blocks';
+import {
   SH_WEEKS,
   SH_KEY_DATES,
   SH_TECHNICAL_ARTICLES,
@@ -68,53 +78,86 @@ export function CoursePage() {
     }));
   };
 
-  return (
-    <motion.div initial="hidden" animate="show" variants={stagger}>
-      {/* HERO */}
-      <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-sky-500/[0.10]" />
-        <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(0,163,71,0.45), transparent 70%)' }} />
-        <div className="aurora w-72 h-72 -bottom-12 -left-12" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.45), transparent 70%)' }} />
-        <div className="relative p-6 md:p-10">
-          <div className="flex items-center gap-2 mb-3 flex-wrap">
-            <span className="chip text-primary"><i className="fa-solid fa-graduation-cap" /> Resit Roadmap</span>
-            <span className="chip">June 2026 sitting</span>
-            <span className="chip" style={{ borderColor: 'rgba(14,165,233,0.4)', background: 'rgba(14,165,233,0.10)', color: '#0369a1' }}>
-              5 weeks · 1 mock
-            </span>
-          </div>
-          <h1 className="font-display text-4xl md:text-5xl tracking-wide uppercase text-ink leading-[0.95]">
-            Your resit schedule,<br /><span className="text-gradient">mirrored & tracked.</span>
-          </h1>
-          <p className="mt-4 max-w-2xl text-ink/80 leading-relaxed">
-            Five weeks. Four guided walkthroughs. One full mock. Every course deliverable mapped to
-            TimBoi&apos;s Academy fixtures, theory cards and examiner traps so the two reinforce each other.
-          </p>
+  const stats: StatItem[] = [
+    {
+      value: current.week ? `W${current.week.num}` : '—',
+      label: current.status === 'live' ? 'Current week' : current.status === 'pre' ? 'Up next' : current.status === 'exam-week' ? 'Exam week' : 'Course complete',
+      sub: current.week?.title || '',
+    },
+    {
+      value: nextDeadline ? daysUntil(nextDeadline.date, now) : 'None',
+      suffix: nextDeadline ? 'd' : undefined,
+      label: 'Next deadline',
+      sub: nextDeadline ? nextDeadline.label : '—',
+    },
+    {
+      value: pct,
+      suffix: '%',
+      label: 'Completion',
+      sub: `${doneCriteria} / ${totalCriteria} exit criteria`,
+    },
+  ];
 
-          <div className="mt-6 grid sm:grid-cols-3 gap-3">
-            <KpiTile
-              label={current.status === 'live' ? 'Current week' : current.status === 'pre' ? 'Up next' : current.status === 'exam-week' ? 'Exam week' : 'Course complete'}
-              value={current.week ? `W${current.week.num}` : '—'}
-              sub={current.week?.title || ''}
-              tone="primary"
-            />
-            <KpiTile
-              label="Next deadline"
-              value={nextDeadline ? `${daysUntil(nextDeadline.date, now)}d` : 'None'}
-              sub={nextDeadline ? nextDeadline.label : ''}
-              tone={nextDeadline?.tone === 'critical' ? 'danger' : 'accent'}
-            />
-            <KpiTile
-              label="Completion"
-              value={`${pct}%`}
-              sub={`${doneCriteria} / ${totalCriteria} exit criteria`}
-              tone="primary"
-            />
-          </div>
-        </div>
-      </motion.section>
+  const anchors: SubNavAnchor[] = [
+    { id: 'this-week', label: 'This week' },
+    { id: 'timeline', label: 'Timeline' },
+    { id: 'dates', label: 'Key dates' },
+    { id: 'articles', label: 'Articles' },
+  ];
+
+  return (
+    <>
+      <StickySubNav title="Course" anchors={anchors} />
+
+      {/* HERO — Block A on tone-white per §12.3 */}
+      <SectionShell tone="white" pad="lg">
+        <CenteredHero
+          eyebrow={
+            <>
+              <span aria-hidden>★</span>
+              12-WEEK PLAN · JUNE 2026 SITTING
+            </>
+          }
+          headline={
+            <>
+              Your road to <HeroGold>Wembley</HeroGold>.
+            </>
+          }
+          subline={
+            <>
+              From foundations to final whistle — week-by-week. Five weeks. Four guided
+              walkthroughs. One full mock. Every deliverable mapped to academy fixtures,
+              theory cards and examiner traps.
+            </>
+          }
+          actions={
+            current.week ? (
+              <>
+                <TonePill as="a" href="#this-week" variant="primary">
+                  Open this week
+                </TonePill>
+                <TonePill as="a" href="#timeline" variant="secondary">
+                  Full timeline
+                </TonePill>
+              </>
+            ) : (
+              <TonePill as="a" href="#timeline" variant="primary">
+                See the plan
+              </TonePill>
+            )
+          }
+        />
+      </SectionShell>
+
+      {/* Stat strip — tone-mist (alternation per §12.2 rule 1) */}
+      <SectionShell tone="mist" pad="md">
+        <StatStrip stats={stats} />
+      </SectionShell>
+
+      <motion.div initial="hidden" animate="show" variants={stagger}>
 
       {/* THIS WEEK BANNER */}
+      <span id="this-week" />
       {current.week && (
         <SectionTitle icon="fa-solid fa-calendar-day" badge={<Pill variant={current.status === 'live' ? 'primary' : 'accent'}>{current.status === 'live' ? 'Live now' : current.status === 'exam-week' ? 'Exam week' : 'Up next'}</Pill>}>
           {current.status === 'live' ? 'Working this week' : 'Next week of the course'}
@@ -127,6 +170,7 @@ export function CoursePage() {
       )}
 
       {/* FULL 5-WEEK GRID */}
+      <span id="timeline" />
       <SectionTitle icon="fa-solid fa-list-ol" badge={<Pill>5 weeks · 1 mock</Pill>}>
         Full course timeline
       </SectionTitle>
@@ -144,6 +188,7 @@ export function CoursePage() {
       </motion.div>
 
       {/* KEY DATES */}
+      <span id="dates" />
       <SectionTitle icon="fa-solid fa-calendar-check" badge={<Pill variant="danger">Hard dates</Pill>}>
         Key dates
       </SectionTitle>
@@ -190,6 +235,7 @@ export function CoursePage() {
       </motion.div>
 
       {/* ACCA TECHNICAL ARTICLES BUTTON-RACK */}
+      <span id="articles" />
       <SectionTitle icon="fa-solid fa-newspaper" badge={<Pill>Curriculum scope</Pill>}>
         ACCA technical articles in scope
       </SectionTitle>
@@ -231,7 +277,8 @@ export function CoursePage() {
           </p>
         </Card>
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 }
 

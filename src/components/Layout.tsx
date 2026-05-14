@@ -6,23 +6,20 @@ import { cn } from '@/lib/cn';
 import { CoachVoice } from '@/components/CoachVoice';
 import { SH_KEY_DATES } from '@/data/shplus';
 
+// Consolidated nav per design-system spec §11.1: hub pages group related sub-routes.
+// Old top-level entries (Theory, Cards, Formulas, Practice, Mock, Debrief, Pitfalls,
+// Examiner, Memory Lab, Skills, Revision) still exist as routes — they are reached
+// through their hub page or via deep links, just not surfaced in the global nav.
 const NAV = [
   { to: '/', label: 'Home', icon: 'fa-house' },
   { to: '/course', label: 'Course', icon: 'fa-graduation-cap' },
-  { to: '/revision', label: 'Revision', icon: 'fa-folder-open', match: '/revision' },
   { to: '/past-papers', label: 'Past Papers', icon: 'fa-file-lines', match: '/past-papers' },
   { to: '/topic/adviser', label: 'Topics', icon: 'fa-list', match: '/topic' },
-  { to: '/practice', label: 'Practice', icon: 'fa-stopwatch-20', match: '/practice' },
-  { to: '/theory', label: 'Theory', icon: 'fa-book' },
-  { to: '/cards', label: 'Cards', icon: 'fa-clone' },
-  { to: '/memory', label: 'Memory Lab', icon: 'fa-brain' },
+  { to: '/playbook', label: 'Playbook', icon: 'fa-book', match: '/playbook' },
+  { to: '/training', label: 'Training', icon: 'fa-stopwatch', match: '/training' },
+  { to: '/scout', label: 'Scout', icon: 'fa-binoculars', match: '/scout' },
+  { to: '/boot-room', label: 'Boot Room', icon: 'fa-brain', match: '/boot-room' },
   { to: '/study-guide', label: 'Tools', icon: 'fa-toolbox' },
-  { to: '/debrief', label: 'Debrief', icon: 'fa-clipboard-check' },
-  { to: '/pitfalls', label: 'Pitfalls', icon: 'fa-triangle-exclamation' },
-  { to: '/mock', label: 'Mock', icon: 'fa-stopwatch' },
-  { to: '/formulas', label: 'Formulas', icon: 'fa-square-root-variable' },
-  { to: '/exam-skills', label: 'Skills', icon: 'fa-trophy' },
-  { to: '/examiner', label: 'Examiner', icon: 'fa-file-signature' },
   { to: '/war-room', label: 'War Room', icon: 'fa-shield-halved' },
 ];
 

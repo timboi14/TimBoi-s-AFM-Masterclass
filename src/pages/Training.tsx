@@ -1,0 +1,95 @@
+import {
+  CenteredHero,
+  HeroGold,
+  SectionShell,
+  StatStrip,
+  StickySubNav,
+  TonePill,
+  TwoUp,
+  type SubNavAnchor,
+} from '@/components/Blocks';
+
+export function TrainingPage() {
+  const anchors: SubNavAnchor[] = [
+    { id: 'practice', label: 'Practice' },
+    { id: 'mock', label: 'Mock' },
+    { id: 'debrief', label: 'Debrief' },
+  ];
+
+  return (
+    <>
+      <StickySubNav title="Training Ground" anchors={anchors} />
+
+      <SectionShell tone="mist" pad="lg">
+        <CenteredHero
+          eyebrow={<>14 sets · 450 marks · 8 examiner markers</>}
+          headline={<>Get reps in the <HeroGold>simulator</HeroGold>.</>}
+          subline={
+            <>
+              Practice drills any time. Full mock when you're ready to be timed.
+              Debrief after every attempt — that's where the marks come from.
+            </>
+          }
+          actions={
+            <>
+              <TonePill as="link" to="/practice" variant="primary">Open practice grid</TonePill>
+              <TonePill as="link" to="/mock" variant="secondary">Start a mock</TonePill>
+            </>
+          }
+        />
+      </SectionShell>
+
+      <SectionShell tone="white" pad="md">
+        <StatStrip
+          stats={[
+            { value: 14, label: 'Practice sets', sub: 'CBE-style multi-panel' },
+            { value: 450, label: 'Marks total', sub: '4.5 full mocks worth' },
+            { value: 2, label: 'Modes', sub: 'Practice / Mock' },
+            { value: 8, label: 'Examiner markers', sub: 'Per-line mark scheme' },
+          ]}
+        />
+      </SectionShell>
+
+      <SectionShell tone="mist" pad="lg" id="practice">
+        <TwoUp
+          left={{
+            tone: 'white',
+            eyebrow: 'Practice',
+            headline: 'Pick. Sit. Open the spreadsheet.',
+            subline:
+              'Untimed by default. Coach AI on tap, full-mark sample answers after submission.',
+            actions: <TonePill as="link" to="/practice" variant="primary">Open practice</TonePill>,
+          }}
+          right={{
+            tone: 'navy',
+            eyebrow: 'Mock',
+            headline: 'Three hours. One trophy.',
+            subline:
+              'Timer on, coach off. Walk in 25 marks short on technique and you walk out without the pass.',
+            actions: <TonePill as="link" to="/mock" variant="primary">Start mock</TonePill>,
+          }}
+        />
+      </SectionShell>
+
+      <SectionShell tone="white" pad="lg" id="debrief">
+        <TwoUp
+          left={{
+            tone: 'mist',
+            eyebrow: 'Debrief',
+            headline: 'The marks are in the post-mortem.',
+            subline:
+              'Log what happened, what went wrong, what to fix next time. The act of writing it is the practice.',
+            actions: <TonePill as="link" to="/debrief" variant="primary">Open debriefs</TonePill>,
+          }}
+          right={{
+            tone: 'white',
+            eyebrow: 'Tools',
+            headline: 'Study toolkit.',
+            subline: 'Memory palace, study planner, spaced-repetition queue, hot-topic radar.',
+            actions: <TonePill as="link" to="/study-guide" variant="primary">Open tools</TonePill>,
+          }}
+        />
+      </SectionShell>
+    </>
+  );
+}
