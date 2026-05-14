@@ -1,1 +1,1 @@
-export { PastPapersView } from './PastPapersView';
+export { PastPapersView, type PastPapersViewHandle } from './PastPapersView';

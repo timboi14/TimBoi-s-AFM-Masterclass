@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { PAPERS } from '@/data/pastpapers/papers';
 import type { PaperSection, TopicCategory } from '@/data/pastpapers/schema';
 import { PaperCard } from './PaperCard';
@@ -7,10 +7,29 @@ import { PaperDetail } from './PaperDetail';
 type FilterSection = 'all' | PaperSection;
 type FilterTopic = 'all' | TopicCategory;
 
-export function PastPapersView() {
+export interface PastPapersViewHandle {
+  setSectionFilter: (s: FilterSection) => void;
+  setTopicFilter: (t: FilterTopic) => void;
+  resetFilters: () => void;
+}
+
+export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPapersView(_, ref) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filterSection, setFilterSection] = useState<FilterSection>('all');
   const [filterTopic, setFilterTopic] = useState<FilterTopic>('all');
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      setSectionFilter: (s) => setFilterSection(s),
+      setTopicFilter: (t) => setFilterTopic(t),
+      resetFilters: () => {
+        setFilterSection('all');
+        setFilterTopic('all');
+      },
+    }),
+    [],
+  );
 
   const filtered = useMemo(() => {
     return PAPERS.filter((p) => {
@@ -34,7 +53,7 @@ export function PastPapersView() {
         </span>
       </div>
 
-      <div className="filter-bar">
+      <div id="filters" className="filter-bar">
         {(['all', 'A', 'B'] as FilterSection[]).map((s) => (
           <button
             key={s}
@@ -45,6 +64,7 @@ export function PastPapersView() {
           </button>
         ))}
         <span className="filter-bar__divider" aria-hidden />
+        <span id="by-topic" />
         {(['all', 'inv', 'hedg', 'ma'] as FilterTopic[]).map((t) => (
           <button
             key={t}
@@ -62,7 +82,7 @@ export function PastPapersView() {
         ))}
       </div>
 
-      <div className="paper-grid">
+      <div id="grid" className="paper-grid">
         {filtered.map((paper) => (
           <PaperCard
             key={paper.id}
@@ -81,4 +101,4 @@ export function PastPapersView() {
       )}
     </div>
   );
-}
+});
