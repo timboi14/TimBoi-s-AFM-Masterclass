@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { store, useStore, tierFor } from '@/lib/store';
 import { cn } from '@/lib/cn';
 import { CoachVoice } from '@/components/CoachVoice';
-import { TabArtBanner, MascotBob } from '@/components/TabArt';
+import { TabArtBanner, MascotBob, tabArtFor, prefetchTabArt } from '@/components/TabArt';
 import { SH_KEY_DATES } from '@/data/shplus';
 
 // Consolidated nav per design-system spec §11.1: hub pages group related sub-routes.
@@ -44,6 +44,26 @@ export function Layout() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Inject a <link rel="preload"> for the current route's backdrop so a fresh
+  // page-load can start the fetch before the <picture> in TabArtBanner parses.
+  // Client-side route changes use the same link element (we update its imageSrcset).
+  useEffect(() => {
+    const art = tabArtFor(location.pathname);
+    if (!art) return;
+    const id = 'tba-tab-art-preload';
+    let link = document.getElementById(id) as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = id;
+      link.rel = 'preload';
+      link.as = 'image';
+      document.head.appendChild(link);
+    }
+    link.type = 'image/webp';
+    link.setAttribute('imagesrcset', `/spurs/${art.base}.webp 1x, /spurs/${art.base}@2x.webp 2x`);
+    link.setAttribute('imagesizes', '520px');
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen relative">
@@ -104,6 +124,8 @@ export function Layout() {
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  onMouseEnter={() => prefetchTabArt(item.to)}
+                  onFocus={() => prefetchTabArt(item.to)}
                   className={cn(
                     'relative inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-colors whitespace-nowrap',
                     isActive ? 'text-white' : 'text-muted hover:text-ink hover:bg-slate-100',
