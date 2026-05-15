@@ -129,9 +129,14 @@ export function RevisionDashboard() {
 /* ─────────────────────────────────────────────
    /revision/papers — Index
    ───────────────────────────────────────────── */
+// Chip list of paper types shown on the index. Narrower than PaperType
+// itself (omits 'mock' and 'pre-mock' which the UX deliberately groups
+// under 'real' / 'tba-original'). State must match the chip set.
+type PaperTypeFilter = 'all' | 'real' | 'specimen' | 'tba-original';
+
 export function PapersIndex() {
   const [year, setYear] = useState<number | 'all'>('all');
-  const [type, setType] = useState<PaperType | 'all'>('all');
+  const [type, setType] = useState<PaperTypeFilter>('all');
   const [topic, setTopic] = useState<string>('all');
 
   const years = useMemo(() => Array.from(new Set(PAPERS.map((p) => p.year))).sort((a, b) => b - a), []);
@@ -172,16 +177,16 @@ export function PapersIndex() {
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-[11px] uppercase tracking-wider text-muted font-bold">Year:</span>
           {(['all', ...years] as const).map((y) => (
-            <button key={String(y)} onClick={() => setYear(y as any)}
+            <button key={String(y)} onClick={() => setYear(y)}
               className={cn('pill border border-border bg-white', year === y && 'bg-primary text-white border-primary')}>{String(y)}</button>
           ))}
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-[11px] uppercase tracking-wider text-muted font-bold">Type:</span>
           {(['all', 'real', 'specimen', 'tba-original'] as const).map((t) => (
-            <button key={t} onClick={() => setType(t as any)}
+            <button key={t} onClick={() => setType(t)}
               className={cn('pill border border-border bg-white', type === t && 'bg-primary text-white border-primary')}>
-              {t === 'all' ? 'All' : TYPE_LABEL[t as PaperType]?.label || t}
+              {t === 'all' ? 'All' : TYPE_LABEL[t]?.label || t}
             </button>
           ))}
         </div>

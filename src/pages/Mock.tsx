@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Card, Pill, fadeUp, stagger, CoachTip } from '@/components/primitives';
+import { Card, Pill, fadeUp, stagger, CoachTip, type AccentTone } from '@/components/primitives';
 import { cn } from '@/lib/cn';
 
 interface Question {
@@ -273,7 +273,7 @@ export function MockPage() {
 function ScoreSummary({ score }: { score: Record<string, number> }) {
   const total = Object.values(score).reduce((a, b) => a + b, 0);
   const pct = (total / 100) * 100;
-  const band =
+  const band: { label: string; tone: AccentTone; note: string } =
     pct >= 70
       ? { label: 'Distinction territory', tone: 'primary', note: 'Outstanding. Keep this rhythm into June. Drill weak topics rather than rerunning strong ones.' }
       : pct >= 60
@@ -294,7 +294,7 @@ function ScoreSummary({ score }: { score: Record<string, number> }) {
             </div>
           </div>
           <div className="ml-auto text-right">
-            <Pill variant={band.tone as any}>{band.label}</Pill>
+            <Pill variant={band.tone}>{band.label}</Pill>
             <div className="text-[12px] text-muted mt-2">Pass mark 50</div>
           </div>
         </div>
