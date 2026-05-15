@@ -81,9 +81,21 @@ export function DebriefIndexPage() {
           <motion.div variants={fadeUp}>
             <Card className="!p-5">
               <div className="grid sm:grid-cols-3 gap-4">
-                <Tile label="Avg structural score" value={`${trends.averageMarksPercent}%`} sub="across past critiques" />
-                <Tile label="Weakest skill (self-rated)" value={trends.weakestSkill ? SKILL_LABELS[trends.weakestSkill as keyof typeof SKILL_LABELS] || '—' : '—'} sub="lowest of the four PS skills" />
-                <Tile label="Most-missed signal" value={trends.weakestSignals[0]?.name || '—'} sub={trends.weakestSignals[0] ? `weak in ${trends.weakestSignals[0].weakCount} sessions` : ''} />
+                <div className="rounded-xl border border-border bg-white p-3.5">
+                  <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">Avg structural score</div>
+                  <div className="font-display text-2xl text-primary leading-none mt-1">{trends.averageMarksPercent}%</div>
+                  <div className="text-[11.5px] text-ink/70 mt-1">across past critiques</div>
+                </div>
+                <div className="rounded-xl border border-border bg-white p-3.5">
+                  <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">Weakest skill (self-rated)</div>
+                  <div className="font-display text-2xl text-primary leading-none mt-1">{trends.weakestSkill ? SKILL_LABELS[trends.weakestSkill as keyof typeof SKILL_LABELS] || '—' : '—'}</div>
+                  <div className="text-[11.5px] text-ink/70 mt-1">lowest of the four PS skills</div>
+                </div>
+                <div className="rounded-xl border border-border bg-white p-3.5">
+                  <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">Most-missed signal</div>
+                  <div className="font-display text-2xl text-primary leading-none mt-1">{trends.weakestSignals[0]?.name || '—'}</div>
+                  <div className="text-[11.5px] text-ink/70 mt-1">{trends.weakestSignals[0] ? `weak in ${trends.weakestSignals[0].weakCount} sessions` : ''}</div>
+                </div>
               </div>
               {trends.weakestSignals.length > 0 && (
                 <div className="mt-4">
@@ -551,16 +563,6 @@ function CritiquePanel({ critique }: { critique: StructuralCritique }) {
       )}
       <p className="mt-4 text-[11.5px] italic text-muted leading-relaxed">{critique.noticesNotReWrite}</p>
     </Card>
-  );
-}
-
-function Tile({ label, value, sub }: { label: string; value: string; sub: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-white p-3.5">
-      <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">{label}</div>
-      <div className="font-display text-2xl text-primary leading-none mt-1">{value}</div>
-      <div className="text-[11.5px] text-ink/70 mt-1">{sub}</div>
-    </div>
   );
 }
 
