@@ -130,7 +130,7 @@ export function CoachVoice() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, supportsVoice]);
 
-  /* ── Coach send / answer ─────────────────────────────────── */
+  // Coach send / answer
   const send = async (raw: string) => {
     const q = raw.trim();
     if (!q || thinking) return;
@@ -161,7 +161,7 @@ export function CoachVoice() {
   };
   const stopSpeaking = () => { speakingRef.current?.stop(); setSpeaking(false); };
 
-  /* ── Voice dictation ─────────────────────────────────────── */
+  // Voice dictation
   const startVoice = () => {
     if (!supportsVoice || listening) return;
     stopSpeaking();
@@ -179,7 +179,7 @@ export function CoachVoice() {
   };
   const stopVoice = () => { recRef.current?.stop(); setListening(false); };
 
-  /* ── Teach me something ──────────────────────────────────── */
+  // Teach me something
   const teachMe = () => {
     const s = pickRandomSpotlight(prefs.recentSpotlightIds);
     setPrefs((p) => ({ ...p, recentSpotlightIds: [s.id, ...p.recentSpotlightIds].slice(0, 8) }));
@@ -193,7 +193,7 @@ export function CoachVoice() {
 
   const hint = useMemo(() => COACH_SUGGESTIONS[Math.floor(Math.random() * COACH_SUGGESTIONS.length)], [open]);
 
-  /* ── Render ─────────────────────────────────────────────── */
+  // Render
   return (
     <>
       {/* FAB */}
@@ -465,7 +465,7 @@ export function CoachVoice() {
   );
 }
 
-/* ─── bubble ─── */
+// bubble
 
 function Bubble({ m, onReplay }: { m: Msg; onReplay: () => void }) {
   if (m.role === 'user') {

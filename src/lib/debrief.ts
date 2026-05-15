@@ -78,7 +78,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
   const psRisks: StructuralCritique['professionalSkillsRisks'] = [];
   const gaps: string[] = [];
 
-  /* ── 1) Recommendation upfront ────────────────────────────────── */
+  // 1) Recommendation upfront
   const earlyText = text.slice(0, 400);
   const hasRecommendationEarly = /(recommend|advise|conclude|propose|suggest)/.test(earlyText);
   signals.push({
@@ -90,7 +90,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
   });
   if (!hasRecommendationEarly) psRisks.push({ skill: 'Communication', risk: 'No upfront recommendation; structure mark at risk.' });
 
-  /* ── 2) Workings references (W1, W2, W3...) ──────────────────── */
+  // 2) Workings references (W1, W2, W3...)
   const workingMatches = (s.userAnswer.match(/\b[Ww][1-9]\b/g) || []).length;
   signals.push({
     name: 'Working references (W1, W2…)',
@@ -103,7 +103,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
   });
   if (workingMatches < 3) gaps.push('Answer-plan template (workings table)');
 
-  /* ── 3) Sensitivity / "however" sentence ─────────────────────── */
+  // 3) Sensitivity / "however" sentence
   const hasSensitivity = /sensitivit|stress[- ]?test|scenario analys|monte carlo|what if/.test(text);
   signals.push({
     name: 'Sensitivity / stress-test',
@@ -124,7 +124,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
   });
   if (!hasHowever) psRisks.push({ skill: 'Scepticism', risk: 'No counter-argument or assumption-challenge sentence.' });
 
-  /* ── 4) Quoted scenario figure ───────────────────────────────── */
+  // 4) Quoted scenario figure
   const numericQuotes = (s.userAnswer.match(/[£$€]\s?[\d,.]+\s?(m|bn|k)?\b/gi) || []).length;
   signals.push({
     name: 'Scenario figures quoted',
@@ -137,7 +137,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
   });
   if (numericQuotes < 3) psRisks.push({ skill: 'Commercial Acumen', risk: 'Insufficient scenario figures quoted.' });
 
-  /* ── 5) Headings / structure ─────────────────────────────────── */
+  // 5) Headings / structure
   const lines = s.userAnswer.split(/\n+/);
   const headingLines = lines.filter((l) => /^#{1,3}\s|\*\*[^*]+\*\*$|^[A-Z][A-Z\s]{6,}$/.test(l.trim())).length;
   signals.push({
@@ -149,7 +149,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
   });
   if (headingLines < 3) psRisks.push({ skill: 'Communication', risk: 'Headings are sparse; flow may be hard to mark.' });
 
-  /* ── 6) ESG / sustainability mention (often a scoring panel) ── */
+  // 6) ESG / sustainability mention (often a scoring panel)
   const hasEsg = /(esg|sustainab|environment|carbon|emissions|green|stakeholder|social licence)/.test(text);
   signals.push({
     name: 'ESG / stakeholder lens',
@@ -160,7 +160,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
   });
   if (!hasEsg) gaps.push('Behavioural & ESG playbook (Issue → Action → Outcome)');
 
-  /* ── 7) Time discipline ──────────────────────────────────────── */
+  // 7) Time discipline
   const expectedMin = s.marks * 1.8;
   const overshoot = s.timeTakenMin > expectedMin * 1.15;
   const undershoot = s.timeTakenMin < expectedMin * 0.7;
@@ -174,7 +174,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
       : `Within target window (~${Math.round(expectedMin)}m for ${s.marks} marks).`,
   });
 
-  /* ── 8) Length / depth heuristic ─────────────────────────────── */
+  // 8) Length / depth heuristic
   const wordCount = (s.userAnswer.trim().match(/\S+/g) || []).length;
   const targetWords = s.marks * 30; // rough heuristic: 25-35 words per mark
   signals.push({
@@ -183,7 +183,7 @@ export function buildCritique(s: Omit<DebriefSession, 'critique'>): StructuralCr
     note: `Answer is ~${wordCount} words. Heuristic target for ${s.marks} marks is ${targetWords} words. Calc-heavy answers may be lower; discussion answers should hit this.`,
   });
 
-  /* ── Aggregate ───────────────────────────────────────────────── */
+  // Aggregate
   const strong = signals.filter((s) => s.verdict === 'strong').length;
 
   return {

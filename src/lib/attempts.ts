@@ -43,7 +43,7 @@ export function uniquePapersAttempted(): number {
   return new Set(loadAttempts().map((a) => a.paperId)).size;
 }
 
-/* ── Topic mastery ─────────────────────────────────────────────
+/* Topic mastery.
    For each topic id, mean(selfScore / marks) across the last 5 attempts
    that quoted that topic, clipped to [0,1]. Falls back to attempt rating
    when selfScore is absent. */

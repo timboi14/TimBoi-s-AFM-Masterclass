@@ -93,7 +93,7 @@ export function createRecognition({
   };
 }
 
-/* ─── voice catalogue + picker ─────────────────────────────── */
+// voice catalogue + picker
 
 export interface VoiceOption {
   name: string;
@@ -158,7 +158,7 @@ export function pickDefaultVoice(): string | null {
   return list[0]?.name || null;
 }
 
-/* ─── speech synthesis with natural cadence ───────────────── */
+// speech synthesis with natural cadence
 
 let voicesReadyPromise: Promise<void> | null = null;
 function whenVoicesReady(): Promise<void> {

@@ -4,7 +4,7 @@ import { cn } from '@/lib/cn';
 
 export type AccentTone = 'primary' | 'accent' | 'danger';
 
-/* Match-day stagger container ------------------------------ */
+// Match-day stagger container
 export const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
@@ -13,7 +13,7 @@ export const fadeUp = {
   hidden: { opacity: 0, y: 14 },
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.2, 0.8, 0.2, 1] as const } },
 };
-/* Card base ------------------------------------------------- */
+// Card base
 export function Card({ className, children, glow, ...rest }: { className?: string; children?: ReactNode; glow?: boolean } & HTMLMotionProps<'div'>) {
   return (
     <motion.div
@@ -27,7 +27,7 @@ export function Card({ className, children, glow, ...rest }: { className?: strin
   );
 }
 
-/* Section title ------------------------------------------- */
+// Section title
 export function SectionTitle({
   icon,
   children,
@@ -52,7 +52,7 @@ export function SectionTitle({
   );
 }
 
-/* Pill ----------------------------------------------------- */
+// Pill
 export function Pill({
   className,
   children,
@@ -71,7 +71,7 @@ export function Pill({
   return <span className={cn('pill', variantCls, className)}>{children}</span>;
 }
 
-/* Form Field (label + input slot) ------------------------- */
+// Form Field (label + input slot)
 // Lives here so Debrief/StudyGuide share the same uppercase eyebrow styling.
 // Two callers today; without a shared definition the eyebrow drifts silently.
 export function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -83,7 +83,7 @@ export function Field({ label, children }: { label: string; children: ReactNode 
   );
 }
 
-/* Coach Tip card (tactics board) -------------------------- */
+// Coach Tip card (tactics board)
 export function CoachTip({ title, children }: { title: string; children: ReactNode }) {
   return (
     <motion.div
