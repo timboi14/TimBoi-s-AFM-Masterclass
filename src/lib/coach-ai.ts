@@ -424,12 +424,20 @@ export async function askCoach(question: string): Promise<CoachReply> {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ question }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        return { text: data.text ?? data.message ?? '', cite: data.cite };
-      }
-    } catch {
-      // fall through to local KB
+      if (!res.ok) throw new Error(`Coach API HTTP ${res.status}`);
+      const data = await res.json();
+      const text = typeof data?.text === 'string' && data.text.trim()
+        ? data.text
+        : typeof data?.message === 'string' && data.message.trim()
+          ? data.message
+          : null;
+      if (!text) throw new Error('Coach API returned no text');
+      return { text, cite: Array.isArray(data?.cite) ? data.cite : undefined };
+    } catch (err) {
+      // Configured remote failed. Log once so a misconfigured URL is
+      // visible, then degrade to local KB (don't render an empty bubble).
+      // eslint-disable-next-line no-console
+      console.warn('[coach-ai] remote failed, using local KB:', err);
     }
   }
   // Simulate "thinking" briefly so the UX is alive
