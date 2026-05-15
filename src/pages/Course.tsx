@@ -19,7 +19,7 @@ import {
   getCurrentShWeek,
   type ShWeek,
 } from '@/data/shplus';
-import { TOPICS } from '@/data/topics';
+import { TOPICS, type Topic } from '@/data/topics';
 import { EXAM_CASES } from '@/data/examiner';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
@@ -346,13 +346,7 @@ function ThisWeekCard({ week, now, live }: { week: ShWeek; now: Date; live: bool
         </div>
         <div>
           <div className="text-[11px] uppercase tracking-wider text-muted font-bold mb-2">Drill these on TimBoi</div>
-          <div className="flex flex-wrap gap-1.5">
-            {tbaTopics.map((t) => (
-              <Link key={t.id} to={`/topic/${t.id}`} className="chip text-primary hover:bg-primary hover:text-white transition-colors">
-                <i className={`fa-solid ${t.badge} text-[10px]`} /> {t.title}
-              </Link>
-            ))}
-          </div>
+          <TbaTopicChips topics={tbaTopics} />
           {examinerCases.length > 0 && (
             <>
               <div className="text-[11px] uppercase tracking-wider text-muted font-bold mt-3 mb-1">Examiner cases worth revisiting</div>
@@ -446,13 +440,7 @@ function WeekCard({ week, isCurrent, progress, onToggle }: { week: ShWeek; isCur
             </div>
             <div>
               <div className="text-[11px] uppercase tracking-wider text-muted font-bold mb-1.5">Drill on TimBoi</div>
-              <div className="flex flex-wrap gap-1.5">
-                {tbaTopics.map((t) => (
-                  <Link key={t.id} to={`/topic/${t.id}`} className="chip text-primary hover:bg-primary hover:text-white transition-colors">
-                    <i className={`fa-solid ${t.badge} text-[10px]`} /> {t.title}
-                  </Link>
-                ))}
-              </div>
+              <TbaTopicChips topics={tbaTopics} />
             </div>
             {week.tutorScenarios.length > 0 && (
               <div>
@@ -532,5 +520,20 @@ function BlackboscaCompanion() {
         <Link to="/examiner" className="btn-outline"><i className="fa-solid fa-file-signature" /> Examiner traps to avoid</Link>
       </div>
     </Card>
+  );
+}
+
+// File-local: the WeekCard expanded view and the WeekFooter collapsed view both
+// render the same chip list; keep it here (not exported) so future tweaks like
+// hover tooltips happen in one place.
+function TbaTopicChips({ topics }: { topics: Topic[] }) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {topics.map((t) => (
+        <Link key={t.id} to={`/topic/${t.id}`} className="chip text-primary hover:bg-primary hover:text-white transition-colors">
+          <i className={`fa-solid ${t.badge} text-[10px]`} /> {t.title}
+        </Link>
+      ))}
+    </div>
   );
 }
