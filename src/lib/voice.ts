@@ -8,8 +8,14 @@
  * Natural* voices (Aria, Libby, Ryan, Sonia) sound far more human than
  * legacy David/Zira. On macOS we prefer Daniel / Serena / Oliver.
  */
+import { errorMessage } from '@/lib/guards';
 
 type RecognitionState = 'idle' | 'listening' | 'error';
+
+interface SpeechWindow extends Window {
+  SpeechRecognition?: typeof SpeechRecognition;
+  webkitSpeechRecognition?: typeof SpeechRecognition;
+}
 
 export interface RecognitionHandle {
   start: () => void;
@@ -19,7 +25,7 @@ export interface RecognitionHandle {
 
 export function isSpeechRecognitionSupported(): boolean {
   if (typeof window === 'undefined') return false;
-  const w = window as any;
+  const w = window as SpeechWindow;
   return Boolean(w.SpeechRecognition || w.webkitSpeechRecognition);
 }
 
@@ -43,8 +49,8 @@ export function createRecognition({
   lang?: string;
   continuous?: boolean;
 }): RecognitionHandle {
-  const w = (typeof window !== 'undefined' ? window : {}) as any;
-  const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
+  const w = (typeof window !== 'undefined' ? window : undefined) as SpeechWindow | undefined;
+  const SR = w?.SpeechRecognition || w?.webkitSpeechRecognition;
   if (!SR) {
     return {
       start: () => onError?.('Voice not supported on this browser. Try Chrome or Edge.'),
@@ -52,7 +58,7 @@ export function createRecognition({
       supported: false,
     };
   }
-  const r: any = new SR();
+  const r: SpeechRecognition = new SR();
   r.lang = lang;
   r.continuous = continuous;
   r.interimResults = true;
@@ -60,11 +66,11 @@ export function createRecognition({
 
   r.onstart = () => onState?.('listening');
   r.onend = () => onState?.('idle');
-  r.onerror = (e: any) => {
+  r.onerror = (e: SpeechRecognitionErrorEvent) => {
     onState?.('error');
-    onError?.(e?.error || 'Speech recognition error.');
+    onError?.(e.error || 'Speech recognition error.');
   };
-  r.onresult = (e: any) => {
+  r.onresult = (e: SpeechRecognitionEvent) => {
     let interim = '';
     let final = '';
     for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -78,8 +84,8 @@ export function createRecognition({
 
   return {
     start: () => {
-      try { r.start(); } catch (err: any) {
-        onError?.(err?.message || 'Could not start microphone');
+      try { r.start(); } catch (err) {
+        onError?.(errorMessage(err, 'Could not start microphone'));
       }
     },
     stop: () => { try { r.stop(); } catch {} },
@@ -119,7 +125,7 @@ const MALE_HINTS = /ryan|guy|daniel|oliver|tom|alex|david|male|fred/i;
 
 function classifyVoice(v: SpeechSynthesisVoice): VoiceOption {
   const isNeural = NEURAL_PATTERNS.some((p) => p.test(v.name));
-  const quality: VoiceOption['quality'] = isNeural ? 'neural' : (v as any).localService ? 'standard' : 'enhanced';
+  const quality: VoiceOption['quality'] = isNeural ? 'neural' : v.localService ? 'standard' : 'enhanced';
   let gender: VoiceOption['gender'] = 'unknown';
   if (FEMALE_HINTS.test(v.name)) gender = 'female';
   else if (MALE_HINTS.test(v.name)) gender = 'male';
