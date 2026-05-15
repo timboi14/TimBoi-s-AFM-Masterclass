@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
+import { Card, Field, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
 import { cn } from '@/lib/cn';
 
 const TIMER_KEY = 'tba_timer_pivots_v1';
@@ -454,11 +454,3 @@ function AnswerPlanCanvas() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="text-[11px] uppercase tracking-wider text-muted font-bold mb-1 block">{label}</span>
-      {children}
-    </label>
-  );
-}

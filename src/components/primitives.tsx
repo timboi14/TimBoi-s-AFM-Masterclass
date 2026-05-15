@@ -71,6 +71,18 @@ export function Pill({
   return <span className={cn('pill', variantCls, className)}>{children}</span>;
 }
 
+/* Form Field (label + input slot) ------------------------- */
+// Lives here so Debrief/StudyGuide share the same uppercase eyebrow styling.
+// Two callers today; without a shared definition the eyebrow drifts silently.
+export function Field({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="block">
+      <span className="text-[11px] uppercase tracking-wider text-muted font-bold mb-1 block">{label}</span>
+      {children}
+    </label>
+  );
+}
+
 /* Coach Tip card (tactics board) -------------------------- */
 export function CoachTip({ title, children }: { title: string; children: ReactNode }) {
   return (

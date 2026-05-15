@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
+import { Card, Field, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
 import {
   buildCritique,
   loadSessions,
@@ -564,11 +564,3 @@ function Tile({ label, value, sub }: { label: string; value: string; sub: string
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="text-[11px] uppercase tracking-wider text-muted font-bold mb-1 block">{label}</span>
-      {children}
-    </label>
-  );
-}
