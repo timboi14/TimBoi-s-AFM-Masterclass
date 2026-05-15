@@ -13,6 +13,7 @@ import {
   type StructuralCritique,
 } from '@/lib/debrief';
 import { cn } from '@/lib/cn';
+import { errorMessage } from '@/lib/guards';
 
 const SKILL_LABELS: Record<keyof DebriefSession['selfRating'], string> = {
   communication: 'Communication',
@@ -197,8 +198,8 @@ export function DebriefNewPage() {
       });
       setCritique(c);
       setStep(5);
-    } catch (e: any) {
-      setError(e.message || 'Could not generate critique.');
+    } catch (e) {
+      setError(errorMessage(e, 'Could not generate critique.'));
     }
   };
 
