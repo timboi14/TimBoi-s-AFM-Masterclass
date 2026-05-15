@@ -26,9 +26,29 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Take over open tabs immediately when a new SW activates so users
+        // running on stale HTML get the fresh chunk manifest on next nav.
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         navigateFallback: '/index.html',
+        // Only fall back to cached index.html for genuine navigations, never
+        // for hashed asset URLs (which would mask a stale-chunk 404).
+        navigateFallbackDenylist: [/^\/assets\//, /\/sw\.js$/, /\/workbox-.*\.js$/],
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],
         runtimeCaching: [
+          {
+            // SPA navigations: prefer the network so a fresh deploy's HTML
+            // (and its updated chunk hashes) reach the client without waiting
+            // for the next SW cycle. Falls back to cache if offline.
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'tba-html',
+              networkTimeoutSeconds: 3,
+              expiration: { maxEntries: 10, maxAgeSeconds: 24 * 60 * 60 },
+            },
+          },
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/practice'),
             handler: 'NetworkOnly',
@@ -37,6 +57,15 @@ export default defineConfig({
             urlPattern: ({ url }) => url.pathname.startsWith('/cards') || url.pathname.startsWith('/theory') || url.pathname.startsWith('/formulas') || url.pathname.startsWith('/memory'),
             handler: 'StaleWhileRevalidate',
             options: { cacheName: 'tba-static-pages', expiration: { maxEntries: 30, maxAgeSeconds: 30 * 24 * 60 * 60 } },
+          },
+          {
+            // Backdrop and mascot artwork: stable filenames, long cache.
+            urlPattern: ({ url }) => url.pathname.startsWith('/spurs/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tba-spurs',
+              expiration: { maxEntries: 60, maxAgeSeconds: 365 * 24 * 60 * 60 },
+            },
           },
           {
             urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\//,
