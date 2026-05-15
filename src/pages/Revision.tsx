@@ -34,9 +34,6 @@ function fmtDate(ts: number) {
   return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-/* ─────────────────────────────────────────────
-   /revision — Dashboard
-   ───────────────────────────────────────────── */
 export function RevisionDashboard() {
   const last = lastAttempt();
   const lastPaper = last ? getPaper(last.paperId) : null;
@@ -126,9 +123,6 @@ export function RevisionDashboard() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   /revision/papers — Index
-   ───────────────────────────────────────────── */
 // Chip list of paper types shown on the index. Narrower than PaperType
 // itself (omits 'mock' and 'pre-mock' which the UX deliberately groups
 // under 'real' / 'tba-original'). State must match the chip set.
@@ -245,9 +239,6 @@ export function PapersIndex() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   /revision/papers/:paperId
-   ───────────────────────────────────────────── */
 export function PaperView() {
   const { paperId = '' } = useParams();
   const paper = getPaper(paperId);
@@ -316,9 +307,6 @@ export function PaperView() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   /revision/papers/:paperId/q/:qNo — Deep dive
-   ───────────────────────────────────────────── */
 export function QuestionDeepDive() {
   const { paperId = '', qNo = '0' } = useParams();
   const paper = getPaper(paperId);
@@ -547,9 +535,6 @@ export function QuestionDeepDive() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   /revision/topics — Topic mastery
-   ───────────────────────────────────────────── */
 export function TopicsIndex() {
   const allTopics = Object.values(TOPICS);
   const masteries = allTopics.map((t) => {
@@ -609,9 +594,6 @@ export function TopicsIndex() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   /progress — Dashboard
-   ───────────────────────────────────────────── */
 export function ProgressDashboard() {
   const attempts = loadAttempts();
   const totalMin = totalStudyMinutes();
@@ -699,8 +681,6 @@ export function ProgressDashboard() {
     </motion.div>
   );
 }
-
-/* ─── shared bits ───────────────────────────── */
 
 function Navigate() {
   const navigate = useNavigate();

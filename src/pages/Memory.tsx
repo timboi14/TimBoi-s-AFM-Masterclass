@@ -79,9 +79,6 @@ function savePalace(p: Record<string, string>) {
   safeWriteJson(PALACE_KEY, p);
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Page
-   ───────────────────────────────────────────────────────────── */
 export function MemoryPage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
@@ -172,10 +169,6 @@ export function MemoryPage() {
     </motion.div>
   );
 }
-
-/* ─────────────────────────────────────────────
-   Sub-components
-   ───────────────────────────────────────────── */
 
 function SRQueue() {
   const [items, setItems] = useState<SRItem[]>(() => loadSR());

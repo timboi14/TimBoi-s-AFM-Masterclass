@@ -23,9 +23,6 @@ const SKILL_LABELS: Record<keyof DebriefSession['selfRating'], string> = {
   calc: 'Calculation accuracy',
 };
 
-/* ─────────────────────────────────────────────
-   Index
-   ───────────────────────────────────────────── */
 export function DebriefIndexPage() {
   const [sessions, setSessions] = useState<DebriefSession[]>(() => loadSessions());
   const trends = useMemo(() => summariseTrends(sessions), [sessions]);
@@ -171,9 +168,6 @@ export function DebriefIndexPage() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   New / Edit
-   ───────────────────────────────────────────── */
 export function DebriefNewPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -430,9 +424,6 @@ export function DebriefNewPage() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   View saved
-   ───────────────────────────────────────────── */
 export function DebriefViewPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -499,8 +490,6 @@ export function DebriefViewPage() {
     </motion.div>
   );
 }
-
-/* ─── shared ─── */
 
 function CritiquePanel({ critique }: { critique: StructuralCritique }) {
   const strong = critique.signals.filter((s) => s.verdict === 'strong').length;

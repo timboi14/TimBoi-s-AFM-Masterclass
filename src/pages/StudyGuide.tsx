@@ -122,9 +122,6 @@ export function StudyGuidePage() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Mark Budget calculator
-   ───────────────────────────────────────────── */
 function MarkBudget() {
   const [marks, setMarks] = useState(50);
   const [calcSplit, setCalcSplit] = useState(50);
@@ -246,9 +243,6 @@ function KpiRow({ label, value, sub, tone }: { label: string; value: string; sub
   );
 }
 
-/* ─────────────────────────────────────────────
-   Timer with Pivot log
-   ───────────────────────────────────────────── */
 interface PivotEntry { ts: number; note: string; elapsedSec: number; }
 
 function TimerTool() {
@@ -387,9 +381,6 @@ function TimerTool() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Answer Plan canvas
-   ───────────────────────────────────────────── */
 function AnswerPlanCanvas() {
   const [openId, setOpenId] = useState(PLAN_TEMPLATES[0].id);
   const [plans, setPlans] = useState<Record<string, Record<string, string>>>(() => safeReadJson<Record<string, Record<string, string>>>(PLAN_KEY, {}));

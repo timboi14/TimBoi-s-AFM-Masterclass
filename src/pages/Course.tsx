@@ -282,8 +282,6 @@ export function CoursePage() {
   );
 }
 
-/* ─── components ─── */
-
 function KpiTile({ label, value, sub, tone }: { label: string; value: string; sub: string; tone: AccentTone }) {
   const colors = {
     primary: { text: 'text-primary', border: 'border-primary/30', bg: 'bg-primary/5' },

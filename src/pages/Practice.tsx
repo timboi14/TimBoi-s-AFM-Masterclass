@@ -23,9 +23,6 @@ import {
 import { readEnum } from '@/lib/guards';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 
-/* ─────────────────────────────────────────────
-   1) PRACTICE INDEX (when no id is given)
-   ───────────────────────────────────────────── */
 export function PracticePage() {
   const { id } = useParams();
   const set = id ? PRACTICE_SETS.find((s) => s.id === id) : null;
@@ -106,9 +103,6 @@ function PracticeIndex() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   2) EXAM SIMULATOR
-   ───────────────────────────────────────────── */
 type PanelKey = 'exhibits' | 'word' | 'sheet' | 'calc' | 'scratch' | 'hints' | 'sample' | 'mark';
 
 function ExamSimulator({ set }: { set: PracticeSet }) {
@@ -442,9 +436,6 @@ function ToolBtn({ icon, label, active, onClick, accent }: { icon: string; label
   );
 }
 
-/* ─────────────────────────────────────────────
-   3) EXPANDABLE SPREADSHEET
-   ───────────────────────────────────────────── */
 type SheetMode = 'inline' | 'docked';
 
 function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void }) {
@@ -795,9 +786,6 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
   return body;
 }
 
-/* ─────────────────────────────────────────────
-   4) CALCULATOR
-   ───────────────────────────────────────────── */
 function Calculator() {
   const [expr, setExpr] = useState('');
   const [history, setHistory] = useState<{ e: string; v: string }[]>([]);
@@ -878,9 +866,6 @@ function Calculator() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   5) SAMPLE ANSWER PANEL (full-mark exam-style)
-   ───────────────────────────────────────────── */
 function SampleAnswerPanel({ setId, reqIndex, reqLabel }: { setId: string; reqIndex: number; reqLabel: string }) {
   const sample = getSampleAnswer(setId, reqIndex);
   if (!sample) {
@@ -970,9 +955,6 @@ function SampleAnswerPanel({ setId, reqIndex, reqLabel }: { setId: string; reqIn
   );
 }
 
-/* ─────────────────────────────────────────────
-   6) COACH AI DRAWER
-   ───────────────────────────────────────────── */
 interface ChatMsg { role: 'user' | 'coach'; text: string; }
 
 function CoachDrawer({ open, onClose, setContext }: { open: boolean; onClose: () => void; setContext?: string }) {
