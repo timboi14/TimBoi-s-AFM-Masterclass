@@ -42,3 +42,29 @@ export function safeOnboarding(rawJson: string | null): SafeOnboarding | null {
     return null;
   }
 }
+
+/**
+ * Generic JSON read/write for tba_* keys.
+ *
+ * Defends against three real failure modes:
+ *   - SSR / private mode (no `window` or `localStorage`).
+ *   - Malformed payloads written by an older app version or extension.
+ *   - QuotaExceededError on write.
+ *
+ * Callers that need schema validation (onboarding, fan name) keep their
+ * own richer parsers above; these are the lowest-common-denominator
+ * helpers for plain JSON blobs.
+ */
+export function safeReadJson<T>(key: string, fallback: T): T {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export function safeWriteJson(key: string, value: unknown): void {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* quota */ }
+}

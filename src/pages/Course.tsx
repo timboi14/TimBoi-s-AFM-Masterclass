@@ -21,6 +21,7 @@ import {
 } from '@/data/shplus';
 import { TOPICS } from '@/data/topics';
 import { EXAM_CASES } from '@/data/examiner';
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
 
 const PROG_KEY = 'tba_sh_progress_v1';
@@ -29,11 +30,10 @@ type WeekProgress = Record<string, boolean>;
 type AllProgress = Record<number, WeekProgress>;
 
 function loadProgress(): AllProgress {
-  if (typeof window === 'undefined') return {};
-  try { return JSON.parse(localStorage.getItem(PROG_KEY) || '{}'); } catch { return {}; }
+  return safeReadJson<AllProgress>(PROG_KEY, {});
 }
 function saveProgress(p: AllProgress) {
-  try { localStorage.setItem(PROG_KEY, JSON.stringify(p)); } catch {}
+  safeWriteJson(PROG_KEY, p);
 }
 
 function fmtDate(iso: string) {

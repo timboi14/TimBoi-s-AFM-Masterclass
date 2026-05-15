@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Card, Pill, SectionTitle, fadeUp, stagger, type AccentTone } from '@/components/primitives';
 import { siteStats } from '@/lib/site-stats';
 import { COMMON_LOSERS } from '@/data/war-room';
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
 
 const WAR_KEY = 'tba_warroom_v1';
@@ -107,13 +108,10 @@ const COMMAND_WORDS: { word: string; what: string; how: string }[] = [
 ];
 
 export function WarRoomPage() {
-  const [done, setDone] = useState<Record<string, boolean>>(() => {
-    if (typeof window === 'undefined') return {};
-    try { return JSON.parse(localStorage.getItem(WAR_KEY) || '{}'); } catch { return {}; }
-  });
+  const [done, setDone] = useState<Record<string, boolean>>(() => safeReadJson<Record<string, boolean>>(WAR_KEY, {}));
 
   useEffect(() => {
-    try { localStorage.setItem(WAR_KEY, JSON.stringify(done)); } catch {}
+    safeWriteJson(WAR_KEY, done);
   }, [done]);
 
   const totalItems = useMemo(() => GROUPS.reduce((n, g) => n + g.items.length, 0), []);

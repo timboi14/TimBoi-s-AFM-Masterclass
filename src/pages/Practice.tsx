@@ -21,6 +21,7 @@ import {
   ChatInputTextArea,
 } from '@/components/ui/chat-input';
 import { errorMessage, readEnum } from '@/lib/guards';
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 
 /* ─────────────────────────────────────────────
    1) PRACTICE INDEX (when no id is given)
@@ -449,11 +450,10 @@ type SheetMode = 'inline' | 'docked';
 function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void }) {
   const sk = (key: string) => `tba_practice_${setId}_sheet_v2_${key}`;
   const [sheet, setSheet] = useState<Sheet>(() => {
-    const raw = localStorage.getItem(sk('data'));
-    if (raw) try { return JSON.parse(raw); } catch {}
     // Start big: 40 rows x 14 columns. Comfortably holds a 7-year NPV proforma
     // with 30+ working lines or a Section A multi-stage model.
-    return Array.from({ length: 40 }, () => Array.from({ length: 14 }, () => ''));
+    const empty = (): Sheet => Array.from({ length: 40 }, () => Array.from({ length: 14 }, () => ''));
+    return safeReadJson<Sheet>(sk('data'), empty());
   });
   const [active, setActive] = useState<{ r: number; c: number } | null>({ r: 0, c: 0 });
   const [showFns, setShowFns] = useState(false);
@@ -468,7 +468,7 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
     return Math.round(window.innerHeight * 0.55);
   });
 
-  useEffect(() => { localStorage.setItem(sk('data'), JSON.stringify(sheet)); }, [sheet, setId]);
+  useEffect(() => { safeWriteJson(sk('data'), sheet); }, [sheet, setId]);
   useEffect(() => { localStorage.setItem('tba_sheet_mode', mode); }, [mode]);
   useEffect(() => { localStorage.setItem('tba_sheet_dock_h', String(dockHeight)); }, [dockHeight]);
 

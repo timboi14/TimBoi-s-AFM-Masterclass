@@ -18,6 +18,7 @@ import { siteStats } from '@/lib/site-stats';
 import { PITFALLS } from '@/data/pitfalls';
 import { SPOTLIGHTS } from '@/data/spotlights';
 import { PAPERS } from '@/data/papers';
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
 
 const EXAM_DATE = new Date('2026-06-05T09:00:00');
@@ -655,9 +656,9 @@ function Hero({
 function DailyQuest() {
   const todayKey = `tba_quest_${new Date().toISOString().slice(0, 10)}`;
   const [done, setDone] = useState<{ pitfall: boolean; spotlight: boolean; question: boolean; rewarded: boolean }>(() => {
-    if (typeof window === 'undefined') return { pitfall: false, spotlight: false, question: false, rewarded: false };
-    try { return { pitfall: false, spotlight: false, question: false, rewarded: false, ...JSON.parse(localStorage.getItem(todayKey) || '{}') }; }
-    catch { return { pitfall: false, spotlight: false, question: false, rewarded: false }; }
+    const defaults = { pitfall: false, spotlight: false, question: false, rewarded: false };
+    // Spread merge so a partial blob (e.g. from a future flag) still hydrates known defaults.
+    return { ...defaults, ...safeReadJson<Partial<typeof defaults>>(todayKey, {}) };
   });
 
   // Deterministic pick per day so the quest is consistent if user reloads
@@ -673,7 +674,7 @@ function DailyQuest() {
   const question = allQuestions[(seed >> 7) % allQuestions.length];
 
   useEffect(() => {
-    try { localStorage.setItem(todayKey, JSON.stringify(done)); } catch {}
+    safeWriteJson(todayKey, done);
     if (done.pitfall && done.spotlight && done.question && !done.rewarded) {
       store.set({ points: store.get().points + 30 });
       setDone((d) => ({ ...d, rewarded: true }));

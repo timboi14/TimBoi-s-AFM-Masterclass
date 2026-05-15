@@ -4,6 +4,7 @@ import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitiv
 import { MNEMONICS } from '@/lib/mnemonics';
 import { store } from '@/lib/store';
 import { speak, isSpeechSynthesisSupported } from '@/lib/voice';
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
 
 /* ── Spaced repetition queue (Leitner 5-box) ────────────────── */
@@ -21,27 +22,25 @@ const SEED_SR: Omit<SRItem, 'box' | 'due'>[] = MNEMONICS.map((m) => ({
 }));
 
 function loadSR(): SRItem[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(SR_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
+  // Seed on first read so the SR queue is never empty for a new user.
+  const stored = safeReadJson<SRItem[] | null>(SR_KEY, null);
+  if (stored && stored.length > 0) return stored;
   const now = Date.now();
   const seeded: SRItem[] = SEED_SR.map((s) => ({ ...s, box: 1, due: now }));
-  localStorage.setItem(SR_KEY, JSON.stringify(seeded));
+  safeWriteJson(SR_KEY, seeded);
   return seeded;
 }
 function saveSR(items: SRItem[]) {
-  try { localStorage.setItem(SR_KEY, JSON.stringify(items)); } catch {}
+  safeWriteJson(SR_KEY, items);
 }
 
 /* ── Feynman drafts ─────────────────────────────────────────── */
 const FEYN_KEY = 'tba_feyn_v1';
 interface FeynDraft { topic: string; text: string; updated: number; }
 function loadFeyn(): FeynDraft[] {
-  try { return JSON.parse(localStorage.getItem(FEYN_KEY) || '[]'); } catch { return []; }
+  return safeReadJson<FeynDraft[]>(FEYN_KEY, []);
 }
-function saveFeyn(d: FeynDraft[]) { try { localStorage.setItem(FEYN_KEY, JSON.stringify(d)); } catch {} }
+function saveFeyn(d: FeynDraft[]) { safeWriteJson(FEYN_KEY, d); }
 
 /* ── Memory palace (slot:concept) ───────────────────────────── */
 const PALACE_KEY = 'tba_palace_v1';
@@ -70,15 +69,14 @@ const DEFAULT_PALACE: Record<string, string> = {
   garden: 'ESG: issue → action → outcome (three sentences in the soil)',
 };
 function loadPalace(): Record<string, string> {
-  try {
-    const raw = localStorage.getItem(PALACE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  localStorage.setItem(PALACE_KEY, JSON.stringify(DEFAULT_PALACE));
+  // Seed defaults so the empty-state visual is never just blank slots.
+  const stored = safeReadJson<Record<string, string> | null>(PALACE_KEY, null);
+  if (stored) return stored;
+  safeWriteJson(PALACE_KEY, DEFAULT_PALACE);
   return DEFAULT_PALACE;
 }
 function savePalace(p: Record<string, string>) {
-  try { localStorage.setItem(PALACE_KEY, JSON.stringify(p)); } catch {}
+  safeWriteJson(PALACE_KEY, p);
 }
 
 /* ─────────────────────────────────────────────────────────────

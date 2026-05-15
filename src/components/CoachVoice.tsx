@@ -11,6 +11,7 @@ import {
   type VoiceOption,
 } from '@/lib/voice';
 import { pickRandomSpotlight, SPOTLIGHT_CATEGORY_LABELS, type Spotlight } from '@/data/spotlights';
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
 
 type Msg =
@@ -27,18 +28,15 @@ interface Prefs {
   recentSpotlightIds: string[];
 }
 
+const DEFAULT_PREFS: Prefs = { speak: true, rate: 0.96, voiceName: null, recentSpotlightIds: [] };
+
 function loadPrefs(): Prefs {
-  if (typeof window === 'undefined') return { speak: true, rate: 0.96, voiceName: null, recentSpotlightIds: [] };
-  try {
-    const raw = localStorage.getItem(PREFS_KEY);
-    if (raw) return { ...{ speak: true, rate: 0.96, voiceName: null, recentSpotlightIds: [] }, ...JSON.parse(raw) };
-  } catch {}
-  return { speak: true, rate: 0.96, voiceName: null, recentSpotlightIds: [] };
+  // Spread merge so a partial blob from an older app version still hydrates new defaults.
+  return { ...DEFAULT_PREFS, ...safeReadJson<Partial<Prefs>>(PREFS_KEY, {}) };
 }
 
 function loadLog(): Msg[] {
-  if (typeof window === 'undefined') return [];
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+  return safeReadJson<Msg[]>(STORAGE_KEY, []);
 }
 
 /**
@@ -68,8 +66,8 @@ export function CoachVoice() {
   const heldRef = useRef(false);
 
   /* Persist */
-  useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-30))); } catch {} }, [messages]);
-  useEffect(() => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch {} }, [prefs]);
+  useEffect(() => { safeWriteJson(STORAGE_KEY, messages.slice(-30)); }, [messages]);
+  useEffect(() => { safeWriteJson(PREFS_KEY, prefs); }, [prefs]);
 
   /* Load voices on mount and when the engine populates async */
   useEffect(() => {

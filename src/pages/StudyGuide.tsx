@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Field, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
 
 const TIMER_KEY = 'tba_timer_pivots_v1';
@@ -254,14 +255,11 @@ function TimerTool() {
   const [budgetMin, setBudgetMin] = useState(45);
   const [secLeft, setSecLeft] = useState(45 * 60);
   const [running, setRunning] = useState(false);
-  const [pivots, setPivots] = useState<PivotEntry[]>(() => {
-    if (typeof window === 'undefined') return [];
-    try { return JSON.parse(localStorage.getItem(TIMER_KEY) || '[]'); } catch { return []; }
-  });
+  const [pivots, setPivots] = useState<PivotEntry[]>(() => safeReadJson<PivotEntry[]>(TIMER_KEY, []));
   const [pivotNote, setPivotNote] = useState('');
   const intervalRef = useRef<number | null>(null);
 
-  useEffect(() => { try { localStorage.setItem(TIMER_KEY, JSON.stringify(pivots.slice(-30))); } catch {} }, [pivots]);
+  useEffect(() => { safeWriteJson(TIMER_KEY, pivots.slice(-30)); }, [pivots]);
 
   useEffect(() => {
     if (!running) return;
@@ -394,12 +392,9 @@ function TimerTool() {
    ───────────────────────────────────────────── */
 function AnswerPlanCanvas() {
   const [openId, setOpenId] = useState(PLAN_TEMPLATES[0].id);
-  const [plans, setPlans] = useState<Record<string, Record<string, string>>>(() => {
-    if (typeof window === 'undefined') return {};
-    try { return JSON.parse(localStorage.getItem(PLAN_KEY) || '{}'); } catch { return {}; }
-  });
+  const [plans, setPlans] = useState<Record<string, Record<string, string>>>(() => safeReadJson<Record<string, Record<string, string>>>(PLAN_KEY, {}));
 
-  useEffect(() => { try { localStorage.setItem(PLAN_KEY, JSON.stringify(plans)); } catch {} }, [plans]);
+  useEffect(() => { safeWriteJson(PLAN_KEY, plans); }, [plans]);
 
   const open = PLAN_TEMPLATES.find((t) => t.id === openId)!;
   const planData = plans[openId] || {};

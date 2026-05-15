@@ -3,16 +3,16 @@
  * Powers the Revision dashboard, topic mastery, and progress page.
  */
 import type { AttemptLog, AttemptRating } from '@/data/papers/schema';
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 
 const KEY = 'tba_attempts_v1';
 
 export function loadAttempts(): AttemptLog[] {
-  if (typeof window === 'undefined') return [];
-  try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
+  return safeReadJson<AttemptLog[]>(KEY, []);
 }
 
 function save(all: AttemptLog[]) {
-  try { localStorage.setItem(KEY, JSON.stringify(all.slice(-500))); } catch {}
+  safeWriteJson(KEY, all.slice(-500));
 }
 
 export function logAttempt(input: Omit<AttemptLog, 'id'>): AttemptLog {

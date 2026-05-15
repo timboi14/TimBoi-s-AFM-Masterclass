@@ -40,17 +40,12 @@ export interface StructuralCritique {
   noticesNotReWrite: string;   // disclaimer string echoed in output
 }
 
+import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
+
 const STORE_KEY = 'tba_debrief_v1';
 
 export function loadSessions(): DebriefSession[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw) as DebriefSession[];
-  } catch {
-    return [];
-  }
+  return safeReadJson<DebriefSession[]>(STORE_KEY, []);
 }
 
 export function saveSession(s: DebriefSession) {
@@ -58,12 +53,12 @@ export function saveSession(s: DebriefSession) {
   const idx = all.findIndex((x) => x.id === s.id);
   if (idx >= 0) all[idx] = s;
   else all.unshift(s);
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(all.slice(0, 50))); } catch {}
+  safeWriteJson(STORE_KEY, all.slice(0, 50));
 }
 
 export function deleteSession(id: string) {
   const all = loadSessions().filter((x) => x.id !== id);
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(all)); } catch {}
+  safeWriteJson(STORE_KEY, all);
 }
 
 /**

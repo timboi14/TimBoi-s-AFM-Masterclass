@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/lib/store';
-import { safeOnboarding, type SafeOnboarding } from '@/lib/safe-storage';
+import { safeOnboarding, safeWriteJson, type SafeOnboarding } from '@/lib/safe-storage';
 
 const KEY = 'tba_onboarding_v1';
 
@@ -36,7 +36,7 @@ function load(): OnbState | null {
   return safeOnboarding(localStorage.getItem(KEY));
 }
 function save(s: OnbState) {
-  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {}
+  safeWriteJson(KEY, s);
 }
 
 /**
