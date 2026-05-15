@@ -151,8 +151,16 @@ export function Layout() {
       </div>
 
       <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 pt-4 pb-32">
-        {/* Spurs-themed banner art keyed to the current route. Hidden on mobile. */}
-        <TabArtBanner />
+        {/* Hero backdrop band: explicit-height section so the absolutely-
+            positioned <img> inside TabArtBanner is bounded to a hero zone
+            instead of stretching to the full page height. Hidden under md
+            via the picture's own classes. */}
+        <section
+          aria-hidden
+          className="pointer-events-none absolute inset-x-4 sm:inset-x-6 top-0 h-[480px] lg:h-[560px] overflow-hidden"
+        >
+          <TabArtBanner />
+        </section>
 
         <AnimatePresence mode="wait">
           <motion.main
