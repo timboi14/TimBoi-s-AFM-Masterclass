@@ -2,6 +2,8 @@ import { motion, type HTMLMotionProps } from 'framer-motion';
 import { type ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
+export type AccentTone = 'primary' | 'accent' | 'danger';
+
 /* Match-day stagger container ------------------------------ */
 export const stagger = {
   hidden: {},
@@ -58,7 +60,7 @@ export function Pill({
 }: {
   className?: string;
   children: ReactNode;
-  variant?: 'outline' | 'primary' | 'accent' | 'danger';
+  variant?: 'outline' | AccentTone;
 }) {
   const variantCls = {
     outline: 'border border-border bg-white text-text',

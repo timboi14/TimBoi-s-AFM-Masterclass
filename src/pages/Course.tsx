@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
+import { Card, Pill, SectionTitle, fadeUp, stagger, type AccentTone } from '@/components/primitives';
 import {
   CenteredHero,
   HeroGold,
@@ -284,7 +284,7 @@ export function CoursePage() {
 
 /* ─── components ─── */
 
-function KpiTile({ label, value, sub, tone }: { label: string; value: string; sub: string; tone: 'primary' | 'accent' | 'danger' }) {
+function KpiTile({ label, value, sub, tone }: { label: string; value: string; sub: string; tone: AccentTone }) {
   const colors = {
     primary: { text: 'text-primary', border: 'border-primary/30', bg: 'bg-primary/5' },
     accent: { text: 'text-accent-dark', border: 'border-accent/40', bg: 'bg-accent/5' },

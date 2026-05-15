@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
+import { Card, Pill, SectionTitle, fadeUp, stagger, type AccentTone } from '@/components/primitives';
 import { siteStats } from '@/lib/site-stats';
 import { COMMON_LOSERS } from '@/data/war-room';
 import { cn } from '@/lib/cn';
@@ -8,7 +8,7 @@ import { cn } from '@/lib/cn';
 const WAR_KEY = 'tba_warroom_v1';
 
 interface ChecklistItem { id: string; text: string; }
-interface ChecklistGroup { id: string; title: string; icon: string; tone: 'primary' | 'accent' | 'danger'; items: ChecklistItem[]; }
+interface ChecklistGroup { id: string; title: string; icon: string; tone: AccentTone; items: ChecklistItem[]; }
 
 const GROUPS: ChecklistGroup[] = [
   {
