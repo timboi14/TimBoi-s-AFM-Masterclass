@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface State { error: Error | null }
 
@@ -9,7 +9,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
     return { error };
   }
 
-  componentDidCatch(error: Error, info: any) {
+  componentDidCatch(error: Error, info: ErrorInfo) {
     // Log to console for debugging in browser dev tools
     // eslint-disable-next-line no-console
     console.error('TBA crash:', error, info);

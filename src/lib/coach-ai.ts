@@ -416,7 +416,7 @@ const FALLBACK: CoachReply = {
 };
 
 export async function askCoach(question: string): Promise<CoachReply> {
-  const remoteUrl = (import.meta as any).env?.VITE_COACH_API_URL as string | undefined;
+  const remoteUrl = import.meta.env.VITE_COACH_API_URL;
   if (remoteUrl) {
     try {
       const res = await fetch(remoteUrl, {
