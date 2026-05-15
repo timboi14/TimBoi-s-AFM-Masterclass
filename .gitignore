@@ -30,3 +30,4 @@ dist/
 
 # Scratch/working dirs
 .spec-blocks/
+reports/tmp-jscpd/

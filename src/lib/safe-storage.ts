@@ -19,7 +19,7 @@ export function safeFanName(raw: unknown, maxLen = 40): string {
   return cleaned.slice(0, maxLen);
 }
 
-export type OnboardingDistance = 'tonight' | 'week' | 'month' | 'twoMonth';
+type OnboardingDistance = 'tonight' | 'week' | 'month' | 'twoMonth';
 const VALID_DISTANCES = new Set<OnboardingDistance>(['tonight', 'week', 'month', 'twoMonth']);
 
 export interface SafeOnboarding {

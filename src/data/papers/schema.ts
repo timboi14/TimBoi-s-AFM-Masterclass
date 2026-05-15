@@ -4,13 +4,13 @@
  */
 
 export type PaperType = 'real' | 'mock' | 'pre-mock' | 'specimen' | 'tba-original';
-export type PaperSource = 'ACCA' | 'internal' | 'licensed';
-export type Section = 'A' | 'B';
+type PaperSource = 'ACCA' | 'internal' | 'licensed';
+type Section = 'A' | 'B';
 export type SyllabusArea = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
-export type Month = 'Mar' | 'Jun' | 'Sep' | 'Dec';
-export type Difficulty = 1 | 2 | 3 | 4 | 5;
+type Month = 'Mar' | 'Jun' | 'Sep' | 'Dec';
+type Difficulty = 1 | 2 | 3 | 4 | 5;
 
-export interface PaperQuestion {
+interface PaperQuestion {
   id: string;
   number: number;
   section: Section;

@@ -24,7 +24,7 @@ const ROUTE_ART: Array<{ match: (p: string) => boolean; src: string; label: stri
   { match: (p) => p === '/', src: '/spurs/home.png', label: 'Home' },
 ];
 
-export function useTabArt() {
+function useTabArt() {
   const { pathname } = useLocation();
   const hit = ROUTE_ART.find((r) => r.match(pathname));
   return hit ?? null;

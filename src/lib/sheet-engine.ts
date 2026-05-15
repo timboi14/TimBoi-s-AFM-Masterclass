@@ -22,7 +22,7 @@ export function colLetter(i: number): string {
   return s;
 }
 
-export function colIndex(letters: string): number {
+function colIndex(letters: string): number {
   let n = 0;
   for (let i = 0; i < letters.length; i++) {
     n = n * 26 + (letters.charCodeAt(i) - 64);
@@ -30,7 +30,7 @@ export function colIndex(letters: string): number {
   return n - 1;
 }
 
-export function getCell(sheet: Sheet, r: number, c: number): Cell {
+function getCell(sheet: Sheet, r: number, c: number): Cell {
   return sheet[r]?.[c] ?? '';
 }
 

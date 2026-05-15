@@ -24,7 +24,7 @@ export interface SampleAnswer {
 }
 
 /** keyed by `${setId}:${requirementIndex}` */
-export const SAMPLE_ANSWERS: Record<string, SampleAnswer> = {
+const SAMPLE_ANSWERS: Record<string, SampleAnswer> = {
   // SET 1A — Lilywhite Co APV
   'set-1a:0': {
     intro:

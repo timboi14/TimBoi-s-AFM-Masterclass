@@ -24,17 +24,6 @@ export function logAttempt(input: Omit<AttemptLog, 'id'>): AttemptLog {
   return att;
 }
 
-export function updateAttempt(id: string, patch: Partial<AttemptLog>) {
-  const all = loadAttempts();
-  const idx = all.findIndex((a) => a.id === id);
-  if (idx >= 0) { all[idx] = { ...all[idx], ...patch }; save(all); }
-}
-
-export function deleteAttempt(id: string) {
-  const all = loadAttempts().filter((a) => a.id !== id);
-  save(all);
-}
-
 export function attemptsByQuestion(questionId: string): AttemptLog[] {
   return loadAttempts().filter((a) => a.questionId === questionId);
 }

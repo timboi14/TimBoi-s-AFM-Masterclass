@@ -277,9 +277,3 @@ export const PITFALLS: PitfallEntry[] = [
   },
 ];
 
-export const PITFALL_TAGS = [
-  { id: 'all', label: 'All' },
-  { id: 'high', label: 'High mark risk' },
-  { id: 'examiner', label: 'Examiner-flagged' },
-  { id: 'coach', label: 'Coach technique' },
-];

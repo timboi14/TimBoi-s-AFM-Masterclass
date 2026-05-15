@@ -19,7 +19,7 @@ const KEY = {
 
 export type Tier = 'Academy' | 'Reserve' | 'First Team' | 'Club Legend' | 'COYS Legend';
 
-export const TIER_THRESHOLDS: Array<{ tier: Tier; min: number; emoji: string; color: string }> = [
+const TIER_THRESHOLDS: Array<{ tier: Tier; min: number; emoji: string; color: string }> = [
   { tier: 'Academy', min: 0, emoji: '🌱', color: '#9ca3af' },
   { tier: 'Reserve', min: 250, emoji: '🛡️', color: '#60a5fa' },
   { tier: 'First Team', min: 750, emoji: '⚽', color: '#00c853' },

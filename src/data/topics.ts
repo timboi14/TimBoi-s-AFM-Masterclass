@@ -13,16 +13,16 @@ export interface Drill {
   marks: number;
   trap: string;
 }
-export interface Worked {
+interface Worked {
   title: string;
   steps: { label: string; detail?: string; calc?: string }[];
   result: string;
 }
-export interface CoachTip {
+interface CoachTip {
   title: string;
   body: string;
 }
-export interface Note {
+interface Note {
   heading: string;
   intro: string;
   bullets: string[];
@@ -36,7 +36,7 @@ export interface Formula {
   context: string;
   category: 'CoC' | 'Valuation' | 'Options' | 'FX' | 'IRR' | 'Portfolio' | 'M&A';
 }
-export interface Pitfall {
+interface Pitfall {
   title: string;
   body: string;
 }

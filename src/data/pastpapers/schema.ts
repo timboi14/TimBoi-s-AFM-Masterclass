@@ -5,7 +5,7 @@ export type DataSource =
   | 'S'  // Solution Pack (text file verified)
   | 'E'; // Examiner Report only (no numerical data from file)
 
-export type SyllabusSection = 'A' | 'B' | 'C' | 'D' | 'E';
+type SyllabusSection = 'A' | 'B' | 'C' | 'D' | 'E';
 export type PaperSection = 'A' | 'B'; // Section A = 50 marks, B = 25 marks
 export type TopicCategory = 'inv' | 'hedg' | 'ma'; // investment, hedging, M&A
 
@@ -15,7 +15,7 @@ export interface VerifiedNumber {
   source: DataSource;
 }
 
-export interface QuestionPart {
+interface QuestionPart {
   label: string;     // e.g. "(a)" or "(b)(i)"
   marks: number;
   requirement: string; // What the question actually asks — plain text, bionic applied at render
@@ -30,13 +30,13 @@ export interface ScenarioStep {
   table?: ScenarioTable; // Optional data table
 }
 
-export interface ScenarioTable {
+interface ScenarioTable {
   headers: string[];
   rows: string[][];
   highlightLastRow?: boolean; // marks the last row as a total/result row
 }
 
-export interface SolutionStep {
+interface SolutionStep {
   stepNumber: number;
   title: string;     // e.g. "Build the cash flow table"
   explanation: string; // Plain text — bionic applied at render
@@ -44,7 +44,7 @@ export interface SolutionStep {
   verifiedNumbers?: string[]; // Key results confirmed from source files
 }
 
-export interface ExaminerFeedback {
+interface ExaminerFeedback {
   didWell: string;     // What the examiner said candidates did correctly
   commonErrors: string; // What the examiner said went wrong
   tutorTip: string;    // Actionable advice for this specific paper

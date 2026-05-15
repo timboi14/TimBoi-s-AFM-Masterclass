@@ -40,4 +40,4 @@ export const siteStats = {
   mnemonics: MNEMONICS.length,
 } as const;
 
-export type SiteStats = typeof siteStats;
+type SiteStats = typeof siteStats;

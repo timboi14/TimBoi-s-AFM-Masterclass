@@ -4,20 +4,20 @@
  * No em dashes anywhere.
  */
 
-export interface Exhibit {
+interface Exhibit {
   number: number;
   title: string;
   body: string;
 }
 
-export interface Requirement {
+interface Requirement {
   label: string;
   marks: number;
   hint: string;
   solution: string[];
 }
 
-export interface MarkSchemeRow {
+interface MarkSchemeRow {
   item: string;
   marks: number;
 }
@@ -1217,5 +1217,3 @@ export const PRACTICE_SETS: PracticeSet[] = [
   },
 ];
 
-export const PRACTICE_BY_MODULE = (m: 1 | 2 | 3 | 4) =>
-  PRACTICE_SETS.filter((s) => s.module === m);

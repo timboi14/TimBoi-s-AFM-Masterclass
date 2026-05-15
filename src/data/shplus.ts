@@ -137,18 +137,6 @@ export const SH_KEY_DATES: { date: string; label: string; tone: 'info' | 'warn' 
   { date: '2026-07-13T05:00:00', label: 'Results released', tone: 'info' },
 ];
 
-export const SH_SUPPORT = {
-  expert: { name: 'Lead Tutor', role: 'Course Expert', linkedin: 'https://www.linkedin.com/in/andrewmower/' },
-  tutors: ['Support Tutor 1', 'Support Tutor 2'],
-  email: 'studyhubplus@accaglobal.com',
-  whatsapp: '+44 7418 311387',
-  whatsappNote: 'Responses typically within 24 hours',
-  assistant: {
-    url: 'https://learning.accaglobal.com/',
-    note: '24/7 AI support inside the course portal. First-time login uses your ACCA ID (omit any leading zero).',
-  },
-};
-
 export const SH_TECHNICAL_ARTICLES = [
   { title: 'Patterns of behaviour', topic: 'behav' },
   { title: 'Green finance', topic: 'behav' },
