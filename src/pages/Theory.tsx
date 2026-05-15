@@ -4,10 +4,11 @@ import { THEORY, CAT_LABELS, type ThoeryCat } from '@/data/theory';
 import { Card, Pill, fadeUp, stagger } from '@/components/primitives';
 import { store, useStore } from '@/lib/store';
 import { cn } from '@/lib/cn';
+import { readEnum } from '@/lib/guards';
 
 export function TheoryPage() {
   const [mode, setMode] = useState<'bullets' | 'full'>(() =>
-    (localStorage.getItem('tba_theory_mode') as any) || 'bullets'
+    readEnum(localStorage.getItem('tba_theory_mode'), ['bullets', 'full'] as const, 'bullets')
   );
   const setModeP = (m: 'bullets' | 'full') => {
     setMode(m);

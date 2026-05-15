@@ -20,6 +20,7 @@ import {
   ChatInputSubmit,
   ChatInputTextArea,
 } from '@/components/ui/chat-input';
+import { errorMessage, readEnum } from '@/lib/guards';
 
 /* ─────────────────────────────────────────────
    1) PRACTICE INDEX (when no id is given)
@@ -64,7 +65,7 @@ function PracticeIndex() {
             ).map((f) => (
               <button
                 key={String(f.v)}
-                onClick={() => setFilter(f.v as any)}
+                onClick={() => setFilter(f.v)}
                 className={cn(
                   'pill border border-border bg-white',
                   filter === f.v && (f.v === 'A' ? 'bg-accent text-bg border-accent' : 'bg-primary text-white border-primary')
@@ -460,7 +461,7 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
   const [zoom, setZoom] = useState(100); // percent
 
   // Mode + resizable dock height
-  const [mode, setMode] = useState<SheetMode>(() => (localStorage.getItem('tba_sheet_mode') as SheetMode) || 'inline');
+  const [mode, setMode] = useState<SheetMode>(() => readEnum(localStorage.getItem('tba_sheet_mode'), ['inline', 'docked'] as const, 'inline'));
   const [dockHeight, setDockHeight] = useState<number>(() => {
     const stored = localStorage.getItem('tba_sheet_dock_h');
     if (stored) return Math.max(220, Math.min(window.innerHeight - 120, parseInt(stored, 10) || 480));
@@ -479,31 +480,40 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
     return () => window.removeEventListener('keydown', onKey);
   }, [mode]);
 
-  // Drag handle: resize the dock by pulling the top edge up or down
+  // Drag handle: resize the dock by pulling the top edge up or down.
+  // Split into mouse/touch handlers because React event handler prop types
+  // are invariant; we delegate to a shared `startDrag` core.
   const dragRef = useRef<{ startY: number; startH: number } | null>(null);
-  function onDragStart(e: React.MouseEvent | React.TouchEvent) {
-    e.preventDefault();
-    const y = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
-    dragRef.current = { startY: y, startH: dockHeight };
-    const onMove = (ev: MouseEvent | TouchEvent) => {
+  function startDrag(startY: number) {
+    dragRef.current = { startY, startH: dockHeight };
+    const applyDrag = (cy: number) => {
       if (!dragRef.current) return;
-      const cy = 'touches' in ev ? (ev as TouchEvent).touches[0].clientY : (ev as MouseEvent).clientY;
       const delta = dragRef.current.startY - cy; // dragging UP increases height
       const next = Math.max(220, Math.min(window.innerHeight - 80, dragRef.current.startH + delta));
       setDockHeight(next);
     };
+    const onMouseMove = (ev: MouseEvent) => applyDrag(ev.clientY);
+    const onTouchMove = (ev: TouchEvent) => applyDrag(ev.touches[0].clientY);
     const onEnd = () => {
       dragRef.current = null;
-      window.removeEventListener('mousemove', onMove as any);
+      window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onEnd);
-      window.removeEventListener('touchmove', onMove as any);
+      window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onEnd);
     };
-    window.addEventListener('mousemove', onMove as any);
+    window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onEnd);
-    window.addEventListener('touchmove', onMove as any, { passive: false });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('touchend', onEnd);
   }
+  const onMouseDownDrag: React.MouseEventHandler = (e) => {
+    e.preventDefault();
+    startDrag(e.clientY);
+  };
+  const onTouchStartDrag: React.TouchEventHandler = (e) => {
+    e.preventDefault();
+    startDrag(e.touches[0].clientY);
+  };
 
   function update(r: number, c: number, v: string) {
     setSheet((cur) => {
@@ -768,8 +778,8 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
         >
           {/* Drag handle */}
           <div
-            onMouseDown={onDragStart as any}
-            onTouchStart={onDragStart as any}
+            onMouseDown={onMouseDownDrag}
+            onTouchStart={onTouchStartDrag}
             className="h-3 cursor-row-resize bg-gradient-to-b from-primary/15 to-primary/0 border-b border-primary/30 flex items-center justify-center group"
             title="Drag to resize. Pull up for more sheet, pull down for more question"
           >
@@ -801,8 +811,8 @@ function Calculator() {
       const result = typeof out.v === 'number' ? Number(out.v.toFixed(6)).toString() : String(out.v);
       setHistory((h) => [{ e: expr, v: result }, ...h].slice(0, 8));
       setExpr(result);
-    } catch (e: any) {
-      setHistory((h) => [{ e: expr, v: e.message || 'ERROR' }, ...h]);
+    } catch (e) {
+      setHistory((h) => [{ e: expr, v: errorMessage(e, 'ERROR') }, ...h]);
     }
   }
 
@@ -996,7 +1006,7 @@ function CoachDrawer({ open, onClose, setContext }: { open: boolean; onClose: ()
     try {
       const reply: CoachReply = await askCoach(msg);
       setMessages((m) => [...m, { role: 'coach', text: reply.text }]);
-    } catch (e: any) {
+    } catch {
       setMessages((m) => [...m, { role: 'coach', text: 'Coach AI hit an error. Try again.' }]);
     } finally {
       setLoading(false);
