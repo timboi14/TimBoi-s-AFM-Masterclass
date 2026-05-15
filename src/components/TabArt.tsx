@@ -65,10 +65,18 @@ export function TabArtBanner() {
   if (!art) return null;
   const { base } = art;
 
-  // Reset the fade when the route changes so each hero animates in cleanly.
-  // The key forces React to remount the <picture> on route change.
+  // Self-bounded backdrop: fixed pixel height + percentage width with a hard cap,
+  // anchored top-right of the nearest positioned ancestor (the page wrapper).
+  // Fixed dimensions avoid any dependence on a parent's intrinsic or computed
+  // height, so the img can't stretch into a 4000+ px sliver when an ancestor
+  // expands. The key forces React to remount the picture on route change so the
+  // fade-in plays fresh.
   return (
-    <picture key={base} className="pointer-events-none">
+    <picture
+      key={base}
+      aria-hidden
+      className="pointer-events-none absolute top-0 right-0 hidden md:block w-[40%] max-w-[520px] h-[480px] lg:h-[560px] overflow-hidden -z-10"
+    >
       <source
         type="image/avif"
         srcSet={`/spurs/${base}.avif 1x, /spurs/${base}@2x.avif 2x`}
@@ -87,7 +95,7 @@ export function TabArtBanner() {
         {...({ fetchpriority: 'high' } as { fetchpriority: 'high' })}
         onLoad={() => setLoaded(true)}
         style={{ opacity: loaded ? 0.15 : 0, transition: 'opacity 320ms ease-out' } as CSSProperties}
-        className="pointer-events-none absolute inset-y-0 right-0 hidden md:block max-w-[40%] w-auto h-full object-contain object-right-top mix-blend-multiply -z-10 select-none"
+        className="w-full h-full object-contain object-right-top mix-blend-multiply select-none"
       />
     </picture>
   );
