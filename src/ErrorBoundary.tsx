@@ -11,7 +11,6 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     // Log to console for debugging in browser dev tools
-    // eslint-disable-next-line no-console
     console.error('TBA crash:', error, info);
   }
 
