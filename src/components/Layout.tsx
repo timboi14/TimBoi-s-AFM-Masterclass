@@ -58,7 +58,7 @@ export function Layout() {
 
       <DeadlineBanner />
 
-      {/* Sticky glass header — premium feel */}
+      {/* Sticky glass header */}
       <div
         className={cn(
           'sticky top-0 z-30 transition-all duration-300',

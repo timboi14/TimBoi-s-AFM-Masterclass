@@ -17,11 +17,7 @@ interface PremiumDarkTileProps {
 
 const ease = [0.2, 0.8, 0.2, 1] as const;
 
-/**
- * Block G — Premium Dark Tile. Reserved for emotionally important moments.
- * Must be inside a SectionShell with tone="navy" or tone="black".
- * Spotlight gradient overlay simulates stadium lighting.
- */
+/** Block G — Premium dark tile for hero CTAs. Requires SectionShell tone="navy" or "black". */
 export function PremiumDarkTile({ eyebrow, headline, subline, actions, artwork, slim = false }: PremiumDarkTileProps) {
   const tone = useTone();
   const dark = tone === 'navy' || tone === 'black';
