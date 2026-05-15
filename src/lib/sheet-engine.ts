@@ -5,8 +5,15 @@
  * Recursive descent, no eval, no third-party deps.
  */
 
+import { errorMessage } from '@/lib/guards';
+
 export type Cell = string;
 export type Sheet = Cell[][];
+
+// Parser value algebra: scalars produced by primary expressions, or
+// CellValue[] when a function arg is a range like A1:B5.
+type CellValue = number | string | boolean;
+type ExprValue = CellValue | CellValue[];
 
 const MAX_ITER = 200;
 
@@ -34,7 +41,11 @@ function getCell(sheet: Sheet, r: number, c: number): Cell {
   return sheet[r]?.[c] ?? '';
 }
 
-export function compute(sheet: Sheet, value: Cell, depth = 0): { ok: boolean; v: any; err?: string } {
+export type ComputeResult =
+  | { ok: true; v: ExprValue }
+  | { ok: false; v: '#CYCLE' | '#ERR'; err: string };
+
+export function compute(sheet: Sheet, value: Cell, depth = 0): ComputeResult {
   if (depth > MAX_ITER) return { ok: false, v: '#CYCLE', err: 'cyclic reference' };
   if (typeof value !== 'string') return { ok: true, v: value };
   const s = value.trim();
@@ -50,8 +61,8 @@ export function compute(sheet: Sheet, value: Cell, depth = 0): { ok: boolean; v:
     const v = parser.parseExpression();
     if (parser.peek() !== null) throw new Error('Unexpected: ' + parser.peek());
     return { ok: true, v };
-  } catch (e: any) {
-    return { ok: false, v: '#ERR', err: e?.message || 'error' };
+  } catch (e) {
+    return { ok: false, v: '#ERR', err: errorMessage(e, 'error') };
   }
 }
 
@@ -86,11 +97,11 @@ class Parser {
   }
 
   // expression: comparison
-  parseExpression(): any {
+  parseExpression(): ExprValue {
     return this.parseComparison();
   }
-  parseComparison(): any {
-    let left = this.parseAdd();
+  parseComparison(): ExprValue {
+    let left: ExprValue = this.parseAdd();
     this.peek();
     while (true) {
       const op = this.peekOp(['<>', '<=', '>=', '<', '>', '=']);
@@ -115,8 +126,8 @@ class Parser {
     }
     return null;
   }
-  parseAdd(): any {
-    let v = this.parseMul();
+  parseAdd(): ExprValue {
+    let v: ExprValue = this.parseMul();
     while (true) {
       const c = this.peek();
       if (c === '+') { this.i++; v = num(v) + num(this.parseMul()); }
@@ -126,8 +137,8 @@ class Parser {
     }
     return v;
   }
-  parseMul(): any {
-    let v = this.parsePow();
+  parseMul(): ExprValue {
+    let v: ExprValue = this.parsePow();
     while (true) {
       const c = this.peek();
       if (c === '*') { this.i++; v = num(v) * num(this.parsePow()); }
@@ -141,21 +152,21 @@ class Parser {
     }
     return v;
   }
-  parsePow(): any {
-    let v = this.parseUnary();
+  parsePow(): ExprValue {
+    let v: ExprValue = this.parseUnary();
     while (this.peek() === '^') {
       this.i++;
       v = Math.pow(num(v), num(this.parseUnary()));
     }
     return v;
   }
-  parseUnary(): any {
+  parseUnary(): ExprValue {
     const c = this.peek();
     if (c === '-') { this.i++; return -num(this.parseUnary()); }
     if (c === '+') { this.i++; return this.parseUnary(); }
     return this.parsePrimary();
   }
-  parsePrimary(): any {
+  parsePrimary(): ExprValue {
     this.peek();
     const c = this.src[this.i];
     if (c === '(') {
@@ -194,7 +205,7 @@ class Parser {
       if (this.src[this.i] === '(') {
         // function call
         this.i++;
-        const args: any[] = [];
+        const args: ExprValue[] = [];
         if (this.src[this.i] !== ')') {
           while (true) {
             // arg can be a range
@@ -232,7 +243,7 @@ class Parser {
     throw new Error('unexpected char: ' + c);
   }
 
-  parseRangeOrExpr(): any {
+  parseRangeOrExpr(): ExprValue {
     // Look ahead for a cell-range pattern A1:B5 (only as a special form for function args)
     const save = this.i;
     this.peek();
@@ -244,13 +255,21 @@ class Parser {
       const r1 = parseInt(cellM[2], 10) - 1;
       const c2 = colIndex(cellM[3].toUpperCase());
       const r2 = parseInt(cellM[4], 10) - 1;
-      const values: any[] = [];
+      const values: CellValue[] = [];
       for (let r = Math.min(r1, r2); r <= Math.max(r1, r2); r++) {
         for (let c = Math.min(c1, c2); c <= Math.max(c1, c2); c++) {
           const raw = getCell(this.sheet, r, c);
           const out = compute(this.sheet, raw, this.depth + 1);
           if (!out.ok) throw new Error(out.err || 'ref err');
-          if (out.v !== '') values.push(out.v);
+          if (out.v !== '') {
+            // Out is `compute` result; arrays only appear at function-arg
+            // positions, not here, so the scalar branch is the only one.
+            if (Array.isArray(out.v)) {
+              for (const x of out.v) values.push(x);
+            } else {
+              values.push(out.v);
+            }
+          }
         }
       }
       return values;
@@ -260,16 +279,17 @@ class Parser {
   }
 }
 
-function num(v: any): number {
+function num(v: ExprValue | null | undefined): number {
   if (typeof v === 'number') return v;
   if (typeof v === 'boolean') return v ? 1 : 0;
   if (v === null || v === undefined || v === '') return 0;
+  if (Array.isArray(v)) throw new Error('not a number: array');
   const n = parseFloat(v);
   if (isNaN(n)) throw new Error('not a number: ' + v);
   return n;
 }
 
-function flat(args: any[]): number[] {
+function flat(args: ExprValue[]): number[] {
   const out: number[] = [];
   for (const a of args) {
     if (Array.isArray(a)) for (const x of a) out.push(num(x));
@@ -278,7 +298,7 @@ function flat(args: any[]): number[] {
   return out;
 }
 
-function callFunc(name: string, args: any[], sheet: Sheet, depth: number): any {
+function callFunc(name: string, args: ExprValue[], sheet: Sheet, depth: number): ExprValue {
   switch (name) {
     case 'SUM': return flat(args).reduce((a, b) => a + b, 0);
     case 'AVERAGE':
