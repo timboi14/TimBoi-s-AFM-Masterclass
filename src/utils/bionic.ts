@@ -4,7 +4,7 @@
  *
  * Never call on user-generated content without sanitising first.
  */
-export function bionic(text: string): string {
+function bionic(text: string): string {
   return text.replace(/\b([a-zA-Z]{2,})\b/g, (word) => {
     const boldCount = Math.ceil(word.length * 0.45);
     return `<b>${word.slice(0, boldCount)}</b>${word.slice(boldCount)}`;

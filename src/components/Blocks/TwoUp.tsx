@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import { useTone, type Tone } from './tone';
 
-export interface TwoUpPanel {
+interface TwoUpPanel {
   /** Background tone for this panel (overrides the surrounding section tone). */
   tone: Tone;
   /** Optional eyebrow chip above the headline. */
