@@ -20,7 +20,7 @@ import {
   ChatInputSubmit,
   ChatInputTextArea,
 } from '@/components/ui/chat-input';
-import { errorMessage, readEnum } from '@/lib/guards';
+import { readEnum } from '@/lib/guards';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 
 /* ─────────────────────────────────────────────
@@ -805,15 +805,14 @@ function Calculator() {
 
   function evalExpr() {
     if (!expr.trim()) return;
-    try {
-      const out = compute([['']], '=' + expr);
-      if (!out.ok) throw new Error(out.err);
-      const result = typeof out.v === 'number' ? Number(out.v.toFixed(6)).toString() : String(out.v);
-      setHistory((h) => [{ e: expr, v: result }, ...h].slice(0, 8));
-      setExpr(result);
-    } catch (e) {
-      setHistory((h) => [{ e: expr, v: errorMessage(e, 'ERROR') }, ...h]);
+    const out = compute([['']], '=' + expr);
+    if (!out.ok) {
+      setHistory((h) => [{ e: expr, v: out.err || 'ERROR' }, ...h]);
+      return;
     }
+    const result = typeof out.v === 'number' ? Number(out.v.toFixed(6)).toString() : String(out.v);
+    setHistory((h) => [{ e: expr, v: result }, ...h].slice(0, 8));
+    setExpr(result);
   }
 
   const KEYS = [
