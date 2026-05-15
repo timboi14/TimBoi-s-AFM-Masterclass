@@ -14,12 +14,3 @@ export function bionic(text: string): string {
 export function bionicHTML(text: string): { dangerouslySetInnerHTML: { __html: string } } {
   return { dangerouslySetInnerHTML: { __html: bionic(text) } };
 }
-
-/** Bionic-safe version for strings that already contain inline HTML tags. */
-export function bionicHTML_safe(html: string): { dangerouslySetInnerHTML: { __html: string } } {
-  const parts = html.split(/(<[^>]+>)/);
-  const processed = parts
-    .map((part) => (part.startsWith('<') ? part : bionic(part)))
-    .join('');
-  return { dangerouslySetInnerHTML: { __html: processed } };
-}
