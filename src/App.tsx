@@ -5,9 +5,32 @@ import { HomePage } from '@/pages/Home';
 import { NameOverlay } from '@/NameOverlay';
 import { Onboarding } from '@/components/Onboarding';
 
-// Helper to lazy-load a page with a named export.
+// When a deploy lands, the user's cached index.html still references the old
+// chunk hashes. import() then 404s and React throws a "Loading chunk failed".
+// On the first such failure we soft-reload once so the browser pulls fresh
+// HTML; the sessionStorage flag prevents an infinite reload if the failure is
+// not actually a stale-chunk issue (e.g. the dev server is down).
+const CHUNK_RELOAD_KEY = 'tba-chunk-reloaded';
+const lazyWithRetry = <T extends React.ComponentType<unknown>>(
+  importer: () => Promise<{ default: T }>,
+) =>
+  lazy(async () => {
+    try {
+      const mod = await importer();
+      sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+      return mod;
+    } catch (err) {
+      if (typeof window !== 'undefined' && !sessionStorage.getItem(CHUNK_RELOAD_KEY)) {
+        sessionStorage.setItem(CHUNK_RELOAD_KEY, '1');
+        window.location.reload();
+      }
+      throw err;
+    }
+  });
+
+// Helper to lazy-load a page with a named export, with stale-chunk self-heal.
 const lazyNamed = <K extends string>(loader: () => Promise<Record<K, React.ComponentType<unknown>>>, name: K) =>
-  lazy(() => loader().then((m) => ({ default: m[name] })));
+  lazyWithRetry(() => loader().then((m) => ({ default: m[name] })));
 
 // Home stays in the main bundle (it's the landing page; lazy here would just delay TTI).
 // Every other route ships in its own chunk.
