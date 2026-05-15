@@ -12,7 +12,7 @@ import { PITFALLS } from '@/data/pitfalls';
 import { EXAM_CASES } from '@/data/examiner';
 import { SPOTLIGHTS } from '@/data/spotlights';
 import { MNEMONICS } from '@/lib/mnemonics';
-import { COMMON_LOSERS } from '@/pages/WarRoom';
+import { COMMON_LOSERS } from '@/data/war-room';
 import { EXAMINER_QUOTES } from '@/data/examiner';
 
 const totalDrills = TOPIC_LIST.reduce((n, t) => n + (t.drills?.length || 0), 0);
