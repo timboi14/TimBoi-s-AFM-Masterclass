@@ -72,11 +72,8 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: { cacheName: 'tba-fonts', expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 } },
           },
-          {
-            urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/font-awesome\//,
-            handler: 'CacheFirst',
-            options: { cacheName: 'tba-fa', expiration: { maxEntries: 30, maxAgeSeconds: 365 * 24 * 60 * 60 } },
-          },
+          // FontAwesome is now bundled locally via @fortawesome/fontawesome-free —
+          // no longer fetched from cdnjs, so no runtime cache rule needed.
         ],
       },
     }),

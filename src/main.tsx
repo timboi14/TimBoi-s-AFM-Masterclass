@@ -11,6 +11,11 @@ import '@fontsource/dm-sans/700.css';
 import '@fontsource/dm-sans/800.css';
 import '@fontsource/jetbrains-mono/500.css';
 import '@fontsource/jetbrains-mono/700.css';
+// Self-hosted Font Awesome (previously cdnjs — that origin returned 503 intermittently).
+import '@fortawesome/fontawesome-free/css/fontawesome.min.css';
+import '@fortawesome/fontawesome-free/css/solid.min.css';
+import '@fortawesome/fontawesome-free/css/regular.min.css';
+import '@fortawesome/fontawesome-free/css/brands.min.css';
 import './styles.css';
 
 const rootEl = document.getElementById('root')!;
