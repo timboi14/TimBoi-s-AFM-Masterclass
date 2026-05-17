@@ -22,6 +22,7 @@ export function CBESpreadsheet({ value, onChange }: Props) {
   const [editing, setEditing] = useState<CellKey | null>(null);
   const [draft, setDraft] = useState<string>('');
   const editRef = useRef<HTMLInputElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (editing && editRef.current) {
@@ -134,6 +135,7 @@ export function CBESpreadsheet({ value, onChange }: Props) {
         </button>
       </div>
       <div
+        ref={gridRef}
         className="cbe-sheet__grid-wrap"
         tabIndex={0}
         onKeyDown={onGridKeyDown}
@@ -164,10 +166,22 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                     <td
                       key={c}
                       className={`cbe-sheet__cell ${isSelected ? 'cbe-sheet__cell--selected' : ''}`}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
+                      onPointerDown={(e) => {
+                        // Don't preventDefault — we need focus to land on the grid
+                        // wrapper so the keyboard handler can pick up typing/F2/arrows.
+                        // If the user taps a cell that's already selected, enter edit
+                        // mode immediately (Google-Sheets-style behaviour on touch).
+                        if (isSelected && !isEditing) {
+                          beginEdit(r, c);
+                          return;
+                        }
                         setSelected({ r, c });
                         if (!isEditing) setEditing(null);
+                        // Pull focus onto the grid wrapper so subsequent keys work.
+                        // Defer to next tick so React's onPointerDown completes first.
+                        if (!isEditing) {
+                          requestAnimationFrame(() => gridRef.current?.focus());
+                        }
                       }}
                       onDoubleClick={() => beginEdit(r, c)}
                     >
