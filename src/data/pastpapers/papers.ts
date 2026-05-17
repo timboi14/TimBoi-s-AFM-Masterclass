@@ -667,30 +667,139 @@ export const PAPERS: Paper[] = [
         id: 'company',
         navLabel: '1. The investment',
         title: 'What McKeever is doing',
-        content: 'McKeever Co is a US company investing in Erat to manufacture and sell scientific instruments. 4-year project.\n\nKey data (verified from ACCA Model Answer Appendix):\n- Initial investment: £50,000,000\n- TAD: £4,500,000 per year (straight line, 4 years)\n- Sales contribution year 1: £9,625,000\n- Fixed costs: 5% of contribution\n- Working capital: 15% of revenue\n- Residual value year 4: £32,000,000 (land and buildings — government agrees to act as buyer of last resort)\n- Opening exchange rate: £/$ 3.31\n- US corporation tax rate: 25%\n- Eratian tax rate: 20%\n- Discount rate: 14%',
+        content: 'McKeever Co is a US company specialising in scientific-instrument design and production. Until now, it has never sold or manufactured outside the US. The CEO has proposed expansion into Erat — an emerging market that has experienced extreme economic challenges but where the new government has introduced foreign-investment incentives.\n\n4-year project. Today\'s spot: £3.31 per $1.\n\nUnit volumes: 55,000 / 67,000 / 82,000 / 90,000 units.\nSelling price £275/unit year 1 (inflates at Erat inflation). Variable costs £100/unit year 1 (inflates at Erat inflation) — this already includes a £20 transfer price from the US parent (pre-tax contribution to parent £10/unit, also inflated at Erat rate).\nFixed costs £750,000 year 1, +5% per year.',
+      },
+      {
+        id: 'investment',
+        navLabel: '2. Investment + tax',
+        title: 'Capex, residual values and tax',
+        content: 'Investment: £32m land and buildings + £18m plant and machinery = £50m total.\nTAD: 25% on cost of plant and machinery, straight-line (£18m × 25% = £4.5m/year, first allowance year 1).\nLand and buildings: government acts as buyer of last resort at end of year 4 → cost recovered in full. Plant and machinery: NOT recoverable.\n\nTax: Erat 20% (reduced from normal 30% as foreign-investor incentive), US 25%. Both pay in the year liability arises. Bilateral treaty allows McKeever to offset overseas tax against US tax incurred on overseas earnings.\n\nWorking capital: 15% of that year\'s CONTRIBUTION at start of year. Fully recoverable end of year 4.',
+        warning: 'Many candidates apply 15% to REVENUE rather than CONTRIBUTION. The question explicitly says contribution. Also: TAD is on plant only (£18m), not on the full £50m investment.',
       },
       {
         id: 'exchange',
-        navLabel: '2. Exchange rates',
-        title: 'Exchange rate calculations',
-        content: 'PPP-derived exchange rates for the project period (verified from ACCA Model Answer):\n- Year 0: £/$ 3.31\n- Year 1: 3.28\n- Year 2: 3.25\n- Year 3: 3.16\n- Year 4: 3.07\n\nThe marketing director proposes an alternative (weaker pound) scenario. This switches the NPV from positive to negative.',
-        warning: 'The residual value of the land and buildings forms a large part of the total project NPV. If the government\'s agreement to act as buyer of last resort is withdrawn (country risk), the project value collapses. Always flag this when discussing country risk.',
+        navLabel: '3. Exchange rates',
+        title: 'PPP rates and the marketing director\'s alternative',
+        content: 'Inflation forecasts (US / Erat):\nYear 1: 6% / 5%\nYear 2: 6% / 5%\nYear 3: 7% / 4%\nYear 4: 7% / 4%\n\nThe finance director estimated these by attaching probabilities to a range of analysts\' predictions. The marketing director questions the consistency and methodology and proposes an alternative based on historical trend:\n£/$ Year 1: 3.37 / Year 2: 3.41 / Year 3: 3.47 / Year 4: 3.50.\n\nThe FD\'s counter: a weakening of the Eratian pound was suggested by less than 5% of analysts.\n\nUnder the alternative assumption, the PV of post-tax component contribution has already been calculated as $485,000.',
+        warning: 'The PPP rates derived from the expected inflation differential have the £ APPRECIATING vs the $ (3.31 → 3.07). The marketing director\'s historical trend has the £ DEPRECIATING (3.31 → 3.50). The alternative swings NPV from positive to negative. Recognising the direction matters more than memorising the exact rates.',
       },
       {
         id: 'country',
-        navLabel: '3. Country risk',
-        title: 'Country risk in Erat',
-        content: 'Erat has political instability. A recent opinion poll shows the governing party losing support shortly after the last election. Key risks to the project:\n\n- Government could withdraw the residual value guarantee on land and buildings\n- Tax regime could change or become unfavourable\n- Remittance restrictions could be reintroduced\n- Political instability could affect operations\n\nThe CEO wants to add a risk premium to the discount rate. The question asks whether this is correct.',
+        navLabel: '4. Country risk',
+        title: 'Political risk and the CEO\'s discount-rate question',
+        content: 'The board is concerned about country risk. Specific items in the scenario:\n• Main opposition party is challenging the tax incentives.\n• Opposition has overtaken the governing party in opinion polls less than 6 months after the last election.\n• Erat has a history of more frequent changes in government than the formal 5-year cycle suggests.\n• Dividend remittance restrictions removed — but could be reinstated.\n• Residual value guarantee on land/buildings depends on the government.\n\nThe CEO has suggested increasing the discount rate to reflect both forex and political risk — even though the project does not change McKeever\'s capital structure or normal business apart from being overseas. Part (vi) asks whether this is valid.',
       },
     ],
 
     questionParts: [
-      { label: '(a)', marks: 10, requirement: 'Calculate the NPV of the investment in Erat using the home currency approach.' },
-      { label: '(b)', marks: 12, requirement: 'Assess country risk in Erat and whether the discount rate should be adjusted for it.' },
-      { label: '(c)', marks: 8, requirement: 'Calculate NPV under the alternative exchange rate assumption. Discuss the marketing director\'s concerns.' },
-      { label: '(d)', marks: 10, requirement: 'Evaluate non-financial factors relevant to the overseas investment decision.' },
-      { label: 'Professional skills', marks: 10, requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.' },
+      {
+        label: '(i)',
+        marks: 8,
+        requirement: 'Estimate the project\'s Erat-based cash flows, in pounds.',
+        markingPoints: [
+          { description: 'Sales revenue: units × £275 inflated at Erat 5%/5%/4%/4%', marks: 1 },
+          { description: 'Variable costs: units × £100 inflated at Erat rates', marks: 1 },
+          { description: 'Contribution = revenue − variable cost (includes £10/unit retained, £20 transfer price)', marks: 1 },
+          { description: 'Fixed costs: £750k yr1 growing 5%/year', marks: 1 },
+          { description: 'TAD: £4.5m/year on plant only (not on land/buildings)', marks: 1 },
+          { description: 'Tax at 20% Erat, paid same year', marks: 1 },
+          { description: 'Working capital: 15% of CONTRIBUTION at start of year; released yr4', marks: 1 },
+          { description: 'Land and buildings recovered in full year 4 (govt buyer of last resort)', marks: 1 },
+        ],
+        examinerCommentary: 'Most candidates handled the cash flow structure but two errors recurred: applying TAD to the full £50m rather than just the £18m plant; and applying working capital to revenue rather than contribution. Many also missed that land and buildings are recovered but plant is not.',
+      },
+      {
+        label: '(ii)',
+        marks: 9,
+        requirement: 'Estimate the net present value (NPV) of the project in dollars.',
+        markingPoints: [
+          { description: 'PPP exchange rates: £/$ 3.31 → 3.28 → 3.25 → 3.16 → 3.07', marks: 2 },
+          { description: 'Convert £ cash flows to $ at each year\'s PPP rate', marks: 1 },
+          { description: 'Add the US parent\'s after-tax component contribution (£10/unit × volume, inflated)', marks: 2 },
+          { description: 'Bilateral treaty: Erat 20% < US 25% → US top-up tax of 5% on Erat taxable profits', marks: 2 },
+          { description: 'Discount at 14% McKeever cost of capital', marks: 1 },
+          { description: 'NPV = $1,061,000 (positive)', marks: 1 },
+        ],
+        examinerCommentary: 'The bilateral tax treaty top-up (5% to bring Erat\'s 20% up to US 25%) was the most common omission. Many candidates treated Erat tax as the only tax. Component contribution from the US parent was sometimes double-taxed.',
+      },
+      {
+        label: '(iii)',
+        marks: 6,
+        requirement: 'Evaluate the impact of the marketing director\'s alternative exchange rate assumption on the project\'s NPV, recommending whether or not the project should be accepted.',
+        markingPoints: [
+          { description: 'Apply alternative rates 3.37/3.41/3.47/3.50 to Erat cash flows', marks: 2 },
+          { description: 'Include the pre-calculated $485k PV of component contribution', marks: 1 },
+          { description: 'NPV under alternative = −$513,000 (negative)', marks: 1 },
+          { description: 'Recommendation: project marginal, recommend conditional acceptance with sensitivity analysis', marks: 2 },
+        ],
+      },
+      {
+        label: '(iv)',
+        marks: 8,
+        requirement: 'Discuss the assumptions made in the NPV calculations and respond to the marketing director\'s concerns about the methodology used to estimate the expected exchange rates in (ii).',
+        markingPoints: [
+          { description: 'PPP holds only loosely in practice; deviation in any single year possible', marks: 1 },
+          { description: 'Expected-value methodology weights low-probability tail outcomes as if certain', marks: 1 },
+          { description: '<5% of analysts predicted £ depreciation, so the alternative is a low-probability scenario', marks: 1 },
+          { description: 'Assumption of constant inflation differential is itself uncertain', marks: 1 },
+          { description: 'Cash flow assumptions: volume growth, selling price, fixed cost growth all are forecasts', marks: 1 },
+          { description: 'Residual value of land/buildings depends on the buyer-of-last-resort guarantee holding', marks: 1 },
+          { description: 'Practical fix: sensitivity analysis (volume −20%, FX +5%, etc.); scenario analysis', marks: 1 },
+          { description: 'Recommend the project is robust under the central forecast but flag tail risk', marks: 1 },
+        ],
+      },
+      {
+        label: '(v)',
+        marks: 5,
+        requirement: 'Discuss the political risks the board should consider before making a final decision.',
+        markingPoints: [
+          { description: 'Opposition challenge to tax incentives → tax rate could revert to 30%', marks: 1 },
+          { description: 'Opposition leading in polls + history of frequent changes → election risk', marks: 1 },
+          { description: 'Dividend remittance restrictions could be reinstated', marks: 1 },
+          { description: 'Buyer-of-last-resort guarantee depends on government continuity', marks: 1 },
+          { description: 'Practical mitigants: political-risk insurance, joint venture with local partner, phased investment', marks: 1 },
+        ],
+        examinerCommentary: 'Country risk discussion was often generic — most candidates listed types of risk without applying them to McKeever and Erat. The strongest answers named the specific risk, said what it does to these cash flows, and suggested what management could do.',
+      },
+      {
+        label: '(vi)',
+        marks: 4,
+        requirement: 'Discuss the validity of the chief executive officer\'s suggestion to adjust the project\'s discount rate to incorporate country risk.',
+        markingPoints: [
+          { description: 'Forex risk is largely diversifiable (shareholders hold global portfolios) — not a discount-rate adjustment', marks: 1 },
+          { description: 'Political risk is more systematic and harder for shareholders to diversify — some argument for adjustment', marks: 1 },
+          { description: 'Better approach: adjust expected cash flows (probability-weight downside scenarios) rather than rate', marks: 1 },
+          { description: 'Discount-rate adjustment risks double-counting risk already in the cash-flow scenarios', marks: 1 },
+        ],
+        examinerCommentary: 'A short part for 4 marks; most candidates wrote too much theory and not enough application. The marking key wants a clear recommendation with brief justification.',
+      },
+      {
+        label: 'Professional skills',
+        marks: 10,
+        requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.',
+      },
     ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — McKeever Co',
+        content: 'McKeever Co specialises in the design and production of scientific instruments. Until now, the company has never sold or manufactured products outside its home market, the United States (US), but the chief executive officer (CEO) has identified a new growth opportunity in the country of Erat. Although Erat is an emerging market which has experienced extreme economic challenges in recent decades, the new government has introduced a series of incentives to promote inward foreign investment. These incentives were introduced after the recent election and were an important factor behind the CEO\'s proposal.',
+      },
+      {
+        title: 'Exhibit 2 — Project information',
+        content: 'Erat\'s currency is the Eratian pound (£) and today\'s exchange rate is £3.31 per $. The project will last 4 years.\n\nOperating cash flows:\nSales units: Yr1 55,000 / Yr2 67,000 / Yr3 82,000 / Yr4 90,000.\nSelling price £275/unit yr1; variable costs £100/unit yr1; both grow at Erat inflation. Variable cost includes £20 transfer price from US (pre-tax contribution to parent £10/unit, also inflated at Erat rate).\nFixed costs £750,000 yr1, growing 5%/year.\n\nInvestment: £32m land/buildings + £18m plant/machinery. TAD 25% straight-line on plant cost (first allowance yr1). Government acts as buyer of last resort for land and buildings at end of yr4 → land/buildings cost recovered in full; plant not recoverable.\n\nTaxation: Erat 20% (reduced from normal 30% as foreign-investor incentive); US 25%. Both pay in year liability arises. Bilateral treaty: offset overseas tax against US tax liabilities on overseas earnings.\n\nWorking capital: 15% of that year\'s contribution at start of year. Fully recoverable end of yr4.\n\nInflation: US 6%/6%/7%/7%; Erat 5%/5%/4%/4%. Use PPP to estimate forecast exchange rates.\n\nDividend remittance restrictions removed; board plans to extract positive annual cash flows at earliest opportunity. McKeever cost of capital 14%.',
+      },
+      {
+        title: 'Exhibit 3 — Alternative exchange rate assumption',
+        content: 'Expected inflation rates were estimated by attaching probabilities to a range of analysts\' predictions. The marketing director has concerns about consistency across the analysts and the methodology used.\n\nAs an alternative, he proposes re-assessing the project using exchange rates based on the historical trend:\nYr1 £/$ 3.37 / Yr2 3.41 / Yr3 3.47 / Yr4 3.50.\n\nThe finance director\'s counter: a weakening of the Eratian pound was suggested by less than 5% of analysts.\n\nUnder this alternative exchange rate assumption, the PV of post-tax component contribution has already been calculated as $485,000.',
+      },
+      {
+        title: 'Exhibit 4 — Country risk',
+        content: 'The board is concerned about country risk in an emerging market — particularly foreign exchange and political risks. Erat\'s main opposition party is challenging the tax incentives and has overtaken the governing party in opinion polls less than 6 months after the last election. The next election is officially 5+ years away but Erat has a history of more frequent changes in government.\n\nThe directors\' key concern is whether McKeever\'s shareholders (mainly institutional investors) will react favourably to the new project.\n\nThe CEO has questioned whether the project\'s discount rate should be increased — even though the project does not involve a change in capital structure or normal course of business, apart from being based in another country. The proposed adjustment would reflect increased risk exposure from both forex and political risk.',
+      },
+    ],
+
+    keyAnswerTips: 'International NPV with bilateral tax treaty is the most-tested AFM investment-appraisal pattern. Routine matters: (1) Erat tax in Erat, then (2) US top-up of 5% to bring the rate up to 25%. Working capital is on CONTRIBUTION not revenue. TAD is on plant only, not full £50m. Land/buildings recovered (govt guarantee); plant not. Six sub-parts means time budget tight: ~14 min for (i), 16 min for (ii), 11 min for (iii), 14 min for (iv), 9 min for (v), 7 min for (vi).',
 
     verifiedNumbers: [
       { value: '$1,061,000', description: 'Base case NPV (verified)', source: 'A' },
@@ -2182,6 +2291,273 @@ export const PAPERS: Paper[] = [
       didWell: 'Comparative advantage identification was well done. Most candidates correctly identified the floating advantage as larger.',
       commonErrors: 'Candidates frequently confused the direction of the swap payments. The mechanics of which party pays fixed and which pays floating were often reversed. Also, the bank fee must be shared — many applied it only to one party.',
       tutorTip: 'In a swap where Lurgshall has the larger floating advantage: Lurgshall borrows floating (what they are better at relatively), counterparty borrows fixed (what they are better at relatively). They then swap payments to achieve the mutually beneficial outcome.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // SOUTHMED CO — Sep/Dec 2023 — Section B Q2
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'southmed',
+    name: 'Southmed Restaurants Co',
+    session: 'Sep/Dec 2023',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'A',
+    topics: ['ma'],
+    tags: ['Ratio analysis', 'Performance evaluation', 'Strategic position'],
+    difficulty: 3,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'business',
+        navLabel: '1. The business',
+        title: 'Southmed: 140 restaurants across three segments',
+        content: 'Southmed Restaurants Co operates in Pangland, specialising in Southern Mediterranean food. Aims to provide a better dining experience than rival chains offering similar food — more comfortable seating, stylish surroundings.\n\nCentral procurement, but restaurants have discretion on local pricing and staffing.\n\nThree reported segments (24 / 32 / 84 restaurants):\n• Six largest cities in Pangland\n• Tourist centres, mostly coastal\n• Smaller cities and towns\n\nCompetitive threats:\n• Six largest cities: higher-quality, more-expensive competitors are eating Southmed\'s lunch (revenue and gross profit both falling materially).\n• Tourist centres: high-volume, cheaper competitors growing (revenue up but gross profit margin compressed).\n• Small cities/towns: flat performance.',
+      },
+      {
+        id: 'financials',
+        navLabel: '2. Financials 20X0–X2',
+        title: 'The financial position is deteriorating',
+        content: 'Revenue: $121.9m → $121.5m → $120.9m (falling slowly).\nGross profit: $20.8m → $20.2m → $19.3m → margin 17.1% / 16.6% / 16.0% (vs industry 19.6 / 19.1 / 18.6%).\nOperating profit: $9.8m → $9.0m → $7.7m → margin 8.0% / 7.4% / 6.4% (vs industry 9.0 / 8.6 / 8.1%).\nProfit after tax: $5.2m → $4.8m → $4.1m.\nDividends: $3.0m / $3.0m / $3.0m (constant despite falling earnings).\nDividend cover: 1.73 → 1.60 → 1.37 (deteriorating fast).\n\nBalance sheet:\nEquity: $51.2m → $53.0m → $54.1m (growing despite falling profit — retentions exceed dividends).\nNon-current liabilities: $28.0m → $26.0m → $23.4m (loan being amortised).\nMarket price: $5.70 → $5.35 → $4.85 (− 9.4% over 2 years, vs industry − 4.2%).\n\nGearing (industry definition: NCL / (NCL + MV equity)):\n20X0: 28.0 / (28.0 + 57.0) ≈ 32.9%\n20X1: 26.0 / (26.0 + 53.5) ≈ 32.7%\n20X2: 23.4 / (23.4 + 48.5) ≈ 32.5%\nVs industry 41.4 / 41.6 / 42.0% → Southmed is significantly LESS geared than peers.',
+        warning: 'Margins are below industry AND falling faster than industry. The share price is falling almost 3× faster than the sector average. Dividend cover is deteriorating sharply because the dividend has been held constant despite falling profits. Together these signal a real strategic problem, not just a soft year.',
+      },
+      {
+        id: 'segments',
+        navLabel: '3. Segment analysis',
+        title: 'Where the damage is being done',
+        content: 'Six largest cities (24 restaurants):\nRevenue: $32.4m → $31.4m → $30.3m (−6.5% over 2 years)\nGross profit: $5.9m → $5.4m → $4.7m (−20.3%)\nGP margin: 18.2% → 17.2% → 15.5% — biggest margin compression.\nRevenue per restaurant: $1.35m → $1.31m → $1.26m.\n→ Premium competitors are stealing share.\n\nTourist centres (32 restaurants):\nRevenue: $28.2m → $29.0m → $29.6m (+5.0%)\nGross profit: $4.5m → $4.4m → $4.3m (−4.4%)\nGP margin: 16.0% → 15.2% → 14.5% — margin under pressure from value competitors.\nRevenue per restaurant: $0.88m → $0.91m → $0.93m.\n→ Volume up but margin compressed.\n\nSmall cities/towns (84 restaurants):\nRevenue: $61.3m → $61.1m → $61.0m (essentially flat)\nGross profit: $10.4m → $10.4m → $10.3m\nGP margin: 17.0% → 17.0% → 16.9% — stable.\nRevenue per restaurant: $0.73m → $0.73m → $0.73m.\n→ Cash cow segment but no growth.\n\nData gaps to flag in the discussion: number of customers per restaurant, average spend, employee headcount, advertising spend per segment, lease costs, capex per segment.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: 'Question (single requirement)',
+        marks: 20,
+        requirement: 'Evaluate Southmed\'s financial performance and business situation. You should indicate in your discussion any omissions in the data provided, where further information would be helpful to extend your analysis. Provide relevant calculations for ratios and trends to support your evaluation. Note: 10 marks are available for the calculations.',
+        markingPoints: [
+          { description: 'GP margin: total + by segment, vs industry trend', marks: 1 },
+          { description: 'Operating profit margin trend vs industry', marks: 1 },
+          { description: 'ROCE / ROE based on opening or average equity', marks: 1 },
+          { description: 'Gearing (industry definition: NCL / (NCL + MV equity))', marks: 1 },
+          { description: 'Dividend cover trend (1.73 → 1.60 → 1.37)', marks: 1 },
+          { description: 'Share price decline vs industry change in share price', marks: 1 },
+          { description: 'Segment revenue and GP per restaurant for each of 3 segments', marks: 2 },
+          { description: 'Working-capital / liquidity ratios (current, quick)', marks: 1 },
+          { description: 'P/E ratio, EPS, dividend yield where useful', marks: 1 },
+          { description: 'Discussion: margin and share-price decline both exceed industry — fundamental issue, not cyclical', marks: 1 },
+          { description: 'Discussion: dividend cover deterioration — current policy unsustainable', marks: 1 },
+          { description: 'Discussion: six-largest-cities segment is most damaged — competitor response needed there', marks: 1 },
+          { description: 'Discussion: tourist centres growing but margin shrinking — pricing or cost issue', marks: 1 },
+          { description: 'Discussion: small-cities-and-towns segment provides stable cash but no growth platform', marks: 1 },
+          { description: 'Discussion: gearing well below industry → debt capacity for investment', marks: 1 },
+          { description: 'Discussion: data omissions (customers per restaurant, average spend, lease costs, etc.)', marks: 1 },
+          { description: 'Strategic recommendation: invest in six-largest-cities differentiation OR exit; review dividend policy', marks: 2 },
+          { description: 'Recognition that the central procurement model may constrain segment-specific response', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Southmed Restaurants Co',
+        content: 'Southmed Restaurants Co (Southmed) is a chain of restaurants operating in the country of Pangland, specialising in Southern Mediterranean food. Southmed aims to provide customers with a better dining experience than other chains offering similar food, with more comfortable seating and stylish surroundings. Sourcing of food and drink from suppliers is organised by a central procurement function, acting on orders from restaurants. Restaurants, however, have some discretion in the prices they charge in response to local business conditions and also in their staffing policies.\n\nFor segmental reporting, Southmed divides its restaurants into three segments: the six largest cities in Pangland; tourist centres (mostly coastal locations); and smaller cities and towns.\n\nSouthmed\'s board is currently reviewing its strategic positioning and financing. The directors wish to ensure that Southmed will have sufficient finance to sustain investment and keep shareholders happy by maintaining dividend levels. They view as a significant competitive threat the growth of more expensive restaurants offering higher quality food and better surroundings — particularly in the six largest cities.\n\nAbout five years ago, Southmed expanded the number of restaurants it had in tourist centres in response to a government campaign aiming to increase the number of holidays taken in Pangland. The board has been pleased with the results, but there is now considerable competition in the tourist centres, particularly from restaurants serving high customer numbers at cheaper prices than Southmed.\n\nSouthmed\'s board wishes to assess its current business situation, based on the figures in its most recent financial statements, before deciding on how it should respond to the competitive threats and how the response should be financed.',
+      },
+      {
+        title: 'Exhibit 2 — Summarised financial statements 20X0–20X2',
+        content: 'Statement of profit or loss for years ending 31 December ($000):\n\n                          20X2     20X1     20X0\nRevenue                 120,900  121,500  121,900\nCost of sales          (101,600)(101,300)(101,100)\nGross profit             19,300   20,200   20,800\nAdministrative costs    (11,600) (11,200) (11,000)\nOperating profit          7,700    9,000    9,800\nFinance costs            (2,400)  (2,600)  (2,800)\nProfit before tax         5,300    6,400    7,000\nTax                      (1,200)  (1,600)  (1,800)\nProfit after tax          4,100    4,800    5,200\nDividends                 3,000    3,000    3,000\n\nStatement of financial position ($000):\nNon-current assets       78,400   78,800   79,100\nBank and cash             8,000    8,000    8,200\nOther current assets      3,000    2,600    2,400\nTotal assets             89,400   89,400   89,700\nOrdinary shares ($1)     10,000   10,000   10,000\nReserves                 44,100   43,000   41,200\nEquity total             54,100   53,000   51,200\nNon-current liabilities  23,400   26,000   28,000\nTrade payables           10,600    8,600    8,500\nOther current liabilities 1,300    1,800    2,000\nTotal equity + liabs     89,400   89,400   89,700\nMarket price per share    $4.85    $5.35    $5.70\n\nNotes: NCA includes land, buildings, fixtures, equipment, vehicles. Other current assets = inventory of perishable foods + prepayments. NCL = loan notes redeemable in 7 years (market = nominal) + bank loan repayable in instalments.\n\nSegment revenue ($000):\nSix largest cities         30,300   31,400   32,400\nTourist centres            29,600   29,000   28,200\nSmall cities and towns     61,000   61,100   61,300\n\nSegment gross profit ($000):\nSix largest cities          4,700    5,400    5,900\nTourist centres             4,300    4,400    4,500\nSmall cities and towns     10,300   10,400   10,400\n\nNumber of restaurants:\nSix largest cities             24       24       24\nTourist centres                32       32       32\nSmall cities and towns         84       84       84\nTotal                         140      140      140\n\nIndustry figures (other national restaurant chains):\n                       20X2   20X1   20X0\nGP margin (%)          18.6   19.1   19.6\nOperating margin (%)    8.1    8.6    9.0\nGearing (%)            42.0   41.6   41.4\nChange in share price  -3.4   -0.8     —\n(Gearing = NCL / (NCL + MV equity))',
+      },
+    ],
+
+    keyAnswerTips: 'Big ratio-analysis questions consistently see candidates over-spend on numbers and under-spend on discussion. 10 marks calculations + 10 marks discussion — budget 18 min on each. Always compare to industry, not just trend. Segment analysis is where the marks are — three segments mean three distinct competitive stories: premium-competitor attack in big cities, value-competitor attack in tourist centres, stable cash cow in small towns. Comment on dividend cover as a separate point: 1.73 → 1.37 is unsustainable.',
+
+    verifiedNumbers: [
+      { value: '16.0% vs 18.6%', description: 'GP margin 20X2 vs industry', source: 'Q' },
+      { value: '6.4% vs 8.1%', description: 'Operating margin 20X2 vs industry', source: 'Q' },
+      { value: '~32.5% vs 42.0%', description: 'Gearing 20X2 vs industry — well below', source: 'Q' },
+      { value: '1.37', description: 'Dividend cover 20X2 (down from 1.73)', source: 'Q' },
+      { value: '-15%', description: 'Share price 20X0→X2 vs industry -4.2%', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Compute the core ratios and compare to industry',
+        explanation: 'Start with the obvious ones: GP margin (gross / revenue), operating margin, ROCE (operating / capital employed), gearing on the industry definition (NCL / (NCL + MV equity)). Each one alongside the industry figure for the same year. The story is consistent — Southmed underperforms on every margin metric and the gap is widening.',
+      },
+      {
+        stepNumber: 2,
+        title: 'Segment the segments',
+        explanation: 'Compute revenue and gross profit per restaurant for each segment, and segment GP margin. Six-largest-cities is being attacked by premium competitors — revenue and margin both falling. Tourist centres are being attacked by value competitors — revenue up but margin compressed. Small cities are stable but offer no growth.',
+      },
+      {
+        stepNumber: 3,
+        title: 'Note dividend cover collapse and capital structure',
+        explanation: 'Dividend held constant at $3.0m despite PAT falling from $5.2m to $4.1m → dividend cover 1.37×, down from 1.73× two years ago. Trajectory is unsustainable. On the other hand, gearing is well below industry (32% vs 42%) so there is debt capacity for transformation investment.',
+      },
+      {
+        stepNumber: 4,
+        title: 'Flag data gaps and recommend',
+        explanation: 'Data gaps the question wants surfaced: customers per restaurant, average spend, advertising/marketing spend, employee productivity, lease costs, capex per segment, like-for-like sales growth. Recommend: (1) decide whether to fight premium competitors in big cities or exit; (2) reposition tourist-centre pricing; (3) protect cash flow from small towns; (4) revisit dividend policy given falling cover.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'Strong candidates produced a clear story tied to industry comparison and segment-level analysis. Best answers identified gearing capacity for investment.',
+      commonErrors: 'Most candidates over-spent on ratios and ran out of time for discussion (the 10/10 mark split was frequently ignored). Discussion was too generic — many didn\'t differentiate the three segments or notice the dividend-cover deterioration.',
+      tutorTip: 'The 10/10 split is rigid. Budget 18 minutes each. Calculations: 8 ratios for the company + 6 segment ratios = 14 numbers, ~75 sec each. Discussion: 4 paragraphs (overall trend, segment-by-segment, capital structure / dividend, strategic recommendation), ~4 min each.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // ABERTAFOL CO — Sep/Dec 2023 — Section B Q3
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'abertafol',
+    name: 'Abertafol Co',
+    session: 'Sep/Dec 2023',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'E',
+    topics: ['hedg'],
+    tags: ['IR futures', 'FRA', 'IR options', 'Loan + investment'],
+    difficulty: 4,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'situation',
+        navLabel: '1. The situation',
+        title: 'Two-leg hedge: borrow then invest',
+        content: 'Abertafol Co is rearranging distribution: selling its large central distribution centre and buying two smaller centres (north + south). Timing differences mean it needs to:\n\n• BORROW $24m from 1 May 20X8 to 1 Sep 20X8 (4 months).\n• INVEST $18m from 1 Sep 20X8 to 1 Feb 20X9 (5 months).\n\nToday: 1 February 20X8. Central bank base rate: 5.1%.\nBorrowing rate: base + 40 bp. Investment rate: base − 30 bp.\nFutures / options settle end of month; basis diminishes to zero at maturity (linear monthly); no basis risk; no margin requirement.',
+        warning: 'Two different hedges, two different directions. Borrowing $24m → going to PAY interest → hedge against RATE RISES → SELL futures, buy PUT options. Investing $18m → going to RECEIVE interest → hedge against RATE FALLS → BUY futures, buy CALL options. Mixing these up costs ~5 marks in the calculation.',
+      },
+      {
+        id: 'loan',
+        navLabel: '2. $24m loan',
+        title: 'Loan hedge (rate could rise to 5.9%)',
+        content: 'Commentators expect the government to raise the base rate by up to 0.8% to 5.9% before 1 May 20X8.\n\nFRA: already calculated by the finance department. Net payment $461,600 = effective annual rate 5.77%.\n\nThree-month $ futures, $500,000 contract size, quoted at 100 − annual % yield:\nJune: 94.55\nSeptember: 94.50\n\nFor a 4-month loan from 1 May to 1 Sep, the natural futures expiry is June.\nSpot price equivalent at 5.1%: 100 − 5.10 = 94.90.\nBasis (June): 94.90 − 94.55 = 0.35.\nUnexpired basis at 1 May (close-out, 1 month from contract end): 1/4 × 0.35 = 0.0875.\nExpected futures price at 1 May if rate rises to 5.9%: 100 − 5.90 − 0.0875 = 94.0125.',
+      },
+      {
+        id: 'invest',
+        navLabel: '3. $18m investment',
+        title: 'Investment hedge (rate could fall to 4.5%)',
+        content: 'Election on 1 July 20X8. Main opposition has promised to reduce the base rate. Commentators expect the rate could fall to 4.5% if opposition wins. Result currently too close to call. Current government winning means no rate change.\n\nFRA: already calculated. Guaranteed $378,750 = effective annual rate 5.05% on the investment.\n\nFinance department is considering BUYING CALL OPTIONS as the alternative to the FRA — the upside of options is preserved if rates do not fall as far as 4.5%.\n\nOptions on three-month September $ futures, $500,000 contract size, premiums quoted in annual %:\nCall 94.75 exercise price: 0.298 premium.\n\nNumber of contracts for the investment (5-month exposure):\nContracts = $18m / $500,000 × 5/3 = 60 contracts.\n\nSpot price equivalent at 5.1%: 94.90.\nBasis (September): 94.90 − 94.50 = 0.40.\nUnexpired basis at 1 Sep (close-out is contract maturity): 0/6 × 0.40 = 0 (no unexpired basis).\nExpected futures price at 1 Sep if rate falls to 4.5%: 100 − 4.50 − 0 = 95.50.',
+        warning: 'For the loan, close-out is 1 May; September futures don\'t expire until end of September → 4 months to expiry vs 1 month for June. For the investment, close-out is 1 September = contract maturity → unexpired basis is zero, simplifying things.',
+      },
+      {
+        id: 'queries',
+        navLabel: '4. Director queries',
+        title: 'Part (b): three directors, three challenges',
+        content: 'Director A: "Abertafol should not use derivatives — trading in derivatives is not part of normal business, so shareholders won\'t expect it."\n→ Counter: hedging ≠ speculating; reduces risk to known cash flows, supporting business plan. Shareholders generally support risk-reduction that protects value.\n\nDirector B: "What if rates rise by less than 0.8% or fall by less than 0.6%? We lose the chance to benefit from better-than-hedged rates."\n→ Hedging is about removing uncertainty, not maximising upside. Where uncertainty is high (election risk), the certainty of an FRA can be worth giving up the upside. Options preserve upside but at the cost of the premium.\n\nDirector C: "Options should not be used for the $18m investment — the premium means they\'re never the best choice. Better not to hedge at all."\n→ Wrong on both counts. Options are best when there is asymmetric uncertainty (rates might fall a lot, might not at all). Not hedging is fine if management has appetite for the rate risk, but exposes Abertafol to a worst-case scenario that could affect business plan.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 13,
+        requirement: 'Advise on hedging strategies, based on the hedging choices that the finance department is considering for: the loan of $24m, assuming the central bank base rate rises to 5.9%; the investment of $18m, assuming the central bank base rate falls to 4.5%. Support your answer with appropriate calculations and discussion. Note: Up to 4 marks are available for discussion.',
+        markingPoints: [
+          { description: '$24m loan: identify SELL futures (borrowers sell) to hedge rate rise', marks: 1 },
+          { description: 'Loan futures: 64 contracts ($24m / $500k × 4/3); basis 0.35; unexpired 0.0875', marks: 2 },
+          { description: 'Futures gain on loan if rate rises to 5.9%: (94.55 − 94.0125) × 0.01 × $500k × 3/12 × 64', marks: 2 },
+          { description: 'Loan: net interest = $24m × 5.9% × 4/12 − futures gain → effective rate calculation', marks: 1 },
+          { description: 'Comparison: futures vs FRA 5.77% (already given) — recommend lower effective rate', marks: 1 },
+          { description: '$18m investment: identify BUY call options (option to lock in rate)', marks: 1 },
+          { description: 'Investment options: 60 contracts ($18m / $500k × 5/3); strike 94.75', marks: 1 },
+          { description: 'Premium: 0.298% × $500k × 3/12 × 60 = $22,350', marks: 1 },
+          { description: 'If rate falls to 4.5%: expected futures price 95.50; option gain = (95.50 − 94.75) × 0.01 × $500k × 3/12 × 60', marks: 1 },
+          { description: 'Investment: net return = $18m × 4.2% × 5/12 + option gain − premium', marks: 1 },
+          { description: 'Discussion (up to 4 of 13 marks): election uncertainty → options preserve upside if rate doesn\'t fall as far', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 7,
+        requirement: 'Discuss the queries raised by each of the directors.',
+        markingPoints: [
+          { description: 'Director A: derivatives ≠ speculation; hedging reduces risk and supports business plan', marks: 1 },
+          { description: 'Director A: shareholders generally support risk-reduction; lack of hedging could destroy more value than the cost of hedging', marks: 1 },
+          { description: 'Director B: hedging removes uncertainty, doesn\'t maximise upside; trade-off is intentional', marks: 1 },
+          { description: 'Director B: options preserve upside but cost a premium; FRA gives certainty but no upside', marks: 1 },
+          { description: 'Director C: options are best when uncertainty is asymmetric (e.g. election where rates might fall a lot or not at all)', marks: 1 },
+          { description: 'Director C: not hedging exposes Abertafol to worst-case rate; may be acceptable if risk appetite high but not "best"', marks: 1 },
+          { description: 'Conclude: derivatives are valuable risk-management tools, not speculation; the right tool depends on risk profile', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Abertafol Co\'s interest rate hedging',
+        content: 'Abertafol Co is planning a change in distribution arrangements: dispose of large central distribution centre, invest proceeds in two smaller centres (north + south).\n\nToday is 1 February 20X8. Because of expected timing differences, Abertafol expects to take out a SHORT-TERM LOAN of $24m from 1 May 20X8 to 1 September 20X8. It then expects to make a SHORT-TERM INVESTMENT of $18m from 1 September 20X8 to 1 February 20X9.\n\nAbertafol intends to hedge interest rate risk using derivatives. Terms based on central bank base rate. Assumptions: futures/options settle at end of each month; basis diminishes to zero at contract maturity (constant rate, monthly intervals); no basis risk; no margin requirements.\n\n$24m loan: Abertafol borrows at base + 40 bp. Base rate currently 5.1%. Commentators expect base to rise by up to 0.8% to 5.9% before 1 May 20X8.\nFRA already calculated: net payment $461,600 = effective 5.77%.\nThree-month $ futures, $500,000 contract size, quoted 100 − annual % yield:\nJune 94.55, September 94.50.\n\n$18m investment: Abertafol invests at base − 30 bp.\nElection 1 July 20X8. Main opposition promises to reduce base rate. Commentators: rate could fall to a minimum of 4.5% if opposition wins. Currently no confident prediction. Assume no rate reduction if current government wins.\nFRA already calculated: guaranteed $378,750 = effective 5.05%.\nFinance department is looking at buying call options as the alternative to the FRA for the investment hedge.\n\nOptions on three-month September $ futures, $500,000 contract size, premiums in annual %:\nCall 94.75 strike: 0.298 premium.',
+      },
+      {
+        title: 'Exhibit 2 — Directors\' queries about hedging',
+        content: 'At the last board meeting, Abertafol\'s finance director explained possible hedging strategies. She received the following queries:\n\nDirector A: Abertafol should not be using derivatives, as trading in derivatives is not part of the company\'s normal activities. Therefore shareholders would not expect the company to be using derivatives.\n\nDirector B: Understood that futures or an FRA might be the best solution if the central bank rate rose up to 5.9% or fell down to 4.5%. But queried what would happen if rates did not rise as high as 5.9% nor fall as low as 4.5% — Abertafol could possibly lose the chance of benefiting from more favourable rates than those offered by the futures or FRA.\n\nDirector C: Options should not be used to hedge the $18m investment, as they would never be the best choice because of their premium. The best choice would be not to hedge at all.',
+      },
+    ],
+
+    keyAnswerTips: 'Two-leg hedge means two opposite directions. Borrower (loan) hedges rate RISES → SELL futures + buy PUT options. Investor (deposit) hedges rate FALLS → BUY futures + buy CALL options. The FRA effective rates for both legs are GIVEN (5.77% loan, 5.05% investment) — your futures/options calculations need to clear those benchmarks to be worth recommending. Up to 4 of 13 marks in part (a) are for discussion — write a short paragraph for each leg comparing futures/options against the given FRA and tying back to the directors\' concerns.',
+
+    verifiedNumbers: [
+      { value: '5.77% (FRA)', description: 'Loan effective rate via FRA (given)', source: 'Q' },
+      { value: '5.05% (FRA)', description: 'Investment effective rate via FRA (given)', source: 'Q' },
+      { value: '64 contracts', description: 'Loan futures: $24m / $500k × 4/3', source: 'Q' },
+      { value: '60 contracts', description: 'Investment options: $18m / $500k × 5/3', source: 'Q' },
+      { value: '0.298% × $500k × 3/12 × 60 = $22,350', description: 'Call option premium for investment hedge', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Loan ($24m): sell futures to hedge rate rise',
+        explanation: 'Borrowers SELL futures because if rates rise, futures prices FALL, and the futures gain offsets the higher loan interest. Number of contracts = $24m / $500,000 × (4 months / 3 months) = 64 contracts. Use June futures (closer to 1 May close-out).',
+        formula: 'Spot today: 100 − 5.10 = 94.90\nJune futures: 94.55\nBasis (June): 94.90 − 94.55 = 0.35\nUnexpired basis at 1 May (1 of 4 months left): 1/4 × 0.35 = 0.0875\nExpected futures price 1 May (rate = 5.9%): 100 − 5.90 − 0.0875 = 94.0125\nFutures gain: (94.55 − 94.0125)/100 × $500k × 3/12 × 64 = $43,000\nLoan interest at 5.9% + 40 bp = 6.30%: $24m × 6.30% × 4/12 = $504,000\nNet cost: $504,000 − $43,000 = $461,000\nEffective annual: $461,000 / ($24m × 4/12) ≈ 5.76%',
+      },
+      {
+        stepNumber: 2,
+        title: 'Compare loan futures result to FRA',
+        explanation: 'Futures hedge gives ~5.76% effective — virtually identical to the FRA\'s 5.77%. Either is fine; FRA wins on simplicity (no contracts to manage); futures win on liquidity and the ability to close out early. Recommendation: FRA for an unsophisticated treasury function; futures if Abertafol already has futures expertise.',
+      },
+      {
+        stepNumber: 3,
+        title: 'Investment ($18m): buy call options to preserve upside',
+        explanation: 'Investor with election uncertainty needs the right (not obligation) to lock in the rate. BUY September call options at strike 94.75. Number of contracts = $18m / $500k × (5/3) = 60. Premium = 0.298% × $500,000 × 3/12 × 60 = $22,350.',
+        formula: 'Spot today: 94.90; September futures 94.50; basis 0.40\nUnexpired basis at 1 Sep (0 of 6 months left): 0\nExpected futures price 1 Sep (rate = 4.5%): 100 − 4.50 − 0 = 95.50\nOption exercise: 95.50 > 94.75 strike → exercise\nOption gain: (95.50 − 94.75)/100 × $500k × 3/12 × 60 = $56,250\nNet option payoff: $56,250 − $22,350 = $33,900\nInvestment interest at 4.5% − 30 bp = 4.20%: $18m × 4.20% × 5/12 = $315,000\nTotal: $315,000 + $33,900 = $348,900\nEffective annual: $348,900 / ($18m × 5/12) ≈ 4.65%',
+      },
+      {
+        stepNumber: 4,
+        title: 'Compare investment options to FRA',
+        explanation: 'FRA gives 5.05% guaranteed = $378,750. Options give 4.65% if rate falls to 4.5%. FRA wins in this scenario — but the question of which to use depends on what happens if the opposition LOSES the election (rate stays at 5.10%, options abandoned, net return = $18m × 4.80% × 5/12 − $22,350 = $337,650 vs FRA $378,750). FRA still wins. Recommendation: FRA, unless management is confident rates will rise above ~5.40%, in which case options dominate.',
+      },
+      {
+        stepNumber: 5,
+        title: 'Director responses (part b)',
+        explanation: 'Director A: Hedging reduces risk and is fundamental treasury practice. Not hedging exposes the business plan to interest-rate shocks. Shareholders understand risk management.\n\nDirector B: The trade-off between certainty and upside is by design. Where uncertainty is high (e.g. election), the cost of giving up upside is worth the certainty. Options preserve upside at the cost of a premium.\n\nDirector C: Wrong. Options ARE the best choice when there is asymmetric uncertainty and the FRA effective rate is unattractive. Not hedging is fine if Abertafol\'s risk appetite tolerates the worst-case scenario — but that\'s a deliberate choice, not the "best" choice in absolute terms.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'Most candidates correctly identified the direction of each hedge (sell futures for loan, buy options/futures for investment). FRA comparisons were generally well-set-up.',
+      commonErrors: 'Confused direction of futures hedge for the loan (some bought instead of sold). Option premium calculation was frequently wrong — the 0.298% is annual, so × 3/12 is needed. Unexpired basis was often miscalculated, especially the loan close-out timing (1 May with June futures = 1 of 4 months remaining).',
+      tutorTip: 'For every IR hedge: (1) am I PAYING or RECEIVING interest? (2) what direction is the rate risk? (3) what derivative position offsets that risk? (4) close-out timing → unexpired basis. Write these four answers down before touching a calculator.',
       source: 'E',
     },
   },
