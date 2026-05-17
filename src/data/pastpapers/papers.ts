@@ -549,13 +549,57 @@ export const PAPERS: Paper[] = [
     ],
 
     questionParts: [
-      { label: '(a)', marks: 6, requirement: 'Explain the forex exposure Fondir faces in the Italian market and suggest how it could be managed.' },
-      { label: '(b)(i)', marks: 7, requirement: 'Calculate the USD receipt from the Lothil payment using both the OTC forward rate and the OTC call option.' },
-      { label: '(b)(ii)', marks: 9, requirement: 'Calculate the interest earned on investing the USD proceeds using interest rate futures. Show outcomes under both rate scenarios.' },
-      { label: '(b)(iii)', marks: 9, requirement: 'Comment on hedging results. Discuss alternative hedging methods for the Lothil receipt. Explain margin requirements.' },
-      { label: '(b)(iv)', marks: 9, requirement: 'Discuss whether it would be beneficial for Fondir to manage its financial risks. Discuss whether it should communicate its risk management approach to stakeholders.' },
-      { label: 'Professional skills', marks: 10, requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.' },
+      {
+        label: '(a)',
+        marks: 6,
+        requirement: 'Explain the forex exposure Fondir faces in the Italian market and suggest how it could be managed.',
+        examinerCommentary: 'The most common error in part (a) was failing to identify economic risk — almost all candidates wrote about transaction risk. Economic risk is a long-term permanent shift in the underlying exchange rate that affects competitive position; derivatives cannot fix it.',
+      },
+      {
+        label: '(b)(i)',
+        marks: 7,
+        requirement: 'Calculate the amounts receivable in $ from Lothil in four months\' time, using the over-the-counter (OTC) forward rate and the OTC option.',
+        examinerCommentary: 'The most common error was using annual interest rates without adjusting for the four-month period (divide by 3).',
+      },
+      {
+        label: '(b)(ii)',
+        marks: 9,
+        requirement: 'Calculate the interest return in $ of the cash flows from Lothil when futures contracts are used to hedge the interest rate fluctuations of 0.5%. Calculations should include the number of futures contracts needed and the gain or loss in the futures market in $.',
+        examinerCommentary: 'Performance on this part was described as "disappointing." Many did not adjust annual rates for the investment period (5/12) and IR futures direction (depositors buy futures) was often wrong.',
+      },
+      {
+        label: '(b)(iii)',
+        marks: 9,
+        requirement: 'Comment on the results obtained in (b)(i) and (ii), and address the queries raised by the BoD with respect to alternative methods to hedge the receipt and the margin requirements.',
+      },
+      {
+        label: '(b)(iv)',
+        marks: 9,
+        requirement: 'Discuss whether it would be beneficial for Fondir to manage its financial risks, and whether or not the company should communicate its risk management approach to its stakeholders.',
+      },
+      {
+        label: 'Professional skills',
+        marks: 10,
+        requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.',
+      },
     ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Fondir Co, risk management',
+        content: 'Fondir Co, based in the USA (currency $), is involved in the production and sale of high-quality foods under its popular brand "Delibeli". Initially aimed at the USA market, products are increasingly sold internationally to North and South America and to Europe. Fondir Co is expanding its production facilities and receiving its revenues in a variety of currencies.\n\nFondir Co has developed robust systems to manage its operational risks, but so far it has not managed its financial risk from currency and interest rate fluctuations. The BoD broadly supports using derivative products and communicating the risk approach to shareholders, managers, lenders and employees.\n\nThe marketing director questioned whether these and other financial risks should be managed at all, suggesting the costs would outweigh the benefits.\n\nThe finance director argued some risks were harder to manage. She gave the Italian market as an example: direct competitors from France and Germany have successfully penetrated the Italian market. Fondir\'s sales revenue from Italy has been falling, which the FD attributes to the weakening of the Euro against the $. She believes this relative weakening is likely to continue for some time and cannot be managed through derivatives.',
+      },
+      {
+        title: 'Exhibit 2 — Receipt from Lothil',
+        content: 'Fondir Co sells to customers in Lothil (currency LL). Expected receipt: LL357m in four months\' time, on 1 May. No exchange-traded derivatives for LL, but two OTC products are available.\n\nFour-month forward agreed today: Lothil annual base 6% + 60 bp; USA annual base 3.3% − 30 bp. Spot rate: LL84.00/$1.\n\nOTC $ call or put option, exercise price LL84.00. Call premium LL4.00 per $1; put premium LL3.00 per $1. Premium payable at commencement; Fondir borrows the premium using its overdraft (5.4% annual).',
+      },
+      {
+        title: 'Exhibit 3 — Short-term investment',
+        content: 'After the four-month conversion to $, the cash is invested for a further five months. The BoD wants to know how interest rate futures can be used to hedge ±0.5% in the base rate. Fondir invests short-term at USA base rate (3.3%) less 30 bp.\n\nJune three-month $ futures: contract size $500,000. June futures price 96.10 (quoted as 100 − annual % yield).\n\nAssumptions: settlement at month end; basis diminishes to zero at maturity (monthly time intervals); no basis risk; ignore margin requirements.\n\nThe BoD has heard dealing with futures can be expensive because of margin requirements and wants to understand what margins are.',
+      },
+    ],
+
+    keyAnswerTips: 'Economic risk = the competitive position itself has shifted permanently. If the scenario says sales have been declining for years due to sustained exchange rate movements, write economic risk immediately and explain the strategic fix (overseas subsidiary, EUR sourcing, market exit), not derivatives. For Lothil: divide the annual interest rates by 3 (four months); for the futures hedge, divide by 12/5 then × 5/3 for contracts.',
 
     verifiedNumbers: [
       { value: '85.00 LL/USD', description: 'OTC forward rate', source: 'A' },
@@ -1193,13 +1237,59 @@ export const PAPERS: Paper[] = [
     ],
 
     questionParts: [
-      { label: '(a)', marks: 9, requirement: 'Discuss the agency conflict arising from Joshua board\'s takeover defence strategy and how it could be mitigated.' },
-      { label: '(b)(i)', marks: 8, requirement: 'Estimate the additional value created from acquiring Fraser Co using FCFE.' },
-      { label: '(b)(ii)', marks: 6, requirement: 'Evaluate impact on shareholder wealth for both sets of shareholders.' },
-      { label: '(b)(iii)', marks: 7, requirement: 'Analyse assumptions and assess credibility of the calculations.' },
-      { label: '(b)(iv)', marks: 10, requirement: 'Discuss concerns likely to be raised by both sets of shareholders.' },
-      { label: 'Professional skills', marks: 10, requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.' },
+      {
+        label: '(a)',
+        marks: 5,
+        requirement: 'Discuss the agency problems created by Joshua Co\'s proposed takeover of Fraser Co as a defence and risk diversification strategy and explain how these could be mitigated.',
+      },
+      {
+        label: '(b)(i)',
+        marks: 5,
+        requirement: 'Calculate the post-acquisition weighted average cost of capital.',
+      },
+      {
+        label: '(b)(ii)',
+        marks: 11,
+        requirement: 'Estimate the additional value to shareholders from Joshua Co\'s proposed acquisition of Fraser Co.',
+      },
+      {
+        label: '(b)(iii)',
+        marks: 6,
+        requirement: 'Compare shareholder wealth before and after the acquisition by calculating the percentage change in equity value and next year\'s dividend income for both companies\' shareholders.',
+      },
+      {
+        label: '(b)(iv)',
+        marks: 8,
+        requirement: 'Advise the board of any concerns either company\'s shareholders may have with the acquisition and discuss the validity of the assumptions made in evaluating the proposal in (b)(i), (ii) and (iii) above.',
+      },
+      {
+        label: '(b)(v)',
+        marks: 5,
+        requirement: 'Discuss the credibility of the CEO\'s alternative suggestion to use a share buyback as a takeover defence and advise whether or not this is a feasible strategy for Joshua Co.',
+      },
+      {
+        label: 'Professional skills',
+        marks: 10,
+        requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.',
+      },
     ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Joshua Co',
+        content: 'Joshua Co is a listed leading fashion retailer with stores based in flagship retail centres nationwide. Financial performance has suffered recently due to problems with its online operation. These problems are causing concern for institutional shareholders.\n\nOnline rivals have emerged in recent years and are quickly reducing Joshua Co\'s market share. They have also diversified into other areas (e.g. household furnishings) once they have established a well-known brand. Joshua Co recently attempted to acquire one of these online rivals, Fraser Co, but neither company\'s shareholders approved the deal — it was unlikely to create value.\n\nFollowing a series of profit warnings there has been media speculation that Joshua Co is attracting takeover interest. No approach yet, but directors are concerned about their future. The chairman would like to discuss defence strategies at an upcoming board meeting — particularly the suggestion that Joshua Co could defend itself by improving its own takeover offer for Fraser Co (an enlarged Joshua Co would be harder to acquire and would introduce risk-diversification benefits).',
+      },
+      {
+        title: 'Exhibit 2 — Acquisition of Fraser Co',
+        content: 'Joshua Co\'s funding options have deteriorated since last year\'s cash offer was rejected. No cash reserves for a cash offer; shareholders unlikely to agree to another rights issue. Gearing significantly exceeds the industry average; close to breaching a bank covenant. The CEO has suggested a share-for-share exchange.\n\nFinancial data — Joshua Co / Fraser Co:\nMarket value of equity: $102m / $56m\nAsset beta: 0.85 / 1.18\nDividend: $2.7m / $3.2m\nOrdinary shares ($1): $40m / $10m\n\nCost of capital: Joshua post-acquisition asset beta = weighted average of both companies\' pre-acquisition asset betas (weighted by market value of equity). Maintain existing debt:equity 30:70 (market value). Pre-tax credit spread on Joshua\'s debt remains 410 bp above the risk-free rate.\n\nPost-acquisition cash flows: PBIT year 1 $27.2m, growing 5%/year in years 2–4. TAD = maintenance investment. Asset investment $2.7m year 1, then $2.13 per $1 increase in PBIT for years 2–4. After-tax synergies $9.2m/year for years 1–4. From year 5: FCF growth 3% in perpetuity.\n\nShare-for-share: 1 Fraser share for 3 Joshua shares. Minimum acquisition premium 35% (same as last year). Fraser\'s founder/majority shareholder will not approve a deal that reduces annual dividend income. Joshua\'s debt covenant restricts dividends to 25% of each year\'s free cash flow to firm.\n\nOther: corporation tax 18%. Risk-free rate 3.7%. Market risk premium 8.1%.',
+      },
+      {
+        title: 'Exhibit 3 — Share buyback',
+        content: 'No formal takeover offers yet. The board wants to be prepared in case Joshua\'s own takeover of Fraser is not viable. Topics for the next board meeting include using a share buyback as a defence tactic — Joshua buying and cancelling some of its own shares. The CEO has asked for advice on the credibility of such a defence and would like to discuss the effect on EPS, cost of capital and share price, in the context of liquidity problems and a further bank covenant restricting what assets can be disposed of.',
+      },
+    ],
+
+    keyAnswerTips: 'Five sub-parts in (b), each with its own deliverable. Do not skip (b)(v) — the share-buyback discussion is 5 marks plus contributes to professional skills (scepticism), and it is independent of the FCFE calculations. The minimum acquisition premium is 35% — Fraser shareholders\' actual gain of 37.1% is just above this floor, so the deal scrapes through. Joshua shareholders only gain 0.3% so management needs to communicate the strategic rationale carefully.',
 
     verifiedNumbers: [
       { value: '$179.2m', description: 'Joshua equity value post-acquisition', source: 'A' },
@@ -1557,12 +1647,39 @@ export const PAPERS: Paper[] = [
     ],
 
     questionParts: [
-      { label: '(a)', marks: 12, requirement: 'Discuss why NPV understates project value. Identify the real options available to Tonpantau and calculate one using BSOP.' },
-      { label: '(b)', marks: 8, requirement: 'Discuss the practical difficulties of incorporating and valuing real options.' },
-      { label: 'Professional skills', marks: 5, requirement: 'Analysis, scepticism, commercial acumen.' },
+      {
+        label: '(a)',
+        marks: 12,
+        requirement: 'Evaluate the financial acceptability of the proposed investment.',
+        examinerCommentary: 'Many candidates produced workings without naming the specific real options visible in the scenario. The base NPV is negative ($2,221k) — the discussion mark is for recognising that flexibility (phased investment, abandon if mathematics sales disappoint) is what could make the project worthwhile.',
+      },
+      {
+        label: '(b)',
+        marks: 8,
+        requirement: 'Discuss, with reference to Tonpantau Co\'s proposed investment: how real options build on traditional net present value analysis when evaluating investment decisions; and the problems with incorporating and valuing real options. Your answer should make specific reference to the Black-Scholes model.',
+        examinerCommentary: 'Many candidates produced generic lists of real option types (delay, expand, abandon) without identifying which specific options were available to Tonpantau Co in the scenario. The examiner called this out explicitly. Always name the actual options visible in the scenario first.',
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Tonpantau Co proposed investment',
+        content: 'Tonpantau Co is a publishing company, currently publishing mathematics and business studies texts and online study material for schools. The company is considering entering new markets in these subject areas. Initially, it will produce material for mathematics degree courses, but then it plans to produce material for other university courses and professional qualifications.\n\nTonpantau Co\'s directors feel that the decision to invest being made in phases, and the possibility of not pursuing the investment further if sales of the mathematics material are disappointing, are significant. However, they are unsure how to incorporate these factors into the investment appraisal. Tonpantau Co\'s directors are also uncertain about whether its closest competitors have any plans to enter these new markets, or how its competitors will react if Tonpantau Co is successful in its new markets.',
+      },
+      {
+        title: 'Exhibit 2 — Detailed investment',
+        content: 'Four-year time horizon based on current plans.\n\nPlanned capital expenditure: Year 0 $20,000k, Year 1 $20,000k, Year 2 $12,000k.\n\nWorking capital at the start of each year: Year 1 $3,000k, Year 2 $3,450k, Year 3 $4,000k, Year 4 $3,800k. Released in full at end of year 4.\n\nForecast pre-tax profits (after deduction of TAD, which equals accounting depreciation):\nYear 1: TAD $2,600k, pre-tax profit $8,700k\nYear 2: TAD $5,200k, pre-tax profit $11,600k\nYear 3: TAD $6,700k, pre-tax profit $15,200k\nYear 4: TAD $6,700k, pre-tax profit $15,500k\nTax payable at 20% in the year profits are made.\n\nBodfari Co is a comparable: debt/equity 25:75, equity beta 1.60. Tonpantau debt/equity 40:60. Risk-free rate 4.25%. MRP 5.5%. Debt beta = 0 for cost of capital estimation.\n\nTonpantau debt: 6% bond, $100 nominal, 4% premium on redemption in 4 years, annual coupon. Spot rates: 1yr 4.33%, 2yr 5.15%, 3yr 5.93%, 4yr 6.58%.',
+      },
     ],
 
     verifiedNumbers: [
+      { value: '($2,221k)', description: 'Base NPV (NEGATIVE — flexibility may rescue it)', source: 'A' },
+      { value: '11%', description: 'WACC (derived from ungeared beta of Bodfari)', source: 'A' },
       { value: 'Expand + Abandon', description: 'Two specific real options in scenario', source: 'A' },
     ],
 
@@ -1588,6 +1705,280 @@ export const PAPERS: Paper[] = [
       didWell: 'BSOP mechanics were mostly correct when attempted. Cost of equity calculations using ungeared betas were strong.',
       commonErrors: 'Almost no candidates identified the two specific real options available to Tonpantau. They listed generic option types instead. The BSOP narrative was thin and not connected to Tonpantau\'s scenario.',
       tutorTip: 'Every real options question: find the actual options in the scenario text first. They are always there. Name them explicitly. The examiner puts them there deliberately and wants to see that you noticed.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // PROPLEIS / ADICTCAN CO — Dec 2022 — Section B
+  // Source: Kaplan Exam Kit 2024-25 (verbatim) + ACCA Model Answer
+  // ─────────────────────────────────────────────
+  {
+    id: 'propleis',
+    name: 'Propleis / Adictcan Co',
+    session: 'Dec 2022',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'C',
+    topics: ['ma'],
+    tags: ['M&A', 'FCFF', 'Synergies', 'Integration'],
+    difficulty: 3,
+    primarySource: 'A',
+
+    scenarioSteps: [
+      {
+        id: 'companies',
+        navLabel: '1. The companies',
+        title: 'Propleis (acquirer) and Adictcan (target)',
+        content: 'Both listed publishers. Propleis publishes property and lifestyle magazines (young in-house staff, high churn). Adictcan publishes professional-sports magazines (long-tenured specialist writers, current sports stars contribute, managerial autonomy given to most successful magazines).\n\nOnline: Propleis has won awards for e-marketing. Adictcan\'s website is criticised as old-fashioned but its online-only content writing is rated highly.\n\nPropleis is planning a takeover bid. Anticipated synergies: online presence, marketing, cross-selling, and savings in staff, administration and paper costs.',
+        warning: 'Adictcan\'s strength is content quality and autonomy. Propleis\'s integration plan must avoid destroying these by imposing Propleis processes. The "synergies in staff" risk losing the specialist writers and sports stars who differentiate Adictcan\'s product.',
+      },
+      {
+        id: 'valuation',
+        navLabel: '2. Valuation inputs',
+        title: 'FCFF inputs and target premium',
+        content: 'Market value of equity — Propleis $620m, Adictcan $340m.\n\nAdictcan board says shareholders expect a premium of 20% above current equity value. Propleis board feels its shareholders will expect a gain of at least 20% of current equity value.\n\nFCFF method inputs:\n- Year 1 sales $720m (sum of both companies); years 2–4 sales growth 8%/year.\n- Post-tax operating cash flows: 14% of sales each year.\n- Additional non-current asset investment: $25m year 1; then $0.30 per $1 of sales-revenue increase years 2–4.\n- Terminal year 5+: 4% growth in perpetuity.\n- Cost of capital: 10%. Target D/E = 1:3 in the combined company.',
+        warning: 'The acquisition premium (20%) and the acquirer\'s required gain (20%) together cap the room for negotiation. If the synergistic value isn\'t big enough to satisfy both, the deal does not work financially.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 10,
+        requirement: 'Estimate: the equity value of the combination of Propleis Co and Adictcan Co; and the benefits which would be gained by Propleis Co\'s shareholders from the acquisition.',
+        markingPoints: [
+          { description: 'Year 1–4 FCFF: 14% post-tax operating × sales − $25m yr1 / $0.30 × ΔSales yrs 2–4', marks: 3 },
+          { description: 'Discount yrs 1–4 at 10% → PV ≈ $292m', marks: 2 },
+          { description: 'Terminal value at end of year 4 = FCFF₅ / (0.10 − 0.04), discounted to today → ≈ $414m', marks: 2 },
+          { description: 'Combined equity value ≈ $706m (apply D/E 1:3 if needed)', marks: 1 },
+          { description: 'Acquisition premium for Adictcan = 20% × $340m = $68m; max Propleis can pay = combined − Propleis ex ante − Propleis required gain', marks: 1 },
+          { description: 'Conclude whether deal creates enough value to satisfy both required gains', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 6,
+        requirement: 'Discuss the assumptions made in the calculations in (a), including whether the expected synergies are likely to be achieved.',
+        markingPoints: [
+          { description: '8% sales growth assumes both companies grow at the same combined rate (challenging — historic Propleis ≠ Adictcan)', marks: 1 },
+          { description: '14% operating margin is constant despite different cost structures of the two companies', marks: 1 },
+          { description: 'Investment rule of $0.30 per $1 sales increase is generic — print/online mix matters', marks: 1 },
+          { description: '4% perpetuity growth in a structurally declining print market is optimistic', marks: 1 },
+          { description: 'Synergy realisation risk: Adictcan\'s value depends on long-tenured staff Propleis may displace', marks: 1 },
+          { description: '10% WACC assumes the target D/E of 1:3 is achieved post-acquisition', marks: 1 },
+        ],
+      },
+      {
+        label: '(c)',
+        marks: 4,
+        requirement: 'Explain the actions which Propleis Co\'s board can take to ensure that the companies are integrated successfully and synergies are realised.',
+        markingPoints: [
+          { description: 'Retain Adictcan\'s key writing/managerial talent with lock-in arrangements', marks: 1 },
+          { description: 'Keep autonomy of successful magazines — do not impose Propleis house style', marks: 1 },
+          { description: 'Apply Propleis\'s e-marketing skill to Adictcan\'s online product', marks: 1 },
+          { description: 'Communicate integration plan to staff early to limit attrition risk', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Propleis Co and Adictcan Co',
+        content: 'Propleis Co and Adictcan Co are two listed publishing companies. Main focus is publishing magazines, with some linked books.\n\nPropleis publishes property and lifestyle magazines. Adictcan publishes magazines covering professional sports. Both publish a combination of recently established titles and longer-running titles.\n\nPropleis has an in-house team of staff writers and editors who are responsible for content. Most are young and tend to stay for a limited time before moving on. Adictcan has a team of in-house writers and editors for each magazine — specialists in the sport their magazines cover, who in some cases have worked for the magazines for many years. Currently successful sports stars also write for Adictcan\'s magazines. Adictcan\'s board has given the managerial and writing teams of the most successful magazines considerable autonomy in determining content and development.\n\nBoth companies have an online presence in addition to paper copies. Electronic subscribers can access some online-only content. Propleis has won awards for its online presence and e-marketing; Adictcan\'s website has been criticised for looking old-fashioned, but the main appeal of its online offering is the high quality of the writing that is only available online.\n\nPropleis is planning to make a takeover bid for Adictcan and has contacted Adictcan\'s board. Propleis\'s board believes the acquisition could provide synergies — particularly in online presence, marketing and cross-selling — and also savings in staff, administration and paper costs.',
+      },
+      {
+        title: 'Exhibit 2 — Acquisition valuation',
+        content: 'Current market value of equity: Propleis $620m, Adictcan $340m.\n\nAdictcan board: shareholders expect a premium of 20% above current equity value. Propleis board: its shareholders will also expect a gain of at least 20% of the current equity value of their shares from the acquisition.\n\nFCFF method inputs:\n• Expected sales revenue in the first year combined: $720m (sum of both companies\' most recent revenue). Expected sales growth in each of years 2–4: 8%.\n• Expected post-tax operating cash flows in each of years 1–4: 14% of sales revenue.\n• Additional investment in non-current assets: $25m in year 1, and $0.30 per $1 increase in sales revenue in each of years 2–4.\n• After year 4: expected annual growth rate of FCFF = 4% for the foreseeable future.\n• Cost of capital: 10%.\n• Target debt/equity ratio of the combined company: 1:3.',
+      },
+    ],
+
+    keyAnswerTips: 'FCFF valuations are most often tested with three traps: (1) the additional investment rule applies to the INCREASE in sales (not total sales), (2) terminal value is calculated AT end of year 4 then discounted, not in year 5, and (3) "post-tax operating cash flow" = post-tax operating profit + depreciation when depreciation is non-cash — but here the 14% of sales figure is given as the cash flow directly, so don\'t double-count.',
+
+    verifiedNumbers: [
+      { value: '$292m', description: 'PV of FCFs years 1–4 (verified Kaplan model answer)', source: 'A' },
+      { value: '$414m', description: 'PV of terminal value years 5+ (verified)', source: 'A' },
+      { value: '$706m', description: 'Combined company equity value (verified)', source: 'A' },
+      { value: '$68m', description: 'Adictcan minimum premium (20% × $340m)', source: 'A' },
+      { value: '$124m', description: 'Propleis minimum required gain (20% × $620m)', source: 'A' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Build FCFF years 1–4',
+        explanation: 'Sales: yr1 $720m, yr2 $777.6m (+8%), yr3 $839.8m, yr4 $907m. Post-tax operating cash flow = 14% × sales. Additional investment: $25m yr1, then $0.30 × (sales increase) yrs 2–4. FCFF = operating cash flow − additional investment.',
+        formula: 'Year 1: $720m × 14% = $100.8m − $25m = $75.8m\nYear 2: $777.6m × 14% = $108.9m − ($777.6−$720)×0.30 = $108.9 − $17.3 = $91.6m\nYear 3: $839.8m × 14% = $117.6m − ($839.8−$777.6)×0.30 = $117.6 − $18.7 = $98.9m\nYear 4: $907m × 14% = $127.0m − ($907−$839.8)×0.30 = $127.0 − $20.2 = $106.8m',
+      },
+      {
+        stepNumber: 2,
+        title: 'Discount and add terminal value',
+        explanation: 'Discount FCFFs years 1–4 at 10%. Terminal value at end of year 4 = FCFF₅ / (WACC − g) = (FCFF₄ × 1.04) / (0.10 − 0.04). Discount terminal value back 4 years to today. Sum PVs.',
+        formula: 'PV yrs 1–4 ≈ $292m\nFCFF₅ = $106.8m × 1.04 ≈ $111.1m\nTV at end of yr 4 = $111.1m / 0.06 ≈ $1,851m\nPV of TV = $1,851m × 0.683 ≈ $414m\nCombined equity value ≈ $292m + $414m ≈ $706m',
+        verifiedNumbers: ['$706m combined equity value — verified from Kaplan model answer Dec 2022'],
+      },
+      {
+        stepNumber: 3,
+        title: 'Check both sides\' required gains',
+        explanation: 'Adictcan needs 20% × $340m = $68m premium. Propleis needs 20% × $620m = $124m gain. Total needed: $192m of value above the standalone $960m. Combined value $706m is BELOW the standalone total — so on these assumptions the deal does NOT create enough value to satisfy both sides. Either synergies must be higher than baked into the 14% margin, or one side must accept less. Many candidates report the $706m number without comparing it to the $960m standalone total — the whole point of the question is to test whether the deal works for both sides.',
+      },
+      {
+        stepNumber: 4,
+        title: 'Integration risk discussion',
+        explanation: 'Adictcan\'s value rests on long-tenured specialist writers and high-quality online content. Propleis\'s strength is e-marketing. The classic synergy story works if Propleis applies its e-marketing to Adictcan\'s superior content WITHOUT displacing Adictcan\'s writers. Heavy-handed integration that imposes Propleis processes risks losing the talent and the content quality that justified paying any premium at all.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'FCFF mechanics were generally correct. Most candidates correctly applied the 14% margin and the $0.30 reinvestment rule.',
+      commonErrors: 'Many candidates calculated the combined value without comparing it to the standalone total of both companies — missing whether the deal actually creates synergy. Integration risks were discussed generically without referencing Adictcan\'s specialist writers and autonomy culture.',
+      tutorTip: 'For every M&A valuation question, do three things: (1) calculate the combined value, (2) compare it to the standalone total of both companies, (3) state whether the difference (synergy value) is enough to satisfy BOTH sides\' minimum required gains. That third step is where most candidates lose marks.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // BLACKBOSCA CO — Mar/Jun 2023 — Section B
+  // Source: Kaplan Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'blackbosca',
+    name: 'Blackbosca Co',
+    session: 'Mar/Jun 2023',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'B',
+    topics: ['inv'],
+    tags: ['International NPV', 'PPP', 'Country risk', 'Business risk'],
+    difficulty: 4,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'company',
+        navLabel: '1. The company',
+        title: 'Blackbosca: Turkish food-delivery market leader expanding to Üskistan',
+        content: 'Blackbosca Co is the market-leading online food delivery company in Turkey. The founder is CEO and majority shareholder. The company already exceeds revenue targets quarterly. The CEO wants to repeat this success in new territories.\n\nProposed project: expansion into Üskistan (currency: Üskistani $). Today\'s spot: TL 3.82 per $1.',
+      },
+      {
+        id: 'inputs',
+        navLabel: '2. NPV inputs',
+        title: 'Investment, revenue model and exchange rates',
+        content: 'Revenue model is exponential (consultant-built). Pre-tax contribution margin 40% throughout 4-year project life.\n\nInflation-adjusted forecasts ($m):\n• Revenue yr1 110 / yr2 138 / yr3 463 / yr4 1,160\n• Pre-tax contribution (40%) yr1 44 / yr2 55.2 / yr3 185.2 / yr4 464\n• Fixed operating costs yr1 74 / yr2 93 / yr3 116 / yr4 145\n\nImmediate plant investment $220m (not recoverable). TAD straight-line 25% on cost.\n\nRoyalty payment (annual): $2.5m yr1, growing 5%/year.\n\nTax: Üskistan 20%, Turkey 15%, bilateral treaty (offset overseas tax against domestic). Üskistan allows tax loss carry-forward.\n\nWorking capital: 2% of that year\'s pre-tax contribution at start of year; released in full at end of project.\n\nInflation: Üskistan 3%, Turkey 12% (constant).\nPPP exchange rates (TL/$): yr0 3.82 / yr1 4.15 / yr2 4.51 / yr3 4.90 / yr4 5.33.\nBlackbosca cost of capital 16%.',
+        warning: 'The revenue jumps from $138m (yr2) to $463m (yr3) — a factor of 3.4×. This is the consultant\'s exponential model. The CEO has flagged that the model is untested and that a single equation is too simple for a complex scenario. Flag this in part (a) discussion (up to 5 of 13 marks).',
+      },
+      {
+        id: 'risk',
+        navLabel: '3. Risks',
+        title: 'Why Üskistan looks attractive — and what could go wrong',
+        content: 'Attractive factors:\n• Excellent infrastructure, shared language with Turkey.\n• Riders treated as self-employed (Supreme Court win); no employer benefit contributions.\n• Stable current government (post-constitutional change); recently removed dividend remittance restriction.\n• Online food-delivery market just emerging — growth headroom.\n\nRisks to flag in part (b):\n• Government debt is high → pressure on government spending; possible tax-policy reversal.\n• Üskistan\'s recent history of frequent government changes.\n• Self-employed-rider ruling could be revisited.\n• Inflation differential (3% vs 12%) → TL persistently weakens — affects dividend value when remitted.\n• Business model relies on financial institutions to process payments — concentration risk.\n• Untested exponential revenue model — high forecasting error.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 13,
+        requirement: 'Evaluate the suitability of the investment proposal in Üskistan, including in your analysis a discussion of the chief executive officer\'s concerns about the consultant\'s cash flow estimates. (Up to 5 marks available for discussion.)',
+        markingPoints: [
+          { description: 'Pre-tax operating cash flow yrs 1–4: contribution − fixed operating cost', marks: 1 },
+          { description: 'TAD: $220m × 25% = $55m per year (straight-line) → taxable profit each year', marks: 1 },
+          { description: 'Üskistan tax 20%; use loss carry-forward where contribution is below fixed cost', marks: 1 },
+          { description: 'After-tax cash flow = pre-tax cash flow − Üskistan tax (add back TAD)', marks: 1 },
+          { description: 'Royalty payment: $2.5m yr1 growing 5%/yr, paid to Turkish parent (taxable in Turkey)', marks: 1 },
+          { description: 'Working capital: 2% × pre-tax contribution at start of each year; released at end', marks: 1 },
+          { description: 'Translate cash flows TL → $ at PPP rates; or work in $ and use TL/$ to convert dividend remittance', marks: 1 },
+          { description: 'Apply bilateral tax treaty: top-up tax to Turkey rate where Üskistan rate is lower (here 20% > 15% so no top-up)', marks: 1 },
+          { description: 'Discount at 16% Blackbosca cost of capital; NPV in TL', marks: 1 },
+          { description: 'Recommendation based on calculated NPV', marks: 1 },
+          { description: 'Discussion: CEO\'s concern that exponential model is untested (3.4× jump yr2→yr3)', marks: 1 },
+          { description: 'Discussion: fixed operating costs of $74–145m vs contribution of $44–464m — early years are loss-making, must rely on later growth materialising', marks: 1 },
+          { description: 'Discussion: sensitivity of NPV to revenue assumption; recommend stress-test', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 7,
+        requirement: 'Discuss the financial and business risks which Blackbosca Co will be exposed to if the project in Üskistan is approved.',
+        markingPoints: [
+          { description: 'Currency / translation risk: 3% vs 12% inflation → persistent TL weakening', marks: 1 },
+          { description: 'Tax policy risk: Üskistan government under pressure on spending; rider-status ruling reversible', marks: 1 },
+          { description: 'Political risk: history of frequent government changes; stability is recent', marks: 1 },
+          { description: 'Operational risk: rider self-employment status is a single point of failure', marks: 1 },
+          { description: 'Counterparty/concentration risk: payment processing depends on financial institutions', marks: 1 },
+          { description: 'Forecasting risk: exponential revenue model is untested', marks: 1 },
+          { description: 'Repatriation risk: dividend remittance restriction was only recently removed', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Blackbosca Co',
+        content: 'Blackbosca Co is the market-leading online food delivery company in Turkey. The company was set up five years ago and is already highly profitable, exceeding all the founder\'s revenue targets by a wide margin every quarter. The founder is the company\'s majority shareholder and chief executive officer (CEO) and he would like to repeat this success in new territories, particularly in locations where the market has been slow to develop so far. The board is due to meet next week to review a potential expansion into the country of Üskistan.',
+      },
+      {
+        title: 'Exhibit 2 — Üskistan expansion project',
+        content: 'Üskistan currency $; spot 3.82 TL/$1.\n\nThe consultant\'s exponential revenue model takes into account market size, new-customer adoption rate, and competitor reaction. Pre-tax contribution margin 40% throughout the 4-year project life. Inflation-adjusted cash-flow estimates ($m):\nRevenue: yr1 110.0 / yr2 138.0 / yr3 463.0 / yr4 1,160.0\nPre-tax contribution (40% of revenue): yr1 44.0 / yr2 55.2 / yr3 185.2 / yr4 464.0\nFixed operating costs: yr1 74 / yr2 93 / yr3 116 / yr4 145.\n\nCEO concerns: untested model, mathematical equation is a simplification, validity of estimated fixed operating costs.\n\nImmediate investment $220m in plant and machinery (not recoverable). TAD: straight-line 25% on cost.\n\nRoyalty payment annually: $2.5m yr1, growing 5%/year.\n\nCorporation tax: Üskistan 20%, Turkey 15%; taxes paid in year liability arises. Üskistan allows tax loss carry-forward. Bilateral tax treaty: offset overseas tax against domestic.\n\nWorking capital: 2% of that year\'s pre-tax contribution at start of year; released in full at end of project. The board intends to extract positive free cash flows as dividends at the earliest opportunity.\n\nInflation constant: Üskistan 3%, Turkey 12% for project duration.\nPPP exchange rates (TL/$): yr0 3.82 / yr1 4.15 / yr2 4.51 / yr3 4.90 / yr4 5.33.\nBlackbosca cost of capital 16%.',
+      },
+      {
+        title: 'Exhibit 3 — Business and financial risks',
+        content: 'Üskistan is a developing country but attractive: excellent infrastructure, important cultural links with Turkey (shared language). Üskistan allows delivery companies to treat riders as self-employed rather than employees, avoiding employer benefit contributions. The tax authority\'s recent Supreme Court challenge on rider status was lost.\n\nFrequent government changes in recent history but the current government appears stable following a constitutional change. The new government recently removed a long-standing dividend remittance restriction. However, it has inherited high government debt creating pressure on expenditure.\n\nOnline food-delivery market just emerging in Üskistan — excellent growth prospects. The finance director plans to follow the same business model as in Turkey, relying on financial institutions for online payment processing.',
+      },
+    ],
+
+    keyAnswerTips: 'International NPV with a developing-country setting — the routine matters more than the cleverness. Layer the calculations: (1) local-currency operating cash flow, (2) Üskistan tax with loss carry-forward, (3) royalty as a separate cash flow taxed in the parent\'s jurisdiction, (4) translate dividends at PPP rates, (5) apply bilateral treaty top-up tax to Turkey rate where needed. The discussion marks (up to 5 in part a) are won by engaging with the CEO\'s specific concerns about the exponential model rather than generic NPV-limitations theory.',
+
+    verifiedNumbers: [
+      { value: '$220m', description: 'Immediate plant investment (not recoverable)', source: 'Q' },
+      { value: '$55m/yr', description: 'TAD = $220m × 25% straight-line', source: 'Q' },
+      { value: '20% / 15%', description: 'Üskistan / Turkey tax rates', source: 'Q' },
+      { value: '3% / 12%', description: 'Üskistan / Turkey inflation (constant)', source: 'Q' },
+      { value: '16%', description: 'Blackbosca cost of capital', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Pre-tax operating cash flow year by year',
+        explanation: 'Contribution − fixed operating cost. Years 1 and 2 are loss-making before tax ($44m − $74m = −$30m; $55.2m − $93m = −$37.8m). Years 3 and 4 swing positive ($185.2m − $116m = $69.2m; $464m − $145m = $319m).',
+      },
+      {
+        stepNumber: 2,
+        title: 'Üskistan tax with loss carry-forward',
+        explanation: 'Taxable profit = operating profit − TAD. Year 1: −$30m − $55m = −$85m (loss carried forward). Year 2: −$37.8m − $55m = −$92.8m loss (cumulative carry-forward $177.8m). Year 3: $69.2m − $55m = $14.2m taxable, fully offset by carry-forward (still $163.6m carried). Year 4: $319m − $55m = $264m taxable, less $163.6m carry-forward = $100.4m × 20% = $20.08m tax.',
+      },
+      {
+        stepNumber: 3,
+        title: 'Add back TAD; royalty; working capital; treaty',
+        explanation: 'After-tax cash flow = pre-tax cash flow − Üskistan tax (TAD is non-cash, so we don\'t subtract it). Royalty $2.5m × 1.05^(n−1) paid to Turkey parent (taxable at Turkey 15%). Working capital 2% of contribution at start of year; release in full at end of year 4. Bilateral treaty: Üskistan 20% > Turkey 15%, so no Turkey top-up tax on Üskistan profits.',
+      },
+      {
+        stepNumber: 4,
+        title: 'Translate to TL at PPP and discount at 16%',
+        explanation: 'Use the PPP rates given (TL/$): yr1 4.15, yr2 4.51, yr3 4.90, yr4 5.33. Convert each year\'s $ cash flow to TL. Discount at 16% (Blackbosca cost of capital). Sum to NPV.',
+      },
+      {
+        stepNumber: 5,
+        title: 'Discussion engaging the CEO\'s specific concerns',
+        explanation: 'The model exponentially scales revenue from $110m → $1,160m in 4 years (10.5× growth). The 3.4× jump between years 2 and 3 is the largest single-period leap and the most fragile assumption — a one-period delay turns NPV materially negative. Recommend sensitivity analysis (revenue −20%, +1 year delay, fixed-cost +25%) and a phased-investment alternative that exits before year 3 if revenue tracks below model.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'Cash flow structure and PPP translation were mostly correct. Most candidates correctly applied the 40% contribution margin and recognised the loss-carry-forward.',
+      commonErrors: 'Tax loss carry-forward was often ignored. Royalty payment was sometimes treated as taxed twice. Discussion in part (a) was generic — most candidates did not engage with the CEO\'s specific point that the exponential model is untested.',
+      tutorTip: 'Up to 5 discussion marks in part (a) is rare for an NPV question. Treat them as a separate sub-deliverable: write a short three-paragraph commentary on the model risk, the fixed-cost validity, and the practical fix (phased investment / sensitivity stress tests).',
       source: 'E',
     },
   },
