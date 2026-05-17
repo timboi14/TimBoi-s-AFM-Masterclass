@@ -56,7 +56,7 @@ export function compute(sheet: Sheet, value: Cell, depth = 0): ComputeResult {
     return { ok: true, v: s };
   }
   try {
-    const expr = s.slice(1);
+    const expr = preprocessFormula(s.slice(1));
     const parser = new Parser(expr, sheet, depth);
     const v = parser.parseExpression();
     if (parser.peek() !== null) throw new Error('Unexpected: ' + parser.peek());
@@ -64,6 +64,20 @@ export function compute(sheet: Sheet, value: Cell, depth = 0): ComputeResult {
   } catch (e) {
     return { ok: false, v: '#ERR', err: errorMessage(e, 'error') };
   }
+}
+
+/**
+ * Normalise Excel/ACCA function names that contain dots into the underscore-
+ * free canonical form the tokenizer accepts. Lets candidates write
+ * `=NORM.S.DIST(z)` and `=AFM.NPV(0.1, A1:A6)` exactly as they would on the
+ * Pearson VUE CBE — both resolve to the same handler.
+ */
+function preprocessFormula(expr: string): string {
+  // Rewrite known dotted aliases in a single pass.
+  return expr
+    .replace(/NORM\.S\.DIST\s*\(/gi, 'NORMSDIST(')
+    .replace(/NORM\.S\.INV\s*\(/gi, 'NORMSINV(')
+    .replace(/AFM\.NPV\s*\(/gi, 'AFM_NPV(');
 }
 
 export function display(sheet: Sheet, r: number, c: number): string {
@@ -421,12 +435,43 @@ function callFunc(name: string, args: ExprValue[], sheet: Sheet, depth: number):
     }
     case 'NORMSDIST': {
       // standard normal cumulative distribution
-      const z = num(args[0]);
-      // Abramowitz & Stegun 26.2.17
-      const t = 1 / (1 + 0.2316419 * Math.abs(z));
-      const phi = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * z * z);
-      const v = 1 - phi * (0.319381530 * t - 0.356563782 * t * t + 1.781477937 * Math.pow(t, 3) - 1.821255978 * Math.pow(t, 4) + 1.330274429 * Math.pow(t, 5));
-      return z >= 0 ? v : 1 - v;
+      return cdfN(num(args[0]));
+    }
+    case 'NORMSINV': {
+      // Inverse standard normal CDF (Acklam 2003 — good to ~4dp). Useful
+      // for VaR / option d1,d2 reversals.
+      const p = num(args[0]);
+      if (!(p > 0 && p < 1)) throw new Error('NORMSINV requires 0 < p < 1');
+      return inverseStandardNormal(p);
+    }
+    case 'AFM_NPV': {
+      // ACCA-style NPV — first value is discounted at t=0 (no discount) so
+      // candidates can lay out year-0 setup cost in the same column as the
+      // operating cash flows. Excel's NPV treats v1 as t=1; the AFM_NPV
+      // alias avoids the year-0 trap that costs marks in real papers.
+      const rate = num(args[0]);
+      const vals = flat(args.slice(1));
+      let s = 0;
+      for (let t = 0; t < vals.length; t++) s += vals[t] / Math.pow(1 + rate, t);
+      return s;
+    }
+    case 'SUMPRODUCT': {
+      // SUMPRODUCT(range1, range2, ...) — element-wise multiply then sum.
+      // ACCA uses this for probability-weighted expected NPVs and sensitivity
+      // analysis. All ranges must be the same length; throws otherwise.
+      if (args.length < 2) throw new Error('SUMPRODUCT needs at least 2 ranges');
+      const rows = args.map((a) => flat([a]));
+      const n = rows[0].length;
+      for (const r of rows) {
+        if (r.length !== n) throw new Error('SUMPRODUCT range lengths differ');
+      }
+      let total = 0;
+      for (let i = 0; i < n; i++) {
+        let prod = 1;
+        for (const r of rows) prod *= r[i];
+        total += prod;
+      }
+      return total;
     }
     case 'BSCALL': {
       // BSCALL(S, K, r, T, sigma)
@@ -461,11 +506,37 @@ function callFunc(name: string, args: ExprValue[], sheet: Sheet, depth: number):
 }
 
 function cdfN(z: number): number {
-  // Standard normal CDF (same as NORMSDIST)
+  // Standard normal CDF (same as NORMSDIST) via Abramowitz & Stegun 26.2.17.
   const t = 1 / (1 + 0.2316419 * Math.abs(z));
   const phi = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * z * z);
   const v = 1 - phi * (0.319381530 * t - 0.356563782 * t * t + 1.781477937 * Math.pow(t, 3) - 1.821255978 * Math.pow(t, 4) + 1.330274429 * Math.pow(t, 5));
   return z >= 0 ? v : 1 - v;
+}
+
+/**
+ * Inverse standard normal CDF — Peter Acklam's rational approximation
+ * (2003). Accurate to about 1.15e-9 over (0,1). Used for NORMSINV.
+ */
+function inverseStandardNormal(p: number): number {
+  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+  const pLow = 0.02425; const pHigh = 1 - pLow;
+  let q: number, r: number;
+  if (p < pLow) {
+    q = Math.sqrt(-2 * Math.log(p));
+    return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+      ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+  }
+  if (p <= pHigh) {
+    q = p - 0.5; r = q * q;
+    return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
+      (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+  }
+  q = Math.sqrt(-2 * Math.log(1 - p));
+  return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+    ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
 }
 
 export const FN_CATALOG: { name: string; sig: string; desc: string }[] = [
@@ -484,16 +555,19 @@ export const FN_CATALOG: { name: string; sig: string; desc: string }[] = [
   { name: 'PV', sig: 'PV(rate, nper, pmt, [fv], [type])', desc: 'Present value annuity' },
   { name: 'FV', sig: 'FV(rate, nper, pmt, [pv], [type])', desc: 'Future value annuity' },
   { name: 'PMT', sig: 'PMT(rate, nper, pv, [fv], [type])', desc: 'Annuity payment' },
-  { name: 'NPV', sig: 'NPV(rate, v1, v2, ...)', desc: 'Net present value (v1 at t=1)' },
+  { name: 'NPV', sig: 'NPV(rate, v1, v2, ...)', desc: 'Excel-style NPV — v1 discounted at t=1' },
+  { name: 'AFM_NPV', sig: 'AFM_NPV(rate, v0, v1, ...) or =AFM.NPV(rate, A1:A6)', desc: 'ACCA-style NPV — v0 at t=0 (no discount). Avoids the year-0 trap.' },
   { name: 'IRR', sig: 'IRR(values, [guess])', desc: 'Internal rate of return' },
   { name: 'MIRR', sig: 'MIRR(values, fin, reinv)', desc: 'Modified IRR' },
+  { name: 'SUMPRODUCT', sig: 'SUMPRODUCT(range1, range2, ...)', desc: 'Element-wise multiply then sum — expected NPV, weighted sensitivity' },
+  { name: 'NORMSINV', sig: 'NORMSINV(p) or =NORM.S.INV(p)', desc: 'Inverse standard normal CDF — VaR z-score lookup' },
   { name: 'AF', sig: 'AF(rate, nper)', desc: 'Annuity factor' },
   { name: 'PVIF', sig: 'PVIF(rate, n)', desc: 'PV factor 1/(1+r)^n' },
   { name: 'WACC', sig: 'WACC(Ke, We, Kd_at, Wd)', desc: 'Weighted average cost of capital' },
   { name: 'CAPM', sig: 'CAPM(Rf, beta, MRP)', desc: 'Cost of equity' },
   { name: 'UNGEAR', sig: 'UNGEAR(Be, E, D, T)', desc: 'Asset beta from equity beta' },
   { name: 'REGEAR', sig: 'REGEAR(Ba, E, D, T)', desc: 'Equity beta from asset beta' },
-  { name: 'NORMSDIST', sig: 'NORMSDIST(z)', desc: 'Standard normal CDF' },
+  { name: 'NORMSDIST', sig: 'NORMSDIST(z) or =NORM.S.DIST(z)', desc: 'Standard normal CDF' },
   { name: 'BSCALL', sig: 'BSCALL(S, K, r, T, sigma)', desc: 'Black-Scholes call' },
   { name: 'BSPUT', sig: 'BSPUT(S, K, r, T, sigma)', desc: 'Black-Scholes put' },
   { name: 'FISHER', sig: 'FISHER(real, h)', desc: 'Nominal rate from real and inflation' },

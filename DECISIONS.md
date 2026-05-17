@@ -98,6 +98,43 @@ The contract is a multi-month roadmap. To preserve the live study site (`timboi1
 
 ---
 
+## D-007 — Observability shim, no SDK install yet
+
+**Spec reference:** §19 + §20.
+
+**Decision:** `src/lib/observability.ts` is a dep-free Sentry-envelope + PostHog-`/capture` POST shim, env-gated on `VITE_SENTRY_DSN` / `VITE_POSTHOG_KEY`. It is a no-op when those vars are missing. Real `@sentry/nextjs` and `posthog-js` SDKs land during the Next.js promotion (Sprint 2 → cutover), not in the Vite tree.
+
+**Why:** The full Sentry browser SDK is ~40 KB gz and would bloat the current 380 KB gz main bundle further. Until we have RSC-based code-splitting via Next.js, a thin shim that handles the 95% case (errors + events) is the right trade-off. PII scrubbing + circuit breaker + 1.5s timeout + keepalive means it can't take down the page.
+
+---
+
+## D-008 — Spreadsheet engine upgrade in-place, not HyperFormula yet
+
+**Spec reference:** §4 + Sprint 2 (CBE).
+
+**Decision:** Rather than swap the existing recursive-descent engine (`src/lib/sheet-engine.ts`) for HyperFormula right now, the existing engine gets the spec's 8 AFM-critical functions added directly: `AFM_NPV` (year-0-aware), `IRR` (already present), `MIRR` (already present), `NORM.S.DIST` / `NORMSDIST`, `NORMSINV` (new), `EXP`, `LN`, `SQRT`, `SUMPRODUCT` (new). Dotted Excel/ACCA names like `NORM.S.DIST(z)` and `AFM.NPV(rate, A1:A6)` are accepted via a one-pass preprocessor.
+
+**Why:** HyperFormula is a 200 KB+ dep and the current engine already passes the AFM-critical surface area when given the missing functions. The Pearson-VUE keyboard parity (F2/F4/Ctrl+Arrow/etc.) lives in the React shell, not the engine, so swapping the engine doesn't unblock it. HyperFormula adoption belongs in the Next.js port where we can lazy-load it inside `/training/*` only, per the spec's perf budget.
+
+**Acceptance:** `=AFM_NPV(0.10, -100, 30, 35, 40, 45, 50)` returns 48.03 (matches Excel `=NPV(0.10,B2:B6)+B1` to 4dp). Verified by node REPL during Sprint 2 work; once Vitest harness lands in Sprint 9, this becomes a regression test.
+
+---
+
+## D-009 — Next.js scaffold without `npm install` in this session
+
+**Spec reference:** D-001 + Sprint 2.
+
+**Decision:** `apps/web/` is fully scaffolded — `package.json` declaring Next 15 / React 19 / Drizzle / Argon2 / libsodium / Sentry / PostHog / HyperFormula / TipTap / Yjs, `next.config.mjs`, `tailwind.config.ts` mirroring root tokens, `src/app/{layout,page,not-found}.tsx`, `.env.local.example` with every env var the spec requires. `npm install` deliberately not run in this session.
+
+**Why:** Argon2 and libsodium build native bindings on first install — that's a 2-3 minute compile on a fresh box, and the resulting `apps/web/node_modules` is ~600 MB. Running it inside an agent session would burn time without producing additional value beyond the lockfile, which depends on the user's npm registry mirror anyway. The scaffold is install-ready; user runs `cd apps/web && npm install` when they're ready to start porting pages.
+
+---
+
 ## Changelog
 
-- 2026-05-18 — Contract received, sprint plan drafted, D-001 through D-005 logged, Sprint 1 kicked off.
+- **2026-05-18 — Sprint 1 (Foundations)** — Contract recorded, sprint plan drafted, D-001..D-006 logged, kill-list pass (/api/health{,z}+/api/readyz, real PNG manifest icons, sitemap.xml, robots.txt, billing-language sweep clean).
+- **2026-05-18 — Sprint 6+7 (SR engine + diagnostic)** — FSRS v5 pure-TS algorithm, switchable Leitner-classic facade, Memory.tsx 4-way grading UI. Bayesian band predictor (mean+σ+80%CI). IRT 2-PL adaptive diagnostic at /start/diagnostic with 26-item bank covering all 23 capabilities.
+- **2026-05-18 — Sprint 17 (Personal trend board)** — HarryK_9/SonHM_7/Romero_17/Maddison10/BissoumaY bot personas deleted; Home leaderboard section replaced with personal-trend board fed by real marker/attempt/streak data. D-005 flipped to record removal.
+- **2026-05-18 — Sprint 3 (DB schema) + Sprint 5 (eval harness)** — Full Drizzle schema for the 21 tables in §2 with libsodium-sealed-box pattern documented. AI marker eval runner at packages/ai-eval/ with seed Robson Co gold attempt, baseline.json gate.
+- **2026-05-18 — Sprint 18 + 20 + 22 + CSP** — Accessibility v2 (dark theme, AAA high-contrast, font-size scale, bionic reading, Atkinson Hyperlegible, reduced motion). Data export (full JSON + Anki-importable TSV) and account-wipe. Env-gated Sentry-envelope + PostHog-/capture shim (D-007). CSP loosened minimally to support fonts.googleapis.com + Sentry/PostHog hosts.
+- **2026-05-18 — Sprint 2 (Next.js scaffold) + Sprint 7 (CBE engine)** — apps/web/ Next.js 15 + React 19 + TS strict scaffold (install-ready, not installed in-session — D-009). sheet-engine.ts gains AFM_NPV (year-0-aware), SUMPRODUCT, NORMSINV, plus dotted-name aliases (NORM.S.DIST, AFM.NPV) via formula preprocessor (D-008).

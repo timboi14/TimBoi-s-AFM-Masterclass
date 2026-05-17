@@ -1,0 +1,51 @@
+{
+  "name": "@tba/web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Next.js 15 App Router shell — strangler-fig migration target. The Vite SPA at the repo root stays canonical until parity is achieved.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "next": "15.0.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "framer-motion": "^12.38.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0",
+    "class-variance-authority": "^0.7.1",
+    "@radix-ui/react-slot": "^1.2.4",
+    "drizzle-orm": "^0.36.0",
+    "postgres": "^3.4.0",
+    "zod": "^3.23.0",
+    "@tanstack/react-query": "^5.59.0",
+    "zustand": "^5.0.0",
+    "yjs": "^13.6.0",
+    "argon2": "^0.41.0",
+    "@simplewebauthn/server": "^11.0.0",
+    "@simplewebauthn/browser": "^11.0.0",
+    "resend": "^4.0.0",
+    "libsodium-wrappers": "^0.7.13",
+    "@sentry/nextjs": "^9.0.0",
+    "posthog-js": "^1.150.0",
+    "hyperformula": "^3.0.0",
+    "@tiptap/react": "^2.9.0",
+    "@tiptap/starter-kit": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "@types/node": "^25.0.0",
+    "typescript": "^5.6.3",
+    "tailwindcss": "^3.4.14",
+    "postcss": "^8.4.47",
+    "autoprefixer": "^10.4.20",
+    "drizzle-kit": "^0.27.0",
+    "@playwright/test": "^1.50.0",
+    "vitest": "^2.1.0"
+  }
+}

@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Globals — copied at the surface level from src/styles.css in the canonical
+ * Vite app. As pages port over, design tokens will be lifted into a shared
+ * `packages/ui` package; until then, keeping a parallel copy is fine.
+ */
+:root {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --primary: #00a347;
+  --accent: #f5b800;
+  --text: #0a0f1e;
+  --muted: #64748b;
+  --border: #e6ebf2;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
