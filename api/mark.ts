@@ -9,9 +9,13 @@
  *   DEEPSEEK_API_KEY — get one at https://platform.deepseek.com
  *
  * Optional:
- *   DEEPSEEK_MODEL   — defaults to 'deepseek-chat' (V3). Use
- *                      'deepseek-reasoner' for the R1 model (slower,
- *                      stronger reasoning, slightly higher cost).
+ *   DEEPSEEK_MODEL              — defaults to 'deepseek-chat' (V3). Use
+ *                                 'deepseek-reasoner' for R1 (slower, stronger).
+ *   UPSTASH_REDIS_REST_URL      — paste from console.upstash.com to enable
+ *   UPSTASH_REDIS_REST_TOKEN      per-IP rate limiting. Both vars must be set.
+ *   MARK_DAILY_LIMIT            — calls per IP per day; defaults to 20.
+ *   MARK_MAX_WORD_CHARS         — request body cap; defaults to 8000.
+ *   MARK_MIN_WORD_CHARS         — minimum answer length; defaults to 20.
  *
  * Runs on Vercel's edge runtime so the response can stream as the model
  * generates. Plain-text chunks are written to the body; the client just
@@ -40,6 +44,9 @@ interface MarkRequest {
 }
 
 const ENDPOINT = 'https://api.deepseek.com/v1/chat/completions';
+const DEFAULT_DAILY_LIMIT = 20;
+const DEFAULT_MIN_WORD_CHARS = 20;
+const DEFAULT_MAX_WORD_CHARS = 8000;
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
@@ -64,6 +71,41 @@ export default async function handler(req: Request): Promise<Response> {
   // Basic shape check — keeps the prompt clean if the client misbehaves.
   if (!body.paperName || !body.partLabel || !body.partRequirement) {
     return new Response('Missing required fields', { status: 400 });
+  }
+
+  // Answer-size guards — cheap rejection before we even hit the upstream.
+  const minChars = numEnv('MARK_MIN_WORD_CHARS', DEFAULT_MIN_WORD_CHARS);
+  const maxChars = numEnv('MARK_MAX_WORD_CHARS', DEFAULT_MAX_WORD_CHARS);
+  const wordLen = (body.studentWord ?? '').length;
+  const sheetLen = (body.studentSheet ?? '').length;
+  if (wordLen + sheetLen < minChars) {
+    return new Response(
+      `Answer too short to mark (minimum ${minChars} characters across the word processor + spreadsheet).`,
+      { status: 400 },
+    );
+  }
+  if (wordLen > maxChars) {
+    return new Response(
+      `Answer too long (${wordLen} chars). Maximum is ${maxChars} characters in the word processor.`,
+      { status: 413 },
+    );
+  }
+
+  // Optional per-IP daily rate limit via Upstash Redis REST API. Only enforced
+  // when both env vars are set, so the API works without an Upstash account.
+  const rl = await checkRateLimit(req);
+  if (rl?.blocked) {
+    return new Response(
+      `Daily limit reached (${rl.limit} marks per day). Resets in ${rl.resetInHours}h.`,
+      {
+        status: 429,
+        headers: {
+          'retry-after': String(rl.resetInSeconds),
+          'x-ratelimit-limit': String(rl.limit),
+          'x-ratelimit-remaining': '0',
+        },
+      },
+    );
   }
 
   const userPrompt = buildPrompt(body);
@@ -136,13 +178,79 @@ export default async function handler(req: Request): Promise<Response> {
     },
   });
 
-  return new Response(stream, {
-    status: 200,
-    headers: {
-      'content-type': 'text/plain; charset=utf-8',
-      'cache-control': 'no-store',
-    },
-  });
+  const headers: Record<string, string> = {
+    'content-type': 'text/plain; charset=utf-8',
+    'cache-control': 'no-store',
+  };
+  if (rl) {
+    headers['x-ratelimit-limit'] = String(rl.limit);
+    headers['x-ratelimit-remaining'] = String(rl.remaining);
+  }
+
+  return new Response(stream, { status: 200, headers });
+}
+
+function numEnv(name: string, fallback: number): number {
+  const raw = process.env[name];
+  if (!raw) return fallback;
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+interface RateLimitInfo {
+  blocked: boolean;
+  limit: number;
+  remaining: number;
+  resetInSeconds: number;
+  resetInHours: number;
+}
+
+/**
+ * Per-IP daily rate limit via Upstash Redis REST API.
+ * Returns null if not configured (rate limiting disabled).
+ */
+async function checkRateLimit(req: Request): Promise<RateLimitInfo | null> {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+
+  const limit = numEnv('MARK_DAILY_LIMIT', DEFAULT_DAILY_LIMIT);
+  const ip =
+    (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ||
+    req.headers.get('x-real-ip') ||
+    'anon';
+  // Day bucket in UTC so all users share the same midnight boundary.
+  const day = Math.floor(Date.now() / 86_400_000);
+  const key = `mark:${ip}:${day}`;
+
+  // INCR + EXPIRE in one pipeline call.
+  try {
+    const res = await fetch(`${url.replace(/\/$/, '')}/pipeline`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${token}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify([
+        ['INCR', key],
+        ['EXPIRE', key, 86_400, 'NX'],
+      ]),
+    });
+    if (!res.ok) return null; // fail-open if Redis is down — don't block users
+    const out = (await res.json()) as Array<{ result?: number; error?: string }>;
+    const count = out?.[0]?.result ?? 0;
+    const remaining = Math.max(0, limit - count);
+    const secsToMidnight = 86_400 - Math.floor((Date.now() % 86_400_000) / 1000);
+    return {
+      blocked: count > limit,
+      limit,
+      remaining,
+      resetInSeconds: secsToMidnight,
+      resetInHours: Math.ceil(secsToMidnight / 3600),
+    };
+  } catch {
+    return null;
+  }
 }
 
 const SYSTEM_PROMPT = `You are an experienced ACCA AFM examiner. You mark candidate answers against the published marking guide. Be strict but fair, and link your feedback to the specific marking points and the verbatim ACCA examiner notes when provided.
