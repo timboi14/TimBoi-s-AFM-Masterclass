@@ -1,4 +1,5 @@
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PAPERS } from '@/data/pastpapers/papers';
 import type { PaperSection, TopicCategory } from '@/data/pastpapers/schema';
 import { PaperCard } from './PaperCard';
@@ -7,6 +8,11 @@ import { PaperDetail } from './PaperDetail';
 type FilterSection = 'all' | PaperSection;
 type FilterTopic = 'all' | TopicCategory;
 
+const TAB_IDS = ['scenario', 'question', 'practice', 'solution', 'examiner'] as const;
+type Tab = (typeof TAB_IDS)[number];
+const isTab = (v: unknown): v is Tab =>
+  typeof v === 'string' && (TAB_IDS as readonly string[]).includes(v);
+
 export interface PastPapersViewHandle {
   setSectionFilter: (s: FilterSection) => void;
   setTopicFilter: (t: FilterTopic) => void;
@@ -14,7 +20,43 @@ export interface PastPapersViewHandle {
 }
 
 export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPapersView(_, ref) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedId = searchParams.get('p');
+  const urlTab = searchParams.get('tab');
+  const activeTab: Tab = isTab(urlTab) ? urlTab : 'scenario';
+  const setSelectedId = useCallback(
+    (id: string | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (id) {
+            next.set('p', id);
+          } else {
+            next.delete('p');
+            next.delete('tab');
+            next.delete('sub');
+          }
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+  const setActiveTab = useCallback(
+    (tab: Tab) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (tab === 'scenario') next.delete('tab');
+          else next.set('tab', tab);
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
   const [filterSection, setFilterSection] = useState<FilterSection>('all');
   const [filterTopic, setFilterTopic] = useState<FilterTopic>('all');
   const detailRef = useRef<HTMLDivElement>(null);
@@ -130,6 +172,11 @@ export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPape
             onClick={() => setSelectedId(paper.id === selectedId ? null : paper.id)}
           />
         ))}
+        {selectedId && !selectedPaper && (
+          <div className="paper-grid__empty">
+            No paper matches <code>?p={selectedId}</code>. <button onClick={() => setSelectedId(null)}>Clear</button>
+          </div>
+        )}
         {filtered.length === 0 && (
           <div className="paper-grid__empty">No papers match those filters.</div>
         )}
@@ -137,7 +184,12 @@ export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPape
 
       {selectedPaper && (
         <div ref={detailRef}>
-          <PaperDetail paper={selectedPaper} onClose={() => setSelectedId(null)} />
+          <PaperDetail
+            paper={selectedPaper}
+            tab={activeTab}
+            onTabChange={setActiveTab}
+            onClose={() => setSelectedId(null)}
+          />
         </div>
       )}
     </div>
