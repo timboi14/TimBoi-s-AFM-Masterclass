@@ -194,7 +194,11 @@ Format your response in Markdown using EXACTLY this structure:
 [The exam answer body. Subdivide with bold or further ### sub-headings only if the marks split naturally (e.g. "### (i) NPV calculation", "### (ii) Discussion"). Keep computations inline as you would write them on paper under exam pressure. Lead with the recommendation where the question expects one.]
 
 ### Marking Key
-[Reproduce the Kaplan per-mark breakdown from MARKING GUIDE in the prompt, presented as bullets. Format each line as either "- (1 mark) [what earns the mark]" or "- (½ mark) [what earns the half-mark]". Totals must reconcile to the marks available in the question. Finish with a bold "**Total: N marks**" line.]
+[Reproduce the Kaplan per-mark breakdown from MARKING GUIDE in the prompt, presented as bullets. Format each line as either "- (1 mark) [what earns the mark]" or "- (½ mark) [what earns the half-mark]". Totals must reconcile to the marks available in the question. Finish with a bold "**Total: N marks**" line, then a reconciliation line in EXACTLY this format on the next line:
+
+**Reconciliation:** X + Y + Z + W = N marks ✓
+
+Where each addend is the sub-total for one heading you used (technical / discussion / professional-skills / etc.), and N matches the requirement's mark allocation. If the parts don't sum to N, recheck and rewrite — the answer is incomplete without a clean reconciliation.]
 
 ### Where candidates lose marks
 [2–4 bullets of verbatim-style examiner commentary on the common pitfalls for this requirement, so the user knows what to watch for when replicating under exam conditions. Draw from EXAMINER NOTES in the prompt where supplied; otherwise infer from common AFM marking patterns.]

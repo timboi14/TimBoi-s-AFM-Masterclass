@@ -5,6 +5,8 @@ import { WarnBox } from '../shared/WarnBox';
 import { DataTable } from '../shared/DataTable';
 import { VerifiedNumberCard } from '../shared/VerifiedNumberCard';
 import { SourceBadge } from '../shared/SourceBadge';
+import { Cite } from '@/components/Cite';
+import { PAPER_CITATIONS } from '@/data/paperCitations';
 
 interface Props { paper: Paper; }
 
@@ -61,6 +63,24 @@ export function ScenarioTab({ paper }: Props) {
               <VerifiedNumberCard key={i} number={n} />
             ))}
           </div>
+
+          {PAPER_CITATIONS[paper.id] && PAPER_CITATIONS[paper.id].length > 0 && (
+            <div className="mt-5 rounded-xl border border-border bg-white/70 p-4">
+              <p className="text-[11px] uppercase tracking-wider text-muted font-bold mb-2">
+                <i className="fa-solid fa-link mr-1.5 text-primary" aria-hidden /> Inline citations · hover or Tab for source
+              </p>
+              <p className="text-[13.5px] leading-relaxed text-ink">
+                {PAPER_CITATIONS[paper.id].map((c, i) => (
+                  <span key={i}>
+                    {i > 0 && ' · '}
+                    <Cite source={c.source} paper={c.paper} note={c.note}>
+                      {c.text}
+                    </Cite>
+                  </span>
+                ))}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

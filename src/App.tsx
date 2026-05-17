@@ -62,6 +62,8 @@ const DebriefViewPage = lazyNamed(() => import('@/pages/Debrief'), 'DebriefViewP
 const PitfallsPage = lazyNamed(() => import('@/pages/Pitfalls'), 'PitfallsPage');
 const StudyGuidePage = lazyNamed(() => import('@/pages/StudyGuide'), 'StudyGuidePage');
 const SyllabusPage = lazyNamed(() => import('@/pages/Syllabus'), 'SyllabusPage');
+const MemoryLabPage = lazyNamed(() => import('@/pages/MemoryLab'), 'MemoryLabPage');
+const FormGuidePage = lazyNamed(() => import('@/pages/FormGuide'), 'FormGuidePage');
 
 function RouteFallback() {
   return (
@@ -115,6 +117,8 @@ export default function App() {
                   <Route path="/debrief/:id" element={<DebriefViewPage />} />
                   <Route path="/pitfalls" element={<PitfallsPage />} />
                   <Route path="/syllabus" element={<SyllabusPage />} />
+                  <Route path="/memory-lab" element={<MemoryLabPage />} />
+                  <Route path="/form-guide" element={<FormGuidePage />} />
                   <Route path="/study-guide" element={<StudyGuidePage />} />
                   <Route path="/mock" element={<MockPage />} />
                   <Route path="/formulas" element={<FormulasPage />} />

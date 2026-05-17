@@ -16,6 +16,7 @@ import { NEWS } from '@/data/news';
 import { SH_KEY_DATES, SH_WEEKS, getCurrentShWeek } from '@/data/shplus';
 import { siteStats } from '@/lib/site-stats';
 import { TBA_STATS } from '@/data/stats';
+import { FormGuideCompact } from '@/components/FormGuideCompact';
 import { PITFALLS } from '@/data/pitfalls';
 import { SPOTLIGHTS } from '@/data/spotlights';
 import { PAPERS } from '@/data/papers';
@@ -127,6 +128,11 @@ export function HomePage() {
             </>
           }
         />
+
+        {/* Form Guide compact card — directly under the hero per Work Item 3 */}
+        <div className="mt-8">
+          <FormGuideCompact />
+        </div>
 
         {/* Course-this-week widget kept inline as a secondary surface */}
         <div className="mt-10">

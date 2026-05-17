@@ -631,6 +631,75 @@ export function CoachVoice() {
 
 // bubble
 
+/**
+ * Best-effort "Download as audio" for a coach answer (Work Item 14.2).
+ *
+ * Web Speech API doesn't expose the synthesised audio to JavaScript, so a
+ * pure-browser capture requires the user to grant `getDisplayMedia` audio
+ * permission (screen-share). We try that path; on rejection or unsupported
+ * browser we surface a clear message rather than failing silently.
+ */
+async function downloadAnswerAsAudio(markdown: string, topicHint?: string): Promise<void> {
+  if (!('speechSynthesis' in window)) {
+    alert('This browser has no built-in text-to-speech. Try Chrome or Edge.');
+    return;
+  }
+  // Strip markdown to make the readback sound natural.
+  const plain = markdown
+    .replace(/^#+\s+/gm, '')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/^[-*]\s+/gm, '');
+
+  let stream: MediaStream;
+  try {
+    // The user must pick "share audio" in the dialog.
+    stream = await (navigator.mediaDevices as MediaDevices & {
+      getDisplayMedia: (opts: DisplayMediaStreamOptions) => Promise<MediaStream>;
+    }).getDisplayMedia({ video: true, audio: true });
+  } catch {
+    alert(
+      'Audio capture needs screen-share permission with audio enabled. ' +
+        'When the picker opens, choose a tab AND tick "Share tab audio".',
+    );
+    return;
+  }
+  const audioTracks = stream.getAudioTracks();
+  if (audioTracks.length === 0) {
+    stream.getTracks().forEach((t) => t.stop());
+    alert('No audio track was shared. Re-pick the tab and tick "Share tab audio".');
+    return;
+  }
+  const audioStream = new MediaStream(audioTracks);
+  const recorder = new MediaRecorder(audioStream, { mimeType: 'audio/webm' });
+  const chunks: BlobPart[] = [];
+  recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+  const finished = new Promise<void>((resolve) => { recorder.onstop = () => resolve(); });
+  recorder.start();
+
+  const utter = new SpeechSynthesisUtterance(plain);
+  utter.rate = 0.97;
+  await new Promise<void>((resolve) => {
+    utter.onend = () => resolve();
+    utter.onerror = () => resolve();
+    window.speechSynthesis.speak(utter);
+  });
+  recorder.stop();
+  await finished;
+  audioTracks.forEach((t) => t.stop());
+
+  const blob = new Blob(chunks, { type: 'audio/webm' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const slug = (topicHint || 'answer').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '').slice(0, 32) || 'answer';
+  a.download = `coach-${slug}-${Date.now()}.webm`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
 function Bubble({ m, onReplay }: { m: Msg; onReplay: () => void }) {
   if (m.role === 'user') {
     return (
@@ -668,8 +737,19 @@ function Bubble({ m, onReplay }: { m: Msg; onReplay: () => void }) {
           <button onClick={onReplay} className="inline-flex items-center gap-1 hover:text-primary">
             <i className="fa-solid fa-volume-high" /> Replay
           </button>
-          <button onClick={() => navigator.clipboard?.writeText(m.text)} className="inline-flex items-center gap-1 hover:text-primary">
+          <button
+            onClick={() => navigator.clipboard?.writeText(m.text)}
+            className="inline-flex items-center gap-1 hover:text-primary"
+            title="Copy raw markdown to clipboard"
+          >
             <i className="fa-regular fa-copy" /> Copy
+          </button>
+          <button
+            onClick={() => downloadAnswerAsAudio(m.text, m.cite?.[0])}
+            className="inline-flex items-center gap-1 hover:text-primary"
+            title="Capture this answer as a .webm via screen-share audio"
+          >
+            <i className="fa-solid fa-download" /> Audio
           </button>
           {m.cite && m.cite.length > 0 && (
             <span className="ml-auto inline-flex items-center gap-1">

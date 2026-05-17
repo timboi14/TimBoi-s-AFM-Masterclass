@@ -6,6 +6,7 @@ import { cn } from '@/lib/cn';
 import { CoachVoice } from '@/components/CoachVoice';
 import { StopVoice } from '@/components/StopVoice';
 import { LjqcStrip } from '@/components/LjqcStrip';
+import { KeyboardHelp } from '@/components/KeyboardHelp';
 import { TabArtBanner, MascotBob, tabArtFor, prefetchTabArt } from '@/components/TabArt';
 import { SH_KEY_DATES } from '@/data/shplus';
 
@@ -187,9 +188,10 @@ export function Layout() {
         </footer>
       </div>
 
-      {/* Global voice-enabled coach + voice stop button */}
+      {/* Global voice-enabled coach + voice stop button + keyboard help */}
       <CoachVoice />
       <StopVoice />
+      <KeyboardHelp />
     </div>
   );
 }

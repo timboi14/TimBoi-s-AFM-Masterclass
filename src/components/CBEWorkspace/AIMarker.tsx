@@ -1,6 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
 import type { Paper } from '@/data/pastpapers/schema';
 import { SHEET_COLS, SHEET_ROWS, colLabel } from '@/lib/cbe-storage';
+import { PitfallToasts } from '@/components/PitfallToasts';
+import { AI_MARKER_KEY, FORM_GUIDE_EVENT, type MarkerResult } from '@/lib/formGuide';
 
 interface Props {
   paper: Paper;
@@ -63,11 +65,26 @@ export function AIMarker({ paper, word, sheet }: Props) {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let acc = '';
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
+        acc += chunk;
         setFeedback((prev) => prev + chunk);
+      }
+
+      // Persist the run for Form Guide. Extract a % score if the marker
+      // surfaced one (e.g. "Score: 7/10" or "Marks awarded: 12 / 16").
+      const pct = extractScorePercent(acc);
+      if (pct !== null) {
+        appendMarkerResult({
+          paperId: paper.id,
+          topicId: paper.topics?.[0] ?? 'unknown',
+          pct,
+          ts: Date.now(),
+        });
+        window.dispatchEvent(new CustomEvent(FORM_GUIDE_EVENT));
       }
     } catch (e: unknown) {
       if (e instanceof DOMException && e.name === 'AbortError') {
@@ -156,6 +173,7 @@ export function AIMarker({ paper, word, sheet }: Props) {
             </p>
           )}
           {feedback && <FeedbackMarkdown text={feedback} />}
+          <PitfallToasts feedback={feedback} busy={busy} />
         </div>
       )}
     </div>
@@ -258,6 +276,42 @@ function htmlToPlainText(html: string): string {
     el.append('\n');
   });
   return (div.textContent ?? '').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+/**
+ * Pull a percentage out of the marker's freeform feedback. Looks for the
+ * common patterns "X / Y", "Marks awarded: X / Y", "Score: X%" etc. and
+ * returns the percentage clamped to [0, 100], or null if nothing matched.
+ */
+function extractScorePercent(feedback: string): number | null {
+  // "X / Y" — e.g. "Marks awarded: 7 / 10" or "Total: 12.5 / 16"
+  const fraction = feedback.match(/(?:marks?\s*(?:awarded|earned|scored|given)?[:\s]*)?(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/i);
+  if (fraction) {
+    const num = parseFloat(fraction[1]);
+    const den = parseFloat(fraction[2]);
+    if (den > 0 && Number.isFinite(num) && Number.isFinite(den)) {
+      return Math.max(0, Math.min(100, (num / den) * 100));
+    }
+  }
+  // Explicit percentage — "Score: 65%"
+  const pct = feedback.match(/(\d+(?:\.\d+)?)\s*%/);
+  if (pct) {
+    const v = parseFloat(pct[1]);
+    if (Number.isFinite(v)) return Math.max(0, Math.min(100, v));
+  }
+  return null;
+}
+
+function appendMarkerResult(r: MarkerResult): void {
+  try {
+    const raw = localStorage.getItem(AI_MARKER_KEY);
+    const list: MarkerResult[] = raw ? JSON.parse(raw) : [];
+    const next = Array.isArray(list) ? [...list, r] : [r];
+    // Cap to last 200 to keep storage bounded
+    localStorage.setItem(AI_MARKER_KEY, JSON.stringify(next.slice(-200)));
+  } catch {
+    // Storage full or disabled — silent.
+  }
 }
 
 function formatSheetForPrompt(sheet: string[][]): string {
