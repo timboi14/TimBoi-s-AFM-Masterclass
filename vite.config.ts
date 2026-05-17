@@ -19,10 +19,20 @@ export default defineConfig({
         scope: '/',
         start_url: '/',
         icons: [
-          { src: '/favicon.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
-          { src: '/favicon.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any' },
-          { src: '/favicon.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'maskable' },
-          { src: '/favicon.svg', sizes: 'any',     type: 'image/svg+xml', purpose: 'any' },
+          // Real PNG / maskable / monochrome set generated from public/favicon.svg
+          // via scripts/generate-icons.mjs. SVG kept as the `any` fallback so
+          // browsers that prefer vector still get it.
+          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/icons/icon-maskable-192.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: '/icons/monochrome-512.png', sizes: '512x512', type: 'image/png', purpose: 'monochrome' },
+          { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+        ],
+        shortcuts: [
+          { name: 'Sit a paper', short_name: 'Sit', url: '/past-papers', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+          { name: 'Open Coach', short_name: 'Coach', url: '/scout', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
+          { name: 'Review cards', short_name: 'Review', url: '/cards', icons: [{ src: '/icons/icon-192.png', sizes: '192x192' }] },
         ],
       },
       workbox: {

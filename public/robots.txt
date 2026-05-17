@@ -1,0 +1,28 @@
+# TimBoi's Academy — single-developer ACCA AFM study tool.
+# Public crawlability is fine; content is original commentary on publicly-
+# published ACCA past papers. No PII, no private endpoints exposed.
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /settings
+Disallow: /debrief/
+
+# Common LLM crawlers — leave allowed by default (open educational content),
+# but the user can flip these to Disallow at any time without code changes
+# by editing this file.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://timboi14masterclass.vercel.app/sitemap.xml
