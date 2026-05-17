@@ -5,8 +5,9 @@ import { ScenarioTab } from './tabs/ScenarioTab';
 import { QuestionTab } from './tabs/QuestionTab';
 import { SolutionTab } from './tabs/SolutionTab';
 import { ExaminerTab } from './tabs/ExaminerTab';
+import { PracticeWorkspace } from '@/components/CBEWorkspace/PracticeWorkspace';
 
-type Tab = 'scenario' | 'question' | 'solution' | 'examiner';
+type Tab = 'scenario' | 'question' | 'practice' | 'solution' | 'examiner';
 
 interface Props {
   paper: Paper;
@@ -19,6 +20,7 @@ export function PaperDetail({ paper, onClose }: Props) {
   const tabs: { id: Tab; label: string }[] = [
     { id: 'scenario', label: 'Scenario' },
     { id: 'question', label: 'Question' },
+    { id: 'practice', label: '⏱ Practice (CBE)' },
     { id: 'solution', label: 'Solution walkthrough' },
     { id: 'examiner', label: 'Examiner says' },
   ];
@@ -73,6 +75,13 @@ export function PaperDetail({ paper, onClose }: Props) {
       >
         {activeTab === 'scenario' && <ScenarioTab paper={paper} />}
         {activeTab === 'question' && <QuestionTab paper={paper} />}
+        {activeTab === 'practice' && (
+          <PracticeWorkspace
+            paperId={paper.id}
+            paperName={paper.name}
+            paperSession={paper.session}
+          />
+        )}
         {activeTab === 'solution' && <SolutionTab paper={paper} />}
         {activeTab === 'examiner' && <ExaminerTab paper={paper} />}
       </div>
