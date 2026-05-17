@@ -106,6 +106,7 @@ export function PaperDetail({ paper, onClose }: Props) {
             )}
             <div className="cbe-split__right">
               <PracticeWorkspace
+                paper={paper}
                 paperId={paper.id}
                 paperName={paper.name}
                 paperSession={paper.session}

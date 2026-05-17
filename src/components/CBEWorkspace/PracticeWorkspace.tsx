@@ -9,11 +9,16 @@ import {
   DEFAULT_DURATION_SECONDS,
   type CBEWorkspaceState,
 } from '@/lib/cbe-storage';
+import type { Paper } from '@/data/pastpapers/schema';
 import { CBETimer } from './CBETimer';
 import { CBEWordProcessor } from './CBEWordProcessor';
 import { CBESpreadsheet } from './CBESpreadsheet';
+import { AIMarker } from './AIMarker';
 
 interface Props {
+  /** Full paper object — needed by the AI marker for the requirement + marking guide. */
+  paper: Paper;
+  /** Kept for the topbar — duplicates Paper but matches existing call sites. */
   paperId: string;
   paperName: string;
   paperSession: string;
@@ -27,7 +32,7 @@ type Pane = 'word' | 'sheet';
  * persistence. Designed to feel like the real CBE editor without trying
  * to be a pixel-perfect clone of it.
  */
-export function PracticeWorkspace({ paperId, paperName, paperSession }: Props) {
+export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: Props) {
   const { fanName } = useStore();
   const [pane, setPane] = useState<Pane>('word');
   const [state, setState] = useState<CBEWorkspaceState>(() =>
@@ -177,6 +182,8 @@ export function PracticeWorkspace({ paperId, paperName, paperSession }: Props) {
           <CBESpreadsheet value={state.sheet} onChange={setSheet} />
         )}
       </div>
+
+      <AIMarker paper={paper} word={state.word} sheet={state.sheet} />
 
       <p className="practice-workspace__footnote">
         Everything you type is auto-saved against <strong>{fanName}</strong> for this paper, in this browser.

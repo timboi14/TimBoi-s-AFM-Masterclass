@@ -1224,3 +1224,119 @@ body {
   color: var(--ink);
 }
 
+/* AI marker ─────────────────────────────────────────────── */
+
+.ai-marker {
+  background: linear-gradient(180deg, rgba(0,163,71,0.04), white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.ai-marker__header {
+  display: flex; flex-direction: column; gap: 2px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.ai-marker__title {
+  font-size: 0.95rem; font-weight: 800; color: var(--ink);
+  display: flex; align-items: center; gap: 6px;
+}
+.ai-marker__sub {
+  font-size: 0.75rem; color: var(--muted);
+}
+
+.ai-marker__controls {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.ai-marker__label {
+  font-size: 0.78rem; color: var(--muted); font-weight: 600;
+}
+.ai-marker__select {
+  font-family: inherit; font-size: 0.82rem;
+  padding: 5px 10px; border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: white; color: var(--ink);
+  cursor: pointer;
+  min-width: 220px;
+}
+.ai-marker__go {
+  background: var(--primary); color: white;
+  border: none; border-radius: 7px;
+  padding: 7px 16px;
+  font-family: inherit; font-size: 0.85rem; font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.ai-marker__go:hover:not(:disabled) { background: #00b349; }
+.ai-marker__go:disabled { background: var(--mist-300, #cbd5e1); cursor: not-allowed; }
+.ai-marker__cancel {
+  background: var(--danger); color: white;
+  border: none; border-radius: 7px;
+  padding: 7px 16px;
+  font-family: inherit; font-size: 0.85rem; font-weight: 700;
+  cursor: pointer;
+}
+
+.ai-marker__hint {
+  font-size: 0.78rem; color: var(--muted); margin: 0;
+}
+
+.ai-marker__error {
+  background: rgba(220,38,38,0.08);
+  border: 1px solid rgba(220,38,38,0.2);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+}
+.ai-marker__error-hint {
+  margin-top: 6px;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+.ai-marker__error code {
+  background: rgba(0,0,0,0.05);
+  padding: 1px 5px; border-radius: 3px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.ai-marker__feedback {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--ink);
+  max-height: 600px; overflow-y: auto;
+}
+.ai-marker__heading {
+  font-size: 0.92rem; font-weight: 800; color: var(--primary);
+  margin: 12px 0 6px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(0,163,71,0.15);
+}
+.ai-marker__heading:first-child { margin-top: 0; }
+.ai-marker__para { margin: 0 0 8px; }
+.ai-marker__list {
+  margin: 0 0 10px 0; padding-left: 18px;
+}
+.ai-marker__list li { margin-bottom: 4px; }
+
+.ai-marker__streaming {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--muted); font-size: 0.85rem; margin: 0;
+  font-style: italic;
+}
+.ai-marker__dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--primary);
+  animation: aiMarkerPulse 1.2s ease-in-out infinite;
+}
+@keyframes aiMarkerPulse {
+  0%, 100% { transform: scale(1);   opacity: 1;   }
+  50%      { transform: scale(1.4); opacity: 0.4; }
+}
+
