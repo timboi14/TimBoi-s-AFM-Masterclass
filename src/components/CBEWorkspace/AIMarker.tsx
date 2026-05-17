@@ -58,7 +58,7 @@ export function AIMarker({ paper, word, sheet }: Props) {
 
       if (!res.ok || !res.body) {
         const text = await res.text().catch(() => '');
-        throw new Error(text || `Server error (${res.status})`);
+        throw new Error(friendlyError(res.status, text));
       }
 
       const reader = res.body.getReader();
@@ -269,4 +269,30 @@ function formatSheetForPrompt(sheet: string[][]): string {
     }
   }
   return rows.join('\n');
+}
+
+/**
+ * Map server status codes + body text to a user-facing line. Hides raw
+ * provider JSON (e.g. DeepSeek "Insufficient Balance" errors) behind a
+ * friendly summary, and converts the 300s function-timeout case into
+ * a recognisable "try again in a moment" message.
+ */
+function friendlyError(status: number, body: string): string {
+  const trimmed = body.trim();
+  if (status === 504 || /timed out|timeout/i.test(trimmed)) {
+    return 'The marker took too long to respond. Try again in a moment.';
+  }
+  if (status === 429) {
+    return trimmed || 'Daily limit reached. Please try again tomorrow.';
+  }
+  if (status === 413) {
+    return trimmed || 'Your answer is too long for one marking pass. Trim it and retry.';
+  }
+  if (status === 503) {
+    return trimmed || 'AI marker is not configured on the server yet.';
+  }
+  if (status >= 500) {
+    return 'The AI provider returned an error. Please try again in a minute.';
+  }
+  return trimmed || `Marker error (HTTP ${status}).`;
 }

@@ -47,6 +47,8 @@ const ENDPOINT = 'https://api.deepseek.com/v1/chat/completions';
 const DEFAULT_DAILY_LIMIT = 20;
 const DEFAULT_MIN_WORD_CHARS = 20;
 const DEFAULT_MAX_WORD_CHARS = 8000;
+const RATE_LIMIT_TIMEOUT_MS = 1500;   // never wait longer than this for Upstash
+const DEEPSEEK_TIMEOUT_MS = 60_000;   // hard ceiling on the upstream connect
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
@@ -93,7 +95,14 @@ export default async function handler(req: Request): Promise<Response> {
 
   // Optional per-IP daily rate limit via Upstash Redis REST API. Only enforced
   // when both env vars are set, so the API works without an Upstash account.
-  const rl = await checkRateLimit(req);
+  //
+  // Hard 1.5s timeout via Promise.race — fail-open if Upstash hangs.
+  // This is the fix for the 300s FUNCTION_INVOCATION_TIMEOUT bug we hit when
+  // the Redis DB was provisioned in af-south-1 and the function ran in lhr1;
+  // the long-haul fetch occasionally never resolved under Edge runtime.
+  console.log('[mark] rate-limit start');
+  const rl = await raceWithTimeout(checkRateLimit(req), RATE_LIMIT_TIMEOUT_MS, null);
+  console.log('[mark] rate-limit done; blocked=%s remaining=%s', rl?.blocked, rl?.remaining);
   if (rl?.blocked) {
     return new Response(
       `Daily limit reached (${rl.limit} marks per day). Resets in ${rl.resetInHours}h.`,
@@ -111,23 +120,37 @@ export default async function handler(req: Request): Promise<Response> {
   const userPrompt = buildPrompt(body);
   const model = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
 
-  const upstream = await fetch(ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      stream: true,
-      temperature: 0.3,
-      max_tokens: 1600,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: userPrompt },
-      ],
-    }),
-  });
+  console.log('[mark] deepseek fetch start; model=%s prompt-chars=%d', model, userPrompt.length);
+  let upstream: Response;
+  try {
+    upstream = await fetch(ENDPOINT, {
+      method: 'POST',
+      signal: AbortSignal.timeout(DEEPSEEK_TIMEOUT_MS),
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        stream: true,
+        temperature: 0.3,
+        max_tokens: 1600,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: userPrompt },
+        ],
+      }),
+    });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : 'fetch failed';
+    console.warn('[mark] deepseek fetch threw:', msg);
+    const reason =
+      e instanceof DOMException && e.name === 'TimeoutError'
+        ? 'AI provider did not respond in time. Please try again.'
+        : `Could not reach the AI provider: ${msg}`;
+    return new Response(reason, { status: 504 });
+  }
+  console.log('[mark] deepseek returned status=%d', upstream.status);
 
   if (!upstream.ok || !upstream.body) {
     const text = await upstream.text().catch(() => 'upstream error');
@@ -224,9 +247,12 @@ async function checkRateLimit(req: Request): Promise<RateLimitInfo | null> {
   const key = `mark:${ip}:${day}`;
 
   // INCR + EXPIRE in one pipeline call.
+  // AbortSignal.timeout is the inner guard; Promise.race at the call site is
+  // the outer guard for the rare case where Edge's fetch swallows the signal.
   try {
     const res = await fetch(`${url.replace(/\/$/, '')}/pipeline`, {
       method: 'POST',
+      signal: AbortSignal.timeout(RATE_LIMIT_TIMEOUT_MS),
       headers: {
         authorization: `Bearer ${token}`,
         'content-type': 'application/json',
@@ -248,9 +274,28 @@ async function checkRateLimit(req: Request): Promise<RateLimitInfo | null> {
       resetInSeconds: secsToMidnight,
       resetInHours: Math.ceil(secsToMidnight / 3600),
     };
-  } catch {
+  } catch (e) {
+    console.warn('[mark] upstash skipped:', (e as Error).message ?? e);
     return null;
   }
+}
+
+/**
+ * Belt-and-braces wrapper for the rate-limit call. Even though the inner
+ * Upstash fetch now carries AbortSignal.timeout(), Vercel's Edge fetch
+ * has been observed to ignore that signal on cross-region long-haul calls
+ * (e.g. lhr1 → af-south-1). Promise.race guarantees this call site can
+ * never block longer than `timeoutMs`.
+ */
+function raceWithTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  fallback: T,
+): Promise<T> {
+  return Promise.race([
+    promise.catch(() => fallback),
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), timeoutMs)),
+  ]);
 }
 
 const SYSTEM_PROMPT = `You are an experienced ACCA AFM examiner. You mark candidate answers against the published marking guide. Be strict but fair, and link your feedback to the specific marking points and the verbatim ACCA examiner notes when provided.
