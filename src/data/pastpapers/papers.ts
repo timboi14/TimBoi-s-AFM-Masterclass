@@ -1431,18 +1431,18 @@ export const PAPERS: Paper[] = [
   },
 
   // ─────────────────────────────────────────────
-  // 12. PRYSOR CO — Mar/Jun 2021 — Section A
-  // Source: Question Pack (OCR verified)
+  // 12. PRYSOR CO — Mar/Jun 2022 — Section A
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
   // ─────────────────────────────────────────────
   {
     id: 'prysor',
     name: 'Prysor Co',
-    session: 'Mar/Jun 2021',
+    session: 'Mar/Jun 2022',
     paperSection: 'A',
     totalMarks: 50,
     syllabusSection: 'B',
     topics: ['inv'],
-    tags: ['International NPV', 'Sensitivity', 'Duration', 'WTO', 'ESG'],
+    tags: ['International NPV', 'Sensitivity', 'Duration', 'WTO', 'Going concern'],
     difficulty: 4,
     primarySource: 'Q',
 
@@ -1450,68 +1450,168 @@ export const PAPERS: Paper[] = [
       {
         id: 'company',
         navLabel: '1. The investment',
-        title: 'Prysor Co investing in Elan',
-        content: 'Prysor Co is a multinational based in Marteg (currency M$). Considering establishing a subsidiary in Elan (currency ED) to manufacture a new mobile phone. 4-year investment horizon.\n\nKey data (verified from Question Pack):\n- Sales: 50,000 / 65,000 / 83,000 / 90,000 units\n- Unit price: ED160 year 1, +5% per year\n- Component transfer price: M$7 per unit year 1 (increases with Marteg inflation)\n- Non-current assets: ED14,460,000\n- Tax: 20% in Elan (exempt years 1-2), 30% in Marteg, bilateral tax treaty\n- Inflation: Elan 6%/4%/3%/3%, Marteg 10%/9%/8%/7%\n- Opening exchange rate: ED2.6000 = M$1\n- Discount rate: 14%',
+        title: 'Prysor: Marteg-based multinational, building a phone subsidiary in Elan',
+        content: 'Prysor Co (Marteg, currency M$) is considering establishing a subsidiary in Elan (currency ED) to manufacture and sell a new mobile phone. 4-year board horizon, but subsidiary may operate longer — board would consider a going-concern offer.\n\nMarteg and Elan have a free trade agreement under WTO rules. Elan also trades on WTO terms with all other countries.\n\nUnit volumes: 50,000 / 65,000 / 83,000 / 90,000.\nSelling price ED160 yr1, +5%/year (years 2–4). Revenue (ED 000): 8,000 / 10,920 / 14,641 / 16,670.',
       },
       {
-        id: 'ethics',
-        navLabel: '2. CFFP concern',
-        title: 'The Campaign for Fair Production',
-        content: 'The CFFP is a global lobbying organisation demanding better treatment of workers in Elan. They have called for Prysor to adopt their charter, which includes requirements on wages, education, environment, and banning child labour.\n\nIf Prysor does not adopt the charter, the CFFP may organise boycotts. Part (c) asks you to discuss whether and to what extent Prysor should adopt the charter as part of its investment policy framework.',
+        id: 'component',
+        navLabel: '2. The Marteg component',
+        title: 'The transfer-price + lost-contribution interaction',
+        content: 'The new phone needs a component made in Marteg, transferred to Elan at M$7/unit in year 1. Transfer price grows at MARTEG inflation. The Marteg parent earns 35% pre-tax contribution on the component (so cost = 65% × transfer price; contribution = 35% × transfer price).\n\nThe new phone cannibalises an existing phone: pre-tax contribution LOST from the existing-phone sales = M$400,000 in yr1, growing at Marteg inflation.\n\nOther Elan costs (after inflation, ED 000): 3,508 / 4,934 / 6,230 / 6,685.',
+        warning: 'Three Marteg-side adjustments to remember: (1) the parent\'s 35% contribution on the component (a CASH INFLOW to Marteg, taxed at 30%); (2) the lost contribution from the existing phone (a CASH OUTFLOW, taxed at 30%); (3) both grow at Marteg inflation, not Elan inflation.',
+      },
+      {
+        id: 'tax',
+        navLabel: '3. Tax + capex',
+        title: 'Bilateral treaty, tax holiday and TAD',
+        content: 'Initial NCA investment: ED14,460,000.\nResidual value end of year 4 (if NOT sold as going concern): ED3,400,000.\n\nTAD (deductible in Elan): yr1 ED3,615 / yr2 ED2,711 / yr3 ED2,033 / yr4 balancing allowance ED2,701.\n\nElan tax 20% on profits — but EXEMPT years 1–2 (tax holiday).\nMarteg tax 30%. Bilateral treaty: Prysor is ASSUMED to have paid Elan 20% in ALL 4 years (i.e. years 1 and 2 the tax holiday doesn\'t change the Marteg top-up calculation).\nMarteg top-up: 30% − 20% = 10% on Elatian taxable profits, all 4 years.\n\nNo additional working capital. All post-tax cash flows remitted.\nOpening rate: ED2.6000 = M$1. Discount rate 14%.\n\nInflation: Elan 6% / 4% / 3% / 3%; Marteg 10% / 9% / 8% / 7%.',
+        warning: 'The tax holiday is in ELAN only. The bilateral treaty wording "assumed to have paid Elan tax at 20% in all 4 years" means Marteg always charges only the 10% top-up — even in years 1 and 2 when Elan actually charged 0%. This is a generous treaty assumption that flatters years 1–2 cash flows.',
+      },
+      {
+        id: 'sensitivity',
+        navLabel: '4. Sensitivity + duration',
+        title: 'The directors\' two specific questions',
+        content: 'The directors are concerned about how low the initial selling price could go before the project breaks even. Part (b)(iii) asks for the % change in initial selling price that would make NPV zero, based on the PV of sales revenue.\n\nThey also want to know how long it will take the investment to contribute value. The FD has suggested DURATION as the metric. Part (b)(iii) asks for the investment\'s duration.\n\nPart (b)(iv) then asks for a discussion of the significance and concerns with both calculations.',
+        warning: 'Duration in AFM is computed on cash flows, not just inflows. It tells you when, on average, the project pays back in PV terms. The earlier the duration, the lower the project\'s exposure to long-term forecasting error.',
       },
     ],
 
     questionParts: [
-      { label: '(a)', marks: 4, requirement: 'Explain the WTO role and assess implications for Prysor of the free trade agreement between Elan and Marteg.' },
-      { label: '(b)(i)', marks: 17, requirement: 'Calculate NPV of the investment in Elan.' },
-      { label: '(b)(ii)', marks: 5, requirement: 'Discuss key assumptions in the NPV.' },
-      { label: '(b)(iii)', marks: 8, requirement: 'Calculate the investment\'s duration and the sensitivity of NPV to the initial selling price.' },
-      { label: '(b)(iv)', marks: 6, requirement: 'Discuss the significance of the sensitivity and duration results.' },
-      { label: '(c)', marks: 6, requirement: 'Discuss factors determining whether Prysor adopts the CFFP charter in its investment policy framework.' },
-      { label: 'Professional skills', marks: 4, requirement: 'Report format, structure, presentation.' },
+      {
+        label: '(a)',
+        marks: 4,
+        requirement: 'Explain the role of the World Trade Organisation and assess the implications for Prysor Co of the free trade agreement between Elan and Marteg in the context of the World Trade Organisation\'s requirements.',
+        markingPoints: [
+          { description: 'WTO\'s aim: reduce barriers to trade (tariffs, quotas, restrictions)', marks: 1 },
+          { description: 'Most-favoured-nation principle: reductions offered to one member offered to all', marks: 1 },
+          { description: 'Free-trade-area exception: members may give preferential treatment within the FTA', marks: 1 },
+          { description: 'Implication for Prysor: components into Elan and any sales back to Marteg benefit; but sales to non-FTA countries face tariffs', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)(i)',
+        marks: 17,
+        requirement: 'Evaluate the financial acceptability of the investment in Elan.',
+        markingPoints: [
+          { description: 'Sales revenue years 1–4 (given as ED 000: 8,000 / 10,920 / 14,641 / 16,670)', marks: 1 },
+          { description: 'Other costs (given, inflated): 3,508 / 4,934 / 6,230 / 6,685', marks: 1 },
+          { description: 'Component cost in ED: M$7 × volume × Marteg inflation / exchange rate at PPP', marks: 2 },
+          { description: 'TAD: 3,615 / 2,711 / 2,033 / 2,701 (balancing allowance yr4)', marks: 1 },
+          { description: 'Elan tax 20%, exempt years 1–2', marks: 1 },
+          { description: 'Residual value yr4: ED3,400,000', marks: 1 },
+          { description: 'Translate to M$ at PPP exchange rates each year', marks: 2 },
+          { description: 'Marteg-side 35% contribution on component (M$, inflated, taxed at 30%)', marks: 1 },
+          { description: 'Marteg-side lost contribution M$400k yr1 inflated (cash outflow, tax relief at 30%)', marks: 1 },
+          { description: 'Bilateral treaty: Marteg 10% top-up tax on Elatian taxable profits all 4 yrs', marks: 2 },
+          { description: 'Discount at 14% and sum to NPV', marks: 2 },
+          { description: 'Recommendation based on NPV sign and magnitude', marks: 2 },
+        ],
+      },
+      {
+        label: '(b)(ii)',
+        marks: 5,
+        requirement: 'Discuss the assumptions made with respect to the calculations in (b)(i) above.',
+        markingPoints: [
+          { description: 'Sales volumes / selling-price growth / cost inflation assumed accurate — significant uncertainty', marks: 1 },
+          { description: 'PPP holds for FX translation — empirically only a long-run approximation', marks: 1 },
+          { description: 'Tax holiday and bilateral treaty hold for the project\'s lifetime — political risk', marks: 1 },
+          { description: 'Lost contribution from existing phone may be over- or under-estimated', marks: 1 },
+          { description: 'Project ends after 4 years — going-concern offer not modelled, may add value', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)(iii)',
+        marks: 8,
+        requirement: 'Calculate the investment\'s duration (2 marks) and the % change in initial selling price required for the investment to have a zero net present value, based on sales revenue (6 marks).',
+        markingPoints: [
+          { description: 'Duration: Σ(year × PV) / Σ(PV) — explicit table', marks: 2 },
+          { description: 'Sensitivity: PV of selling-price-related sales revenue in M$', marks: 2 },
+          { description: '% change = NPV / PV of sales revenue × 100%', marks: 2 },
+          { description: 'Direction: a fall in selling price; quote the % drop required', marks: 2 },
+        ],
+      },
+      {
+        label: '(b)(iv)',
+        marks: 6,
+        requirement: 'Discuss the significance of, and concerns with, the calculations in (b)(iii) above.',
+        markingPoints: [
+          { description: 'Sensitivity tells you the % fall in initial selling price for NPV = 0', marks: 1 },
+          { description: 'A small % means the project is very vulnerable to price-setting decisions', marks: 1 },
+          { description: 'Sensitivity assumes only ONE variable changes at a time — unrealistic', marks: 1 },
+          { description: 'Duration shows the average payback in PV terms; shorter = less exposure to forecasting error', marks: 1 },
+          { description: 'Duration ignores volatility (only timing); should be used alongside scenario / Monte Carlo analysis', marks: 1 },
+          { description: 'Practical recommendation: stress-test the price assumption before committing', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 10,
+        requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.',
+      },
     ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Prysor Co\'s investment in Elan',
+        content: 'Prysor Co is a multinational company, based in the country of Marteg (currency M$). Prysor Co\'s board is considering establishing a subsidiary in the country of Elan (currency ED) to manufacture and sell a new model of mobile phone.\n\nElan has free trade agreements in place with a number of countries, including Marteg, and trades on World Trade Organisation terms with other countries.',
+      },
+      {
+        title: 'Exhibit 2 — Investment appraisal details',
+        content: 'Board horizon 4 years; subsidiary may operate longer. Board would consider an offer for the subsidiary as a going concern.\n\nSales units and revenue (ED 000):\nYr1: 50,000 / 8,000\nYr2: 65,000 / 10,920\nYr3: 83,000 / 14,641\nYr4: 90,000 / 16,670\nBased on ED160 unit price yr1 +5%/year.\n\nNew phone needs a component made in Marteg, transferred to Elan at M$7/unit in year 1. Transfer price grows at Marteg inflation. Parent earns 35% pre-tax contribution on component sales to Elan.\n\nLost pre-tax contribution from sales of existing phone: M$400,000 yr1, +Marteg inflation each year.\n\nOther Elan costs (after inflation, ED 000): 3,508 / 4,934 / 6,230 / 6,685.\n\nImmediate NCA investment ED14,460,000. Realisable value yr4 = ED3,400,000 (if NOT sold as going concern).\n\nTAD (ED 000): yr1 3,615 / yr2 2,711 / yr3 2,033. Balancing allowance yr4 = ED2,701,000.\n\nTax: Elan 20% (EXEMPT years 1–2). Marteg 30%. Bilateral treaty: Prysor ASSUMED to have paid Elan 20% in ALL 4 years. Tax payable in year liability arises.\n\nNo additional working capital.\n\nInflation: Elan 6% / 4% / 3% / 3%; Marteg 10% / 9% / 8% / 7%.\nOpening exchange rate: ED2.6000 = M$1. Discount rate 14%.\n\nDirectors are concerned about (a) sensitivity to a lower initial selling price needed to establish the phone, and (b) how long the investment takes to contribute value — FD has suggested measuring this via duration.',
+      },
+    ],
+
+    keyAnswerTips: 'Big and tricky international investment appraisal. Component cost and contribution are especially complex. A well-prepared candidate with good technique can pass by focusing on the simpler calculations and getting all written parts done in time. Don\'t spend 60 minutes on (b)(i) — leave time for (a), (b)(ii), (b)(iii) and (b)(iv) plus the 10 professional marks.',
 
     verifiedNumbers: [
       { value: 'ED14,460,000', description: 'Initial NCA investment', source: 'Q' },
       { value: 'ED2.6000 = M$1', description: 'Opening exchange rate', source: 'Q' },
       { value: '14%', description: 'Discount rate', source: 'Q' },
-      { value: '20% / 30%', description: 'Elan / Marteg tax rates', source: 'Q' },
+      { value: '20% / 30%', description: 'Elan / Marteg tax rates (Elan exempt yrs 1–2)', source: 'Q' },
+      { value: '35%', description: 'Pre-tax contribution to Marteg parent on component', source: 'Q' },
+      { value: 'M$400k', description: 'Lost contribution from existing phone yr1', source: 'Q' },
     ],
 
     solutionSteps: [
       {
         stepNumber: 1,
-        title: 'International NPV with dual tax',
-        explanation: 'Calculate cash flows in ED. Apply 20% Elan tax (zero in years 1-2 due to exemption). Convert to M$ using PPP-derived exchange rates each year. Apply additional Marteg tax at effective 10% (30% Marteg rate minus 20% Elan credit already paid) on Elatian taxable profits. Discount at 14%.',
+        title: 'Build Elan-side cash flows in ED',
+        explanation: 'Sales revenue is given (already inflated). Component cost in ED = M$7/unit × volume × Marteg inflation translated at the PPP exchange rate. Other costs given. TAD given. Tax: 0% years 1–2 (holiday), 20% years 3–4.',
       },
       {
         stepNumber: 2,
-        title: 'Duration calculation',
-        explanation: 'Duration = sum of (PV of each year\'s cash flows x year number) divided by total PV of all cash flows. Set up a column: year number times PV of that year\'s cash flows. Sum that column. Divide by total PV. Show as a table — you pick up the marks even with a small arithmetic error if the structure is clear.',
+        title: 'Add Marteg-side adjustments',
+        explanation: 'Component contribution to Marteg parent: 35% × transfer price × volume, in M$, taxed at 30%. Lost contribution from existing phone: M$400k yr1 × Marteg inflation, in M$, with 30% tax relief. Both are cash flows of the parent in M$ — do NOT translate them.',
       },
       {
         stepNumber: 3,
-        title: 'Sensitivity of NPV to selling price',
-        explanation: 'Sensitivity = NPV / PV of selling price cash flows x 100%. This tells you the percentage fall in selling price before NPV reaches zero. A low sensitivity percentage means high risk — a small price change wipes out all the value.',
+        title: 'Translate Elan cash flows to M$ at PPP and add the bilateral top-up',
+        explanation: 'PPP rate each year: ED/M$ × (1 + ElanInflation) / (1 + MartegInflation). Translate the after-Elan-tax ED cash flow to M$. Then apply Marteg 10% top-up on Elatian taxable profit (all 4 years, even during the tax holiday — bilateral treaty wording).',
+      },
+      {
+        stepNumber: 4,
+        title: 'Discount and decide',
+        explanation: 'Discount net M$ cash flows at 14%. Sum to NPV. Compare to zero. Then compute sensitivity and duration to address parts (b)(iii) and (iv).',
+        formula: 'Duration: Σ(year × PV) / Σ(PV)\nSensitivity to selling price: NPV / PV of revenue × 100% = % fall in price for NPV = 0',
       },
     ],
 
     examinerFeedback: {
-      didWell: 'International NPV generally well-structured. Most applied dual-tax approach correctly.',
-      commonErrors: 'Duration was poorly attempted. ESG and CFFP discussion was generic with minimal use of the Elan-specific information.',
-      tutorTip: 'Duration calculation: column 1 is year number, column 2 is PV of that year\'s cash flows, column 3 is column 1 x column 2. Sum column 3, divide by sum of column 2. Show the table explicitly.',
+      didWell: 'Strong candidates correctly applied PPP, the dual-tax structure, and the bilateral treaty top-up. Most identified the lost-contribution adjustment.',
+      commonErrors: 'Component cost was frequently miscalculated — many forgot to apply Marteg inflation or applied Elan inflation by mistake. The bilateral treaty\'s "assumed Elan tax paid" wording was missed by many, who computed zero top-up during the tax-holiday years. Duration was poorly attempted.',
+      tutorTip: 'For duration: column 1 = year, column 2 = PV of that year\'s cash flow, column 3 = col 1 × col 2. Sum col 3 ÷ sum col 2 = duration. Show the table explicitly even if a number is wrong — the structure earns marks.',
       source: 'E',
     },
   },
 
   // ─────────────────────────────────────────────
-  // 13. FRONGOCH CO — Mar/Jun 2021 — Section B
-  // Source: Question Pack (OCR verified) + Solution Pack (text verified)
+  // 13. FRONGOCH CO — Mar/Jun 2022 — Section B
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
   // ─────────────────────────────────────────────
   {
     id: 'frongoch',
     name: 'Frongoch Co',
-    session: 'Mar/Jun 2021',
+    session: 'Mar/Jun 2022',
     paperSection: 'B',
     totalMarks: 25,
     syllabusSection: 'E',
@@ -1525,17 +1625,78 @@ export const PAPERS: Paper[] = [
         id: 'situation',
         navLabel: '1. The situation',
         title: 'Frongoch hedging a EUR payment',
-        content: 'Frongoch Co is a US company. Today: 1 March. Payment due: EUR18,250,000 to a German supplier on 1 August.\n\nKey data (verified from Question Pack):\n- Spot rate: 1.1483-1.1497 USD per EUR\n- Five-month forward: 1.1528-1.1544 USD per EUR\n- September futures price: 1.1560 (contract size EUR 125,000)\n- Call options at 1.1540: March 0.54, June 0.61, September 0.69 (US cents per EUR)\n- Put options at 1.1540: March 0.79, June 0.90, September 1.02\n\nVerified results from Solution Pack:\n- Forward contract: $21,067,800\n- Currency futures: $21,064,150\n- Currency options (if exercised): $21,186,425\n- Number of contracts: 146',
+        content: 'Frongoch Co is a US company with a centralised US treasury function. Today: 1 March. Payment due: €18,250,000 to a German supplier on 1 August (5 months).\n\nMarket data:\n• Spot: $1.1483 – $1.1497 per €1\n• 5-month forward: $1.1528 – $1.1544 per €1\n• September € futures price: $1.1560 (contract size €125,000)\n• Call options at 1.1540 strike (US cents/€): Mar 0.54 / Jun 0.61 / Sep 0.69\n• Put options at 1.1540 strike: Mar 0.79 / Jun 0.90 / Sep 1.02\n\nFutures and options mature at month end.',
+        warning: 'Frongoch is PAYING EUR → BUYING EUR → use CALL options on EUR (not puts). Common error: candidates pick puts because they\'re hedging an outflow.',
+      },
+      {
+        id: 'scenarios',
+        navLabel: '2. Two outcome scenarios',
+        title: 'What if the rates move? Part (b) tests this',
+        content: 'Scenario (i) at 1 August:\n• Spot: 1.1519 – 1.1534\n• 5-month forward: 1.1565 – 1.1581\n• September futures: 1.1552\n\nScenario (ii) at 1 August:\n• Spot: 1.1532 – 1.1549\n• 5-month forward: 1.1566 – 1.1584\n• September futures: 1.1563\n\nKey insight: forward result is UNCHANGED in both scenarios (locked in 1 March). Futures result varies via basis risk. Options change behaviour — under scenario (i) they lapse (spot 1.1534 < strike 1.1540), under scenario (ii) they\'re exercised (spot 1.1549 > strike 1.1540).',
       },
     ],
 
     questionParts: [
-      { label: '(a)', marks: 15, requirement: 'Calculate and compare forward contract, currency futures, and currency options for the EUR payment. Recommend on financial grounds.' },
-      { label: '(b)', marks: 6, requirement: 'Recalculate results for futures and options under two alternative spot rate scenarios.' },
-      { label: '(c)', marks: 4, requirement: 'Explain what is meant by basis and basis risk and discuss their impact on the hedging decision.' },
-      { label: '(d)', marks: 5, requirement: 'Explain why local treasury functions may be established in countries where Frongoch operates.' },
-      { label: 'Professional skills', marks: 5, requirement: 'Analysis, scepticism, commercial acumen.' },
+      {
+        label: '(a)',
+        marks: 9,
+        requirement: 'Recommend, on financial grounds, a hedging strategy for the €18,250,000 payment using the market data available on 1 March (Exhibit 1) and assuming the options are exercised. Assume basis diminishes to zero at contract maturity at a constant rate, based on monthly intervals.',
+        markingPoints: [
+          { description: 'Forward: €18,250,000 × 1.1544 = $21,067,800', marks: 1 },
+          { description: 'Futures: BUY September € futures (paying EUR = buying EUR)', marks: 1 },
+          { description: 'Basis at 1 March: 1.1497 − 1.1560 = −0.0063 (using bid spot)', marks: 1 },
+          { description: 'Unexpired basis at 1 Aug (2 of 7 months remaining): 2/7 × −0.0063 = −0.0018', marks: 1 },
+          { description: 'Lock-in rate: 1.1560 − 0.0018 = 1.1542', marks: 1 },
+          { description: 'Contracts = €18,250,000 / €125,000 = 146', marks: 1 },
+          { description: 'Futures outcome: 146 × €125,000 × 1.1542 = $21,064,150', marks: 1 },
+          { description: 'Options: BUY 146 September call options at 1.1540 strike; premium 146 × $0.0069 × 125,000 = $125,925', marks: 1 },
+          { description: 'Options outcome if exercised: 146 × €125,000 × 1.1540 + $125,925 = $21,186,425; RECOMMEND FUTURES (lowest cost)', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 6,
+        requirement: 'Evaluate the impact on the results of using the three hedging instruments being considered if the rates and futures prices are as per scenarios (i) and (ii) on 1 August (Exhibit 2).',
+        markingPoints: [
+          { description: 'Forward unchanged at $21,067,800 in BOTH scenarios (rate locked 1 Mar)', marks: 1 },
+          { description: 'Scenario (i) futures: basis difference 1.1552 − 1.1534 = 0.0018, same as predicted → same outcome $21,064,150', marks: 1 },
+          { description: 'Scenario (i) options: spot 1.1534 < strike 1.1540 → LAPSE; pay spot $21,049,550 + premium $125,925 = $21,175,475', marks: 1 },
+          { description: 'Scenario (ii) futures: basis difference may differ from predicted → outcome varies', marks: 1 },
+          { description: 'Scenario (ii) options: spot 1.1549 > strike 1.1540 → EXERCISE; same outcome as (a) $21,186,425', marks: 1 },
+          { description: 'Discussion: forward eliminates uncertainty; futures partially exposed to basis risk; options behaviour depends on strike vs spot', marks: 1 },
+        ],
+      },
+      {
+        label: '(c)',
+        marks: 5,
+        requirement: 'Explain what is meant by basis and basis risk, and discuss the impact of basis risk on the hedging decision being considered in (a) and (b).',
+        markingPoints: [
+          { description: 'Basis = difference between spot price and futures price for the same maturity', marks: 1 },
+          { description: 'Basis diminishes to zero at contract maturity (convergence)', marks: 1 },
+          { description: 'Basis risk = risk that basis does not diminish linearly as assumed', marks: 1 },
+          { description: 'Impact on Frongoch: futures hedge result depends on actual unexpired basis at 1 Aug, which may differ from the linear-decay assumption', marks: 1 },
+          { description: 'Basis risk is NOT eliminated by hedging with futures — only currency risk is', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
     ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Frongoch Co hedging a payment',
+        content: 'Frongoch Co is an American company, with a centralised treasury function based in the US. Today\'s date is 1 March. Frongoch Co\'s treasury team is currently looking at hedging a payment of €18,250,000 to a German supplier, which Frongoch Co is due to make on 1 August.\n\nExchange rates (quoted as US$ per €1):\nSpot 1 March: 1.1483 – 1.1497\nFive months forward: 1.1528 – 1.1544\n\nCurrency futures (contract size €125,000, price quoted as US$ per €1):\nSeptember: 1.1560\n\nCurrency options (contract size €125,000, exercise price as US$ per €1, premium in US cents per €1):\n               Calls                        Puts\nExercise   Mar    Jun    Sep         Mar    Jun    Sep\n1.1540    0.54   0.61   0.69        0.79   0.90   1.02\n\nFutures and options mature at month end.',
+      },
+      {
+        title: 'Exhibit 2 — Alternative exchange rate scenarios at 1 August',
+        content: 'Scenario (i) at 1 August:\nSpot: 1.1519 – 1.1534\nFive months forward: 1.1565 – 1.1581\nSeptember futures: 1.1552\n\nScenario (ii) at 1 August:\nSpot: 1.1532 – 1.1549\nFive months forward: 1.1566 – 1.1584\nSeptember futures: 1.1563\n\nThe treasury team has been asked to consider these scenarios alongside the significance of basis risk in deciding how the risk should be hedged.',
+      },
+    ],
+
+    keyAnswerTips: 'Frongoch PAYS €. Paying = buying. Buying EUR = CALL options on EUR (not puts). Standard 3-way hedge comparison: forward $21,067,800; futures $21,064,150 (cheapest in baseline scenario); options $21,186,425 if exercised. In part (b) under scenario (i), the spot moves IN FRONGOCH\'S FAVOUR enough that the option lapses — and even then the premium is sunk, so options still cost more than spot purchase. Forward = certainty, futures = exposure to basis risk, options = exposure to strike-vs-spot.',
 
     verifiedNumbers: [
       { value: '$21,067,800', description: 'Forward contract outcome', source: 'S' },
@@ -1572,6 +1733,168 @@ export const PAPERS: Paper[] = [
       didWell: 'Forward and futures calculations mostly correct. Good structure overall.',
       commonErrors: 'Options direction errors were common. Frongoch is paying EUR (buying EUR) so needs call options. Several candidates calculated the number of contracts using OTC logic instead of exchange-traded logic.',
       tutorTip: 'Frongoch pays EUR. Paying = buying EUR. Buying EUR = call options on EUR. Direction: buy September call options, not put options. This one question removes the most common error in currency options.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // CHARBOROUGH CO — Mar/Jun 2022 — Section B Q2
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'charborough',
+    name: 'Charborough Co',
+    session: 'Mar/Jun 2022',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'C',
+    topics: ['ma'],
+    tags: ['Demerger', 'FCF valuation', 'EPS', 'WACC', 'Asset beta ungearing'],
+    difficulty: 4,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'business',
+        navLabel: '1. The business',
+        title: 'CC: 20-year-old coffee chain considering selling the coffee shops',
+        content: 'Charborough Co (CC) was established 20 years ago as a high-quality coffee chain. Listed 6 years ago. Used the IPO proceeds to buy a struggling fast-food chain and rebrand it as a fruit juice bar chain.\n\nTwo divisions now:\n• Coffee shops — historically the cash engine, but growth has slowed in the last 2 years and significant refurbishment expenditure is needed.\n• Juice bars — successful with fashionable young customers, but capital-hungry. Until recently funded by surpluses from coffee shops.\n\nA competitor has enquired about buying the coffee shops. Board likely to accept a reasonable offer because (a) juice bars offer better growth prospects, and (b) sale proceeds would fund juice bar expansion and refurbishment.',
+      },
+      {
+        id: 'sale',
+        navLabel: '2. Sale terms + assumptions',
+        title: 'How the coffee-shop sale price is calculated',
+        content: 'Sale price = PV of future free cash flows (DCF valuation).\n\nCoffee shop after-tax profits ($m): yr1 296 / yr2 328 / yr3 360 / yr4 388.\nCC total after-tax profits including coffee shops (yr1): $658m. Assume after-tax profits = after-tax cash flows.\n\nCapital investment in coffee shops: $60m yr1. In yrs 2–4: increases by $0.50 per $1 of after-tax profit increase.\nAfter yr 4: free cash flows grow at 3.5% per year forever.\nDiscount rate: CURRENT WACC = 10%.\n\nProceeds used FIRST to pay off the 9% loan notes ($1,700m). Remaining proceeds invested in juice bar non-current assets at a 17% pre-tax return.\n\nNet book value of coffee shop NCAs: $3,350m. Profit on sale goes directly to retained earnings.',
+        warning: 'Sale price valuation uses CURRENT WACC of 10% even though WACC will fall to a different value after the sale (capital structure changes). The question is explicit. Many candidates re-derive a post-sale WACC and discount with that — don\'t.',
+      },
+      {
+        id: 'capital',
+        navLabel: '3. Capital structure',
+        title: 'CC balance sheet pre-sale and post-sale',
+        content: 'CC pre-sale balance sheet ($m):\nNCA 6,625 / CA 535 / Total 7,160\nShare capital 500 / Retained earnings 2,930 / Equity 3,430\n9% loan notes 1,700 / Bank loans 1,575 / NCL 3,275\nCurrent liabilities 455 / Total 7,160\n\n500 million $1 shares trading at $8 per share. Expected to rise 5% after the sale (improved juice-bar prospects).\nPre-tax cost of debt: 8% currently, falls to 7% after loan notes redeemed.\nJuice bars asset beta: 0.7. Risk-free rate 4%. Market return 11%. Tax 25%.',
+      },
+      {
+        id: 'discussion',
+        navLabel: '4. Sale discussion',
+        title: 'Arguments for and against the sale',
+        content: 'FOR the sale:\n• Cash to refurbish juice bars (which need it) and to expand them.\n• Removes the coffee-shop refurbishment liability ($significant unknown).\n• Removes the 9% loan notes → lower cost of debt going forward (8% → 7%).\n• Focuses CC on growth (juice bars) rather than mature/declining coffee shops.\n• Profit on sale of $534m boosts retained earnings.\n\nAGAINST the sale:\n• Coffee shops still profitable; predicted future cash flows are substantial.\n• Juice bars are a single business unit — less diversification.\n• Buyer\'s offer may not match true value (could be opportunistic).\n• Coffee-shop refurbishment might restore growth at lower cost than walking away.\n• 17% return assumption on new juice-bar investment is optimistic and unproven.\n• Loss of revenue diversity could increase business risk.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)(i)',
+        marks: 4,
+        requirement: 'Calculate the expected sale price of the coffee shops.',
+        markingPoints: [
+          { description: 'Capital investment yrs 2–4: $0.50 × ΔPAT each year (76 / 92 / 106)', marks: 1 },
+          { description: 'Free cash flow = PAT − capital investment: 236 / 252 / 268 / 282', marks: 1 },
+          { description: 'PV at 10% yrs 1–4 = $817m', marks: 1 },
+          { description: 'Terminal value at end of yr 4 = $282m × 1.035 / (0.10 − 0.035), discount = $3,067m; total = $3,884m', marks: 1 },
+        ],
+      },
+      {
+        label: '(a)(ii)',
+        marks: 9,
+        requirement: 'Calculate the impact of the sale of the coffee shops on CC\'s forecast statement of financial position, forecast earnings per share, and weighted average cost of capital.',
+        markingPoints: [
+          { description: 'Profit on sale = $3,884m − $3,350m = $534m → retained earnings', marks: 1 },
+          { description: 'Cash flow application: $1,700m repays loan notes; $2,184m goes into juice bar NCA', marks: 2 },
+          { description: 'Revised balance sheet: NCA $5,459m / equity $3,964m / NCL $1,575m / total $5,994m', marks: 1 },
+          { description: 'EPS impact: lose $296m PAT, gain interest saved $115m + return on new NCA $278m = +$97m', marks: 1 },
+          { description: 'Adjusted EPS: $755m / 500m shares = $1.51 (up from $1.32)', marks: 1 },
+          { description: 'WACC: re-gear asset beta 0.7 with new debt ratio → equity beta ≈ 0.897', marks: 1 },
+          { description: 'Cost of equity = 4% + (11% − 4%) × 0.897 ≈ 10.2%', marks: 1 },
+          { description: 'WACC = Ke × E/(D+E) + Kd(1−t) × D/(D+E); recompute and recommend', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 7,
+        requirement: 'Evaluate the arguments for and against the decision to sell the coffee shops.',
+        markingPoints: [
+          { description: 'FOR: cash to refurbish + expand juice bars; refurbishment liability removed', marks: 1 },
+          { description: 'FOR: lower cost of debt (8% → 7%) when loan notes redeemed', marks: 1 },
+          { description: 'FOR: strategic focus on growth business', marks: 1 },
+          { description: 'AGAINST: coffee shops still profitable; cannibalised future cash flows', marks: 1 },
+          { description: 'AGAINST: loss of business diversification — concentration risk in juice bars', marks: 1 },
+          { description: 'AGAINST: 17% return on juice-bar reinvestment is optimistic and unproven', marks: 1 },
+          { description: 'Recommendation with justification (e.g. accept only if offer ≥ DCF value)', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Introduction: Charborough Co',
+        content: 'Charborough Co (CC) was established 20 years ago offering high-quality coffee at a reasonable price. As well as offering takeaway coffees, CC marketed its coffee shops as being comfortable places in which to spend time and meet friends. For most of its life, CC\'s coffee shops have outperformed its competitors and CC was able to obtain a listing six years ago.\n\nMost of the funds obtained from the listing were used to buy a struggling fast food chain and rebrand it as a fruit juice bar chain. The fruit juice bar chain and coffee shops are now separate divisions within CC.\n\nThe fruit juice bars offer a mix of drinks and salads with flavours from around the world. This chain has been successful in attracting fashionable young customers but has required considerable investment. Up until recently, much of this investment has come from surpluses generated by CC\'s coffee shops.\n\nHowever, the growth in the profits of the coffee shops has slowed in the last two years. Customer and media comment has suggested that CC\'s coffee shops now need significant refurbishment expenditure.\n\nCompetition in the coffee shop sector has led to some mergers between rival chains. CC has just received an enquiry from a competitor about whether it would be interested in selling its coffee shops. CC\'s board is likely to accept a reasonable offer for its coffee shops, as it believes the juice bars offer more prospects for future growth. A large cash inflow from the sale would fund further expansion and refurbishment of existing juice bars over the next few years.',
+      },
+      {
+        title: 'Exhibit 2 — Sale of coffee shops',
+        content: 'Sale price = sum of PV of predicted future free cash flows.\n\n1. Coffee-shop after-tax profits ($m): yr1 296 / yr2 328 / yr3 360 / yr4 388. CC total after-tax profits (yr1, incl. coffee shops): $658m. Assume after-tax profits = after-tax cash flows.\n\n2. Capital investment in coffee shops: $60m yr1. Yrs 2–4: increases by $0.50 per $1 increase in after-tax profits.\n\n3. After yr 4: free cash flows grow at 3.5% per year for the foreseeable future.\n\n4. Discount rate: current WACC = 10%.',
+      },
+      {
+        title: 'Exhibit 3 — CC\'s statement of financial position',
+        content: 'CC pre-sale balance sheet ($m):\n\nAssets\nNon-current assets         6,625\nCurrent assets               535\nTotal assets               7,160\n\nEquity and liabilities\nCalled-up share capital      500\nRetained earnings          2,930\nTotal equity               3,430\n\nNon-current liabilities\n9% loan notes              1,700\nBank loans                 1,575\nTotal NCL                  3,275\n\nCurrent liabilities          455\nTotal equity + liabilities 7,160',
+      },
+      {
+        title: 'Exhibit 4 — Other information',
+        content: '1. Proceeds used FIRST to pay off the 9% loan notes. Remaining proceeds invested in enhancement expenditure on juice bar non-current assets. Juice-bar new NCA expected to earn 17% pre-tax return.\n2. Current NBV of coffee-shop NCAs = $3,350m. Profit on sale goes directly to retained earnings.\n3. Current assets and liabilities unchanged.\n4. Overall pre-tax cost of debt currently 8%; falls to 7% when 9% loan notes redeemed.\n5. 500 million $1 shares currently trading at $8 per share. Expected to rise 5% as a result of the sale and improved juice-bar prospects.\n6. Juice bars asset beta: 0.7.\n7. Tax 25% on profits.\n8. Risk-free rate 4%, market return 11%.',
+      },
+    ],
+
+    keyAnswerTips: 'A question that integrates lots of syllabus areas — DCF valuation, balance-sheet impact, EPS, WACC, plus a discursive evaluation. Leave time for part (b) (7 marks plus 5 prof = 12 marks). Sale price valuation uses CURRENT WACC of 10%; the post-sale WACC is only needed for part (a)(ii). Re-gear the juice-bar asset beta 0.7 using the new debt:equity ratio to get the new equity beta (≈0.897), then CAPM to get new Ke (≈10.2%).',
+
+    verifiedNumbers: [
+      { value: '$3,884m', description: 'Coffee shops DCF valuation (PV $817m + terminal $3,067m)', source: 'S' },
+      { value: '$534m', description: 'Profit on sale ($3,884m − $3,350m NBV)', source: 'S' },
+      { value: '$2,184m', description: 'Cash for juice-bar NCA after repaying loan notes', source: 'S' },
+      { value: '$1.51 EPS', description: 'Revised EPS (up from $1.32)', source: 'S' },
+      { value: '0.897 / 10.2%', description: 'Re-geared equity beta and revised Ke', source: 'S' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Compute the sale price as DCF of future free cash flows',
+        explanation: 'FCF = PAT − capital investment. Capital investment yr1 = $60m given; yrs 2–4 = $0.50 × ΔPAT.',
+        formula: 'PAT ($m):     296 / 328 / 360 / 388\nCapex ($m):    60 /  76 /  92 / 106 (yrs 2-4: $0.50 × ΔPAT)\nFCF ($m):     236 / 252 / 268 / 282\nDF @ 10%:   0.909/0.826/0.751/0.683\nPV ($m):      215 / 208 / 201 / 193 → sum $817m\nTerminal value at end of yr 4 = $282m × 1.035 / (0.10 − 0.035) = $4,490m\nPV of TV = $4,490m × 0.683 = $3,067m\nTotal sale price = $817m + $3,067m = $3,884m',
+        verifiedNumbers: ['$3,884m — verified from Kaplan Solution Pack MJ22'],
+      },
+      {
+        stepNumber: 2,
+        title: 'Roll the sale through the balance sheet',
+        explanation: 'Profit on sale = $3,884m − $3,350m NBV = $534m → retained earnings. Cash proceeds split: $1,700m repays loan notes, $2,184m invested in juice-bar NCA. Result: NCA $5,459m, equity $3,964m, NCL $1,575m, total $5,994m.',
+        verifiedNumbers: ['Revised balance sheet totals $5,994m — verified from Kaplan model answer'],
+      },
+      {
+        stepNumber: 3,
+        title: 'Forecast revised EPS',
+        explanation: 'Start with $658m baseline. Subtract $296m of coffee-shop PAT. Add interest saved net of tax: $1,700m × 9% × (1 − 25%) = $115m. Add return on new juice-bar NCA net of tax: $2,184m × 17% × (1 − 25%) = $278m. Revised profit $755m ÷ 500m shares = $1.51.',
+        verifiedNumbers: ['$1.51 EPS (up from $1.32) — verified'],
+      },
+      {
+        stepNumber: 4,
+        title: 'Re-gear the juice-bar asset beta and re-compute WACC',
+        explanation: 'Equity beta = 0.7 × (Ve + Vd(1 − t)) / Ve, with new equity value (500m × $8 × 1.05 = $4,200m) and remaining debt $1,575m. ≈ 0.897. Cost of equity = 4% + (11% − 4%) × 0.897 = 10.28%. Use new pre-tax cost of debt 7% × (1 − 25%) = 5.25%. Combine with new D/E weights for revised WACC.',
+        verifiedNumbers: ['Equity beta 0.897, Ke 10.2% — verified from Kaplan model answer'],
+      },
+      {
+        stepNumber: 5,
+        title: 'Evaluate the sale decision (part b)',
+        explanation: 'For: cash for juice bar refurb/expansion; refurbishment liability removed; lower cost of debt; strategic focus. Against: cannibalising profitable coffee business; concentration risk; 17% juice-bar return is unproven; offer may be opportunistic. Recommendation: accept only if competitor\'s offer ≥ the calculated $3,884m DCF value (or close to it).',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'DCF valuation was generally correctly structured. Most candidates correctly computed the $0.50 × ΔPAT capital investment rule.',
+      commonErrors: 'Capital investment was often calculated on TOTAL PAT rather than the INCREASE in PAT. Terminal value timing errors (discounting from yr 5 instead of treating as a yr 4 sum). Re-gearing the equity beta was poorly attempted — many used the wrong formula direction.',
+      tutorTip: 'Two recipes: (1) capital investment in yrs 2–4 = $0.50 × ΔPAT, where ΔPAT = PAT(yr n) − PAT(yr n−1). (2) Re-gearing: βe = βa × (Ve + Vd(1−t)) / Ve. The factor in the brackets is ALWAYS bigger than Ve, so βe > βa. If your βe < βa you\'ve inverted the formula.',
       source: 'E',
     },
   },
