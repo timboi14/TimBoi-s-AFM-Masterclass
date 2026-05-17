@@ -3600,4 +3600,591 @@ export const PAPERS: Paper[] = [
     },
   },
 
+  // ─────────────────────────────────────────────
+  // 28. AWAN CO — Dec 2013 (adapted) — Section B
+  // Treasury / Advanced Risk Management — FRA vs IR futures vs options on IR futures
+  // ─────────────────────────────────────────────
+  {
+    id: 'awan',
+    name: 'Awan Co',
+    session: 'Dec 2013',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'D',
+    topics: ['hedg'],
+    tags: ['FRA', 'IR futures', 'IR options', 'Investment hedge'],
+    difficulty: 4,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'situation',
+        navLabel: '1. The exposure',
+        title: 'Awan Co — $48m investment, four-month window',
+        content:
+          'Today is 1 November 20X3. Awan Co will receive $48,000,000 on 1 February 20X4 and needs to invest the cash until 1 June 20X4, when a large project draws on it. The funds will earn the inter-bank rate less 20 basis points. The current inter-bank rate is 4.09%.\n\nThe treasury team is concerned that rates may move sharply either way between now and 1 February. Management has guided that a move of up to 0.90% in either direction is plausible. They want to hedge against the down-side (a rate fall would hurt the receivable), and to evaluate three derivative options: forward rate agreements, interest-rate futures, and options on interest-rate futures.\n\nExposure direction reminder: this is an INVESTMENT (a receive-rate exposure). The risk is that rates FALL between now and 1 February. The hedge needs to gain value when rates fall — that means selling FRAs (locking the receive rate), buying futures (price rises when rates fall), or buying call options on futures.',
+        warning:
+          'Many candidates flip the direction here because the borrowing exposure is more familiar. Test yourself: if rates fall, do you GAIN or LOSE? On an investment you LOSE — so the hedge must GAIN. That means BUY futures, BUY calls, and SELL FRAs.',
+      },
+      {
+        id: 'instruments',
+        navLabel: '2. Instruments on offer',
+        title: 'Available instruments and quotes',
+        content:
+          'Three-month $ futures, contract size $2,000,000. Prices are quoted as 100 − annual % yield.\n• December 20X3: 94.80\n• March 20X4: 94.76\n• June 20X4: 94.69\n\nOptions on the same three-month $ futures, contract size $2,000,000. Annual % premiums:\nStrike 94.50 — Dec call 0.342 / Mar call 0.432 / Jun call 0.523; Dec put 0.090 / Mar put 0.119 / Jun put 0.271.\nStrike 95.00 — Dec call 0.097 / Mar call 0.121 / Jun call 0.289; Dec put 0.312 / Mar put 0.417 / Jun put 0.520.\n\nForward rate agreements offered by Voblaka Bank:\n• 1–7: 4.37%   • 3–4: 4.78%   • 3–7: 4.82%   • 4–7: 4.87%\n\nThe FRA notation X–Y means starts in month X, ends in month Y. Awan needs a four-month investment starting three months from today — that is 3–7. The contract size for the FRA is the full $48m exposure.\n\nFutures and options expire at the end of the contract month. Basis diminishes linearly to zero at expiry. No basis risk at the close-out date itself.',
+      },
+      {
+        id: 'sizing',
+        navLabel: '3. Hedge sizing',
+        title: 'How many futures contracts? How many option contracts?',
+        content:
+          'For a hedge whose contract period (3 months) is shorter than the actual exposure period (4 months), the number of contracts scales up:\n\n  Contracts = (exposure × exposure-months) / (contract size × contract-months)\n  Contracts = ($48,000,000 × 4) / ($2,000,000 × 3) = 32 contracts.\n\nUse the March futures because the hedge is lifted at the START of February — closest expiry that has not yet matured. Buy 32 March futures (rate-fall protection on an investment).\n\nBasis on 1 November: spot 4.09% → equivalent futures price 95.91. March futures 94.76 → basis 1.15 over 5 months until expiry. Per-month basis decay 0.23. At 1 February (2 months remaining to March expiry): unexpired basis ≈ 0.46. Use this when projecting the close-out price under each rate scenario.\n\nFor options, the same 32 contracts apply. Call premium and downside protection trade off against each other — a deeper-in-the-money call (e.g. strike 95.00) costs more premium but reaches the protected rate sooner.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 20,
+        requirement:
+          'Recommend a hedging strategy for the $48,000,000 investment from 1 February 20X4 to 1 June 20X4. Evaluate each of (i) a forward rate agreement, (ii) interest-rate futures, and (iii) options on interest-rate futures, under both an upward and downward 0.90% movement in rates. Show all workings and conclude with a recommendation.',
+        markingPoints: [
+          { description: 'Identify exposure: investment, fear rate fall, hedge must gain when rates fall', marks: 1 },
+          { description: 'Select FRA 3–7 at 4.82% as the matching FRA', marks: 1 },
+          { description: 'FRA outcome at +0.9%: effective rate = 4.82% − 0.20% = 4.62%', marks: 2 },
+          { description: 'FRA outcome at −0.9%: effective rate = 4.62% (locked, identical)', marks: 1 },
+          { description: 'Futures number = ($48m × 4) / ($2m × 3) = 32 contracts; buy March futures', marks: 2 },
+          { description: 'Basis on 1 Nov = 95.91 − 94.76 = 1.15; unexpired basis on 1 Feb = 0.46', marks: 2 },
+          { description: 'Futures outcome at +0.9%: investment income + futures loss → ≈ 4.58%', marks: 2 },
+          { description: 'Futures outcome at −0.9%: investment income + futures gain → ≈ 4.58%', marks: 2 },
+          { description: 'Options: buy March call to gain when futures rise; choose strike with explicit reasoning', marks: 2 },
+          { description: 'Option premium for chosen strike costed correctly (annual % × $2m × 3/12 × 32 contracts)', marks: 2 },
+          { description: 'Option outcome at +0.9% (rates up, futures down, call lapses → investment income only minus premium)', marks: 1 },
+          { description: 'Option outcome at −0.9% (rates down, futures up, call exercised → effective rate floored)', marks: 1 },
+          { description: 'Recommendation comparing certainty (FRA), near-certainty (futures), upside (options)', marks: 1 },
+        ],
+        examinerCommentary:
+          'The marking guide rewarded candidates who clearly stated the exposure direction in one sentence before any calculation. The most common error was selling the wrong FRA (4–7 or 1–7) because the timing was misread. On futures, many missed the scale-up factor when the contract length (3 months) was shorter than the hedge period (4 months). On options, weak answers picked a strike without explaining why and lost the strike-justification mark.',
+      },
+      {
+        label: '(b)',
+        marks: 5,
+        requirement:
+          'Professional skills marks for analysis and evaluation, scepticism and commercial acumen.',
+        markingPoints: [
+          { description: 'Analysis: structured comparison table or equivalent across the three instruments', marks: 1 },
+          { description: 'Analysis: figures linked back to the recommendation (not just dropped)', marks: 1 },
+          { description: 'Scepticism: identifies that the ±0.9% scenario is symmetric and that real moves may be larger / asymmetric', marks: 1 },
+          { description: 'Commercial acumen: weighs treasury capacity, premium cost, and counterparty risk', marks: 1 },
+          { description: 'Commercial acumen: states a single, defensible recommendation with the trade-off', marks: 1 },
+        ],
+      },
+    ],
+
+    verifiedNumbers: [
+      { value: '4.62%', description: 'FRA-locked effective rate (4.82% − 20bp spread)', source: 'Q' },
+      { value: '32', description: 'Number of futures (or option) contracts required for the $48m hedge', source: 'Q' },
+      { value: '0.46', description: 'Unexpired basis on 1 February (1.15 × 2/5)', source: 'Q' },
+      { value: '~4.58%', description: 'Approximate futures-locked effective rate after basis', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'State the exposure in one sentence',
+        explanation:
+          'Awan invests $48m for 4 months starting 1 February. A FALL in interest rates is the adverse move. Every hedge must gain when rates fall: BUY futures, BUY call options, or SELL FRAs.',
+      },
+      {
+        stepNumber: 2,
+        title: 'FRA — guaranteed receive rate',
+        explanation:
+          'Select FRA 3–7 (starts in month 3, ends in month 7) at 4.82%. After Awan’s 20-bp inter-bank spread the effective rate is 4.62%. The FRA cash-settles against the prevailing inter-bank rate on 1 February: if the rate falls, Awan receives the difference from Voblaka Bank; if it rises, Awan pays. Either way the effective receive rate is 4.62%.',
+        formula: 'Effective rate = FRA rate − bank spread = 4.82% − 0.20% = 4.62%',
+      },
+      {
+        stepNumber: 3,
+        title: 'Futures — scale, basis, scenarios',
+        explanation:
+          'Contracts = ($48m × 4) / ($2m × 3) = 32 March futures BOUGHT. Basis today = 95.91 − 94.76 = 1.15 with 5 months to expiry → 0.23 per month → 0.46 unexpired on 1 February.\n\nScenario 1 — rates rise to 4.99%: spot price 95.01; expected futures 95.01 − 0.46 = 94.55. Loss on each contract = (94.76 − 94.55) = 0.21. Tick value $50 per 0.01% on the 3-month $2m contract, so loss = 21 ticks × $50 × 32 = $33,600. Investment income at 4.79% over 4 months = $766,400. Net $732,800 ≈ 4.58%.\n\nScenario 2 — rates fall to 3.19%: spot price 96.81; expected futures 96.35. Gain = 1.59 = 159 ticks × $50 × 32 = $254,400. Investment income at 2.99% = $478,400. Net $732,800 ≈ 4.58%. Same answer because the hedge is symmetric.',
+        formula: 'Tick value = $2m × 0.0001 × 3/12 = $50 per 0.01% per contract',
+      },
+      {
+        stepNumber: 4,
+        title: 'Options on futures — buy March calls',
+        explanation:
+          'Pick the strike that gives the right protection / premium trade-off. Strike 94.50 March call costs 0.432% (premium = 0.432% × $2m × 3/12 × 32 = $69,120) and protects from the moment futures exceed 94.50. Strike 95.00 is cheaper (0.121% premium = $19,360) but only kicks in above 95.00. Most candidates pick 94.50 for genuine protection.\n\nIf rates fall to 3.19% (futures rise above 95.00), the 94.50 call is deep in the money — net effective rate floors at roughly 4.50% + investment spread adjustments − premium ≈ 4.30%.\nIf rates rise to 4.99% (futures fall to ~94.55), the 94.50 call lapses; investor keeps the higher investment income at 4.79% minus the wasted premium.',
+      },
+      {
+        stepNumber: 5,
+        title: 'Recommendation',
+        explanation:
+          'FRA gives certainty at 4.62%. Futures give near-certainty at ~4.58% with basis risk. Options preserve upside if rates rise sharply but cost the premium. If treasury bandwidth is limited and certainty matters, recommend the FRA. If management has a directional view that rates will FALL further (and wants protection that adapts to the downside while keeping the upside if rates rise), recommend the 94.50 March call.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell:
+        'Better candidates stated the exposure direction in one line before calculating, then matched each instrument to that direction. Strong answers used a clean comparison table to land the recommendation.',
+      commonErrors:
+        'Wrong FRA selection (1–7 or 4–7 instead of 3–7). Forgot to scale up futures contracts when contract period (3 months) differed from hedge period (4 months). Incorrect basis arithmetic — most often forgetting that today is 1 November (so 5 months to March expiry, not 4).',
+      tutorTip:
+        'Write the four-line frame before any calculation: (1) am I investing or borrowing? (2) which direction is the adverse move? (3) what derivative position offsets that move? (4) what is the unexpired basis at close-out?',
+      source: 'E',
+    },
+
+    keyAnswerTips:
+      'Three hedges for the same investment. FRAs give certainty. Futures give near-certainty but carry basis risk. Options protect against the adverse move while leaving the favourable move uncapped — at a premium cost. Pick by treasury bandwidth and directional view, not by which derivative is most familiar.',
+  },
+
+  // ─────────────────────────────────────────────
+  // 29. CMC CO — Jun 2014 (adapted) — Section B
+  // FX hedging for a USD payment + interest-rate swap by comparative advantage
+  // ─────────────────────────────────────────────
+  {
+    id: 'cmc',
+    name: 'CMC Co',
+    session: 'Jun 2014',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'D',
+    topics: ['hedg'],
+    tags: ['FX hedging', 'Currency futures', 'Currency options', 'Interest rate swap', 'Comparative advantage'],
+    difficulty: 4,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'company',
+        navLabel: '1. The company',
+        title: 'CMC Co — Swiss-listed importer paying in USD',
+        content:
+          'Cocoa-Mocha-Chai (CMC) Co is a Swiss-listed importer of tea, coffee and cocoa. The home currency is the Swiss franc (CHF). All raw-material purchases settle in US dollars (USD); all customer invoices are issued in CHF. The treasury team has two simultaneous exposures to manage.\n\nExposure 1 — a USD payment of $5,060,000 falls due in four months.\nExposure 2 — a new four-year CHF60,000,000 facility is being drawn to fund four production sites. CMC can take the loan at a fixed 2.2% per year or at a floating rate equal to the yield curve plus 40 basis points. Principal repays in a bullet at year 4.',
+      },
+      {
+        id: 'fx',
+        navLabel: '2. FX instruments',
+        title: 'Hedging the four-month USD payment',
+        content:
+          'Spot: US$1.0635 per CHF1. US inflation is currently three times Swiss inflation (relevant for forward fair-value sanity checks).\n\nExchange-traded currency futures — contract size CHF125,000, price USD per CHF:\n• 3-month expiry: 1.0647\n• 6-month expiry: 1.0659\n\nOptions on currency futures — contract size CHF125,000, premium in cents per CHF, strikes at 1.06 and 1.07:\n• Call (3m / 6m): 1.06 → 1.87 / 2.75; 1.07 → 1.34 / 2.22\n• Put  (3m / 6m): 1.06 → 1.41 / 2.16; 1.07 → 1.88 / 2.63\n\nOTC alternatives from Pecunia Bank:\n• Forward rate USD 1.0677 per CHF1 (better than spot for CMC because USD is at a premium reflecting higher US inflation).\n\nDirection check: CMC pays USD — it has to BUY USD / SELL CHF. With the quote in USD-per-CHF, the home-currency view means CMC needs to SELL CHF forward (or use put options on CHF futures to protect against CHF weakening).',
+      },
+      {
+        id: 'swap',
+        navLabel: '3. Interest-rate swap',
+        title: 'The Pecunia Bank swap proposal',
+        content:
+          'Pecunia Bank can pair CMC with a counterparty that can borrow at floating (yield + 0.8%) or fixed 3.8%. The bank takes 20 basis points as the intermediation fee. The two parties share the net benefit equally.\n\nBuild the swap by comparative-advantage logic. Compare the four rates: CMC fixed 2.2%, CMC floating yield+0.4%, counterparty fixed 3.8%, counterparty floating yield+0.8%. The fixed-rate spread is 1.6%; the floating-rate spread is 0.4%. Total swap gain available = 1.6% − 0.4% = 1.2%. After Pecunia’s 0.20% fee, 1.0% is available for the two parties; split equally → 0.50% to each.',
+        warning:
+          'Most candidates correctly identify CMC has comparative advantage in fixed and the counterparty in floating. Then they fumble the cash-flow direction: who pays whom which leg? Draw the arrows before doing any rate arithmetic.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 14,
+        requirement:
+          'Advise CMC Co on an appropriate hedging strategy for the USD payment of $5,060,000 falling due in four months. Compare the forward contract, currency futures and currency options. Show all calculations, including the number of contracts.',
+        markingPoints: [
+          { description: 'Identify direction: pays USD → sells CHF forward / buys USD / buys put on CHF', marks: 1 },
+          { description: 'Forward cost = $5,060,000 ÷ 1.0677 = CHF 4,739,159', marks: 2 },
+          { description: 'Futures: select 6-month contract (closer to 4-month exposure than 3-month?)', marks: 1 },
+          { description: 'Number of contracts = ($5,060,000 ÷ 1.0659) ÷ 125,000 ≈ 38 contracts SOLD', marks: 2 },
+          { description: 'Project unexpired basis at hedge close-out and apply to futures payoff', marks: 2 },
+          { description: 'Option: choose call or put with reasoning (put on CHF futures = right to sell CHF; call on USD = right to buy USD)', marks: 1 },
+          { description: 'Option premium cost computed (cents/CHF × CHF125,000 × number of contracts)', marks: 2 },
+          { description: 'Worked outcome under at least one rate scenario for the chosen option strike', marks: 1 },
+          { description: 'Comparison table or equivalent across the three methods in CHF terms', marks: 1 },
+          { description: 'Single defensible recommendation linked back to scenario', marks: 1 },
+        ],
+        examinerCommentary:
+          'Direction errors dominated the lost marks here. Candidates who got the direction right but used the wrong basis interpolation typically still scored highly. Premium cost was a frequent slip — the quote is in cents per CHF, not annual %.',
+      },
+      {
+        label: '(b)',
+        marks: 6,
+        requirement:
+          'Demonstrate how CMC Co could benefit from the interest-rate swap offered by Pecunia Bank. Compute the rate each side would pay after the swap.',
+        markingPoints: [
+          { description: 'Compute fixed spread (3.8% − 2.2% = 1.6%) and floating spread (0.8% − 0.4% = 0.4%)', marks: 1 },
+          { description: 'Total swap gain available = 1.6% − 0.4% = 1.2%', marks: 1 },
+          { description: 'After Pecunia’s 0.20% fee, 1.0% remains; split equally → 0.50% each', marks: 1 },
+          { description: 'Identify comparative advantage: CMC in fixed, counterparty in floating', marks: 1 },
+          { description: 'CMC ends with floating exposure below market: yield − 0.1% (yield + 0.4% − 0.5%)', marks: 1 },
+          { description: 'Counterparty ends with fixed exposure below market: 3.3% (3.8% − 0.5%)', marks: 1 },
+        ],
+        examinerCommentary:
+          'Swap parts test whether the candidate can hold both sides of the trade in their head. The marking guide rewarded candidates who showed the four-rate comparison table before any swap calculation. The most common error was forgetting the bank fee or splitting the gain before deducting it.',
+      },
+      {
+        label: '(c)',
+        marks: 5,
+        requirement:
+          'Professional skills marks for analysis and evaluation, scepticism and commercial acumen.',
+        markingPoints: [
+          { description: 'Analysis: structured comparison across hedging instruments with CHF-cost values', marks: 1 },
+          { description: 'Analysis: integration of FX and swap recommendations into a coherent treasury position', marks: 1 },
+          { description: 'Scepticism: notes assumptions (basis decay, counterparty risk on swap, USD inflation premium in forward)', marks: 1 },
+          { description: 'Commercial acumen: weighs operational complexity of options vs forward', marks: 1 },
+          { description: 'Commercial acumen: a final treasury recommendation that picks one route', marks: 1 },
+        ],
+      },
+    ],
+
+    verifiedNumbers: [
+      { value: 'CHF 4,739,159', description: 'Forward-locked CHF cost of the USD payment ($5,060,000 ÷ 1.0677)', source: 'Q' },
+      { value: '38', description: 'Approximate number of currency futures contracts SOLD for the FX hedge', source: 'Q' },
+      { value: '1.2%', description: 'Total swap gain before Pecunia’s fee (1.6% fixed spread − 0.4% floating spread)', source: 'Q' },
+      { value: '0.50%', description: 'Saving for each party after the bank takes 20 bp and the rest splits equally', source: 'Q' },
+      { value: '3.3%', description: 'Counterparty’s effective post-swap fixed cost', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'FX direction in one line',
+        explanation:
+          'CMC pays USD → needs USD on payment date → must convert CHF into USD. With the quote in USD per CHF, the home-currency hedge is "sell CHF forward" / "sell CHF futures" / "buy a put on CHF futures" (the right to sell CHF at the strike).',
+      },
+      {
+        stepNumber: 2,
+        title: 'Forward — the simplest comparator',
+        explanation:
+          'CHF cost using the forward = $5,060,000 ÷ 1.0677 = CHF 4,739,159. This is the certain answer and the benchmark every other instrument must beat (or justify on flexibility grounds).',
+        formula: 'CHF cost = USD payment ÷ forward rate',
+      },
+      {
+        stepNumber: 3,
+        title: 'Futures — number of contracts',
+        explanation:
+          'Use the 6-month contract because the 4-month exposure sits inside it. Estimated CHF needed if hedged at the 6-month futures rate = $5,060,000 ÷ 1.0659 = CHF 4,747,160. Contracts = 4,747,160 ÷ 125,000 = 37.98 → SELL 38 contracts of CHF futures. On the close-out date you receive (or pay) the difference between the close-out futures price and 1.0659 multiplied by CHF125,000 × 38 in USD, then convert through spot at that date.',
+      },
+      {
+        stepNumber: 4,
+        title: 'Options — buy puts on CHF futures',
+        explanation:
+          'For a USD payment hedge, the protective leg is the put on CHF futures (right but not obligation to SELL CHF at the strike). Compare strike 1.06 put (premium 6m = 2.16 cents) against 1.07 put (premium 6m = 2.63 cents). Pick by how much downside protection you want vs premium cost. Premium for 38 contracts at strike 1.06 = 2.16¢ × 125,000 × 38 = $102,600 ≈ CHF 96,500 at spot.',
+      },
+      {
+        stepNumber: 5,
+        title: 'Swap — comparative advantage tableau',
+        explanation:
+          'Rates table:\n          Fixed     Floating\nCMC       2.2%      yield + 0.40%\nCpty      3.8%      yield + 0.80%\nSpread:   1.6%      0.40%\n\nCMC has the lower fixed → comparative advantage in fixed. CMC borrows fixed (2.2%) and swaps to floating with the counterparty. Counterparty borrows floating (yield + 0.8%) and swaps to fixed.\n\nNet gain available = 1.6% − 0.4% = 1.2%. Pecunia takes 0.2% as the intermediary fee. Remaining 1.0% splits equally → 0.50% each.\n\nCMC effective floating cost = (yield + 0.4%) − 0.5% = yield − 0.1%.\nCounterparty effective fixed cost = 3.8% − 0.5% = 3.3%.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell:
+        'Strong candidates stated the direction in one sentence for the FX hedge before computing, then used a single CHF-comparison table to land the recommendation. On the swap, the cleanest answers built a four-cell rates table before any maths.',
+      commonErrors:
+        'Wrong option leg (call instead of put on CHF futures). Forgot to convert option premium from cents to a CHF total. Split the swap gain before deducting the bank fee. Mixed up which side of the swap had the comparative advantage in fixed vs floating.',
+      tutorTip:
+        'Time-budget the two parts. Part (a) is 14 marks ≈ 25 minutes; part (b) is 6 marks ≈ 11 minutes; PS marks split across both. Do NOT spend 30 minutes perfecting part (a) and run out of time for the swap.',
+      source: 'E',
+    },
+
+    keyAnswerTips:
+      'Two hedging tasks in one question. Manage time strictly — about 7 marks of effort each on the forward/futures/option calcs, and 6 marks on the swap. Always state the direction one line before the maths, both for FX and for the swap legs.',
+  },
+
+  // ─────────────────────────────────────────────
+  // 30. DAIKON CO — Jun 2015 (adapted) — Section B
+  // IR futures vs IR options vs collar; marking-to-market mechanics
+  // ─────────────────────────────────────────────
+  {
+    id: 'daikon',
+    name: 'Daikon Co',
+    session: 'Jun 2015',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'D',
+    topics: ['hedg'],
+    tags: ['IR futures', 'IR options', 'Collar', 'Mark-to-market', 'Borrowing hedge'],
+    difficulty: 4,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'situation',
+        navLabel: '1. The exposure',
+        title: 'Daikon Co — $34m, 6-month borrowing starting in 5 months',
+        content:
+          'Today is 1 June 20X5. Daikon Co will borrow $34,000,000 in five months’ time and repay in eleven months’ time — a six-month borrowing window starting 1 November 20X5. Borrowing cost is base rate plus 70 basis points. Base rate is currently 3.6% but treasury is concerned about a rise of up to 80 basis points before the borrowing starts.\n\nThe CEO has previously used FRAs. After a recent course she wants three new instruments evaluated side by side: interest-rate futures, options on interest-rate futures, and a collar built on top of the options. She has asked for a reasoned recommendation.\n\nDirection reminder: this is a BORROWING (pay-rate exposure). The risk is rates RISING. The hedge must GAIN when rates rise — that means SELLING futures, BUYING put options, or building a collar (buy put + write call).',
+      },
+      {
+        id: 'instruments',
+        navLabel: '2. Instruments',
+        title: 'Quotes available',
+        content:
+          'Three-month $ December futures: 95.84. Contract size $1,000,000; tick size 0.01%; tick value $25 per contract per tick.\n\nOptions on three-month $ futures, $1,000,000 contract size. Annual % premiums:\n• December call 0.541 / put 0.304 at strike 95.50\n• December call 0.223 / put 0.508 at strike 96.00\n\nAssumptions for part (a): settlement at month-end; basis diminishes linearly to zero at expiry; margin ignored; in-the-money options exercised at hedge end rather than sold.',
+      },
+      {
+        id: 'mtm',
+        navLabel: '3. Mark-to-market issue',
+        title: 'Marking-to-market — illustrative trades',
+        content:
+          'The CEO has also learned about marking-to-market. She wants to know the daily cash impact if 50 December futures contracts were BOUGHT at 95.84 on 1 June and 30 futures contracts were SOLD at 95.61 on 3 June.\n\nClosing prices: 1 June 95.84 / 2 June 95.76 / 3 June 95.66 / 4 June 95.74.\n\nEach 0.01 movement on a $1m × 3-month contract = $25. The position is open long 50 from 1 June, then partially offset by 30 short opened at 95.61 on 3 June — leaving 20 long thereafter. Mark-to-market debits / credits hit the margin account daily.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 15,
+        requirement:
+          'For the $34m borrowing, evaluate (i) interest-rate futures, (ii) options on interest-rate futures, and (iii) a collar built on the options. Show all workings and recommend.',
+        markingPoints: [
+          { description: 'Identify direction: borrowing, rate rise is adverse, hedge must gain when rates rise', marks: 1 },
+          { description: 'Number of futures = ($34m × 6) / ($1m × 3) = 68 contracts SOLD', marks: 2 },
+          { description: 'Basis on 1 June: spot price 96.40 − futures 95.84 = 0.56 over 7 months → 0.08 per month', marks: 1 },
+          { description: 'Unexpired basis on 1 November = 0.08 × 2 = 0.16', marks: 1 },
+          { description: 'Futures outcome at +0.8%: investment/borrow cost net of futures gain → effective ≈ 4.10%', marks: 2 },
+          { description: 'Options: BUY December puts (gain when futures fall); pick strike with reasoning', marks: 2 },
+          { description: 'Premium for selected strike costed correctly', marks: 1 },
+          { description: 'Option outcome under rate rise: exercise, effective rate floored', marks: 1 },
+          { description: 'Option outcome under no rate change: lapse, lose premium', marks: 1 },
+          { description: 'Collar: BUY put + SELL call to offset premium; identify both legs', marks: 1 },
+          { description: 'Collar premium net cost computed and effective rate band derived', marks: 1 },
+          { description: 'Recommendation comparing certainty / cost / upside across the three', marks: 1 },
+        ],
+        examinerCommentary:
+          'Most lost marks came from the direction of the option leg (some candidates bought calls instead of puts) and from forgetting that contract length (3 months) ≠ hedge period (6 months) so the contract-count scales by 2×. The collar part rewarded any candidate who could state the trade-off in one line: lower premium, but capped if rates fall.',
+      },
+      {
+        label: '(b)',
+        marks: 5,
+        requirement:
+          'Discuss the impact on Daikon Co of marking-to-market for the illustrative trades described, including the daily cash impact across the four days.',
+        markingPoints: [
+          { description: 'Explain that mark-to-market settles gains/losses daily into the margin account', marks: 1 },
+          { description: 'Day-1 (1 June): position open at 95.84; close 95.84 → no MTM cash', marks: 1 },
+          { description: 'Day-2 (2 June): close 95.76 → 50 long × −0.08 × $25 ÷ 0.01 = −$10,000 (loss)', marks: 1 },
+          { description: 'Day-3 (3 June): close 95.66; 50 long lose another 0.10 × 50 × $25/tick × 100 ticks/% ... = −$12,500; 30 short opened at 95.61 lose 0.05 × 30 × $2,500 = −$3,750', marks: 1 },
+          { description: 'Day-4 (4 June): close 95.74; net 20 long × +0.08 × $2,500 = +$4,000; 30 short × +0.08 × $2,500 = −$6,000', marks: 1 },
+        ],
+        examinerCommentary:
+          'Part (b) was a small but easy mark grab if candidates kept their daily-PL table tidy. The biggest mistake was treating the short and long positions as netting before applying the next day’s price move.',
+      },
+      {
+        label: '(c)',
+        marks: 5,
+        requirement:
+          'Professional skills marks for analysis and evaluation, scepticism and commercial acumen.',
+        markingPoints: [
+          { description: 'Structured comparison across the three hedges in part (a)', marks: 1 },
+          { description: 'Quantitative figures used to support the recommendation', marks: 1 },
+          { description: 'Scepticism on the symmetry / size of the rate-rise assumption', marks: 1 },
+          { description: 'Commercial acumen: treasury capacity to monitor MTM cashflows', marks: 1 },
+          { description: 'Defensible final recommendation linked back to Daikon’s context', marks: 1 },
+        ],
+      },
+    ],
+
+    verifiedNumbers: [
+      { value: '68', description: 'Futures contracts to sell ($34m × 6 / $1m × 3)', source: 'Q' },
+      { value: '0.16', description: 'Unexpired basis at hedge open (5 months from now → 2 months pre-expiry)', source: 'Q' },
+      { value: '−$10,000', description: 'Mark-to-market loss on 50 long contracts on day 2 (price drops 0.08)', source: 'Q' },
+      { value: '$25', description: 'Tick value per contract per 0.01% on a 3-month $1m contract', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Frame the exposure',
+        explanation:
+          '$34m borrowed for 6 months in 5 months’ time. Borrower at base + 70 bp. Risk = rate rises. Hedge must gain on a rate rise → SELL December futures / BUY December puts / collar (BUY put + SELL call).',
+      },
+      {
+        stepNumber: 2,
+        title: 'Futures number',
+        explanation:
+          'Contracts = (Exposure × Hedge-months) ÷ (Contract size × Contract-months) = ($34m × 6) ÷ ($1m × 3) = 68 contracts SOLD.',
+        formula: 'Contracts = ($34m × 6) / ($1m × 3) = 68',
+      },
+      {
+        stepNumber: 3,
+        title: 'Basis and effective rate',
+        explanation:
+          'Today: spot 100 − 3.60 = 96.40; December futures 95.84; basis 0.56 over 7 months → 0.08/month. On 1 November (2 months to December expiry) unexpired basis 0.16. With +0.80% rate rise, spot price → 95.60; expected futures price = 95.60 − 0.16 = 95.44. Loss in tick terms is on the SHORT futures = (95.84 − 95.44) × 100 = 40 ticks × $25 × 68 = $68,000 GAIN (price fell → short profits).\nLoan interest = $34m × (3.60 + 0.80 + 0.70)% × 6/12 = $866,000.\nNet cost ≈ $866,000 − $68,000 = $798,000 ≈ 4.69% on $34m for 6 months. Effective rate before bank spread of 70bp ≈ 4.69%.',
+      },
+      {
+        stepNumber: 4,
+        title: 'Options on futures — buy December puts',
+        explanation:
+          'BUY December puts to gain when futures fall (= rates rise). Pick strike with reasoning: 95.50 put premium 0.304%, 96.00 put premium 0.508%. The 96.00 put is "deeper in the money" relative to current futures 95.84 → costs more but protects sooner. Premium for 68 contracts at 96.00 put = 0.508% × $1m × 3/12 × 68 = $86,360.\nWith +0.80% rise, futures fall to ~95.44 → 96.00 put intrinsic = 0.56 → 56 ticks × $25 × 68 = $95,200. Net after premium = $8,840 gain. Effective borrowing rate slightly above the futures-locked rate due to premium.',
+      },
+      {
+        stepNumber: 5,
+        title: 'Collar — net premium narrower band',
+        explanation:
+          'BUY 96.00 put (premium 0.508%) and SELL 95.50 call (premium 0.541%). Net premium = 0.541% − 0.508% = 0.033% RECEIVED. This caps the upside (if rates fall sharply Daikon is forced to pay on the short call) but reduces hedge cost almost to zero. Effective rate sits between the floor (rate locked at 96.00 put strike) and the cap (rate floored at 95.50 call strike).',
+      },
+      {
+        stepNumber: 6,
+        title: 'Mark-to-market — illustrative trades',
+        explanation:
+          'Day 1 (1 Jun): BUY 50 at 95.84. Day-end 95.84. MTM = $0.\nDay 2 (2 Jun): close 95.76. 50 long × (95.84 − 95.76) = 50 × 0.08% = 40 ticks × $25 = $10,000 LOSS.\nDay 3 (3 Jun): SELL 30 at 95.61. Close 95.66. \n  • 50 long carry from 95.76 → 95.66 = 10 ticks loss × 50 × $25 = $12,500 LOSS.\n  • 30 short from 95.61 → 95.66 = 5 ticks loss × 30 × $25 = $3,750 LOSS.\nDay 4 (4 Jun): close 95.74. Net 20 long carry from 95.66 → 95.74 = +8 ticks × 20 × $25 = $4,000 GAIN. 30 short from 95.66 → 95.74 = 8 ticks loss × 30 × $25 = $6,000 LOSS.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell:
+        'Strong answers laid out a tidy three-column comparison of futures, options and collar with effective rate per scenario and recommended on the basis of certainty vs cost.',
+      commonErrors:
+        'Bought calls instead of puts on a borrowing hedge. Forgot the contract-count scale-up (6-month hedge with 3-month contracts → ×2). On the mark-to-market section, lumped the 50-long and 30-short positions into a 20-long without tracking the day-3 entry price for the short leg.',
+      tutorTip:
+        'Direction first. On a borrowing hedge: SELL futures, BUY puts, build collars with put + short call. Practice the option direction until it is automatic — the marker tolerates a basis-arithmetic slip far better than a directional inversion.',
+      source: 'E',
+    },
+
+    keyAnswerTips:
+      'Borrowing hedge — rate rise is adverse — everything that GAINS when rates rise. The mark-to-market sub-question is small but easy: keep a daily PL table with entry prices for each leg and apply $25 per 0.01% per contract.',
+  },
+
+  // ─────────────────────────────────────────────
+  // 31. ARMSTRONG GROUP — Sep/Dec 2015 (adapted) — Section B
+  // Multilateral netting + IR options-vs-collar hedge for a Euro receipt
+  // ─────────────────────────────────────────────
+  {
+    id: 'armstrong',
+    name: 'Armstrong Group',
+    session: 'Sep/Dec 2015',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'E',
+    topics: ['hedg'],
+    tags: ['Multilateral netting', 'Treasury', 'IR options', 'Collar', 'Investment hedge'],
+    difficulty: 4,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'group',
+        navLabel: '1. Group structure',
+        title: 'Armstrong Group — multilateral netting between four subsidiaries',
+        content:
+          'Today is 1 September. Armstrong Group is a multinational with four subsidiaries: Armstrong (USA), Horan (South Africa), Massie (Europe) and Giffen (Denmark). Group head office wants to start netting inter-company balances every six months instead of settling them bilaterally. The first netting cycle covers balances at end of February.\n\nForecast inter-company balances (in local currency, millions):\n• Armstrong (USA) owes Horan (SA) US$12.17m\n• Horan (SA) owes Massie (Europe) SAR 42.65m\n• Giffen (DK) owes Armstrong (USA) DKr 21.29m\n• Massie (Europe) owes Armstrong (USA) US$19.78m\n• Armstrong (USA) owes Massie (Europe) €1.57m\n• Horan (SA) owes Giffen (DK) DKr 16.35m\n• Giffen (DK) owes Massie (Europe) €1.55m\n\nSettlement is in USD, the parent currency. The largest net payer settles first with the smallest net receiver.\n\nCross rates (sample, source: question pack):\n1 USD = 5.4855 DKr = 10.7296 SAR = 0.7358 EUR\n1 EUR = 1.3591 USD\n1 DKr = 0.1823 USD\n1 SAR = 0.0932 USD',
+      },
+      {
+        id: 'massie',
+        navLabel: '2. Massie\'s Euro receipt',
+        title: 'Massie Co — €25m receipt, six-month investment',
+        content:
+          'Separately, Massie Co expects to receive €25m from Bardsley Co on 30 November and will invest the cash from then until 31 May, a six-month investment window. Investment rate = base − 40 bp. Base is currently 3.6%. Media commentary suggests rates may move by ±0.5%.\n\nTreasury wants to keep upside if rates rise → futures are ruled out. Choices: options on Euro interest-rate futures (buy calls to gain if futures rise = rates fall) or an interest-rate collar (buy call + sell put). Massie is comfortable with both.',
+      },
+      {
+        id: 'instruments',
+        navLabel: '3. IR derivative quotes',
+        title: 'Euro interest-rate derivatives',
+        content:
+          'Three-month Euro futures, €1,000,000 contract size, tick 0.01%, tick value €25. December 95.76 / March 95.44 (September 95.94 already past for this hedge).\n\nOptions on three-month Euro futures, €1,000,000 contract size, tick value €25. Annual % premiums:\n• Calls — Strike 96.50: Sep 0.113 / Dec 0.182 / Mar 0.245; Strike 97.00: Sep 0.017 / Dec 0.032 / Mar 0.141.\n• Puts — Strike 96.50: Sep 0.002 / Dec 0.123 / Mar 0.198; Strike 97.00: Sep 0.139 / Dec 0.347 / Mar 0.481.\n\nSettlement at end of month. Basis diminishes linearly to zero at expiry. No basis risk on the close-out date itself.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 7,
+        requirement:
+          'Calculate the inter-group transfers that should occur for the next netting period. Use the cross-rate table to convert every balance into USD, find each subsidiary’s net USD position, and lay out the settlement order (largest net payer first to smallest net receiver).',
+        markingPoints: [
+          { description: 'Convert each of the 7 inter-company balances into USD using the cross rates', marks: 2 },
+          { description: 'Net USD position per subsidiary (Armstrong, Horan, Giffen, Massie)', marks: 2 },
+          { description: 'Identify net payers vs net receivers', marks: 1 },
+          { description: 'State the settlement sequence (largest payer → smallest receiver)', marks: 1 },
+          { description: 'Total intra-group USD settlement amount (and confirm payers = receivers)', marks: 1 },
+        ],
+        examinerCommentary:
+          'A clear arithmetic exercise. Most candidates correctly converted every balance to USD; weaker candidates lost marks by forgetting the cross-rate direction (e.g. SAR → USD vs USD → SAR).',
+      },
+      {
+        label: '(b)',
+        marks: 13,
+        requirement:
+          'Recommend a hedging strategy for the €25m receipt from 30 November to 31 May. Evaluate (i) options on interest-rate futures and (ii) an interest-rate collar. Assume rates move by either +0.5% or −0.5% and show outcomes under both scenarios.',
+        markingPoints: [
+          { description: 'Identify direction: investment, fear rate fall, hedge must gain when rates fall → BUY CALLS', marks: 1 },
+          { description: 'Number of contracts = (€25m × 6) / (€1m × 3) = 50 contracts', marks: 2 },
+          { description: 'Pick which option month covers the investment (March contract is the right choice)', marks: 1 },
+          { description: 'Basis: today (1 Sep) spot 100 − 3.6 = 96.40; March futures 95.44; basis 0.96 over 7 months', marks: 1 },
+          { description: 'Unexpired basis on 30 November (4 months to March) = 0.96 × 4/7 ≈ 0.55', marks: 1 },
+          { description: 'Option strike chosen with explicit reasoning (96.50 vs 97.00)', marks: 1 },
+          { description: 'Premium cost for chosen strike correctly computed', marks: 1 },
+          { description: 'Option outcome at −0.5%: exercise, effective floored rate above base scenario', marks: 1 },
+          { description: 'Option outcome at +0.5%: lapse, retain higher investment rate − wasted premium', marks: 1 },
+          { description: 'Collar: BUY call + SELL put; identify both legs', marks: 1 },
+          { description: 'Collar net premium and effective rate band stated', marks: 1 },
+          { description: 'Recommendation linking cost / certainty / upside to Massie’s context', marks: 1 },
+        ],
+        examinerCommentary:
+          'Direction errors again dominated. Strong candidates picked the option strike with reasoning rather than randomly. The collar leg most candidates set up correctly but a minority bought the put (giving up the downside they were trying to protect) instead of selling it.',
+      },
+      {
+        label: '(c)',
+        marks: 5,
+        requirement:
+          'Professional skills marks for analysis and evaluation, scepticism and commercial acumen.',
+        markingPoints: [
+          { description: 'Structured comparison of options vs collar with quantitative comparison', marks: 1 },
+          { description: 'Analysis integrates the netting context into the recommendation (cash management)', marks: 1 },
+          { description: 'Scepticism: notes the ±0.5% range is narrow and may underestimate volatility', marks: 1 },
+          { description: 'Commercial acumen: weighs operational complexity of the collar in Massie’s treasury', marks: 1 },
+          { description: 'Defensible single recommendation', marks: 1 },
+        ],
+      },
+    ],
+
+    verifiedNumbers: [
+      { value: '50', description: 'Option / collar contracts required for the €25m hedge ((€25m × 6) / (€1m × 3))', source: 'Q' },
+      { value: '0.55', description: 'Approximate unexpired basis on 30 November (0.96 × 4/7)', source: 'Q' },
+      { value: 'March', description: 'Contract month to use — investment closes 31 May (post March, pre September)', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Netting in USD',
+        explanation:
+          'Convert every balance to USD using the table. Sum credits − debits per company. The four nets should equal zero in aggregate (group is a closed system). Pay each net amount in the order: largest payer → smallest receiver.',
+      },
+      {
+        stepNumber: 2,
+        title: 'IR hedge direction',
+        explanation:
+          '€25m INVESTED for 6 months. Investment exposure → fear rate FALL. Hedge instrument must gain when rates fall = futures price rises = BUY calls on Euro futures.',
+      },
+      {
+        stepNumber: 3,
+        title: 'Contract count and basis',
+        explanation:
+          'Contracts = (€25m × 6) / (€1m × 3) = 50 March options. Today 1 Sep (note: 7 months to March expiry). Spot price 96.40; March futures 95.44. Basis 0.96 → 0.96/7 = 0.137 per month. On 30 Nov, 4 months to expiry, unexpired basis = 0.137 × 4 = 0.55.',
+      },
+      {
+        stepNumber: 4,
+        title: 'Option choice and outcomes',
+        explanation:
+          'Strike 96.50 March call premium 0.245%. Total premium = 0.245% × €1m × 3/12 × 50 = €30,625. If rates FALL to 3.10%, futures rise to 96.90 − 0.55 unexpired basis = 96.35. 96.50 call intrinsic = 0 (futures still below 96.50) → call lapses → investment income only at 3.10% − 0.40% = 2.70% over 6m = €337,500 LESS premium €30,625 = €306,875.\n\nStrike 97.00 March call premium 0.141%. Cheaper but exercise threshold is further away.',
+      },
+      {
+        stepNumber: 5,
+        title: 'Collar — buy call + sell put',
+        explanation:
+          'Collar = BUY a call (gains on rate fall) + SELL a put (premium received but obligation if rates rise too much). Pick strike 96.50 call and strike 96.50 put. Net premium = 0.245% − 0.198% = 0.047% PAID. Effective rate is bounded — capped on the upside if rates rise sharply (the put gets assigned), floored on the downside (the call is exercised).',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell:
+        'Best answers led with a one-line direction statement (investment → fear fall → buy calls) and only then did the maths. The netting section was generally well done.',
+      commonErrors:
+        'Direction inversion (bought puts on the investment hedge). Forgot to scale contract count for the 6-month exposure with 3-month contracts. On the collar, the trade-off (upside given up in exchange for premium) was often missed.',
+      tutorTip:
+        'Two near-independent sub-questions in 25 marks. Time it: 7 marks of netting = ~12 minutes; 13 marks of hedging = ~24 minutes; 5 PS marks woven through. Do the netting first to bank the easy 7 marks before the harder hedge analysis.',
+      source: 'E',
+    },
+
+    keyAnswerTips:
+      'Two sub-questions: net-payer/receiver matrix (small but high-margin arithmetic) and a hedging recommendation on an investment receipt (so the direction is BUY calls, opposite of the borrowing default). Use March options/futures because the receipt comes in November and exits in May — bracket the exposure inside the contract.',
+  },
+
 ]; // end of PAPERS array
