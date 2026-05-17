@@ -1984,6 +1984,147 @@ export const PAPERS: Paper[] = [
   },
 
   // ─────────────────────────────────────────────
+  // OXWICK CO — Mar/Jun 2023 — Section B Q3
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'oxwick',
+    name: 'Oxwick Co',
+    session: 'Mar/Jun 2023',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'C',
+    topics: ['ma'],
+    tags: ['M&A', 'P/E valuation', 'FCF valuation', 'Diversification'],
+    difficulty: 3,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'companies',
+        navLabel: '1. The companies',
+        title: 'Oxwick (acquirer) and Ludham (target)',
+        content: 'Oxwick Co is a listed fruit-flavoured soft drinks manufacturer. Profits have grown significantly recently. Wants to expand.\n\nLudham Co is unlisted, family-owned, producing the premium Ludorchard brand. Ludorchard is stocked in retail outlets where Oxwick is not.\n\nThe acquisition rationale: Oxwick can spend more on marketing Ludorchard than Ludham has, driving sales growth, plus other synergies. A non-executive director disagrees — he argues the acquisition does not REDUCE risk and so creates no value for shareholders. He thinks Oxwick should instead acquire companies in different product streams (true diversification) or one of its suppliers (vertical integration).',
+        warning: 'The non-exec director\'s view conflates portfolio theory (diversification by individual investors) with corporate diversification. Shareholders can already diversify risk by holding multiple stocks — they don\'t need Oxwick to do it for them. Synergy-driven acquisitions create real value; pure diversification acquisitions usually destroy it. This is the standard part (a) trap.',
+      },
+      {
+        id: 'valuation',
+        navLabel: '2. Valuation inputs',
+        title: 'P/E for Ludham, FCF for combination',
+        content: 'Oxwick: 200m shares × $11.52 = $2,304m market cap. Most recent post-tax earnings $128m → P/E = 18.\n\nLudham: 80m shares, post-tax earnings $52m. Profits static for 3 years. Use Oxwick\'s P/E ratio reduced by 40% for unlisted status → 18 × 0.60 = 10.8. Ludham value = 10.8 × $52m = $561.6m → $7.02 per share.\n\nCombined company FCF (4-year horizon then perpetuity):\n• Year 1: $270m\n• Year 2: +12% / Year 3: +10% / Year 4: +7%\n• TAD = maintenance investment (cancel out)\n• Additional investment: $28m at end of year 1; $0.80 per $1 of FCF increase end of years 2-4\n• From year 5: 5% perpetual growth, no additional capital investment\n• WACC 12% post-acquisition; debt:equity 20:80\n• Acquisition premium for Ludham: 15% above fair value\n• Oxwick shareholders\' minimum required gain: 15%',
+        warning: 'The 40% discount applied to the P/E ratio is large. Many candidates apply 40% to the P/E itself (18 − 0.40 = 17.60). That\'s wrong. "Reduced by 40%" means multiplied by 60% → 18 × 0.60 = 10.8.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 5,
+        requirement: 'Discuss the non-executive director\'s views in relation to Oxwick Co\'s acquisition strategy and the acquisition of Ludham Co.',
+        markingPoints: [
+          { description: 'Shareholders can diversify themselves — corporate diversification adds little if any value', marks: 1 },
+          { description: 'Synergy-driven acquisitions (like Ludham) create real value through revenue and cost economies', marks: 1 },
+          { description: 'Acquiring unrelated businesses risks destroying value through management distraction and lack of expertise', marks: 1 },
+          { description: 'Vertical integration with suppliers can reduce supply risk but transfers risk, doesn\'t eliminate it', marks: 1 },
+          { description: 'Recommend the Ludham acquisition on synergy/strategic grounds, rejecting the diversification argument', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 10,
+        requirement: 'Estimate, using the data available: the equity value of the combination of Oxwick Co and Ludham Co; and the % gain in value which would be gained by Oxwick Co\'s shareholders from the acquisition, concluding whether it will fulfil the expected shareholder requirement of a 15% gain in value.',
+        markingPoints: [
+          { description: 'Oxwick P/E = 200m × $11.52 / $128m = 18; Ludham P/E = 18 × 60% = 10.8', marks: 1 },
+          { description: 'Ludham value = 10.8 × $52m = $561.6m; with 15% premium = $645.84m', marks: 1 },
+          { description: 'FCF year 1 = $270m − $28m = $242m', marks: 1 },
+          { description: 'FCF years 2–4 grow by 12% / 10% / 7%; deduct $0.80 × ΔFCF investment each year', marks: 2 },
+          { description: 'Terminal value at end of year 4 = FCF₅ × 1.05 / (0.12 − 0.05), discounted to today', marks: 2 },
+          { description: 'Combined equity value = PV(FCF 1–4) + PV(TV)', marks: 1 },
+          { description: 'Oxwick gain = combined value − $645.84m paid to Ludham − $2,304m Oxwick ex ante; express as %', marks: 1 },
+          { description: 'Conclude whether ≥15% gain to Oxwick shareholders is met', marks: 1 },
+        ],
+      },
+      {
+        label: '(c)',
+        marks: 5,
+        requirement: 'Discuss the assumptions made in the calculations in part (b).',
+        markingPoints: [
+          { description: 'Using Oxwick\'s P/E for Ludham assumes similar risk and growth — Ludham\'s profits are static, suggesting lower growth', marks: 1 },
+          { description: 'The 40% unlisted discount is a rule of thumb — actual marketability discount varies widely', marks: 1 },
+          { description: 'Combined FCF growth rates assume synergies are achieved — increased marketing spend may not translate to sales', marks: 1 },
+          { description: '5% terminal growth in perpetuity is high vs long-run economic growth', marks: 1 },
+          { description: '$0.80 reinvestment ratio per $1 of FCF increase is a simplification', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Oxwick Co\'s acquisition of Ludham Co',
+        content: 'Oxwick Co is a listed, fruit-flavoured soft drinks manufacturer which has increased its profits significantly over the last few years and is looking to expand. Oxwick Co\'s directors have identified Ludham Co as a potential target. Ludham Co is an unlisted, family-owned company. It produces a premium brand of soft drink, the Ludorchard brand. Oxwick Co\'s directors are aware that the Ludorchard brand is stocked in a number of retail outlets where Oxwick Co\'s drinks are not stocked.\n\nAssuming Ludham Co is acquired, Oxwick Co\'s directors believe that Oxwick Co will be able to spend more on marketing the Ludorchard brand than Ludham Co has been able to spend, increasing sales significantly. It will also achieve other synergies which will increase value and justify the acquisition. However, one of Oxwick Co\'s non-executive directors believes that the acquisition will be of no value to Oxwick Co because it does not reduce risk. He feels that Oxwick Co\'s shareholders want the company to make acquisitions which reduce risk and therefore increase company value. He believes that Oxwick Co should therefore consider acquiring companies with different product streams, or one or more of its suppliers.',
+      },
+      {
+        title: 'Exhibit 2 — Financial data, both companies',
+        content: 'Ludham Co\'s profits have remained static during the past three years. As it is an unlisted company, there is no information available about Ludham Co\'s forecast cash flows.\n\nOxwick Co has 200 million shares in issue and its current market price per share is $11.52. Its most recent post-tax earnings were $128m.\n\nLudham Co has 80 million shares in issue. Its most recent post-tax earnings were $52m.\n\nAssume that Ludham Co\'s current valuation can be obtained by using Oxwick Co\'s P/E ratio, reduced by 40% to reflect Ludham Co\'s unlisted status.\n\nThe post-tax cash flows for the first year of the combined company are estimated to be $270m. These are expected to increase by the following % each year as a result of sales volume increases, synergies and inflation:\nYear 2: 12%, Year 3: 10%, Year 4: 7%.\n\nTax allowable depreciation is assumed to be equivalent to the amount of investment needed to maintain existing operations. However, an additional investment in assets (including working capital) will be required of $28m at the end of year 1. In years 2 to 4, additional investment in assets at the end of each year will be $0.80 for every $1 increase in post-tax cash flows in that year.\n\nAfter four years, the annual growth rate of free cash flows is expected to be 5% for the foreseeable future. It is assumed that there will be no additional capital investment from year 5 onwards.\n\nThe combined company\'s cost of capital is estimated to be 12%. It is expected that the combined company\'s debt to equity level will be maintained at 20:80, in market value terms, after the acquisition has taken place.\n\nThe directors of Oxwick Co assume that the shareholders of Ludham Co will require a 15% premium on the fair value of their shares. To satisfy their own shareholders, Oxwick Co\'s directors believe that the acquisition should result in a minimum gain to their shareholders of at least 15%.',
+      },
+    ],
+
+    keyAnswerTips: 'When AFM tests business valuations, strategic aspects of acquisitions are usually tested alongside. Make sure you can calculate the value using P/E AND FCF methods — Oxwick uses P/E for the target (Ludham is unlisted) but FCF for the combination. The non-exec director\'s diversification argument is a classic AFM trap: shareholders diversify themselves through their portfolios, so corporate diversification rarely adds value for shareholders.',
+
+    verifiedNumbers: [
+      { value: 'P/E = 18', description: 'Oxwick P/E ratio = 200m × $11.52 / $128m', source: 'Q' },
+      { value: 'P/E = 10.8', description: 'Ludham P/E = 18 × 60% (40% unlisted discount)', source: 'Q' },
+      { value: '$561.6m', description: 'Ludham fair value = 10.8 × $52m', source: 'Q' },
+      { value: '$645.84m', description: 'Ludham with 15% acquisition premium', source: 'Q' },
+      { value: '$2,304m', description: 'Oxwick market cap pre-acquisition (200m × $11.52)', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Establish Ludham\'s fair value with the discounted P/E',
+        explanation: 'Ludham is unlisted so its value can\'t be observed directly. The standard approach: use the listed acquirer\'s P/E, discounted for marketability. Oxwick P/E = $2,304m / $128m = 18. Reduced by 40% means × 60%. Discounted P/E = 18 × 60% = 10.8. Ludham fair value = 10.8 × $52m = $561.6m. With 15% acquisition premium, Oxwick pays $645.84m for Ludham.',
+        formula: 'Oxwick P/E = 200m × $11.52 / $128m = 18\nLudham P/E = 18 × (1 − 40%) = 18 × 0.60 = 10.8\nLudham fair value = 10.8 × $52m = $561.6m\nWith 15% premium: $561.6m × 1.15 = $645.84m',
+      },
+      {
+        stepNumber: 2,
+        title: 'Build the combined-company free cash flows',
+        explanation: 'Year 1 FCF = $270m, less $28m additional investment = $242m. Years 2–4 grow by 12% / 10% / 7%. Additional investment = $0.80 × (FCF increase) each year. No additional investment from year 5.',
+        formula: 'Year 1: $270m − $28m = $242m\nYear 2: $270m × 1.12 = $302.4m; ΔFCF = $32.4m; invest $25.92m → net $276.48m\nYear 3: $302.4m × 1.10 = $332.64m; ΔFCF = $30.24m; invest $24.19m → net $308.45m\nYear 4: $332.64m × 1.07 = $355.92m; ΔFCF = $23.28m; invest $18.62m → net $337.30m\nYear 5: $355.92m × 1.05 = $373.72m (no investment)',
+      },
+      {
+        stepNumber: 3,
+        title: 'Discount at 12% and apply terminal value',
+        explanation: 'Terminal value at end of year 4 = FCF₅ / (WACC − g) = $373.72m / (0.12 − 0.05) = $5,338.86m. Discount all cash flows to today at 12% and sum.',
+        formula: 'PV factors at 12%: 0.893 / 0.797 / 0.712 / 0.636\nPV of FCF 1–4: $242 × 0.893 + $276.48 × 0.797 + $308.45 × 0.712 + $337.30 × 0.636\n         ≈ $216.1 + $220.3 + $219.6 + $214.5 = $870.5m\nPV of terminal value: $5,338.86m × 0.636 ≈ $3,395.5m\nCombined firm value ≈ $4,266m\nCombined EQUITY value (apply D/E 20:80): $4,266m × 80% ≈ $3,413m',
+      },
+      {
+        stepNumber: 4,
+        title: 'Calculate Oxwick shareholders\' gain',
+        explanation: 'Value going to Oxwick shareholders = combined equity value − $645.84m paid for Ludham. Compare to Oxwick\'s pre-acquisition $2,304m. Gain = (Oxwick share of new value − $2,304m) / $2,304m. Compare to 15% required gain.',
+        formula: 'Oxwick share = $3,413m − $645.84m = $2,767.16m\nGain = ($2,767.16m − $2,304m) / $2,304m ≈ 20.1%\n20.1% > 15% required gain → acquisition meets the threshold',
+      },
+      {
+        stepNumber: 5,
+        title: 'Respond to the non-exec director',
+        explanation: 'Concede the principle: pure diversification does not create shareholder value since shareholders can diversify themselves. But reject the application to Ludham: this is a synergy-driven acquisition (marketing-spend uplift on Ludorchard, distribution access to new retail outlets), not a diversification play. The calculations show a 20% gain — well above the 15% threshold. The director\'s alternative (acquire suppliers / unrelated businesses) is poorly defined and would not be screened against any specific synergy hypothesis.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'Most candidates correctly calculated the P/E ratio and applied the 40% unlisted discount. FCF mechanics for years 1–4 were generally correct.',
+      commonErrors: 'Many candidates applied the 40% discount additively (P/E − 0.40) rather than multiplicatively (× 0.60). Terminal value timing errors (discounting from year 5 rather than treating the year-5 number as the perpetuity value at end of year 4). Many candidates failed to compute Oxwick\'s gain as a percentage — they reported the combined value but didn\'t compare it to the 15% threshold.',
+      tutorTip: 'Three-step recipe for every M&A valuation: (1) value the target, (2) value the combination, (3) check both sides\' required gains. Always express the final gain as a percentage of the acquirer\'s pre-acquisition equity value — that\'s the metric the question is testing against the 15% threshold.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
   // 17. LURGSHALL CO — Mar/Jun 2019 — Section B
   // Source: Solution Pack (text verified)
   // ─────────────────────────────────────────────
