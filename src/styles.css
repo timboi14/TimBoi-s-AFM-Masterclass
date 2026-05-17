@@ -1409,3 +1409,60 @@ body {
   }
 }
 
+/* Mock timer flash near time-out */
+@keyframes cbeFlash {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.4; }
+}
+
+/* ----------------------------------------------------------------------
+   Accessibility settings (Work Item 12).
+   --------------------------------------------------------------------- */
+html.tba-reduce-motion *,
+html.tba-reduce-motion *::before,
+html.tba-reduce-motion *::after {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+}
+html.tba-dyslexia body {
+  font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  letter-spacing: 0.05em;
+}
+html.tba-large-text {
+  font-size: 18px;
+}
+
+/* Global focus ring — gold per spec */
+:focus-visible {
+  outline: 2px solid #f7c948;
+  outline-offset: 2px;
+}
+
+
+/* ----------------------------------------------------------------------
+   Print stylesheet for the mock report — Work Item 4.
+   --------------------------------------------------------------------- */
+@media print {
+  /* Hide everything that is not the report content */
+  header, nav, footer,
+  .ljqc-strip,
+  .no-print,
+  [aria-label="Open Coach AI"],
+  [aria-label="Open coach AI"],
+  [aria-label="Stop voice playback"] {
+    display: none !important;
+  }
+  body, html {
+    background: #fff !important;
+  }
+  .mock-report {
+    color: #000 !important;
+  }
+  .mock-report a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+}
+

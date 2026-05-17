@@ -63,11 +63,11 @@ export function TrainingPage() {
           }}
           right={{
             tone: 'navy',
-            eyebrow: 'Mock',
-            headline: 'Three hours. One trophy.',
+            eyebrow: 'Composite mock',
+            headline: 'Three hours fifteen. One trophy.',
             subline:
-              'Timer on, coach off. Walk in 25 marks short on technique and you walk out without the pass.',
-            actions: <TonePill as="link" to="/mock" variant="primary">Start mock</TonePill>,
+              'A + B + B drawn from the bank with no topic repeats. Timer auto-submits at zero, Coach locked off, report waiting at the other end.',
+            actions: <TonePill as="link" to="/training/mock" variant="primary">Start composite mock</TonePill>,
           }}
         />
       </SectionShell>

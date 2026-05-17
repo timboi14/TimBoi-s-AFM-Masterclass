@@ -17,6 +17,9 @@ import '@fortawesome/fontawesome-free/css/solid.min.css';
 import '@fortawesome/fontawesome-free/css/regular.min.css';
 import '@fortawesome/fontawesome-free/css/brands.min.css';
 import './styles.css';
+// Apply persisted accessibility settings (reduce-motion / dyslexia / large
+// text) on app bootstrap — module side-effect inside the file does the work.
+import '@/pages/Settings';
 
 const rootEl = document.getElementById('root')!;
 // Clear the static loading splash so React owns the node

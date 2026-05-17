@@ -64,6 +64,11 @@ const StudyGuidePage = lazyNamed(() => import('@/pages/StudyGuide'), 'StudyGuide
 const SyllabusPage = lazyNamed(() => import('@/pages/Syllabus'), 'SyllabusPage');
 const MemoryLabPage = lazyNamed(() => import('@/pages/MemoryLab'), 'MemoryLabPage');
 const FormGuidePage = lazyNamed(() => import('@/pages/FormGuide'), 'FormGuidePage');
+const MockBriefingPage = lazyNamed(() => import('@/pages/MockComposite'), 'MockBriefingPage');
+const MockSittingPage = lazyNamed(() => import('@/pages/MockComposite'), 'MockSittingPage');
+const MockReportPage = lazyNamed(() => import('@/pages/MockComposite'), 'MockReportPage');
+const SettingsPage = lazyNamed(() => import('@/pages/Settings'), 'SettingsPage');
+const StartPage = lazyNamed(() => import('@/pages/Start'), 'StartPage');
 
 function RouteFallback() {
   return (
@@ -119,6 +124,11 @@ export default function App() {
                   <Route path="/syllabus" element={<SyllabusPage />} />
                   <Route path="/memory-lab" element={<MemoryLabPage />} />
                   <Route path="/form-guide" element={<FormGuidePage />} />
+                  <Route path="/training/mock" element={<MockBriefingPage />} />
+                  <Route path="/training/mock/sit/:id" element={<MockSittingPage />} />
+                  <Route path="/training/mock/report/:id" element={<MockReportPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/start" element={<StartPage />} />
                   <Route path="/study-guide" element={<StudyGuidePage />} />
                   <Route path="/mock" element={<MockPage />} />
                   <Route path="/formulas" element={<FormulasPage />} />

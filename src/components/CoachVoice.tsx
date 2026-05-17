@@ -72,6 +72,16 @@ function loadLog(): Msg[] {
 export function CoachVoice() {
   const [open, setOpen] = useState(false);
   const [pulse, setPulse] = useState(true);
+  const [disabled, setDisabled] = useState<boolean>(() =>
+    typeof window !== 'undefined' && sessionStorage.getItem('tba.coach.disabled') === '1',
+  );
+  // Poll the disabled flag so the FAB greys out the instant a mock starts/ends.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const tick = () => setDisabled(sessionStorage.getItem('tba.coach.disabled') === '1');
+    const id = window.setInterval(tick, 500);
+    return () => window.clearInterval(id);
+  }, []);
   const [messages, setMessages] = useState<Msg[]>(() => loadLog());
   const [text, setText] = useState('');
   const [partial, setPartial] = useState('');
@@ -367,16 +377,19 @@ export function CoachVoice() {
     <>
       {/* FAB */}
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => !disabled && setOpen((v) => !v)}
+        disabled={disabled}
         className={cn(
           'fixed bottom-5 right-5 z-40 group',
           'h-14 w-14 md:h-16 md:w-16 rounded-2xl',
           'flex items-center justify-center text-white',
           'shadow-[0_18px_40px_-12px_rgba(0,163,71,0.55)]',
           'transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98]',
+          disabled && 'opacity-40 grayscale cursor-not-allowed hover:scale-100',
         )}
         style={{ backgroundImage: 'linear-gradient(135deg, #00b54e 0%, #008f3d 55%, #f5b800 140%)' }}
-        aria-label="Open Coach AI"
+        aria-label={disabled ? 'Coach off during mocks. Available again on submission.' : 'Open Coach AI'}
+        title={disabled ? 'Coach off during mocks. Available again on submission.' : 'Open Coach AI'}
       >
         <span className="relative">
           <i className="fa-solid fa-headset text-xl md:text-2xl" />
@@ -396,6 +409,9 @@ export function CoachVoice() {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 30, opacity: 0, scale: 0.98 }}
               transition={{ type: 'spring', stiffness: 280, damping: 28 }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="coach-dialog-title"
               className={cn(
                 'absolute right-2 left-2 bottom-2 md:right-5 md:left-auto md:bottom-5',
                 'md:w-[460px] max-h-[92vh] flex flex-col',
@@ -411,7 +427,7 @@ export function CoachVoice() {
                     <i className="fa-solid fa-headset" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-display text-lg tracking-wide uppercase text-white leading-none">Coach AI</div>
+                    <div id="coach-dialog-title" className="font-display text-lg tracking-wide uppercase text-white leading-none">Coach AI</div>
                     <div className="text-[11px] text-white/60 tracking-wider uppercase mt-1 inline-flex items-center gap-1.5">
                       {speaking ? 'Speaking…' : listening ? 'Listening…' : 'On-device coach · curated AFM technique'}
                       <span title="On-device for concept questions; routes paper-specific model-answer requests to the AI service when one is configured." className="cursor-help text-white/50 hover:text-white">

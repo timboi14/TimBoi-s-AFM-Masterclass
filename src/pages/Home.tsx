@@ -71,6 +71,29 @@ const PASS_QUOTES = [
   { who: 'Priya S. · Sep/Dec 2024', score: '61%', quote: '"Voice dictation while doing housework. Got 6 weeks of revision out of dead time."' },
 ];
 
+/** Auto-hides once the user visits /start. */
+function NewUserTourBanner() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    setShow(localStorage.getItem('tba.onboarding.completed') !== '1');
+  }, []);
+  if (!show) return null;
+  return (
+    <div className="rounded-2xl border-l-4 border-l-accent bg-accent/[0.10] p-3 mb-3 flex items-center gap-3 flex-wrap">
+      <span className="text-[12px] uppercase tracking-wider text-accent-dark font-bold">
+        <i className="fa-solid fa-bullseye mr-1.5" aria-hidden /> New here?
+      </span>
+      <span className="text-[13.5px] text-ink flex-1 min-w-[200px]">
+        Take the 60-second tour to learn what each section does and what you should do today.
+      </span>
+      <Link to="/start" className="px-3 py-1.5 rounded-lg bg-accent text-ink font-bold text-[12px]">
+        Start the tour →
+      </Link>
+    </div>
+  );
+}
+
 const STADIUM_STATS = [
   { value: siteStats.practiceSets, label: 'Practice exams', sub: `${siteStats.practiceMarks} marks · CBE shell` },
   { value: siteStats.theoryCards, label: 'Theory Q&A', sub: 'Bullets + full model' },
@@ -98,6 +121,10 @@ export function HomePage() {
 
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
+      {/* One-time "Take the 60-second tour" banner. Hides forever once /start
+          has been visited (sets tba.onboarding.completed=1). */}
+      <NewUserTourBanner />
+
       {/* §12.3 Home tone sequence — section 1: white (welcoming) */}
       <SectionShell tone="white" pad="lg">
         <CenteredHero

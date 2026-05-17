@@ -15,6 +15,7 @@ import { SH_KEY_DATES } from '@/data/shplus';
 // Examiner, Memory Lab, Skills, Revision) still exist as routes — they are reached
 // through their hub page or via deep links, just not surfaced in the global nav.
 const NAV = [
+  { to: '/start', label: 'Start here', icon: 'fa-compass' },
   { to: '/', label: 'Home', icon: 'fa-house' },
   { to: '/course', label: 'Course', icon: 'fa-graduation-cap' },
   { to: '/past-papers', label: 'Past Papers', icon: 'fa-file-lines', match: '/past-papers' },
