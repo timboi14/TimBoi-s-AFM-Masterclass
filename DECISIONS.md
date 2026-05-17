@@ -67,13 +67,15 @@ The contract is a multi-month roadmap. To preserve the live study site (`timboi1
 
 ---
 
-## D-005 — Stadium League → personal trend board, optional pseudonymous global
+## D-005 — Stadium League → personal trend board (bots removed entirely)
 
-**Spec reference:** §10.
+**Spec reference:** §10 + Sprint 17 follow-up (2026-05-18).
 
-**Decision:** Existing "Stadium League Table" UI shifts to a personal trend table (best mark per topic, longest streak, fastest 25-mark debrief, biggest week-on-week improvement). An opt-in `/settings/community` toggle gates pseudonymous global comparison; the current bot personas (HarryK_9 etc.) are kept and clearly tagged "Coach bot" for motivational benchmarking.
+**Decision:** The "Stadium league table" on Home is replaced with a **Personal trend board** computed from real data — current/longest streak, fastest 25-mark debrief, week-on-week marker delta, and personal-best % per topic with deep links to the matching `/topic/:id`. The synthetic personas (HarryK_9, SonHM_7, etc.) are deleted entirely per the 2026-05-18 follow-up.
 
-**Why:** Single-cohort use makes a true competitive leaderboard meaningless, but the football-league identity of the section is sacred per §0.1. Reframing to personal trend preserves the metaphor.
+**Why:** Single-cohort use makes a competitive leaderboard meaningless; the follow-up explicitly directed removal of the fake rivals. The football-league identity is preserved by the section header style and emoji language, not by fake competitors.
+
+**Future work:** An opt-in `/settings/community` toggle for pseudonymous comparison against an anonymised median of opted-in users is still possible later, gated on auth + DB (Sprint 3+).
 
 ---
 

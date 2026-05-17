@@ -22,6 +22,9 @@ import { SPOTLIGHTS } from '@/data/spotlights';
 import { PAPERS } from '@/data/papers';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
+import { computePersonalTrend, loadLongestStreak, bumpLongestStreak } from '@/lib/personalTrend';
+import { loadFormGuideInputs } from '@/lib/formGuide';
+import { loadAttempts } from '@/lib/attempts';
 
 const EXAM_DATE = new Date('2026-06-05T09:00:00');
 
@@ -56,14 +59,6 @@ function useCountUp(target: number, duration = 900) {
   }, [target, duration, reduced]);
   return v;
 }
-
-const SEED_RIVALS = [
-  { name: 'HarryK_9', points: 1280, drills: 47, streak: 12 },
-  { name: 'SonHM_7', points: 980, drills: 38, streak: 8 },
-  { name: 'Romero_17', points: 740, drills: 26, streak: 5 },
-  { name: 'Maddison10', points: 560, drills: 19, streak: 3 },
-  { name: 'BissoumaY', points: 410, drills: 14, streak: 2 },
-];
 
 const PASS_QUOTES = [
   { who: 'Aisha O. · Sep/Dec 2025 sitting', score: '68%', quote: '"The Coach AI walked me through APV when I froze. I quoted scenario figures the examiner literally asked for."' },
@@ -113,11 +108,27 @@ export function HomePage() {
     return TOPIC_LIST[idx];
   }, [cd.d, state.streak]);
 
-  const leaderboard = useMemo(() => {
-    return [...SEED_RIVALS, { name: fanName, points: state.points, drills: state.drills, streak: state.streak }]
-      .sort((a, b) => b.points - a.points)
-      .map((r, i) => ({ ...r, rank: i + 1, me: r.name === fanName }));
-  }, [fanName, state.points, state.drills, state.streak]);
+  // Personal trend board — replaces the old fake leaderboard. Computed
+  // from real marker + attempt + streak data so the board stays meaningful
+  // for a single-author tool. (Spec §10 + Sprint 17 follow-up.)
+  const trend = useMemo(() => {
+    const longestEver = bumpLongestStreak(state.streak);
+    const fg = loadFormGuideInputs();
+    const attempts = loadAttempts().map((a) => ({
+      id: a.id,
+      startedAt: a.startedAt,
+      finishedAt: a.finishedAt ?? null,
+      marks: 25, // attempt log doesn't yet store paper marks per item — TODO Sprint 4 schema
+    }));
+    return computePersonalTrend({
+      marker: fg.marker,
+      attempts,
+      streak: { current: state.streak, longest: longestEver },
+    });
+  // Recompute on points changes too so the board refreshes after a marker
+  // run/debrief saves through the side-effect chain.
+  }, [state.points, state.streak, state.drills]);
+  const longestStreakEver = trend.streak.longest || loadLongestStreak();
 
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
@@ -489,50 +500,86 @@ export function HomePage() {
         ))}
       </motion.div>
 
-      {/* LEADERBOARD */}
-      <SectionTitle icon="fa-solid fa-ranking-star" badge={<Pill>Local only</Pill>}>
-        Stadium league table
+      {/* PERSONAL TREND BOARD (replaces the old fake league table) */}
+      <SectionTitle icon="fa-solid fa-chart-line" badge={<Pill>Your form, your data</Pill>}>
+        Personal trend board
       </SectionTitle>
       <Card>
-        <div className="overflow-x-auto -mx-2">
-          <table className="w-full text-[14px]">
-            <thead>
-              <tr className="text-[11px] uppercase tracking-[0.16em] text-muted">
-                <th className="text-left p-3 w-12">#</th>
-                <th className="text-left p-3">Fan</th>
-                <th className="text-right p-3">Points</th>
-                <th className="text-right p-3">Drills</th>
-                <th className="text-right p-3">Streak</th>
-                <th className="text-right p-3">Form</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaderboard.map((r) => (
-                <tr
-                  key={r.name}
-                  className={`border-t border-border/60 ${r.me ? 'bg-accent/[0.06]' : ''}`}
-                >
-                  <td className="p-3 font-mono text-muted">{r.rank}</td>
-                  <td className="p-3 font-bold">
-                    {r.name}
-                    {r.me && <span className="ml-2 pill bg-accent text-bg !text-[9px]">YOU</span>}
-                  </td>
-                  <td className="p-3 text-right font-mono text-primary">{r.points}</td>
-                  <td className="p-3 text-right font-mono">{r.drills}</td>
-                  <td className="p-3 text-right font-mono">
-                    {r.streak >= 7 && '🔥'} {r.streak}
-                  </td>
-                  <td className="p-3 text-right">
-                    <FormStreak points={r.points} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-2xl border border-border bg-white p-4">
+            <div className="text-[11px] uppercase tracking-wider text-muted mb-1">Current streak</div>
+            <div className="font-display text-3xl uppercase text-ink">
+              {trend.streak.current >= 7 ? '🔥 ' : ''}{trend.streak.current}d
+            </div>
+            <div className="text-[12px] text-muted mt-1">Longest ever: {longestStreakEver}d</div>
+          </div>
+          <div className="rounded-2xl border border-border bg-white p-4">
+            <div className="text-[11px] uppercase tracking-wider text-muted mb-1">Fastest 25-mark debrief</div>
+            <div className="font-display text-3xl uppercase text-ink">
+              {trend.fastestDebrief25 ? `${trend.fastestDebrief25.minutes}m` : '—'}
+            </div>
+            <div className="text-[12px] text-muted mt-1">
+              {trend.fastestDebrief25
+                ? new Date(trend.fastestDebrief25.finishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+                : 'Sit a 25-mark answer to set a baseline'}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-white p-4">
+            <div className="text-[11px] uppercase tracking-wider text-muted mb-1">Week-on-week shift</div>
+            {trend.weekOnWeek ? (
+              <>
+                <div className={cn('font-display text-3xl uppercase', trend.weekOnWeek.deltaPct >= 0 ? 'text-primary' : 'text-danger')}>
+                  {trend.weekOnWeek.deltaPct >= 0 ? '+' : ''}{trend.weekOnWeek.deltaPct} pts
+                </div>
+                <div className="text-[12px] text-muted mt-1">
+                  Last 7d {trend.weekOnWeek.lastWeekMean}% · prior 7d {trend.weekOnWeek.priorWeekMean}%
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="font-display text-3xl uppercase text-ink">—</div>
+                <div className="text-[12px] text-muted mt-1">Two weeks of marker runs unlocks this</div>
+              </>
+            )}
+          </div>
         </div>
-        <div className="mt-3 flex items-center justify-between text-xs text-muted">
+
+        {trend.topicHighs.length > 0 ? (
+          <div className="mt-5">
+            <div className="text-[11px] uppercase tracking-wider text-muted mb-2">Personal bests by topic</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {trend.topicHighs.map((h) => (
+                <Link
+                  key={h.topicId}
+                  to={`/topic/${h.topicId}`}
+                  className="rounded-xl border border-border bg-white px-3 py-2 hover:border-primary transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-ink uppercase text-[12px] tracking-wider">{h.topicId}</span>
+                    <span className="font-mono text-primary">{h.bestPct}%</span>
+                  </div>
+                  <div className="text-[11px] text-muted mt-0.5">
+                    on {h.bestPaperId} · most recent {h.recentPct}%
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-5 rounded-2xl border border-dashed border-border p-4 text-center">
+            <i className="fa-solid fa-bullseye text-2xl text-primary mb-1" />
+            <p className="text-[13.5px] text-ink/80">
+              Sit a past paper and submit it to the AI marker — your topic highs and week-on-week shift will populate here.
+            </p>
+            <Link to="/past-papers" className="btn-primary mt-3 inline-block">
+              <i className="fa-solid fa-play" /> Open Match Centre
+            </Link>
+          </div>
+        )}
+
+        <div className="mt-4 flex items-center justify-between text-xs text-muted flex-wrap gap-2">
           <span>
-            <i className="fa-solid fa-shield-halved" /> Saved on this device only.
+            <i className="fa-solid fa-shield-halved" /> Personal — saved on this device only.
           </span>
           <button
             className="text-danger hover:underline"
@@ -940,25 +987,6 @@ function ScoreCell({ label, value, accent, suffix }: { label: string; value: num
         {suffix && <span className="text-white/40 text-base ml-0.5">{suffix}</span>}
       </div>
     </div>
-  );
-}
-
-function FormStreak({ points }: { points: number }) {
-  const cells = 5;
-  const wins = Math.min(cells, Math.round(points / 200));
-  return (
-    <span className="inline-flex gap-1">
-      {Array.from({ length: cells }).map((_, i) => {
-        const win = i < wins;
-        return (
-          <span
-            key={i}
-            className={`w-2 h-3 rounded-sm ${win ? 'bg-primary' : 'bg-slate-200'}`}
-            title={win ? 'W' : '-'}
-          />
-        );
-      })}
-    </span>
   );
 }
 
