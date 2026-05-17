@@ -1917,35 +1917,139 @@ export const PAPERS: Paper[] = [
 
     scenarioSteps: [
       {
-        id: 'company',
-        navLabel: '1. The company',
-        title: 'Zhichi Co: three policy failures',
-        content: 'Zhichi Co is a listed engineering company that has been underperforming. Analysis identified three policy failures:\n\n1. No post-completion audits on investment projects\n2. A fixed 10% discount rate used for all projects regardless of risk (no one knows why this rate was chosen)\n3. Continuous equity financing that sent wrong signals to investors\n\nThe company is now entering a new business area (motor scooters) and wants to do this properly.',
+        id: 'failures',
+        navLabel: '1. Three policy failures',
+        title: 'Why Zhichi has been underperforming',
+        content: 'Zhichi is a large, listed engineering company (environmentally friendly products). Shares had been outperforming rivals until a few years ago. Now shares are underperforming; many analysts recommend sell.\n\nFinancial analysis attributes the underperformance to THREE policy failures:\n1. No post-completion audits on investment projects.\n2. A FIXED 10% discount rate used for ALL projects regardless of risk. None of the senior management can remember why this rate was chosen.\n3. Continuous equity financing for new projects, which sends adverse signals to investors.\n\nPart (a) asks you to discuss and justify the actions Zhichi should take to address all three failures.',
+      },
+      {
+        id: 'discount',
+        navLabel: '2. Discount rate',
+        title: 'Deriving a project-specific discount rate via proxy companies',
+        content: 'New project: manufacture environmentally friendly motor scooters (fully carbon neutral). This is a DIVERSIFICATION — Zhichi has no prior experience.\n\nThe CFO wants an appropriate discount rate based on an INITIAL assumption that the project is all-equity financed (APV will be used later).\n\nProxy data:\n• Liyu Co (competitor, 60% motor scooters, 40% wind farms):\n   - Share capital $20,000,000 ($0.25 nominal value)\n   - Reserves $27,436,000\n   - Market value of equity $172,000,000\n   - Market value of debt $48,260,000\n   - Equity beta 1.20\n• Sanwenyu Co (100% wind farms):\n   - Cost of equity estimated at 15.4%\n   - Financed 20% debt, 80% equity (market value)\n\nRisk-free rate 4.8%. Market risk premium 8%. Tax 20%.',
+        warning: 'Two-stage proxy derivation: (1) ungear Sanwenyu equity beta to isolate the WIND FARM asset beta; (2) ungear Liyu equity beta to its asset beta, then back out the MOTOR SCOOTER asset beta using the 60/40 split. Don\'t ungear Liyu directly and assume it\'s the scooter beta — it\'s a blended beta.',
       },
       {
         id: 'project',
-        navLabel: '2. The project',
-        title: 'New motor scooter project (verified data)',
-        content: 'Zhichi is manufacturing environmentally friendly motor scooters. 4-year project.\n\nKey data (verified from Question Pack):\n- Initial plant: $70m\n- Sales: $10m year 1, $40m year 2, then +20% years 3-4\n- Costs: 120% / 80% / 40% / 40% of sales\n- Working capital: $10m initial, then 15% of annual sales\n- TAD: 15% reducing balance\n- Tax: 20%, one-year delay\n- Residual value: $42m at year 4\n- Subsidised loan rate: 3% (4.8% risk-free rate minus 180 basis points)\n- Zhichi normal borrowing rate: 6%\n\nProxy companies: Liyu Co (60% motor scooters, 40% wind farms) and Sanwenyue Co (100% wind farms). Data given to derive the motor scooter-specific asset beta.',
-        warning: 'APV calculation checklist in order: (1) all-equity NPV at ungeared cost of equity, (2) add PV of tax shield on debt, (3) subtract PV of issue costs, (4) add PV of subsidised loan benefit. If you use WACC anywhere in an APV, stop and rethink. WACC is for NPV, not APV.',
+        navLabel: '3. Project cash flows',
+        title: 'NPV inputs',
+        content: 'Project life: 4 years. Initial plant and machinery: $70m. Sale at end of year 4: $42m INCLUSIVE of inflation (i.e. given as a money sum).\n\nRevenues: yr1 $10m / yr2 $40m / yrs 3–4 +20% per year ($48m / $57.6m).\nCosts: yr1 120% of sales / yr2 80% / yrs 3–4 40%.\n\nWorking capital: $10m at start of year 1; then 15% of THAT YEAR\'S sales at start of years 2–4. Any remaining WC released at end of project.\n\nTax: 20%, payable one year in arrears. Tax losses set against company\'s other profits.\nTAD: 15% reducing balance on plant.\nRealisable value of plant at end of yr 4: $20m (included in the $42m project sale price).',
+      },
+      {
+        id: 'finance',
+        navLabel: '4. APV financing',
+        title: 'Subsidised loan + issue costs',
+        content: 'Due to the project\'s positive environmental nature, Zhichi can fund the ENTIRE project through a loan at a subsidised interest rate of 180 bp below the risk-free rate of 4.8% → subsidised loan rate = 3.0%.\n\nZhichi\'s normal borrowing rate: 6%.\n\nIssue costs: 3% of GROSS finance. Issue costs are NOT tax-deductible.\n\nCFO says APV is more appropriate than conventional WACC-based NPV — but cannot explain why. Part (b)(iv) asks you to justify the APV approach.',
+        warning: 'APV checklist in order: (1) base-case NPV at UNGEARED cost of equity, (2) PLUS PV of tax shield on debt, (3) LESS PV of issue costs (payable upfront), (4) PLUS PV of subsidised loan benefit (interest saving × (1−t), discounted at the normal borrowing rate or risk-free rate). If you use WACC anywhere, that\'s wrong.',
       },
     ],
 
     questionParts: [
-      { label: '(a)', marks: 8, requirement: 'Explain the three policy failures and why they would lead to underperformance.' },
-      { label: '(b)(i)', marks: 10, requirement: 'Estimate project-specific cost of equity by ungearing proxy betas and regearing to Zhichi capital structure.' },
-      { label: '(b)(ii)', marks: 10, requirement: 'Calculate the all-equity NPV of the project.' },
-      { label: '(b)(iii)', marks: 3, requirement: 'Calculate APV adjusting for issue costs and subsidised loan benefit.' },
-      { label: '(b)(iv)', marks: 10, requirement: 'Evaluate APV results, discuss assumptions, and compare APV vs WACC-based NPV for this project.' },
-      { label: '(c)', marks: 6, requirement: 'Compare conventional debt financing with asset securitisation as funding options for Zhichi.' },
-      { label: 'Professional skills', marks: 4, requirement: 'Report format, structure, presentation.' },
+      {
+        label: '(a)',
+        marks: 8,
+        requirement: 'Discuss and justify the actions Zhichi Co should take to address the three financial strategy policy failures.',
+        markingPoints: [
+          { description: 'Post-completion audits: aim, benefits (learning, control), cost limitation', marks: 1 },
+          { description: 'Post-completion audits: recommendation — ring-fenced resource, clear aims', marks: 1 },
+          { description: 'Fixed discount rate: ineffective because projects have different risks', marks: 1 },
+          { description: 'Fixed discount rate: risk of accepting high-risk / rejecting low-risk value-adding projects', marks: 1 },
+          { description: 'Discount rate recommendation: project-specific risk-adjusted hurdle rate', marks: 1 },
+          { description: 'Pecking-order theory: internal > debt > equity', marks: 1 },
+          { description: 'Equity-issue signal: managers issue equity when shares overvalued → price falls on announcement', marks: 1 },
+          { description: 'Recommendation: shift to debt financing where possible (subsidised loan is ideal example)', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)(i)',
+        marks: 6,
+        requirement: 'Estimate an appropriate discount rate to use to determine the net present value of the new project based on all-equity finance.',
+        markingPoints: [
+          { description: 'Ungear Sanwenyu equity beta from Ke 15.4% via CAPM → equity beta = (15.4 − 4.8)/8 = 1.325', marks: 1 },
+          { description: 'Sanwenyu asset beta (D/E 20/80): βa = 1.325 × 80/(80 + 20×0.80) = 1.105 (wind farms only)', marks: 1 },
+          { description: 'Liyu equity beta 1.20 ungeared: D/E = 48.26/172, βa = 1.20 × 172/(172 + 48.26×0.80) = 0.967', marks: 1 },
+          { description: 'Motor scooter asset beta: 0.967 = 0.6 × βscooter + 0.4 × 1.105 → βscooter = 0.875', marks: 1 },
+          { description: 'All-equity cost of equity = 4.8% + 0.875 × 8% = ~11.8% (use a precise figure)', marks: 1 },
+          { description: 'Use this as discount rate for base-case NPV', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)(ii)',
+        marks: 9,
+        requirement: 'Estimate the net present value of the new project, assuming that it is all-equity financed.',
+        markingPoints: [
+          { description: 'Revenue: $10m / $40m / $48m / $57.6m', marks: 1 },
+          { description: 'Costs (% of sales): $12m / $32m / $19.2m / $23.04m', marks: 1 },
+          { description: 'TAD: 15% reducing balance on $70m; balancing allowance/charge yr 4 vs $20m plant residual', marks: 2 },
+          { description: 'Tax: 20% with one-year delay; tax loss in yr 1 gives a refund in yr 2', marks: 1 },
+          { description: 'Working capital: $10m yr 0; 15% of yr-sales yrs 1–3; release WC at end of yr 4', marks: 1 },
+          { description: 'Residual value $42m at end yr 4 (incl. inflation, $20m of which is plant)', marks: 1 },
+          { description: 'Discount at all-equity cost of capital ~11.8%', marks: 1 },
+          { description: 'Sum to base-case NPV', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)(iii)',
+        marks: 7,
+        requirement: 'Estimate the adjusted present value of the new project.',
+        markingPoints: [
+          { description: 'Issue costs = $100m gross × 3% = $3m (cash reserves, not grossed up); no tax relief', marks: 1 },
+          { description: 'Subsidised loan benefit per year: ($70m × (6% − 3%) × (1 − 20%)) = $1.68m × annuity factor', marks: 2 },
+          { description: 'Tax shield on subsidised-loan interest: $70m × 3% × 20% × annuity factor', marks: 2 },
+          { description: 'Discount financing side-effects at normal borrowing rate 6% (or risk-free 4.8%)', marks: 1 },
+          { description: 'APV = base-case NPV + financing side-effects; recommend accept/reject', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)(iv)',
+        marks: 10,
+        requirement: 'Evaluate whether the new project should be undertaken, and discuss the assumptions made in the estimates above, discuss whether the adjusted present value method would be more appropriate than the conventional net present value method to evaluate the new project.',
+        markingPoints: [
+          { description: 'Recommendation: accept if APV positive; magnitude vs absolute size of investment', marks: 1 },
+          { description: 'Sensitivity caveat: NPV depends heavily on revenue forecast; small change → big NPV swing', marks: 1 },
+          { description: 'Proxy company assumption: Liyu 60/40 split is approximate; sensitivity matters', marks: 1 },
+          { description: 'Cost-structure assumption: 40% of sales perpetuity is optimistic', marks: 1 },
+          { description: 'Residual value $42m incl. inflation is one estimate; volatility ignored', marks: 1 },
+          { description: 'APV more appropriate when financing structure DIFFERS from target capital structure (here: 100% subsidised loan)', marks: 2 },
+          { description: 'APV makes the value of the subsidy and the tax shield EXPLICIT, separating financing from operating value', marks: 2 },
+          { description: 'WACC would hide the subsidised-loan benefit in a single discount rate', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 10,
+        requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.',
+      },
     ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Zhichi Co policy failures',
+        content: 'Zhichi Co is a large, listed engineering company involved in the development and manufacture of environmentally friendly products. Until a few years ago, the value of its shares had been increasing steadily and it regularly outperformed its main rivals.\n\nMore recently its shares have been underperforming and many financial analysts are recommending the shares should be sold. Investors are becoming increasingly concerned.\n\nAnalysis concluded this underperformance was due to three policy failures:\n• Zhichi Co does not undertake post-completion audits of its investment projects.\n• Zhichi Co has used a fixed discount rate of 10% to assess all investment projects for some years now. None of senior management can remember why this rate was chosen.\n• Zhichi Co has continually funded new investment projects using equity finance, which sent the wrong signals to investors.',
+      },
+      {
+        title: 'Exhibit 2 — New project discount rate',
+        content: 'New project: manufacture environmentally friendly motor scooters (carbon neutral). Diversification into a new business area for Zhichi — no previous experience.\n\nThe CFO wants the discount rate determined on an initial assumption that the project is all-equity financed.\n\nLiyu Co (competitor, 60% motor scooters, 40% wind farms):\n• Share capital ($0.25 nominal): $20,000,000\n• Reserves: $27,436,000\n• Market value of equity: $172,000,000\n• Market value of debt: $48,260,000\n• Equity beta: 1.20\n\nSanwenyu Co (100% wind farm equipment):\n• Cost of equity: 15.4%\n• Financed 20% debt / 80% equity in market value terms.\n\nRisk-free rate 4.8%. Market risk premium 8%. Tax 20% for all companies.',
+      },
+      {
+        title: 'Exhibit 3 — New project cash flows',
+        content: 'Project life: 4 years.\nImmediate plant and machinery: $70m.\nProject sold at end of yr 4 for $42m (incl. any inflationary increase).\n\nRevenue: yr1 $10m; yr2 $40m; yrs 3–4 +20%/year (so yr3 $48m, yr4 $57.6m).\nCosts (% of revenue): yr1 120%; yr2 80%; yrs 3–4 40%.\n\nWorking capital: $10m initial at start of yr 1; then 15% of THAT YEAR\'S sales at start of yrs 2–4. Remaining WC released at end of project.\n\nTax: 20% per year, payable ONE YEAR IN ARREARS. Project tax losses set against company\'s profits from other projects.\nTAD: 15% reducing balance on plant.\nPlant realisable value at end yr 4 = $20m (this is included in the $42m project sale price).',
+      },
+      {
+        title: 'Exhibit 4 — Financing the new project',
+        content: 'Due to the positive environmental nature of the project, Zhichi can obtain the ENTIRE funding through a loan at a subsidised interest rate of 180 basis points BELOW the risk-free rate of 4.8% → subsidised loan rate 3%.\n\nZhichi\'s normal borrowing rate: 6%.\n\nIssue costs: 3% of GROSS finance, payable upfront. Issue costs are NOT tax-deductible.\n\nThe CFO believes APV is more appropriate than conventional NPV based on a risk-adjusted cost of capital — but cannot explain why.',
+      },
+    ],
+
+    keyAnswerTips: 'Key cost-of-capital and investment-appraisal question. The 6% normal borrowing rate is used as the discount rate for the financing side-effects (tax shield + subsidy benefit), but the 4.8% risk-free rate would also be acceptable per the Kaplan model answer. Two-stage proxy: ungear Sanwenyu → wind-farm asset beta (1.105); ungear Liyu → blended asset beta (0.967); back out motor-scooter beta from 0.967 = 0.6 × βs + 0.4 × 1.105 → βs ≈ 0.875.',
 
     verifiedNumbers: [
       { value: '$70m', description: 'Initial plant investment', source: 'Q' },
-      { value: '3%', description: 'Subsidised loan rate (4.8% - 1.8%)', source: 'Q' },
-      { value: '15%', description: 'TAD reducing balance rate', source: 'Q' },
-      { value: '20%', description: 'Corporation tax rate', source: 'Q' },
+      { value: '3%', description: 'Subsidised loan rate (4.8% − 1.8%)', source: 'Q' },
+      { value: '15%', description: 'TAD reducing-balance rate on $70m plant', source: 'Q' },
+      { value: '20%', description: 'Corporation tax rate (payable 1 year in arrears)', source: 'Q' },
+      { value: '~11.8%', description: 'All-equity cost of capital (using motor-scooter beta ≈ 0.875)', source: 'A' },
+      { value: '$42m', description: 'Project sale value at end of yr 4 (incl. $20m plant residual)', source: 'Q' },
     ],
 
     solutionSteps: [
@@ -1975,6 +2079,289 @@ export const PAPERS: Paper[] = [
       didWell: 'Beta ungearing and regearing was mostly done correctly. APV structure was understood by stronger candidates.',
       commonErrors: 'Many candidates calculated a WACC-based NPV and called it APV. That is not APV. The subsidised loan benefit calculation was frequently wrong or omitted entirely.',
       tutorTip: 'APV checklist: (1) all-equity NPV using ungeared cost of equity — no WACC, (2) add PV of tax shield, (3) subtract issue costs, (4) add subsidised loan benefit. If you see WACC anywhere in your APV answer, that is wrong.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // HANWOOD SHOES CO — Sep/Dec 2021 — Section B Q2
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'hanwood',
+    name: 'Hanwood Shoes Co',
+    session: 'Sep/Dec 2021',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'C',
+    topics: ['ma'],
+    tags: ['Demerger', 'FCF valuation', 'EPS', 'Liquidity'],
+    difficulty: 3,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'business',
+        navLabel: '1. The business',
+        title: 'Hanwood: 40-year-old shoe maker with two divisions',
+        content: 'Hanwood Shoes Co started 40 years ago manufacturing and selling children\'s shoes. Higher quality than rivals but also more expensive; school shoe sales have been a consistent cash generator funding the company\'s expansion.\n\nAbout 15 years ago Hanwood added adults\' shoes. Adults\' shoes now generate the majority of profits and at a higher margin than children\'s shoes. Adult shoes are a mix of formal (long lifespan) and fashionable. Inventory turnover period for adult shoes is much higher.\n\nTwo divisions, separate shops (don\'t sell both). Hanwood also wholesales adult shoes to other retailers.\n\n5 years ago: restructured cost base — moved children\'s shoe production to new home-country facilities; outsourced adults\' shoes to foreign suppliers. Board now expects children\'s profits to grow more slowly than adults\' — and that lower-cost competitors will take share in the children\'s market.',
+      },
+      {
+        id: 'sale',
+        navLabel: '2. The sale proposal',
+        title: 'Sell the children\'s shoes division — two reasons',
+        content: 'Hanwood\'s board wants to improve the cash position for TWO reasons:\n\n1. $175m loan notes (9%) due to be redeemed in just over a year. Board unwilling to refinance: terms unfavourable and investors concerned about gearing.\n2. Hanwood has been slow to pay some adult-shoe suppliers. One major supplier recently delayed delivery until paid for previous deliveries (working-capital crunch).\n\nCEO proposes: sell children\'s shoes division. Believes at least 3 children\'s clothing manufacturers (looking to expand product range) would be interested.\n\nFD plan for proceeds:\n• FIRST: repay $175m 9% loan notes.\n• THEN: increase cash held to improve liquidity (target current ratio 1.4).\n• REMAINDER: invest in adults\' shoes NCA to improve EPS.',
+        warning: 'Two-tier use of proceeds: loan repayment + current-ratio target + reinvestment in NCA. The current-ratio target of 1.4 is a CONSTRAINT, not a free choice — it determines how much extra current assets are needed before any reinvestment in NCA.',
+      },
+      {
+        id: 'valuation',
+        navLabel: '3. Sale valuation',
+        title: 'DCF valuation of the children\'s division',
+        content: 'Sale price = PV of future free cash flows.\n\nFCF of children\'s shoes division ($m): yr1 76 / yr2 81 / yr3 85 / yr4 88.\nAfter yr 4: 3.5% perpetual growth.\nDiscount rate 10%.\n\nChildren\'s division yr 1 PAT = $76m (FCF = PAT).\nHanwood total yr 1 PAT (if children\'s shoes not sold) = $217m.\n\nChildren\'s NCA = $608m; current assets = $349m.\n\nNew adult-shoe NCA earns 18% pre-tax return.\nNew adult-shoe current assets earn 6% pre-tax return.\nTax 20%.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 13,
+        requirement: 'Calculate the expected sales price of the children\'s shoes division and demonstrate its impact on Hanwood Shoes Co\'s statement of financial position and forecast earnings per share.',
+        markingPoints: [
+          { description: 'PV of FCF years 1–4 at 10%: $260m', marks: 2 },
+          { description: 'Terminal value at end of yr 4 = $88m × 1.035 / (0.10 − 0.035) = $1,402m; PV = $957m', marks: 2 },
+          { description: 'Total sale price = $260m + $957m = $1,217m', marks: 1 },
+          { description: 'Profit on sale = $1,217m − $608m − $349m = $260m → reserves', marks: 1 },
+          { description: 'Current-assets target: $894m × 1.4 = $1,252m → gain in CA = $692m', marks: 1 },
+          { description: 'NCA reinvestment = remaining proceeds − CA gain = $350m', marks: 1 },
+          { description: 'Revised balance sheet: NCA $942m / CA $1,252m / equity $1,047m / NCL $253m', marks: 1 },
+          { description: 'EPS: lose $76m PAT; add interest saved $13m ($175m × 9% × (1−20%))', marks: 1 },
+          { description: 'EPS: add return on new NCA $50m ($350m × 18% × (1−20%))', marks: 1 },
+          { description: 'EPS: add return on new CA $33m ($692m × 6% × (1−20%)); revised PAT $237m', marks: 1 },
+          { description: 'Adjusted EPS: $237m / 50m shares = $4.74 (up from $4.34)', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 7,
+        requirement: 'Discuss whether Hanwood Shoes Co\'s investors are likely to be satisfied with the proposed sale of the children\'s shoes division and its consequences for profits and funding.',
+        markingPoints: [
+          { description: 'EPS rises from $4.34 to $4.74 (+9.2%) — short-term positive', marks: 1 },
+          { description: 'Loan repayment removes refinance risk and reduces gearing', marks: 1 },
+          { description: 'Improved liquidity (current ratio target 1.4) helps supplier relationships', marks: 1 },
+          { description: 'Loss of cash-generative division → concentration in adults\' shoes (single-segment risk)', marks: 1 },
+          { description: 'Inventory turnover much higher for adults\' shoes → working-capital risk', marks: 1 },
+          { description: 'Children\'s division still profitable; cannibalisation of future PAT', marks: 1 },
+          { description: 'Investor question: why sell now, before lower-cost-competitor threat materialises?', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Hanwood Shoes Co',
+        content: 'Hanwood Shoes Co started trading 40 years ago, manufacturing and selling children\'s shoes in shops. Shoes have been higher quality than competitors\' — also more expensive. School-shoe sales in particular have been a consistent large generator of cash, helping fund expansion.\n\nAbout 15 years ago Hanwood started manufacturing and selling adults\' shoes. Adults\' shoes are currently sold at a higher profit margin than children\'s. Adults\' shoe sales now generate the majority of profits. The adults\' shoes are a mix of formal (long lifespan) and fashionable shoes. The inventory turnover period for adults\' shoes is, on average, significantly higher than for children\'s.\n\nHanwood is organised into two separate divisions. Shops sell either children\'s OR adults\' shoes, not both. Hanwood also wholesales adult shoes to other retailers.\n\nFive years ago Hanwood restructured its cost base. Children\'s shoe production moved to new home-country facilities; adults\' shoes outsourced to foreign suppliers. The board now predicts children\'s profits will grow more slowly than adults\' — and that a greater share of the children\'s market will be taken by lower-cost competitors.\n\nThe board is aware it must convince investors that any major strategic changes will increase EPS, and that any change in EPS will be considered against any change in business risk profile.',
+      },
+      {
+        title: 'Exhibit 2 — Sale of children\'s shoes division',
+        content: 'Two reasons the board wants to improve cash:\n\n1. $175m loan notes due to be redeemed in just over a year. Board unwilling to refinance: terms unfavourable, investor concern about gearing.\n2. Hanwood has been slow to pay some adult-shoe suppliers. One major supplier recently delayed delivery until paid for previous deliveries.\n\nCEO proposes: in future Hanwood should sell only adults\' shoes and sell the children\'s shoes division. He believes at least three children\'s clothing manufacturers (looking to expand their product range) would be interested.\n\nFD: proceeds used first to pay off loan notes. Then increase cash held to improve liquidity. Remaining proceeds invested in adults\' shoes division to improve EPS.',
+      },
+      {
+        title: 'Exhibit 3 — Impact and consequences of sale',
+        content: '1. Sale price = sum of PV of future free cash flows. Discount rate 10%.\n2. Children\'s division FCF ($m): yr1 76 / yr2 81 / yr3 85 / yr4 88.\n3. Children\'s yr 1 PAT = $76m. Hanwood total yr 1 PAT if children\'s not sold = $217m.\n4. After yr 4: FCF grows 3.5%/year.\n5. Proceeds: FIRST repay 9% loan notes. Part of the remainder held in CURRENT ASSETS to take CURRENT RATIO to 1.4. Rest invested in NON-CURRENT ASSETS.\n6. Profit on sale → reserves.\n7. Children\'s NCA = $608m; children\'s CA = $349m.\n8. New NCA earns 18% pre-tax; new CA earns 6% pre-tax.\n9. Tax 20%.',
+      },
+      {
+        title: 'Exhibit 4 — Hanwood Shoes Co\'s SOFP',
+        content: 'Hanwood Shoes Co pre-sale balance sheet ($m):\n\nAssets\nNon-current assets             1,200\nCurrent assets                   909\nTotal assets                   2,109\n\nEquity and liabilities\nCalled-up share capital           50\nReserves                         737\nTotal equity                     787\n\nNon-current liabilities\n9% loan notes                    175\n7% loan notes                    145\nBank loans                       108\nTotal NCL                        428\n\nCurrent liabilities              894\nTotal equity + liabilities     2,109',
+      },
+    ],
+
+    keyAnswerTips: 'Recipe almost identical to Charborough (MJ22): DCF valuation → balance sheet impact → EPS impact. Two differences: (1) current-ratio target of 1.4 explicitly constrains how much goes to CA before NCA reinvestment; (2) discount rate 10% is given directly, no need to compute a WACC. Watch the share count: 50m shares (not the 500m of CC), so the EPS numbers are roughly 10× larger — $4.34 baseline going to $4.74. Investor satisfaction discussion is in part (b) — link explicitly to the two reasons stated by the board (loan refinance + supplier squeeze).',
+
+    verifiedNumbers: [
+      { value: '$1,217m', description: 'Children\'s division DCF valuation', source: 'S' },
+      { value: '$260m', description: 'Profit on sale → reserves', source: 'S' },
+      { value: '$692m', description: 'Gain in current assets to hit 1.4 current ratio', source: 'S' },
+      { value: '$350m', description: 'Investment in adult-shoe NCA', source: 'S' },
+      { value: '$4.34 → $4.74', description: 'EPS before → after sale (+9.2%)', source: 'S' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'DCF the children\'s division',
+        explanation: 'FCF given for years 1–4: $76m / $81m / $85m / $88m. Discount at 10%: PV $260m. Terminal value at end of yr 4 = $88m × 1.035 / (0.10 − 0.035) = $1,402m. PV of terminal value = $1,402m × 0.683 = $957m. Total sale price = $260m + $957m = $1,217m.',
+        formula: 'PV yrs 1–4 @ 10% = 76×0.909 + 81×0.826 + 85×0.751 + 88×0.683 ≈ $260m\nTerminal value at end yr 4 = $88m × 1.035 / (0.10 − 0.035) ≈ $1,402m\nPV of terminal value = $1,402m × 0.683 ≈ $957m\nTotal sale price ≈ $1,217m',
+        verifiedNumbers: ['$1,217m sale price — verified Kaplan model answer'],
+      },
+      {
+        stepNumber: 2,
+        title: 'Roll the proceeds through the balance sheet',
+        explanation: 'Profit on sale = $1,217m − $608m NCA − $349m CA = $260m → reserves. Repay $175m loan notes. Required CA = $894m × 1.4 = $1,252m. Existing CA after children\'s removal = $909m − $349m = $560m. Gain in CA needed = $1,252m − $560m = $692m. NCA reinvestment = $1,217m − $175m − $692m = $350m.',
+        verifiedNumbers: ['$350m NCA reinvestment / $692m CA gain — verified'],
+      },
+      {
+        stepNumber: 3,
+        title: 'EPS impact',
+        explanation: 'Start with $217m baseline. Lose $76m children\'s PAT. Add interest saved net of tax: $175m × 9% × (1 − 20%) = $13m. Add NCA return net of tax: $350m × 18% × (1 − 20%) = $50m. Add CA return net of tax: $692m × 6% × (1 − 20%) = $33m. Revised PAT = $237m. EPS = $237m / 50m = $4.74 (vs $4.34 baseline).',
+        verifiedNumbers: ['$4.74 EPS — verified Kaplan model answer'],
+      },
+      {
+        stepNumber: 4,
+        title: 'Investor satisfaction discussion',
+        explanation: 'EPS up 9.2% should please investors. Loan-repayment removes refinance risk. Liquidity improved (CR 1.4). BUT: loss of cash-cow division, single-segment concentration in adult shoes (higher inventory turnover = more working-capital risk), and the lower-cost-competitor threat in children\'s market has not yet materialised, so the timing of the sale may be premature.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'DCF mechanics generally correct. EPS structure was logical for strong candidates.',
+      commonErrors: 'Current-ratio constraint was often ignored — many split proceeds 50/50 between CA and NCA arbitrarily. Investor-satisfaction discussion was generic; few connected the analysis back to the supplier-squeeze and refinance reasons.',
+      tutorTip: 'When proceeds are used in multiple ways with a stated constraint (here CR=1.4), work out the FORCED amount first (CA gain = $692m to hit the target), then the residual goes to NCA. Don\'t split arbitrarily.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // ROBSON CO — Mar/Jun 2021 — Section B Q3
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'robson',
+    name: 'Robson Co',
+    session: 'Mar/Jun 2021',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'B',
+    topics: ['inv'],
+    tags: ['APV', 'Subsidised loan', 'Issue costs', 'Capital provider analysis'],
+    difficulty: 4,
+    primarySource: 'A',
+
+    scenarioSteps: [
+      {
+        id: 'company',
+        navLabel: '1. The company',
+        title: 'Robson: a food manufacturer mid-turnaround',
+        content: 'Robson Co is a listed food manufacturer with well-known brands. Founding directors retain a significant minority stake and remain on the board. Listed 10 years ago.\n\nPost-listing, gearing rose significantly above sector average due to a poorly timed expansion strategy, mainly financed by debt. Earnings became volatile; debt burden triggered a decline.\n\n5 years ago the board started a debt-reduction turnaround: rights issues + asset disposals. Gearing now back to industry average BUT share price remains depressed (competitive pressure) and credit rating recently downgraded again.\n\nThe CEO has identified an opportunity: relocate manufacturing plant to a new state-of-the-art automated production line. Reduces underlying cost base and creates competitive advantage.',
+      },
+      {
+        id: 'project',
+        navLabel: '2. The project',
+        title: '$120m relocation: cash flows + financing mix',
+        content: 'FCFs from the project ($m):\nYr1: 20.9 / Yr2: 20.6 / Yr3: 28.7 / Yr4: 104.6 (large yr4 = realisation of disposal value)\n\nInvestment cost: $120m. CEO proposes financing:\n• Disposal of existing plant: $20m\n• Rights issue: $10m\n• Subsidised loan @ 3.5%: $40m\n• Bank loan @ 9%: $50m\nTotal $120m.\n\nBank loan repayable in equal annual instalments over 4 years.\nIssue costs 2% on GROSS EXTERNAL FINANCING, payable from cash reserves (not grossed up), not tax-deductible.\nUnderwriting on the rights issue: IGNORE.\n\nAsset beta currently 1.222. Risk-free rate 3%. MRP 9%. CEO expects business risk unchanged.\nCorporation tax 20%.',
+        warning: 'External financing for issue-cost purposes = rights issue $10m + subsidised loan $40m + bank loan $50m = $100m. The $20m plant disposal is NOT external financing — it\'s an internal asset realisation. So issue costs = $100m × 2% = $2m.',
+      },
+      {
+        id: 'providers',
+        navLabel: '3. Capital providers',
+        title: 'Concerns about external shareholders + subsidy approval',
+        content: 'EXTERNAL SHAREHOLDERS:\n• Last rights issue 18 months ago; two others in previous 5 years (4 rights issues total in 6.5 years).\n• Shareholder action group formed to pressure the board.\n• Campaign to replace CEO narrowly avoided at recent AGM.\n• CEO optimistic about rights-issue success and suggests UNDERWRITING.\n\nSUBSIDISED LOAN PROVIDER (government):\n• Funds the programme to boost jobs in the economically deprived northern region (where the new plant will be).\n• Loan yet to be approved.\n• Loan is open to applicants without security available — relevant because Robson\'s surplus assets were disposed of during the turnaround; remaining assets will secure the bank loan.\n• Other restrictions may be imposed.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 13,
+        requirement: 'Calculate the adjusted present value of the investment and recommend whether the project should be accepted or not.',
+        markingPoints: [
+          { description: 'Ungeared cost of equity: Keu = 3% + 1.222 × 9% = 14%', marks: 1 },
+          { description: 'Base-case NPV: discount FCFs at 14%; PV = 18.3 + 15.8 + 19.4 + 61.9 − 120 = ($4.6m)', marks: 2 },
+          { description: 'Issue costs: ($10m + $40m + $50m) × 2% = $2m (cash, no tax relief)', marks: 1 },
+          { description: 'Bank loan amortisation schedule: equal annual instalment $50m / 3.240 = $15,432k', marks: 2 },
+          { description: 'Tax shield on bank loan interest (declining balance): PV at 9% ≈ $2.0m', marks: 2 },
+          { description: 'Tax shield on subsidised loan interest: $40m × 3.5% × 20% × 3.240 ≈ $0.9m', marks: 1 },
+          { description: 'Subsidy benefit: $40m × (9% − 3.5%) × (1 − 20%) × 3.240 ≈ $5.7m', marks: 2 },
+          { description: 'Total financing side-effects: −2.0 + 2.0 + 0.9 + 5.7 = $6.6m', marks: 1 },
+          { description: 'APV = ($4.6m) + $6.6m = $2.0m → ACCEPT (positive APV)', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 7,
+        requirement: 'Discuss the factors the capital providers, excluding the bank, will consider before deciding whether or not to approve the funding decision for Robson Co\'s investment in a new manufacturing plant.',
+        markingPoints: [
+          { description: 'Shareholders: rights issue frequency (4 in 6.5 yrs) → fatigue and signal of weakness', marks: 1 },
+          { description: 'Shareholders: action group + narrowly survived CEO vote → governance instability', marks: 1 },
+          { description: 'Shareholders: dilution + underwriting cost vs the $2m APV margin', marks: 1 },
+          { description: 'Shareholders: business risk supposedly unchanged but credit downgrade suggests otherwise', marks: 1 },
+          { description: 'Subsidy provider: regional-employment criterion — must be met in northern region', marks: 1 },
+          { description: 'Subsidy provider: applicants without security accepted but restrictions may be imposed', marks: 1 },
+          { description: 'Subsidy provider: if loan declined, the entire APV thesis collapses (the $5.7m benefit was the swing factor)', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Robson Co and project information',
+        content: 'Robson Co is a food manufacturer with a portfolio of well-known brands. Founding directors retain a significant minority shareholding and continue to serve on the board following a successful listing 10 years ago.\n\nAfter listing, the gearing ratio increased significantly above sector average as the result of a poorly timed expansion strategy, mainly financed by debt. Earnings became increasingly volatile and the debt burden triggered a decline in financial performance.\n\nThe board responded 5 years ago with a debt-reduction turnaround strategy, financed by rights issues and asset disposals. Gearing is now equal to the industry average — but the share price remains depressed (competitive pressure within the industry). Credit rating recently downgraded again.\n\nThe CEO has identified an opportunity to relocate the manufacturing plant and develop a state-of-the-art automated production line, reducing the underlying cost base and creating competitive advantage.\n\nFCF estimates ($m): yr1 20.9 / yr2 20.6 / yr3 28.7 / yr4 104.6.\n\nInvestment cost $120m. CEO\'s proposed financing:\n• Disposal of existing manufacturing plant $20m\n• Rights issue $10m\n• Subsidised loan @ 3.5% $40m\n• Bank loan @ 9% $50m\n• Total $120m.\n\nBank loan repayable in equal annual instalments over 4 years. Issue costs 2% on gross external financing, payable from cash reserves, not tax-deductible. Ignore rights-issue underwriting.\n\nAdditional: asset beta 1.222. Risk-free rate 3%. MRP 9%. Business risk unchanged. Corporation tax 20%.',
+      },
+      {
+        title: 'Exhibit 2 — Further information on project finance',
+        content: 'The board discussed financing at a recent meeting. Bankers have already approved the $50m bank loan; the FD is concerned about other capital providers:\n\nEXTERNAL SHAREHOLDERS: Last rights issue 18 months ago; two others in the previous 5 years. Shareholder action group has formed; campaign to replace CEO narrowly avoided at the most recent AGM. CEO optimistic about rights-issue success but suggests underwriting to reduce the risk of failure.\n\nSUBSIDISED LOAN PROVIDER: Government funds the subsidised-loan programme to boost job creation in the economically deprived northern region (where the new automated manufacturing plant is to be located). Loan yet to be approved; CEO optimistic. Loan programme is open to applicants without assets for security, although other restrictions may be imposed. Relevant because Robson\'s surplus assets were disposed of during the turnaround and remaining assets will secure the bank loan.',
+      },
+    ],
+
+    keyAnswerTips: 'The 6% normal borrowing rate would discount the tax-shield and subsidy-benefit cash flows — but Robson uses the bank loan rate of 9% per the Kaplan model answer (the bank loan IS the closest comparator for the subsidy benefit). The risk-free rate 3% would also be acceptable. Base case is NEGATIVE ($4.6m) — APV depends entirely on the financing benefits ($6.6m), particularly the $5.7m subsidy benefit. If the subsidy is rejected, the APV collapses to ($3.7m) and the project should be rejected.',
+
+    verifiedNumbers: [
+      { value: '14%', description: 'Ungeared cost of equity Keu = 3% + 1.222 × 9%', source: 'A' },
+      { value: '($4.6m)', description: 'Base-case NPV (NEGATIVE — financing makes the project)', source: 'A' },
+      { value: '$2m', description: 'Issue costs ($100m gross × 2%)', source: 'A' },
+      { value: '$0.9m', description: 'Tax shield on subsidised loan interest', source: 'A' },
+      { value: '$2.0m', description: 'Tax shield on bank loan interest (declining balance)', source: 'A' },
+      { value: '$5.7m', description: 'Subsidy benefit ($40m × 5.5% × 80% × annuity 3.240)', source: 'A' },
+      { value: '$2.0m', description: 'APV = base + financing side-effects → ACCEPT', source: 'A' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Base-case NPV at the ungeared cost of equity',
+        explanation: 'Asset beta 1.222 + CAPM at 3% risk-free and 9% MRP → Keu = 14%. Discount the FCFs at 14%. Base NPV = ($4.6m). Negative — on a base-case basis the project should be REJECTED.',
+        formula: 'Keu = 3% + 1.222 × 9% = 14%\nDF at 14%: 0.877 / 0.769 / 0.675 / 0.592\nPV: 18.3 + 15.8 + 19.4 + 61.9 = 115.4\nBase NPV = 115.4 − 120 = ($4.6m)',
+        verifiedNumbers: ['Base NPV ($4.6m) — verified Kaplan model answer'],
+      },
+      {
+        stepNumber: 2,
+        title: 'Issue costs and tax shields',
+        explanation: 'External financing = $10m rights + $40m subsidised + $50m bank = $100m. Issue cost = $100m × 2% = $2m (cash, no tax relief).\n\nBank loan tax shield (declining balance — equal annual instalment $15,432k): interest yr1 $4,500k / yr2 $3,516k / yr3 $2,444k / yr4 $1,275k. Tax relief at 20%, discount at 9% → PV ≈ $2.0m.\n\nSubsidised loan tax shield: $40m × 3.5% × 20% × 3.240 (annuity 9%, 4yr) ≈ $0.9m.',
+        verifiedNumbers: ['Issue costs $2m / bank tax shield $2.0m / subsidy tax shield $0.9m — verified'],
+      },
+      {
+        stepNumber: 3,
+        title: 'Subsidy benefit',
+        explanation: 'The subsidy is the interest saving on $40m vs the normal borrowing rate (9% bank loan): $40m × (9% − 3.5%) = $2.2m/yr. After tax (lose tax shield on the saving): × (1 − 20%) = $1.76m/yr. Annuity at 9% over 4 yrs = 3.240. PV = $5.702m ≈ $5.7m.',
+        formula: 'Annual subsidy benefit (after tax) = $40m × (0.09 − 0.035) × (1 − 0.20) = $1.76m\nPV = $1.76m × 3.240 ≈ $5.7m',
+        verifiedNumbers: ['$5.7m subsidy benefit — verified'],
+      },
+      {
+        stepNumber: 4,
+        title: 'APV and recommendation',
+        explanation: 'APV = base case + financing side-effects = ($4.6m) + (−$2m + $2.0m + $0.9m + $5.7m) = ($4.6m) + $6.6m = $2.0m. Positive — recommend ACCEPT. But note the slim margin: if the subsidised loan is declined, APV collapses to ($3.7m).',
+        verifiedNumbers: ['APV $2.0m → ACCEPT — verified Kaplan model answer'],
+      },
+      {
+        stepNumber: 5,
+        title: 'Capital provider analysis (part b)',
+        explanation: 'EXTERNAL SHAREHOLDERS will question the FOURTH rights issue in 6.5 years (fatigue + signal of weakness), the action group + CEO vote (governance), dilution, and the slim $2m APV margin given a credit-rating downgrade. SUBSIDISED LOAN PROVIDER will check the regional-employment criterion (northern region, qualifies), assess the no-security exception (Robson has used remaining assets to secure the bank loan), and may impose restrictions. The entire APV thesis depends on the subsidy approval.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'Strong candidates correctly identified the APV structure and computed all four side-effects. Capital-provider analysis was reasonable when tied to scenario specifics.',
+      commonErrors: 'Many candidates grossed up the issue costs (the question says payable out of cash, so don\'t gross up). Bank-loan tax shield was often computed as an annuity on the full $50m rather than on declining balances. Capital-provider discussion was often generic — few referenced the action group, the CEO vote, or the no-security exception.',
+      tutorTip: 'When a question says issue costs are payable from CASH RESERVES — DO NOT gross up. The required investment is $120m, total financing is $120m, issue costs are $2m additional out of separate cash. When financing must reach a target post-issue-cost amount, then you gross up. Read the question carefully.',
       source: 'E',
     },
   },
