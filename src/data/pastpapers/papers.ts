@@ -2367,6 +2367,334 @@ export const PAPERS: Paper[] = [
   },
 
   // ─────────────────────────────────────────────
+  // CHAKULA CO — Mar/Jun 2021 — Section A
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'chakula',
+    name: 'Chakula Co',
+    session: 'Mar/Jun 2021',
+    paperSection: 'A',
+    totalMarks: 50,
+    syllabusSection: 'C',
+    topics: ['ma'],
+    tags: ['Demerger', 'Spin-off', 'M&A', 'P/E valuation', 'Capital structure'],
+    difficulty: 4,
+    primarySource: 'A',
+
+    scenarioSteps: [
+      {
+        id: 'companies',
+        navLabel: '1. The companies',
+        title: 'Chakula carving out coffee shops; Lahla considering acquisition',
+        content: 'Chakula Co — listed, two business sectors:\n• Food and drink production for supermarkets (rapid innovation — Chakula\'s focus)\n• Coffee shops nationwide (to be unbundled)\n\nThe board thinks Chakula is undervalued and wants to focus on the food & drink production sector. The coffee shops will be unbundled into Kawa Co. Chakula then either DEMERGES Kawa via a spin-off (1 Kawa share per Chakula share to existing shareholders) or SELLS Kawa to a third party.\n\nLahla Co — large UNLISTED hotels company, 20 significant shareholders. Looking to diversify into coffee retail. Has approached Chakula about acquiring Kawa. Lahla will finance either via cash-only or share-for-share offer.',
+      },
+      {
+        id: 'regulatory',
+        navLabel: '2. Regulatory + capital structure',
+        title: 'Lahla\'s board questions',
+        content: 'Lahla\'s board wants clarification on TWO theoretical questions:\n\n(i) WHY does an M&A regulatory framework exist? (To protect minority shareholders, prevent target-management blocking commercial deals, ensure sufficient time for scrutiny, prevent competition reduction — protecting consumers, suppliers and employees.)\n\n(ii) Two capital-structure propositions:\n• Maximise debt (because debt is cheap + tax shield) — MM with taxes view.\n• Balance debt and equity (because at high gearing financial distress costs override the tax shield) — trade-off theory.\n\nThese are NOT the same theory and the question wants both discussed.',
+      },
+      {
+        id: 'valuation',
+        navLabel: '3. Valuation inputs',
+        title: 'Capital structure + cash flow data',
+        content: 'CHAKULA ($m): Assets less CL 5,010 / Share capital ($0.50) 1,000 / Reserves 1,180 / Loan notes A ($100 nominal) 2,470 / Loan notes B ($100 nominal) 360.\n\nShare price $2.45. Kawa estimated equity value $1,200m.\nLoan notes A market value $2,100m (stays with Chakula). Loan notes B market value $400m (transfers to Kawa post-tax cost of debt 3.52%).\nKawa cost of equity 13.51%. Kawa maintains capital structure after unbundling.\nLahla D/E = 40:60 market value; 1,200m shares in issue.\nTax 20% all companies.\n\nKAWA AS DEMERGED COMPANY:\nChakula sales = $4,500m of which 20% = Kawa ($900m).\nPost-demerger: 6% sales growth/yr for 4 yrs; profit margin (PBIT) 21% of sales.\nTAD = maintenance investment; additional investment = $0.25 per $1 sales increase.\nAfter yr 4: 2.5% perpetual growth.\n\nACQUISITION OF KAWA BY LAHLA:\nHotel-industry average P/E = 15.61. Lahla\'s P/E = 10% lower than this = 14.05.\nLahla PBIT $305m, interest ($91.2m), tax 20%, PAT $171m.\nKawa PBIT $161.2m, interest ($14.8m), tax 20%, PAT $117.1m.\nCombined P/E = midpoint of Lahla and Kawa P/E ratios (Kawa P/E derived from demerger valuation).\nAdditional after-tax profit from combining = $62m/yr.\nLahla offers either CASH at $0.66/Kawa share OR 1 Lahla share for 3 Kawa shares. Lahla borrows for cash offer.',
+        warning: 'Demerger ≠ acquisition. Demerger value goes to CHAKULA shareholders (who own Kawa post-spin-off). Acquisition value is split between LAHLA shareholders and KAWA shareholders based on the price paid. These are evaluated separately and the question asks for gain percentages under each scenario.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 5,
+        requirement: 'Explain why a regulatory framework related to mergers and acquisitions is necessary to protect the interests of shareholders and other stakeholders.',
+        markingPoints: [
+          { description: 'Markets alone don\'t fully protect stakeholders — regulatory framework needed', marks: 1 },
+          { description: 'Protect minority shareholders — prevent dominant majority from forcing unfair terms', marks: 1 },
+          { description: 'Prevent target management blocking deals in shareholders\' commercial interest', marks: 1 },
+          { description: 'Ensure sufficient time + information for proper scrutiny by all investor groups', marks: 1 },
+          { description: 'Protect other stakeholders — prevent substantial lessening of competition (consumers, suppliers, employees)', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 6,
+        requirement: 'Discuss the two theoretical propositions, as raised by Lahla Co\'s board of directors (BoD), in relation to a company\'s capital structure.',
+        markingPoints: [
+          { description: 'Proposition 1 (MM with taxes): debt cheaper + tax shield → maximise debt minimises WACC', marks: 1 },
+          { description: 'Mechanism: interest paid pre-tax, dividends post-tax → tax shield', marks: 1 },
+          { description: 'Proposition 2 (Trade-off theory): at high gearing, financial distress costs override tax shield', marks: 1 },
+          { description: 'Cost of equity rises sharply; cost of debt eventually rises too', marks: 1 },
+          { description: 'Optimal capital structure exists at minimum WACC = max corporate value', marks: 1 },
+          { description: 'Practical conclusion: target capital structure, not pure debt-maximisation', marks: 1 },
+        ],
+      },
+      {
+        label: '(c)(i)',
+        marks: 8,
+        requirement: 'Estimate the value of each Kawa Co share if it is demerged and listed as an independent company.',
+        markingPoints: [
+          { description: 'Kawa sales: $4,500m × 20% = $900m yr0; grow 6%/yr', marks: 1 },
+          { description: 'PBIT 21% of sales; tax 20% → PAT each year', marks: 2 },
+          { description: 'Additional investment = $0.25 × ΔSales each year (TAD = maintenance, so net out)', marks: 2 },
+          { description: 'FCF yrs 1–4 = PAT − additional investment', marks: 1 },
+          { description: 'Terminal value at end yr 4 = FCF₅ / (Ke − g) where g = 2.5%, Ke = 13.51%', marks: 1 },
+          { description: 'Discount at 13.51%; sum to Kawa equity value; divide by Chakula shares (2,000m at $0.50 nominal)', marks: 1 },
+        ],
+      },
+      {
+        label: '(c)(ii)',
+        marks: 12,
+        requirement: 'Estimate: the additional equity value created when combining Lahla Co and Kawa Co; the percentage gain to each of Lahla Co\'s and Kawa Co\'s shareholder group under each payment method; the impact on Lahla Co\'s capital structure under each payment method.',
+        markingPoints: [
+          { description: 'Combined P/E = midpoint of Lahla 14.05 and Kawa (derived) → combined company value', marks: 2 },
+          { description: 'Combined after-tax profit = Lahla PAT $171m + Kawa PAT $117.1m + $62m synergy = $350.1m', marks: 1 },
+          { description: 'Combined equity value = combined P/E × combined PAT', marks: 1 },
+          { description: 'Additional equity value = combined equity − (Lahla equity + Kawa fair-value equity)', marks: 1 },
+          { description: 'CASH offer ($0.66/share × Kawa shares): Kawa gain = (cash received − Kawa fair value) / Kawa fair value', marks: 2 },
+          { description: 'CASH offer: Lahla gain = (combined equity − cash paid − original Lahla equity) / original Lahla equity', marks: 1 },
+          { description: 'CASH offer impact on capital structure: D/E rises (new debt to fund cash)', marks: 1 },
+          { description: 'SHARE offer (1 Lahla per 3 Kawa): new Lahla shares issued; combined equity split pro-rata', marks: 2 },
+          { description: 'SHARE offer: each side\'s gain depends on the new ownership %; D/E falls (no new debt)', marks: 1 },
+        ],
+      },
+      {
+        label: '(c)(iii)',
+        marks: 9,
+        requirement: 'Evaluate the financial and other factors that both Lahla Co\'s shareholders and Kawa Co\'s shareholders would consider prior to agreeing to the acquisition, and the impact on Lahla Co\'s capital structure under each payment method.',
+        markingPoints: [
+          { description: 'Demerger gives Kawa shareholders 18.3% gain (verified) — benchmark for evaluating any offer', marks: 1 },
+          { description: 'Cash offer: Kawa shareholders get 10% gain — LESS than demerger, may reject', marks: 1 },
+          { description: 'Cash offer: certain cash but loss of upside if combined company performs well', marks: 1 },
+          { description: 'Share offer: Kawa shareholders share in synergies but take Lahla risk', marks: 1 },
+          { description: 'Lahla shareholders: cash offer requires new debt — D/E rises beyond current 40:60', marks: 1 },
+          { description: 'Lahla shareholders: share offer dilutes existing holding but preserves capital structure', marks: 1 },
+          { description: 'Other factors: Lahla is unlisted → Kawa shareholders accepting Lahla shares lose liquidity', marks: 1 },
+          { description: 'Synergy realisation risk — $62m additional profit assumes integration succeeds', marks: 1 },
+          { description: 'Recommendation: Kawa shareholders should reject the 10% cash offer (demerger is better); consider share offer only if synergies credible', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 10,
+        requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Introduction',
+        content: 'Chakula Co is a large listed company in two business sectors: production of food and drink for supermarkets and other large traders (main business), and a chain of coffee shops nationwide. The board thinks the company is undervalued and wants to focus on the rapid innovation in food and drink production.\n\nChakula\'s board has decided to unbundle the coffee shops into a company called Kawa Co. Chakula will then either DEMERGE Kawa through a spin-off OR SELL Kawa. Initially, Chakula\'s shareholders will own Kawa on the basis of 1 Kawa share for every Chakula share owned.\n\nLahla Co is a large UNLISTED company controlled by 20 significant shareholders. Lahla owns a number of hotels around the country and is looking to diversify into coffee retail. Lahla has approached Chakula about purchasing Kawa. Lahla will finance the purchase either through a cash-only offer or a share-for-share offer.\n\nIf Kawa is demerged, it will be listed on the stock exchange as an independent company.',
+      },
+      {
+        title: 'Exhibit 2 — Areas for further clarification (Lahla\'s requests)',
+        content: '(i) Lahla\'s CEO has determined that a regulatory framework in the area of M&A is designed to protect the interests of shareholders and other stakeholders. She wants to find out WHY there is a need for a regulatory framework.\n\n(ii) The acquisition of Kawa will be a major investment for Lahla. The board has heard of several theories explaining the capital structure of a company, including two propositions:\n• A company should maximise its debt financing.\n• Too much debt can be harmful and there needs to be a balance between equity and debt financing.',
+      },
+      {
+        title: 'Exhibit 3 — Capital structure details',
+        content: 'Chakula Co ($m):\nAssets less current liabilities: 5,010\nShare capital ($0.50 nominal): 1,000\nReserves: 1,180\nLoan notes A ($100 nominal): 2,470 (book), market value $2,100m\nLoan notes B ($100 nominal): 360 (book), market value $400m\n\nChakula share price $2.45. Kawa estimated equity value $1,200m.\n\nAfter unbundling: Loan notes B serviced by Kawa (post-tax cost of debt 3.52%); Loan notes A remain with Chakula. Kawa maintains its capital structure post-unbundling.\n\nLahla D/E = 40:60 (market value). Lahla has 1,200m shares in issue.\nKawa cost of equity 13.51%.\nCorporation tax 20% all companies, paid same year.',
+      },
+      {
+        title: 'Exhibit 4 — Kawa Co as a demerged company',
+        content: 'Chakula sales revenue currently $4,500m, of which 20% attributable to Kawa.\n\nAfter Kawa is demerged:\n• Annual sales growth 6% for each of the next 4 years.\n• Profit margin before interest and tax (PBIT) = 21% of sales revenue, each year.\n• Current TAD = investment needed to maintain operations.\n• Kawa requires additional investment in assets of $0.25 per $1 increase in sales revenue.\n• After yr 4: annual FCF growth 2.5% for the foreseeable future.',
+      },
+      {
+        title: 'Exhibit 5 — Acquisition of Kawa Co by Lahla Co',
+        content: 'Average hotel-industry P/E ratio: 15.61. Lahla\'s P/E estimated to be 10% LOWER = 14.05.\n\nExtracts from current P&L ($m):\n               Lahla       Kawa\nPBIT           305.0       161.2\nInterest       (91.2)      (14.8)\nTax 20%        (42.8)      (29.3)\nPAT            171.0       117.1\n\nAfter acquisition: combined company P/E = MIDPOINT between Lahla and Kawa\'s individual P/E ratios. Annual after-tax profits increase by $62m due to combining.\n\nPayment options:\n• CASH offer: $0.66 per Kawa share (Lahla borrows the money).\n• SHARE-FOR-SHARE: 1 Lahla share for every 3 Kawa shares.',
+      },
+    ],
+
+    keyAnswerTips: 'Three-part valuation: (i) Kawa standalone via FCF; (ii) Combined company via P/E midpoint; (iii) Two payment methods evaluated separately on gain to each side. Critical insight: the DEMERGER benchmark gives Kawa shareholders a 18.3% gain — the cash offer\'s 10% gain is INFERIOR to just demerging. So Kawa shareholders should rationally reject the cash offer and either accept demerger or hold out for a better cash price. The share-for-share offer\'s appeal depends on whether Kawa shareholders trust the $62m synergy materialising.',
+
+    verifiedNumbers: [
+      { value: '18.3%', description: 'Kawa shareholder gain under demerger (benchmark)', source: 'A' },
+      { value: '10.0%', description: 'Kawa shareholder gain under cash payment', source: 'A' },
+      { value: '$1,200m', description: 'Kawa estimated equity value', source: 'Q' },
+      { value: '14.05', description: 'Lahla P/E ratio (15.61 × 0.90)', source: 'A' },
+      { value: '$350.1m', description: 'Combined annual PAT (Lahla $171 + Kawa $117.1 + synergy $62)', source: 'A' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Demerger valuation of Kawa via FCF',
+        explanation: 'Kawa sales yr0 = $900m (20% of $4,500m). Grow 6%/yr → yr1 $954m, yr2 $1,011m, yr3 $1,072m, yr4 $1,136m. PBIT 21% of sales each year. Tax 20% → PAT. Additional investment = $0.25 × ΔSales. FCF = PAT − additional investment. Discount at 13.51%; add terminal value at 2.5% perpetual growth from yr 5.',
+      },
+      {
+        stepNumber: 2,
+        title: 'Kawa standalone equity value and gain to shareholders',
+        explanation: 'Kawa equity value as derived above. Chakula has 2,000m shares ($1,000m nominal at $0.50 each). Demerger gives 1 Kawa share per Chakula share. Each Kawa share value = Kawa equity / 2,000m. Compare to Kawa\'s estimated $1,200m starting equity → gain ≈ 18.3% verified.',
+      },
+      {
+        stepNumber: 3,
+        title: 'Combined company value via P/E midpoint',
+        explanation: 'Lahla P/E = 14.05. Kawa P/E derived from FCF valuation. Combined P/E = midpoint. Combined PAT = $171m + $117.1m + $62m synergy = $350.1m. Combined equity value = combined P/E × $350.1m.',
+      },
+      {
+        stepNumber: 4,
+        title: 'Evaluate the two payment methods',
+        explanation: 'CASH OFFER: $0.66 × Kawa shares (2,000m demerged shares) = $1,320m paid. Kawa shareholders get $1,320m vs $1,200m fair value → 10% gain. Lahla shareholders get combined equity − $1,320m cash paid (financed by new debt). Lahla gain = (combined equity − $1,320m − Lahla original equity) / Lahla original equity. D/E rises post-deal.\n\nSHARE-FOR-SHARE: New Lahla shares issued (Kawa shares / 3). Combined equity split between original Lahla shareholders and new Kawa shareholders pro rata. Each side\'s gain = their share of combined value vs their pre-deal value. D/E unchanged.',
+        verifiedNumbers: ['18.3% demerger gain / 10% cash-offer gain to Kawa shareholders — verified'],
+      },
+      {
+        stepNumber: 5,
+        title: 'Recommend',
+        explanation: 'Kawa shareholders should reject the 10% cash offer — it\'s WORSE than the demerger\'s 18.3% gain. Consider the share offer only if confident the $62m synergy materialises. Also note: accepting Lahla shares means accepting unlisted-company illiquidity, which has its own discount.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'Strong candidates correctly used FCF for Kawa demerger value and P/E for the combined company. Most identified the demerger as the benchmark.',
+      commonErrors: 'Combined P/E was sometimes computed as the simple average of profits rather than the midpoint of P/E ratios. Cash-offer Lahla shareholder gain was often miscalculated because candidates forgot to deduct the cash paid from the combined equity value. Few candidates flagged the illiquidity issue of accepting unlisted Lahla shares.',
+      tutorTip: 'When evaluating two payment methods, always tabulate side-by-side: Kawa gain under each, Lahla gain under each, D/E impact under each. The recommendation falls out of the table — and the demerger is always the benchmark to beat.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // GOGARTH CO — Mar/Jun 2021 — Section B Q2
+  // Source: Kaplan AFM Exam Kit 2024-25 (verbatim)
+  // ─────────────────────────────────────────────
+  {
+    id: 'gogarth',
+    name: 'Gogarth Co',
+    session: 'Mar/Jun 2021',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'E',
+    topics: ['hedg'],
+    tags: ['Forex netting', 'Forwards', 'Futures', 'Options', 'Economic risk'],
+    difficulty: 3,
+    primarySource: 'Q',
+
+    scenarioSteps: [
+      {
+        id: 'situation',
+        navLabel: '1. The situation',
+        title: 'Gogarth: net the same-currency same-date flows FIRST',
+        content: 'Gogarth Co is a Malaysian electrical-equipment manufacturer. Big sales market: USA. Also imports components from the USA. Regularly hedges foreign currency.\n\nToday: 1 May. On 31 August (4 months):\n• PAY $14,500,000 to a US supplier\n• RECEIVE $37,400,000 from a US customer\n\nNET position: receive $22,900,000.\n\nGogarth\'s home currency: Malaysian Ringgit (MR). The hedge converts the net USD receipt to MR.',
+        warning: 'NET first, then hedge. Both flows are in the SAME currency on the SAME date — they offset naturally without any derivatives. Hedging the gross amounts separately doubles the transaction costs and adds counterparty risk for no economic benefit.',
+      },
+      {
+        id: 'market',
+        navLabel: '2. Market data',
+        title: 'Quotes available on 1 May',
+        content: 'Exchange rates (US$ per MR1):\n• Spot: 0.2355 – 0.2358\n• 4-month forward: 0.2370 – 0.2374\n\nCurrency futures (contract size MR500,000, price US$/MR1):\n• June: 0.2366\n• September: 0.2378\n\nCurrency options (contract size MR500,000, exercise US$/MR1, premium in US cents/MR1):\nExercise 0.2368:\n   Calls — Jun 0.11 / Sep 0.14\n   Puts  — Jun 0.19 / Sep 0.23\n\nFutures and options mature at month end. Number of contracts rounded to nearest whole. Any unhedged amount or over-hedge is hedged via forward. Options assumed to be exercised for calculation purposes.',
+      },
+      {
+        id: 'direction',
+        navLabel: '3. Direction of hedge',
+        title: 'Net receiver of USD = SELLING USD = BUYING MR',
+        content: 'Gogarth is a NET RECEIVER of USD. To convert USD to MR, Gogarth SELLS USD and BUYS MR.\n\nFor each instrument:\n• FORWARD: sell USD at the BID for MR (the bank buys USD low). USD per MR forward bid is 0.2370 → effective rate 1/0.2370 MR per USD; or work directly: MR received = $22.9m / 0.2374 (use ASK side of US$/MR1 forward — the side that gives Gogarth fewer MR per USD).\n• FUTURES: Gogarth wants to BUY MR (sell USD). BUY September MR futures.\n• OPTIONS: Gogarth has the right to BUY MR at strike. BUY September CALL options on MR.\n\nThe MR (home currency) is the asset Gogarth wants to acquire. Buying = call options on MR.',
+        warning: 'Currency direction trap: when rates are quoted as US$ per MR1 (not the more familiar MR per US$1), reading the bid/ask the wrong way is a common error. Gogarth wants MR. The quote is "how many USD per MR". The HIGHER number means the bank gives Gogarth MORE USD per MR — but Gogarth is SELLING USD, so it WANTS more MR per USD, which means it wants the LOWER number of USD per MR. The ask (higher) 0.2374 is the rate at which Gogarth must pay more USD per MR — so it gets fewer MR per USD.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 15,
+        requirement: 'Advise Gogarth Co on, and recommend, an appropriate hedging strategy for its US$ cash flows on 31 August. Include relevant calculations.',
+        markingPoints: [
+          { description: 'NET position: $37.4m receipt − $14.5m payment = $22.9m net receipt', marks: 1 },
+          { description: 'Forward: convert net receipt at 4-month forward; MR received = $22.9m / 0.2374 = MR96,461,668', marks: 2 },
+          { description: 'Futures: BUY September MR futures (buying MR). Contracts = ($22.9m / 0.2378) / MR500,000 ≈ 193', marks: 2 },
+          { description: 'Futures lock-in rate via basis: basis Sep = 0.2378 − 0.2358 = 0.0020; unexpired at end Aug (1 of 5 mths) = 0.0004', marks: 2 },
+          { description: 'Futures outcome ≈ 193 × MR500,000 × 0.2374 → MR equivalent computed', marks: 1 },
+          { description: 'Over/under-hedge balance hedged at forward', marks: 1 },
+          { description: 'Options: BUY September CALL on MR at 0.2368 strike; 193 contracts', marks: 1 },
+          { description: 'Premium: 0.0014 × MR500,000 × 193 × current spot conversion', marks: 1 },
+          { description: 'Options outcome assuming exercise — exercise gives MR at strike; compare USD cost vs gross + premium', marks: 1 },
+          { description: 'Compare three outcomes in MR; recommend the highest MR receipt', marks: 2 },
+          { description: 'Discussion: forward gives certainty; futures lower transaction cost; options preserve upside if MR weakens vs USD', marks: 1 },
+        ],
+      },
+      {
+        label: '(b)',
+        marks: 5,
+        requirement: 'Discuss the role of Gogarth Co\'s treasury function in relation to the management of economic risk in relation to foreign exchange.',
+        markingPoints: [
+          { description: 'Economic risk = long-term competitive impact of FX movements (not specific contract cash flows)', marks: 1 },
+          { description: 'Derivatives cannot fix economic risk — it\'s structural', marks: 1 },
+          { description: 'Treasury\'s role: identify economic exposures (e.g. USD-denominated competitors), monitor real exchange rates', marks: 1 },
+          { description: 'Strategic responses: foreign-currency borrowing (natural hedge), overseas production, sourcing relocation', marks: 1 },
+          { description: 'Treasury advises board on diversification and pricing strategy in different currency zones', marks: 1 },
+        ],
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, commercial acumen.',
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Gogarth Co\'s currency risk management',
+        content: 'Gogarth Co is an electrical equipment manufacturer, based in Malaysia, looking to develop its operations abroad. One of its biggest sales markets is the USA and Gogarth Co also imports components from the USA. Gogarth Co regularly hedges transactions in foreign currencies.\n\nIt is currently 1 May. On 31 August, Gogarth Co is due to pay $14,500,000 to an American supplier and receive $37,400,000 from an American customer.\n\nExchange rates (US$ per MR1):\nSpot: 0.2355 – 0.2358\nFour months forward: 0.2370 – 0.2374\n\nCurrency futures (contract size MR500,000, futures price US$/MR1):\nJune: 0.2366\nSeptember: 0.2378\n\nCurrency options (contract size MR500,000, exercise price US$/MR1, premium US cents/MR1):\nExercise 0.2368:\n         Calls           Puts\n         Jun    Sep      Jun    Sep\n         0.11   0.14     0.19   0.23\n\nFutures and options mature at month end. Number of contracts rounded to nearest whole. Any unhedged or over-hedged amount is hedged at the forward market. For the calculations, options should be assumed to be exercised.',
+      },
+      {
+        title: 'Exhibit 2 — Board queries about risk management',
+        content: 'The head of Gogarth\'s treasury function gave a presentation at the last board meeting about the treasury function and its management of FX risk.\n\nA new non-executive director has stated that he understands what the treasury function does in relation to the management of TRANSACTION RISK, but is unclear on the treasury function\'s role in the management of ECONOMIC RISK.',
+      },
+    ],
+
+    keyAnswerTips: 'NET first, then hedge — same currency, same date, no derivatives needed. The net $22.9m receipt is what gets hedged. Direction confusion is the second biggest error: rates here are quoted as US$ per MR1 (not the more familiar MR per US$1). Gogarth wants MR, so it BUYS MR — buy MR futures and BUY CALL options on MR. Part (b) is a separate 5-mark discursive on economic risk — DON\'T mix into the calculations. Economic risk is structural and can\'t be hedged with derivatives; treasury\'s job is to identify exposures and recommend strategic responses (natural hedges, overseas production).',
+
+    verifiedNumbers: [
+      { value: '$22.9m', description: 'Net USD receipt (37.4 − 14.5)', source: 'Q' },
+      { value: 'MR96,461,668', description: 'Forward outcome ($22.9m / 0.2374)', source: 'A' },
+      { value: '193 contracts', description: 'Futures contracts ($22.9m / 0.2378 / MR500,000)', source: 'A' },
+      { value: '0.2378', description: 'September futures price', source: 'Q' },
+      { value: '0.2368', description: 'Option exercise price', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Net the same-currency same-date flows',
+        explanation: 'Receipt $37.4m and payment $14.5m are both USD, both on 31 August. Net = $22.9m receipt. Hedge ONLY the net.',
+      },
+      {
+        stepNumber: 2,
+        title: 'Forward hedge: lock in MR receipt',
+        explanation: 'Gogarth sells USD and buys MR. With quote US$/MR1, the ask side 0.2374 means Gogarth needs more USD per MR (= gets fewer MR per USD). MR received = $22.9m / 0.2374 = MR96,461,668.',
+        formula: 'MR received = $22.9m / 0.2374 = MR96,461,668',
+        verifiedNumbers: ['MR96,461,668 forward outcome — verified Kaplan model answer'],
+      },
+      {
+        stepNumber: 3,
+        title: 'Futures hedge: buy MR futures',
+        explanation: 'Buy September MR futures (settle after Aug close-out). Contracts = ($22.9m / 0.2378) / MR500,000 ≈ MR96.3m / MR500k ≈ 193 contracts. Basis at 1 May = 0.2378 − 0.2358 = 0.0020. Unexpired basis at end Aug (1 of 5 mths to Sep maturity) = 0.0004. Lock-in rate ≈ 0.2378 − 0.0004 = 0.2374. Futures outcome ≈ 193 × MR500,000 × 0.2374 = MR22.9m USD equivalent. Any over/under-hedge handled at forward.',
+        verifiedNumbers: ['193 contracts — verified Kaplan model answer'],
+      },
+      {
+        stepNumber: 4,
+        title: 'Options hedge: buy MR call options',
+        explanation: 'Buy 193 September call options at strike 0.2368. Premium 0.0014 × MR500,000 × 193 = USD 135,100 → convert at spot (USD 135,100 / 0.2358 ≈ MR572,985). If exercised: get MR at strike 0.2368, gives MR outcome similar to futures but at a cost of the premium.',
+      },
+      {
+        stepNumber: 5,
+        title: 'Compare and recommend',
+        explanation: 'Forward MR96.46m vs Futures (similar net outcome) vs Options (lower net after premium). Recommend the highest MR receipt. Typically forwards or futures win in a baseline scenario; options only justified if Gogarth wants upside if MR weakens (USD strengthens) further — Gogarth would benefit because it receives more MR per USD on the unhedged portion.',
+      },
+      {
+        stepNumber: 6,
+        title: 'Economic risk discussion (part b)',
+        explanation: 'Economic risk = structural, long-term impact of FX on competitive position. Cannot be hedged with derivatives. Treasury\'s role: identify exposures (e.g. USD-pricing competitors), monitor real exchange rates, recommend strategic responses — natural hedges via USD borrowing, overseas production or sourcing relocation, diversification of sales currencies. Treasury advises the board; doesn\'t fix the problem with a forward contract.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'Most candidates correctly netted the gross USD flows. Forward and futures direction were generally correct.',
+      commonErrors: 'Many candidates hedged the gross amounts separately, doubling transaction costs. Some used the wrong side of the bid/ask spread when the quote was reversed (US$/MR1 instead of the more familiar MR/US$1). Economic risk discussion was often blurred with transaction risk despite the question explicitly separating them.',
+      tutorTip: 'When rates are quoted as US$/MR1 (i.e. asset/base format) and you want to BUY MR, you want the LOWER number of USD per MR — but that\'s the bid, and you\'re the customer dealing at the ASK (higher). So you give MORE USD per MR than the mid, meaning you get FEWER MR per USD. The right answer is always: pick the rate that gives you LESS of what you want and confirm with a direction check.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
   // 15. FITZHARRIS CO — Sep/Dec 2020 — Section B
   // Source: Solution Pack (text verified)
   // ─────────────────────────────────────────────
