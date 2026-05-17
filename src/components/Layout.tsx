@@ -25,7 +25,6 @@ const NAV = [
   { to: '/training', label: 'Training', icon: 'fa-stopwatch', match: '/training' },
   { to: '/scout', label: 'Scout', icon: 'fa-binoculars', match: '/scout' },
   { to: '/boot-room', label: 'Boot Room', icon: 'fa-brain', match: '/boot-room' },
-  { to: '/study-guide', label: 'Tools', icon: 'fa-toolbox' },
   { to: '/war-room', label: 'War Room', icon: 'fa-shield-halved' },
 ];
 

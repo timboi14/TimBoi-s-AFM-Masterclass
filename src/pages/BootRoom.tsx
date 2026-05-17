@@ -13,6 +13,7 @@ export function BootRoomPage() {
   const anchors: SubNavAnchor[] = [
     { id: 'memory', label: 'Memory Lab' },
     { id: 'skills', label: 'Skills' },
+    { id: 'tools', label: 'Study tools' },
   ];
 
   return (
@@ -65,6 +66,27 @@ export function BootRoomPage() {
             subline:
               'Communication, analysis, scepticism, commercial acumen. Drilled with examiner-style prompts.',
             actions: <TonePill as="link" to="/exam-skills" variant="primary">Open skills</TonePill>,
+          }}
+        />
+      </SectionShell>
+
+      <SectionShell tone="mist" pad="lg" id="tools">
+        <TwoUp
+          left={{
+            tone: 'white',
+            eyebrow: 'Study tools',
+            headline: 'Mark budget · timer · answer plans · verb translator.',
+            subline:
+              'The four tools you reach for mid-revision. Apportion marks across a paper, time your drills, plan before you write, translate the requirement verb. Everything saves to your device.',
+            actions: <TonePill as="link" to="/study-guide" variant="primary">Open study tools</TonePill>,
+          }}
+          right={{
+            tone: 'mist',
+            eyebrow: 'Memory Lab Pro',
+            headline: 'Leitner queue, palace, Feynman pad.',
+            subline:
+              'The full retrieval workshop — 5-stage spaced repetition, a 10-room memory palace, and a Feynman pad that forces a 4-sentence plain-English explanation.',
+            actions: <TonePill as="link" to="/memory-lab" variant="primary">Open Memory Lab</TonePill>,
           }}
         />
       </SectionShell>
