@@ -69,6 +69,7 @@ const MockSittingPage = lazyNamed(() => import('@/pages/MockComposite'), 'MockSi
 const MockReportPage = lazyNamed(() => import('@/pages/MockComposite'), 'MockReportPage');
 const SettingsPage = lazyNamed(() => import('@/pages/Settings'), 'SettingsPage');
 const StartPage = lazyNamed(() => import('@/pages/Start'), 'StartPage');
+const DiagnosticPage = lazyNamed(() => import('@/pages/Diagnostic'), 'DiagnosticPage');
 
 function RouteFallback() {
   return (
@@ -129,6 +130,7 @@ export default function App() {
                   <Route path="/training/mock/report/:id" element={<MockReportPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/start" element={<StartPage />} />
+                  <Route path="/start/diagnostic" element={<DiagnosticPage />} />
                   <Route path="/study-guide" element={<StudyGuidePage />} />
                   <Route path="/mock" element={<MockPage />} />
                   <Route path="/formulas" element={<FormulasPage />} />

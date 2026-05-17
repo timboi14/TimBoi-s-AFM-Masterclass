@@ -6,15 +6,26 @@ import { store } from '@/lib/store';
 import { speak, isSpeechSynthesisSupported } from '@/lib/voice';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
+import {
+  type SRCard,
+  type SRMode,
+  type Box,
+  emptyCard,
+  grade as gradeCard,
+  getMode,
+  setMode as persistMode,
+  RATING,
+  type Rating,
+} from '@/lib/sr-engine';
 
-/* ── Spaced repetition queue (Leitner 5-box) ────────────────── */
-type Box = 1 | 2 | 3 | 4 | 5;
-interface SRItem { id: string; front: string; back: string; topic: string; box: Box; due: number; }
+/* ── Spaced repetition queue (FSRS v5 default, Leitner classic optional) ──
+ * Spec §7: FSRS v5 is the new default scheduler; legacy Leitner stays as
+ * "Classic". Card state lives under tba_sr_v1 for backwards-compat with
+ * existing users — the FSRS branch reads/writes the same key. */
+type SRItem = SRCard;
 const SR_KEY = 'tba_sr_v1';
 
-const SR_INTERVALS_DAYS: Record<Box, number> = { 1: 0, 2: 1, 3: 3, 4: 7, 5: 14 };
-
-const SEED_SR: Omit<SRItem, 'box' | 'due'>[] = MNEMONICS.map((m) => ({
+const SEED_SR = MNEMONICS.map((m) => ({
   id: `m-${m.id}`,
   front: m.topic,
   back: `${m.formula} — ${m.phrase}`,
@@ -23,10 +34,12 @@ const SEED_SR: Omit<SRItem, 'box' | 'due'>[] = MNEMONICS.map((m) => ({
 
 function loadSR(): SRItem[] {
   // Seed on first read so the SR queue is never empty for a new user.
+  // Legacy Leitner-only cards are valid SRCards as-is (no .fsrs field yet);
+  // they'll get a FSRS state on their next grade if FSRS mode is active.
   const stored = safeReadJson<SRItem[] | null>(SR_KEY, null);
   if (stored && stored.length > 0) return stored;
   const now = Date.now();
-  const seeded: SRItem[] = SEED_SR.map((s) => ({ ...s, box: 1, due: now }));
+  const seeded: SRItem[] = SEED_SR.map((s) => emptyCard(s, now));
   safeWriteJson(SR_KEY, seeded);
   return seeded;
 }
@@ -173,6 +186,7 @@ export function MemoryPage() {
 function SRQueue() {
   const [items, setItems] = useState<SRItem[]>(() => loadSR());
   const [flipped, setFlipped] = useState(false);
+  const [mode, setLocalMode] = useState<SRMode>(() => getMode());
 
   useEffect(() => { saveSR(items); }, [items]);
 
@@ -185,22 +199,54 @@ function SRQueue() {
   const totalDue = due.length;
   const current = due[0];
 
-  const grade = (correct: boolean) => {
+  const [lastInterval, setLastInterval] = useState<number | null>(null);
+
+  const handleGrade = (rating: Rating) => {
     if (!current) return;
-    const nextBox = (correct ? Math.min(5, current.box + 1) : 1) as Box;
-    const nextDue = Date.now() + SR_INTERVALS_DAYS[nextBox] * 86_400_000;
-    setItems((prev) => prev.map((i) => i.id === current.id ? { ...i, box: nextBox, due: nextDue } : i));
+    const { card, intervalDays } = gradeCard(current, rating);
+    setItems((prev) => prev.map((i) => (i.id === current.id ? card : i)));
     setFlipped(false);
-    if (correct) store.set({ points: store.get().points + 5 });
+    setLastInterval(intervalDays);
+    if (rating !== RATING.Again) {
+      const reward = rating === RATING.Easy ? 8 : rating === RATING.Good ? 5 : 3;
+      store.set({ points: store.get().points + reward });
+    }
+  };
+
+  const switchMode = (next: SRMode) => {
+    persistMode(next);
+    setLocalMode(next);
   };
 
   return (
     <Card className="!p-6">
       <div className="grid md:grid-cols-[1fr_220px] gap-6">
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <Pill variant="primary">{totalDue} due now</Pill>
-            <span className="text-[11px] uppercase tracking-wider text-muted">Active recall · graded</span>
+          <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Pill variant="primary">{totalDue} due now</Pill>
+              {lastInterval !== null && (
+                <Pill>Next in {lastInterval}d</Pill>
+              )}
+            </div>
+            <div role="radiogroup" aria-label="Scheduler mode" className="inline-flex rounded-lg border border-border bg-white text-[11px] overflow-hidden">
+              <button
+                role="radio"
+                aria-checked={mode === 'fsrs'}
+                onClick={() => switchMode('fsrs')}
+                className={cn('px-2.5 py-1 uppercase tracking-wider font-bold', mode === 'fsrs' ? 'bg-primary text-white' : 'text-ink/70 hover:bg-slate-50')}
+              >
+                FSRS v5
+              </button>
+              <button
+                role="radio"
+                aria-checked={mode === 'leitner'}
+                onClick={() => switchMode('leitner')}
+                className={cn('px-2.5 py-1 uppercase tracking-wider font-bold border-l border-border', mode === 'leitner' ? 'bg-ink text-white' : 'text-ink/70 hover:bg-slate-50')}
+              >
+                Leitner (Classic)
+              </button>
+            </div>
           </div>
           {!current && (
             <div className="rounded-2xl border border-dashed border-border p-6 text-center">
@@ -226,40 +272,68 @@ function SRQueue() {
             </button>
           )}
           {current && (
-            <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className={cn('mt-4 grid gap-2', mode === 'fsrs' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2')}>
               <button
                 disabled={!flipped}
-                onClick={() => grade(false)}
+                onClick={() => handleGrade(RATING.Again)}
                 className="btn border border-danger text-danger bg-white hover:bg-danger hover:text-white disabled:opacity-40"
+                aria-label="Again — I forgot this card"
               >
-                <i className="fa-solid fa-rotate-left" /> Got it wrong → box 1
+                <i className="fa-solid fa-rotate-left" /> Again
               </button>
+              {mode === 'fsrs' && (
+                <button
+                  disabled={!flipped}
+                  onClick={() => handleGrade(RATING.Hard)}
+                  className="btn border border-accent text-ink bg-white hover:bg-accent disabled:opacity-40"
+                  aria-label="Hard — recalled with serious effort"
+                >
+                  <i className="fa-solid fa-mountain" /> Hard
+                </button>
+              )}
               <button
                 disabled={!flipped}
-                onClick={() => grade(true)}
+                onClick={() => handleGrade(RATING.Good)}
                 className="btn-primary disabled:opacity-40"
+                aria-label="Good — recalled with normal effort"
               >
-                <i className="fa-solid fa-check" /> Recalled → promote
+                <i className="fa-solid fa-check" /> Good
               </button>
+              {mode === 'fsrs' && (
+                <button
+                  disabled={!flipped}
+                  onClick={() => handleGrade(RATING.Easy)}
+                  className="btn border border-primary text-primary bg-white hover:bg-primary hover:text-white disabled:opacity-40"
+                  aria-label="Easy — trivial recall"
+                >
+                  <i className="fa-solid fa-bolt" /> Easy
+                </button>
+              )}
             </div>
           )}
         </div>
         <div className="space-y-2">
-          <div className="text-[11px] uppercase tracking-wider text-muted mb-1">Box distribution</div>
-          {([1, 2, 3, 4, 5] as Box[]).map((b) => {
-            const pct = items.length ? Math.round((counts[b] / items.length) * 100) : 0;
-            return (
-              <div key={b} className="rounded-lg border border-border bg-white px-3 py-2">
-                <div className="flex items-center justify-between text-[12px]">
-                  <span className="font-bold text-ink">Box {b}</span>
-                  <span className="font-mono text-muted">{counts[b]} · every {SR_INTERVALS_DAYS[b]}d</span>
-                </div>
-                <div className="h-1.5 mt-1.5 rounded-full bg-slate-100 overflow-hidden">
-                  <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
-                </div>
-              </div>
-            );
-          })}
+          {mode === 'leitner' ? (
+            <>
+              <div className="text-[11px] uppercase tracking-wider text-muted mb-1">Box distribution</div>
+              {([1, 2, 3, 4, 5] as Box[]).map((b) => {
+                const pct = items.length ? Math.round((counts[b] / items.length) * 100) : 0;
+                return (
+                  <div key={b} className="rounded-lg border border-border bg-white px-3 py-2">
+                    <div className="flex items-center justify-between text-[12px]">
+                      <span className="font-bold text-ink">Box {b}</span>
+                      <span className="font-mono text-muted">{counts[b]} cards</span>
+                    </div>
+                    <div className="h-1.5 mt-1.5 rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          ) : (
+            <FsrsDistribution items={items} />
+          )}
           <button
             onClick={() => {
               if (!confirm('Reset spaced repetition queue?')) return;
@@ -273,6 +347,50 @@ function SRQueue() {
         </div>
       </div>
     </Card>
+  );
+}
+
+function FsrsDistribution({ items }: { items: SRItem[] }) {
+  // Group cards by FSRS lifecycle stage. New cards (no fsrs state yet) fall
+  // into "Fresh" so the user can see the migration progress from Leitner.
+  const buckets = useMemo(() => {
+    const b = { fresh: 0, learning: 0, review: 0, relearning: 0 };
+    for (const it of items) {
+      if (!it.fsrs) b.fresh++;
+      else if (it.fsrs.state === 'learning') b.learning++;
+      else if (it.fsrs.state === 'relearning') b.relearning++;
+      else b.review++;
+    }
+    return b;
+  }, [items]);
+
+  const total = items.length || 1;
+  const rows: Array<{ key: keyof typeof buckets; label: string; tint: string }> = [
+    { key: 'fresh', label: 'Fresh (not seen)', tint: 'bg-slate-400' },
+    { key: 'learning', label: 'Learning', tint: 'bg-accent' },
+    { key: 'review', label: 'In review', tint: 'bg-primary' },
+    { key: 'relearning', label: 'Relearning', tint: 'bg-danger' },
+  ];
+
+  return (
+    <>
+      <div className="text-[11px] uppercase tracking-wider text-muted mb-1">FSRS distribution</div>
+      {rows.map((r) => {
+        const n = buckets[r.key];
+        const pct = Math.round((n / total) * 100);
+        return (
+          <div key={r.key} className="rounded-lg border border-border bg-white px-3 py-2">
+            <div className="flex items-center justify-between text-[12px]">
+              <span className="font-bold text-ink">{r.label}</span>
+              <span className="font-mono text-muted">{n} cards</span>
+            </div>
+            <div className="h-1.5 mt-1.5 rounded-full bg-slate-100 overflow-hidden">
+              <div className={cn('h-full', r.tint)} style={{ width: `${pct}%` }} />
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 }
 
