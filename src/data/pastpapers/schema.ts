@@ -15,10 +15,25 @@ export interface VerifiedNumber {
   source: DataSource;
 }
 
+export interface MarkingPoint {
+  description: string;
+  marks: number;
+}
+
 interface QuestionPart {
   label: string;     // e.g. "(a)" or "(b)(i)"
   marks: number;
   requirement: string; // What the question actually asks — plain text, bionic applied at render
+  /** Per-mark breakdown of what earns each mark (verbatim from Kaplan marking guide). */
+  markingPoints?: MarkingPoint[];
+  /** Verbatim ACCA examiner commentary for this specific part. */
+  examinerCommentary?: string;
+}
+
+/** Optional verbatim scenario exhibit — paper-level, rendered above the step nav when present. */
+export interface ScenarioExhibit {
+  title: string;
+  content: string;
 }
 
 export interface ScenarioStep {
@@ -67,4 +82,10 @@ export interface Paper {
   verifiedNumbers: VerifiedNumber[];
   solutionSteps: SolutionStep[];
   examinerFeedback: ExaminerFeedback;
+  /** Optional verbatim Kaplan "key answer tips" callout. */
+  keyAnswerTips?: string;
+  /** Optional verbatim Kaplan model answer extract (collapsible block on solution tab). */
+  modelAnswerText?: string;
+  /** Optional verbatim Kaplan scenario exhibits (rendered on scenario tab). */
+  exhibits?: ScenarioExhibit[];
 }

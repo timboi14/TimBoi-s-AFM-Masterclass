@@ -65,13 +65,105 @@ export const PAPERS: Paper[] = [
     ],
 
     questionParts: [
-      { label: '(a)', marks: 4, requirement: 'Explain why Para Fuels might include the value of the Kero Innovations offer when evaluating Investment B. What type of option is it and why can normal NPV not capture it?' },
-      { label: '(b)(i)', marks: 9, requirement: 'Calculate the NPV of Investment A. Full cash flow table with TAD, working capital, and tax.' },
-      { label: '(b)(ii)', marks: 9, requirement: 'Calculate NPV of Investment B without the Kero real option. Then recalculate NPV of Investment B after adding the BSOP-valued abandonment option.' },
-      { label: '(b)(iii)', marks: 7, requirement: 'Recommend on financial grounds which investment to choose. Discuss the assumptions behind your numbers.' },
-      { label: '(b)(iv)', marks: 11, requirement: 'Discuss the four board directors comments in detail. Advise how Para Fuels should proceed if Investment B is adopted.' },
-      { label: 'Professional skills', marks: 10, requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.' },
+      {
+        label: '(a)',
+        marks: 4,
+        requirement: 'Explain why Para Fuels might include the value of the Kero Innovations offer when evaluating Investment B. What type of option is it and why can normal NPV not capture it?',
+        markingPoints: [
+          { description: 'NPV assumes now-or-never decision / cannot be reversed once taken', marks: 1 },
+          { description: 'Kero offer creates an abandonment real option / flexibility to sell project', marks: 1 },
+          { description: 'Identified as a put option / right but not obligation to sell', marks: 1 },
+          { description: 'Real option has value / BSOP can value this flexibility', marks: 1 },
+        ],
+        examinerCommentary: 'This part of the question was generally done well. Many candidates recognised that the possibility of selling the project gives Para Fuels an abandonment real option, which has value. And this value needs to be considered in the financial analysis and evaluation.',
+      },
+      {
+        label: '(b)(i)',
+        marks: 9,
+        requirement: 'Calculate the NPV of Investment A. Full cash flow table with TAD, working capital, and tax.',
+        markingPoints: [
+          { description: 'Sales revenue years 1–4 correctly inflated at 5% per year', marks: 1 },
+          { description: 'Production costs correctly inflated at given rates per year', marks: 2 },
+          { description: 'TAD: 25% reducing balance years 1–3, balancing allowance year 4', marks: 2 },
+          { description: 'Tax at 20% applied correctly in year of occurrence', marks: 1 },
+          { description: 'Working capital: 10% of next year sales, invested at start, not released at year 25', marks: 2 },
+          { description: 'Correct discounting at 12% including PV of years 5–25', marks: 1 },
+        ],
+        examinerCommentary: 'This part of the question was done well by many candidates and a number achieved full marks. The difficulties were encountered when applying different inflation rates to different years cash flows, and when calculating the working capital, which did not get released back to the company after four years.',
+      },
+      {
+        label: '(b)(ii)',
+        marks: 9,
+        requirement: 'Calculate NPV of Investment B without the Kero real option. Then recalculate NPV of Investment B after adding the BSOP-valued abandonment option.',
+        markingPoints: [
+          { description: 'FCF years 1–4 correctly calculated (40% growth yrs 2–3, doubled yr 4)', marks: 2 },
+          { description: 'PV of years 5–25 as delayed annuity at 12%', marks: 2 },
+          { description: 'NPV of Investment B without real option', marks: 1 },
+          { description: 'Pa = PV of cash flows forgone (years 4 onwards) correctly identified', marks: 1 },
+          { description: 'Pe = $27m, t = 3, r = 5%, sigma = 40% applied to BSOP formula', marks: 2 },
+          { description: 'NPV of Investment B with real option (base NPV + put option value)', marks: 1 },
+        ],
+        examinerCommentary: 'Candidates found this part of the calculations more challenging. Common errors here included: (i) not recognising that the option is a put option and using the call value instead; and (ii) getting the estimate of Pa wrong — Pa is the present value of the cash flows forgone, therefore the present value of year 4 cashflows and the present value of the cash flows related to years 5 to 25.',
+      },
+      {
+        label: '(b)(iii)',
+        marks: 7,
+        requirement: 'Recommend on financial grounds which investment to choose. Discuss the assumptions behind your numbers.',
+        markingPoints: [
+          { description: 'Clear recommendation for Investment A based on higher NPV ($5.7m vs $4.4m)', marks: 1 },
+          { description: 'Discuss accuracy of cash flow forecasts', marks: 1 },
+          { description: 'Discuss reliability of 40% standard deviation estimate', marks: 1 },
+          { description: 'Discuss whether Kero offer will materialise (no binding contract)', marks: 1 },
+          { description: 'Discuss long-term nature of project and reliability of years 5–25 estimates', marks: 1 },
+          { description: 'Discuss stability of cost of capital at 12%', marks: 1 },
+          { description: 'Discuss real options assumptions (constant volatility, lognormal distribution)', marks: 1 },
+        ],
+        examinerCommentary: 'This part was answered adequately. Most candidates made a number of relevant points in the discussion, but mainly the answers stated the assumptions without going into a detailed discussion on the relevance and impact of the assumptions made.',
+      },
+      {
+        label: '(b)(iv)',
+        marks: 11,
+        requirement: 'Discuss the four board directors comments in detail. Advise how Para Fuels should proceed if Investment B is adopted.',
+        markingPoints: [
+          { description: 'CEO/ESG: valid concern but must be balanced against shareholder value obligations', marks: 2 },
+          { description: 'CMO/airlines: demand growth plausible but safety certification delays adoption timing', marks: 2 },
+          { description: 'CFO/Kero: no binding contract is a material risk; option value may not materialise', marks: 2 },
+          { description: 'CFO/two years: replacing further facilities with new tech increases cumulative risk', marks: 2 },
+          { description: 'Early adopter advantage: real but magnitude uncertain', marks: 1 },
+          { description: 'Practical next steps: pilot programme, negotiate binding Kero contract, phased approach', marks: 2 },
+        ],
+        examinerCommentary: 'Generally, this part was done less well than the other parts of the question. Many candidates presented the quotes from the various directors and then a few sentences to explain these comments. But very few went beyond that to turn the explanations and basic comments into a discussion by considering alternative positions and actions.',
+      },
+      {
+        label: 'Professional skills',
+        marks: 10,
+        requirement: 'Communication, analysis and evaluation, scepticism, commercial acumen.',
+        markingPoints: [
+          { description: 'Communication: report format with introduction, subheadings, conclusion', marks: 3 },
+          { description: 'Analysis and evaluation: calculations used to support discussion and recommendation', marks: 3 },
+          { description: 'Scepticism: questioning assumptions and challenging director comments', marks: 2 },
+          { description: 'Commercial acumen: real-world context applied to Para Fuels specific situation', marks: 2 },
+        ],
+        examinerCommentary: 'Candidates scored better with communication and analysis and evaluation marks, but less well on scepticism and commercial acumen. Fewer candidates scored well on scepticism because they did not question the relevance of the calculations, the validity of assumptions in any meaningful detail or question the opinion of directors.',
+      },
     ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 2 — Traditional technology, Investment A',
+        content: 'The initial investment in the production facility will be $14m. Tax allowable depreciation is available on the production facility at an annual rate of 25% reducing balance in years 1 to 3. At the end of year 4, any remaining written down value can be written off as a balancing adjustment. There will be no residual value after the 25-year project life because of substantial decommissioning costs.\n\nSales revenue in year 1 is expected to be $12.75m and this is expected to increase by 5% per year in each of the years 2 to 4. Production costs are expected to be $5.25m in year 1. Pre-inflation amounts and inflation rates for years 2 to 4 are: year 2 $6.20m at 6%, year 3 $7.10m at 7%, year 4 $8.00m at 8%.\n\nWorking capital of 10% of sales revenue will be needed in years 1 to 4, at the start of each year. No additional working capital is needed in years 5 to 25. At the end of 25 years, the working capital will be required for the decommissioning costs and will not be released.\n\nTax: 20% on profits in the year the liability occurs. Tax on losses refunded the year the loss occurs.\n\nAn estimate has been made of the discounted value of post-tax cash flows for years 5 to 25. This totals $5.40m at the start of year 5.',
+      },
+      {
+        title: 'Exhibit 3 — New technology, Investment B',
+        content: 'The initial set-up costs for the Investment B production facility using the new technology are estimated to be $34.6m. The after-tax free cash flows generated by this investment are expected to be $1.4m in year 1. These are expected to increase by 40% in each of years 2 and 3. In year 4, when costs reduce and revenues increase, the after-tax free cash flows are expected to be twice as much as the year 3 amount. The annual after-tax free cash flows from years 5 to 25 will remain the same as year 4. The annuity factor for the 12% cost of capital based on a useful life of 25 years is 7.843.\n\nKero Innovations Co has suggested it may offer to purchase Investment B at the start of year 4 for $27m. Due to the uncertainties surrounding this investment, the cash flows are expected to vary by a standard deviation of as much as 40%. The risk-free rate of return is estimated to be 5%.',
+      },
+      {
+        title: 'Exhibit 4 — Comments made at the BoD meeting',
+        content: 'The CEO gave an enthusiastic talk about the need for Para Fuels Co to fulfil its ESG responsibilities. The CMO pointed out that airlines around the world will face increasing pressure on their ESG agendas, but also that airlines will need to ensure that this type of jet fuel is safe to use.\n\nThe CFO was more cautious. She pointed to the fact that there is no binding contract with Kero Innovations Co. She also said that while shareholders would be supportive of pursuing an environmental agenda, the majority will be concerned if that led to a significant negative impact on corporate value. The CFO reminded the BoD that although only one production facility needs to be replaced very soon, more will need to be replaced after two years.\n\nNevertheless, the CFO suggested that if this new technology becomes established and produces jet fuel which is safe to use, Para Fuels Co will get the benefit of being one of the first companies to adopt the new technology. This could be advantageous in terms of cost reduction and revenue maximisation.',
+      },
+    ],
+
+    keyAnswerTips: 'Real options theory is often tested alongside investment appraisal. The BSOP calculator spreadsheet provided in the CBE helps to calculate option values very quickly. Be careful to pick up the correct figure from the spreadsheet — "C" is the value of a call option, and "P" is the value of a put option. The offer from Kero in this question gives Para Fuels an option to abandon the project in three years, which is an example of a put option.',
 
     verifiedNumbers: [
       { value: '$5,716,000', description: 'NPV of Investment A', source: 'S' },
@@ -174,11 +266,72 @@ export const PAPERS: Paper[] = [
     ],
 
     questionParts: [
-      { label: '(a)', marks: 9, requirement: 'Calculate the impact on intra-group cash flows if multilateral netting is used. Briefly explain the main advantage.' },
-      { label: '(b)', marks: 4, requirement: 'Calculate the USD cost of hedging the SEK payment using the forward (money market) method.' },
-      { label: '(c)', marks: 7, requirement: 'Calculate the result using currency futures and currency options. Recommend a hedging strategy.' },
-      { label: 'Professional skills', marks: 5, requirement: 'Analysis, scepticism, commercial acumen.' },
+      {
+        label: '(a)',
+        marks: 9,
+        requirement: 'Calculate the impact on intra-group cash flows if multilateral netting is used. Briefly explain the main advantage.',
+        markingPoints: [
+          { description: 'Convert all balances to USD at mid spot rates', marks: 2 },
+          { description: 'Build netting matrix showing total payables and receivables per entity', marks: 3 },
+          { description: 'Calculate net positions for each entity', marks: 2 },
+          { description: 'Apply settlement order rule correctly (largest payer → smallest receiver)', marks: 1 },
+          { description: 'Explain main advantage: fewer transactions, lower transaction costs', marks: 1 },
+        ],
+        examinerCommentary: 'Many candidates made a systematic attempt at the calculations and gained the majority of the marks. The most common error was failing to follow the instructions provided in the scenario, either by ignoring the need to calculate the final cash flow settlements once they had netted out the underlying transactions or by suggesting alternative settlement arrangements that were not in line with the instructions.',
+      },
+      {
+        label: '(b)',
+        marks: 4,
+        requirement: 'Calculate the USD cost of hedging the SEK payment using the forward (money market) method.',
+        markingPoints: [
+          { description: 'Forward market hedge: SEK125m / 8.5308 = USD 14,650,252', marks: 1 },
+          { description: 'Money market hedge: borrow SEK, convert at spot, invest in USD', marks: 2 },
+          { description: 'Comparison and recommendation with brief justification', marks: 1 },
+        ],
+        examinerCommentary: 'Candidates normally answered this requirement satisfactorily. The most common errors involved using the spot rate rather than the forward rate, or using the ask rate instead of the bid rate in the forward hedge, and using the wrong interest and/or exchange rates in the money market hedge.',
+      },
+      {
+        label: '(c)',
+        marks: 7,
+        requirement: 'Explain how a centralised treasury department assists with the cost-reduction strategy and discuss the advantages of the finance director\'s proposal to decentralise the treasury function.',
+        markingPoints: [
+          { description: 'Centralised: bulk pricing on derivatives, netting reduces transaction costs', marks: 2 },
+          { description: 'Centralised: expertise, consistent risk management policy', marks: 1 },
+          { description: 'Decentralised: faster decision-making, better local market knowledge', marks: 2 },
+          { description: 'Decentralised: more delegation of authority — addresses problems identified', marks: 1 },
+          { description: 'Application to Lough Co specific scenario (missed investment, failed float)', marks: 1 },
+        ],
+        examinerCommentary: 'Many candidates provided rote learned advantages of both centralised and decentralised treasury functions but very few were able to apply their answers to the specific scenario. Candidates who provide rote-learned explanations will always perform less well than candidates who take the time to apply their knowledge to the scenario.',
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis, scepticism, commercial acumen.',
+        markingPoints: [
+          { description: 'Analysis and evaluation: well-structured netting and hedging comparison', marks: 2 },
+          { description: 'Scepticism: questioning whether hedging is necessary given expected SEK depreciation', marks: 1 },
+          { description: 'Commercial acumen: discussion applied to Lough Co specific competitive situation', marks: 2 },
+        ],
+        examinerCommentary: 'Many candidates were also able to demonstrate reasonable analysis and evaluation skills but often struggled to demonstrate the requisite level of skills in scepticism and commercial acumen.',
+      },
     ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — Intra-group balances',
+        content: 'Cash flows between Lough Co (US, USD), Fitz Co (UK, GBP), Gahana Co (India, INR) and Adalar Co (Turkey, TRY):\n\nLough Co owes Gahana Co: INR 3,447.70m\nLough Co owes Adalar Co: TRY 126.20m\nFitz Co owes Lough Co: USD 75.75m\nFitz Co owes Gahana Co: INR 333.13m\nFitz Co owes Adalar Co: TRY 256.29m\nGahana Co owes Fitz Co: GBP 34.08m\nGahana Co owes Adalar Co: TRY 135.52m\nAdalar Co owes Lough Co: USD 12.80m\n\nSpot mid-rates: GBP/USD1 0.7070, INR/USD1 72.4000, TRY/USD1 7.2235.\n\nSettlements made in the order: company owing the largest net amount in USD settles with the company owed the smallest net amount in USD.',
+      },
+      {
+        title: 'Exhibit 2 — Payment to Swedish supplier',
+        content: 'Lough Co makes regular payments to a Swedish supplier. The next payment is for SEK125m due in five months.\n\nExchange rates (SEK per USD1): spot 8.4458–8.4924, five-month forward 8.5308–8.5778.\n\nAnnual interest rates available to Lough Co — investing/borrowing: United States 1.5% / 2.2%, Sweden 2.1% / 3.1%.',
+      },
+      {
+        title: 'Exhibit 3 — Treasury function context',
+        content: 'Lough Co operates in a highly competitive industry undergoing structural adjustment. A wave of M&A has led to consolidation and Lough Co\'s profitability has declined over recent years. The new CEO is implementing a cost-reduction strategy.\n\nThe finance director wants to restructure the treasury function due to ongoing problems: delays in approving finance for new projects (Gahana Co missed an investment opportunity); a failed plan to float Adalar Co on the local stock exchange; high turnover of senior management across subsidiaries due to lack of delegation. The FD believes a decentralised treasury function would help.',
+      },
+    ],
+
+    keyAnswerTips: 'The most commonly tested topics in AFM when looking at currency hedging are futures and traded options. This question covered some different topics — money market hedge and multilateral netting. This shows the importance of revising all parts of the syllabus, not just the most commonly tested topics.',
 
     verifiedNumbers: [
       { value: 'SEK125m', description: 'Payment amount', source: 'Q' },
@@ -214,6 +367,138 @@ export const PAPERS: Paper[] = [
       didWell: 'The netting schedule was generally handled well. Most candidates understood the concept of netting and correctly converted all balances to USD.',
       commonErrors: 'Many confused call and put options. Paying foreign currency means buying it, so you need call options. OTC and exchange-traded options were frequently conflated, leading to wrong contract size calculations.',
       tutorTip: 'One question before picking call or put: am I buying or selling the foreign currency? Buying = call. Selling = put. Paying SEK = buying SEK = call options. That single question removes most hedging direction errors.',
+      source: 'E',
+    },
+  },
+
+  // ─────────────────────────────────────────────
+  // FELINHEN CO — Sep/Dec 2022 — Section B
+  // Source: Kaplan Exam Kit 2024-25 + ACCA Examiner Report Sep 2022
+  // ─────────────────────────────────────────────
+  {
+    id: 'felinhen',
+    name: 'Felinhen Co',
+    session: 'Sep/Dec 2022',
+    paperSection: 'B',
+    totalMarks: 25,
+    syllabusSection: 'C',
+    topics: ['ma'],
+    tags: ['Valuation', 'MBO', 'Free cash flow', 'Stakeholders'],
+    difficulty: 3,
+    primarySource: 'A',
+
+    scenarioSteps: [
+      {
+        id: 'company',
+        navLabel: '1. The company',
+        title: 'Who is Felinhen Co?',
+        content: 'Felinhen Co carries out agricultural and woodland management. It owns a wholly-owned retail subsidiary, Counwood Co, with the same directors on both boards. Counwood runs two businesses: countryside stores and a woodcraft business.\n\nThe woodcraft business sells furniture and wood products. Wood is sourced from Felinhen-managed woodlands. Profits have declined for years and in the most recent year the woodcraft business made its first operating loss.',
+      },
+      {
+        id: 'options',
+        navLabel: '2. Three options',
+        title: 'The three options on the table',
+        content: 'The board initially decided to close all the woodcraft shops and craft centres. The proposals faced significant opposition. A group of shop employees, backed by business angels and a crowdfunding campaign, has offered to buy out the woodcraft business for $3m.\n\nThe finance director must value three scenarios:\n\n1. Close everything and sell the assets individually.\n2. Keep the craft centres open, close the shops, sell products through countryside stores and online.\n3. Keep all craft centres and woodcraft shops open (for comparison only — not an option the board is considering).',
+        warning: 'Scenario 3 is comparison-only. The board is NOT considering keeping everything open. Many candidates recommend scenario 3 anyway and lose the discussion marks.',
+      },
+      {
+        id: 'data',
+        navLabel: '3. Valuation data',
+        title: 'The valuation inputs',
+        content: 'Scenario 1 — Close and sell:\nCounwood Co most recent balance sheet: non-current assets $5,820k, current assets $1,750k, current liabilities $970k, total equity $6,600k. Net assets of woodcraft business = 60% of Counwood Co total net assets. Realisable value = 75% of woodcraft net assets (net of closure costs).\n\nScenario 2 — Keep craft centres only:\nImmediate net cash inflow $800k. Years 1–5 after-tax profits: $470k, $494k, $516k, $536k, $558k. Annual additional investment $100k, $120k, $135k, $145k, $150k — exactly equal to depreciation. From year 6: same as year 5 in perpetuity. Cost of capital 12%.\n\nScenario 3 — Keep everything open (comparison only):\nImmediate investment $600k. Year 1–3 after-tax profits $380k, $420k, $440k. Year 1–3 depreciation $170k, $190k, $200k. Year 1–3 additional investment $300k, $250k, $210k. From year 4: free cash flows grow at 3% in perpetuity. Cost of capital 12%.',
+        warning: 'Scenario 2 explicitly states additional investment = depreciation each year. Both cancel out of FCF. Use after-tax profits as FCF directly. Candidates who include both lose marks.',
+      },
+    ],
+
+    questionParts: [
+      {
+        label: '(a)',
+        marks: 9,
+        requirement: 'Calculate the valuation of the woodcraft business in the three projected scenarios.',
+        markingPoints: [
+          { description: 'Scenario 1: 60% × $6,600k = $3,960k woodcraft net assets; × 75% realisable = $2,970k', marks: 3 },
+          { description: 'Scenario 2: FCF = profits (depreciation = investment, both cancel). PV years 1–5 + terminal $558k/0.12 discounted from Y5 + $800k immediate', marks: 3 },
+          { description: 'Scenario 3: FCF = profit + depreciation − investment. Year 4 grows at 3%; terminal = FCF₄/(0.12−0.03). Deduct $600k immediate', marks: 3 },
+        ],
+        examinerCommentary: 'Overall, candidates coped well with the calculations and many scored high marks. The most common error with the net asset valuation involved ignoring the adjustments that should have been made to Counwood Co\'s assets to determine the realisable value of the woodcraft business\'s share of those assets. Many candidates also included additional investment in the valuation for the second scenario despite being told that this was equivalent to depreciation.',
+      },
+      {
+        label: '(b)',
+        marks: 11,
+        requirement: 'Discuss possible courses of action for Felinhen Co\'s board based on the valuations. Discuss other possible courses of action. Recommend a course of action.',
+        markingPoints: [
+          { description: 'Scenario 1 ($2,970k) is the floor value — compare to buyout offer of $3m', marks: 1 },
+          { description: 'Scenario 2 ($5,275k) is the highest financial value — discuss execution risk', marks: 2 },
+          { description: 'Buyout offer of $3m: marginally above floor — avoids job losses and reputational harm', marks: 2 },
+          { description: 'Other options: negotiate higher buyout price, partial implementation, phased approach', marks: 2 },
+          { description: 'Non-financial factors: employees, community, Felinhen reputation', marks: 2 },
+          { description: 'Clear recommendation with justification', marks: 2 },
+        ],
+        examinerCommentary: 'Although there were some excellent answers to this requirement, a significant number of candidates provided limited responses. Some candidates wasted time repeating information from the scenario or discussing points that were not relevant to the scenario. The most common misunderstanding made by candidates involved recommending the hypothetical third scenario even though candidates were told in exhibit one that this is not an option that the board is considering.',
+      },
+      {
+        label: 'Professional skills',
+        marks: 5,
+        requirement: 'Analysis and evaluation, scepticism, commercial acumen.',
+        markingPoints: [
+          { description: 'Analysis: comprehensive and well-structured valuation calculations', marks: 2 },
+          { description: 'Scepticism: questioning whether cash flow assumptions for scenarios 2 and 3 are realistic', marks: 1 },
+          { description: 'Commercial acumen: practical recommendations balancing financial and stakeholder factors', marks: 2 },
+        ],
+      },
+    ],
+
+    exhibits: [
+      {
+        title: 'Exhibit 1 — The decision facing the board',
+        content: 'Counwood Co (Felinhen\'s wholly-owned subsidiary) runs countryside stores and a woodcraft business. Profits from the woodcraft business have declined in recent years and made its first operating loss this year. The board initially decided to close all woodcraft shops and craft centres. After significant opposition, a group of shop employees, backed by business angels and a crowdfunding campaign, has offered to buy out the woodcraft business for $3m. The board has asked the FD to consider three valuations. (The "keep everything open" scenario is for comparison only — it is not an option the board is considering.)',
+      },
+      {
+        title: 'Exhibit 2 — Scenario data',
+        content: 'Scenario 1 (close & sell assets): Counwood balance sheet — non-current assets $5,820k, current assets $1,750k, current liabilities $970k, total equity $6,600k. Woodcraft net assets = 60% of Counwood total net assets. Realisable value = 75% of woodcraft net assets (net of closure costs).\n\nScenario 2 (keep craft centres, close shops, sell online): immediate net cash inflow $800k. After-tax profits years 1–5: $470k, $494k, $516k, $536k, $558k. Additional investment years 1–5: $100k, $120k, $135k, $145k, $150k — equal to depreciation. From year 6: as year 5 in perpetuity. Cost of capital 12%.\n\nScenario 3 (keep everything open — comparison only): immediate investment $600k. After-tax profits years 1–3: $380k, $420k, $440k. Depreciation years 1–3: $170k, $190k, $200k. Additional investment years 1–3: $300k, $250k, $210k. From year 4: FCF growth 3% in perpetuity. Cost of capital 12%.',
+      },
+    ],
+
+    keyAnswerTips: 'There was a lot to read in this question — three different alternatives. The calculations were actually straightforward, especially scenario 2 where depreciation equalled investment so both figures could be ignored. More than half of the marks were for the discussion elements and the professional skills, so do not over-spend on the calculations.',
+
+    verifiedNumbers: [
+      { value: '$2,970,000', description: 'Scenario 1 valuation (close & sell assets)', source: 'A' },
+      { value: '~$5,275,000', description: 'Scenario 2 valuation (keep craft centres)', source: 'A' },
+      { value: '~$3,719,000', description: 'Scenario 3 valuation (keep everything — comparison)', source: 'A' },
+      { value: '$3,000,000', description: 'Buyout offer from shop employees', source: 'Q' },
+    ],
+
+    solutionSteps: [
+      {
+        stepNumber: 1,
+        title: 'Scenario 1 is the floor value',
+        explanation: 'Closing and selling assets gives the minimum anyone should accept for this business. Calculate the woodcraft share of Counwood\'s net assets (60%), then apply the 75% realisable rate (accounting for closure costs). The buyout offer of $3m sits just above this floor — the employee group is not being exploitative.',
+        formula: 'Counwood net assets = $6,600,000 (total equity)\nWoodcraft share = 60% × $6,600,000 = $3,960,000\nRealisable value = 75% × $3,960,000 = $2,970,000',
+        verifiedNumbers: ['$2,970,000 — Scenario 1 valuation (floor)'],
+      },
+      {
+        stepNumber: 2,
+        title: 'Scenario 2 cancels out additional investment',
+        explanation: 'The question states additional investment equals depreciation in each year. So FCF = after-tax profits only. Do not include either in your cash flows. Terminal value at year 5 = $558k / 0.12 = $4,650k, discounted to today. Add the immediate $800k inflow.',
+        verifiedNumbers: ['~$5,275,000 — Scenario 2 valuation (highest)'],
+      },
+      {
+        stepNumber: 3,
+        title: 'Scenario 3 uses FCF = profit + depreciation − investment',
+        explanation: 'Scenario 3 has unequal depreciation and investment so both matter. FCF year 1 = $380k + $170k − $300k = $250k. Year 2 = $360k. Year 3 = $430k. Year 4 FCF = $430k × 1.03 = $442.9k. Terminal value at year 3 = $442.9k / (0.12 − 0.03) = $4,921k. Deduct the immediate $600k investment.',
+        verifiedNumbers: ['~$3,719,000 — Scenario 3 valuation (comparison only — NOT an option)'],
+      },
+      {
+        stepNumber: 4,
+        title: 'Make a recommendation that engages with the buyout offer',
+        explanation: 'Buyout ($3m) sits just above floor ($2.97m) but well below scenario 2 (~$5.3m). The employee group may be getting a bargain. Options: accept the offer (avoids job losses and reputational damage), negotiate upward toward scenario 2 value, or pursue scenario 2 themselves. Scenario 3 is NOT an option — do not recommend it.',
+      },
+    ],
+
+    examinerFeedback: {
+      didWell: 'Candidates coped well with the calculations and many scored high marks on the valuations — especially scenario 1\'s net asset approach.',
+      commonErrors: 'Two recurring failures: including additional investment alongside depreciation in scenario 2 despite the question saying they were equal; and recommending scenario 3 even though the exhibit explicitly said it was not an option the board was considering.',
+      tutorTip: 'When the question says two figures are equal and cancel, take them out. When the question says a scenario is for comparison only, do not recommend it. Read the exhibits twice before starting the calculations.',
       source: 'E',
     },
   },

@@ -613,6 +613,159 @@ body {
 }
 .question-part__body { margin: 0; color: var(--ink); }
 
+/* Marking guide (per-part Kaplan breakdown) */
+.marking-guide {
+  margin-top: 0.7rem;
+  border-top: 1px dashed var(--border);
+  padding-top: 0.55rem;
+}
+.marking-guide__summary {
+  cursor: pointer;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+  user-select: none;
+  list-style: none;
+}
+.marking-guide__summary::-webkit-details-marker { display: none; }
+.marking-guide__summary::before {
+  content: '+ ';
+  display: inline-block;
+  width: 0.9rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+.marking-guide[open] .marking-guide__summary::before { content: '− '; }
+.marking-guide__list {
+  list-style: none;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.marking-guide__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  padding: 4px 0;
+}
+.marking-guide__marks {
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 800;
+  font-size: 0.7rem;
+  color: var(--primary);
+  background: rgba(0,163,71,0.10);
+  padding: 1px 6px;
+  border-radius: 5px;
+  min-width: 28px;
+  text-align: center;
+}
+.marking-guide__desc { color: var(--ink); }
+
+/* Per-part ACCA examiner commentary */
+.part-examiner {
+  margin-top: 0.7rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(15,23,42,0.04);
+  border-left: 3px solid var(--ink);
+  border-radius: 6px;
+}
+.part-examiner__label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.part-examiner__body {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ink);
+  font-style: italic;
+}
+
+/* Kaplan key answer tips callout */
+.key-tips {
+  margin-top: 1.1rem;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(135deg, rgba(245,184,0,0.10), rgba(0,163,71,0.06));
+  border-radius: 12px;
+  border: 1px solid rgba(245,184,0,0.35);
+}
+.key-tips__label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7c4a06;
+  margin: 0 0 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.key-tips__body { margin: 0; color: var(--ink); font-size: 0.84rem; }
+
+/* Verbatim scenario exhibits (collapsible) */
+.paper-exhibits {
+  margin: 0 0 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(0,0,0,0.015);
+}
+.paper-exhibits__summary {
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 0.65rem 0.9rem;
+  user-select: none;
+  list-style: none;
+}
+.paper-exhibits__summary::-webkit-details-marker { display: none; }
+.paper-exhibits__summary::before {
+  content: '▸ ';
+  display: inline-block;
+  width: 1.1rem;
+  color: var(--primary);
+  font-weight: 800;
+}
+.paper-exhibits[open] .paper-exhibits__summary::before { content: '▾ '; }
+.paper-exhibits__list {
+  padding: 0 0.9rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.paper-exhibit {
+  background: white;
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.paper-exhibit__title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+.paper-exhibit__para {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.paper-exhibit__para:last-child { margin-bottom: 0; }
+
 /* Solution tab ─────────────────────────────────────── */
 
 .solution-step {

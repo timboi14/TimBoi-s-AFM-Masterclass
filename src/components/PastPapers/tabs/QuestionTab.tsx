@@ -14,6 +14,24 @@ export function QuestionTab({ paper }: Props) {
         Target {Math.round(totalMarks * 1.8)} minutes (1.8 min / mark)
       </p>
 
+      {paper.exhibits && paper.exhibits.length > 0 && (
+        <details className="paper-exhibits">
+          <summary className="paper-exhibits__summary">
+            Scenario exhibits (verbatim from Kaplan) · {paper.exhibits.length}
+          </summary>
+          <div className="paper-exhibits__list">
+            {paper.exhibits.map((ex) => (
+              <div key={ex.title} className="paper-exhibit">
+                <p className="paper-exhibit__title">{ex.title}</p>
+                {ex.content.split('\n\n').map((para, i) => (
+                  <p key={i} className="paper-exhibit__para bionic-text" {...bionicHTML(para)} />
+                ))}
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
+
       <ol className="question-parts">
         {paper.questionParts.map((part) => (
           <li key={part.label} className="question-part">
@@ -28,9 +46,43 @@ export function QuestionTab({ paper }: Props) {
               className="question-part__body bionic-text"
               {...bionicHTML(part.requirement)}
             />
+
+            {part.markingPoints && part.markingPoints.length > 0 && (
+              <details className="marking-guide">
+                <summary className="marking-guide__summary">
+                  Marking guide · {part.markingPoints.reduce((n, m) => n + m.marks, 0)}/{part.marks} marks broken down
+                </summary>
+                <ul className="marking-guide__list">
+                  {part.markingPoints.map((m, i) => (
+                    <li key={i} className="marking-guide__item">
+                      <span className="marking-guide__marks">{m.marks}m</span>
+                      <span className="marking-guide__desc bionic-text" {...bionicHTML(m.description)} />
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+
+            {part.examinerCommentary && (
+              <div className="part-examiner">
+                <p className="part-examiner__label">
+                  <span aria-hidden>✎</span> ACCA examiner on this part
+                </p>
+                <p className="part-examiner__body bionic-text" {...bionicHTML(part.examinerCommentary)} />
+              </div>
+            )}
           </li>
         ))}
       </ol>
+
+      {paper.keyAnswerTips && (
+        <div className="key-tips">
+          <p className="key-tips__label">
+            <span aria-hidden>★</span> Kaplan key answer tip
+          </p>
+          <p className="key-tips__body bionic-text" {...bionicHTML(paper.keyAnswerTips)} />
+        </div>
+      )}
     </div>
   );
 }
