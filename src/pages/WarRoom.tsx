@@ -218,26 +218,28 @@ export function WarRoomPage() {
       </SectionTitle>
       <motion.div variants={fadeUp}>
         <Card className="!p-0 overflow-hidden">
-          <table className="w-full text-[14px]">
-            <thead className="bg-slate-50">
-              <tr className="text-[11px] uppercase tracking-wider text-muted">
-                <th className="text-left px-4 py-2.5">Block</th>
-                <th className="text-right px-4 py-2.5">Marks</th>
-                <th className="text-right px-4 py-2.5">Minutes</th>
-                <th className="text-right px-4 py-2.5">Ratio</th>
-              </tr>
-            </thead>
-            <tbody>
-              {TIME_BUDGET.map((row, i) => (
-                <tr key={row.label} className={cn('border-t border-border', i === TIME_BUDGET.length - 1 && 'font-bold bg-primary/5')}>
-                  <td className="px-4 py-3">{row.label}</td>
-                  <td className="px-4 py-3 text-right font-mono">{row.marks || '—'}</td>
-                  <td className="px-4 py-3 text-right font-mono text-primary">{row.mins}</td>
-                  <td className="px-4 py-3 text-right text-muted text-[12.5px]">{row.ratio}</td>
+          <div className="war-table-scroll">
+            <table className="war-table w-full text-[14px]">
+              <thead className="bg-slate-50">
+                <tr className="text-[11px] uppercase tracking-wider text-muted">
+                  <th className="text-left px-4 py-2.5">Block</th>
+                  <th className="text-right px-4 py-2.5">Marks</th>
+                  <th className="text-right px-4 py-2.5">Minutes</th>
+                  <th className="text-right px-4 py-2.5">Ratio</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {TIME_BUDGET.map((row, i) => (
+                  <tr key={row.label} className={cn('border-t border-border', i === TIME_BUDGET.length - 1 && 'font-bold bg-primary/5')}>
+                    <td className="px-4 py-3">{row.label}</td>
+                    <td className="px-4 py-3 text-right font-mono">{row.marks || '—'}</td>
+                    <td className="px-4 py-3 text-right font-mono text-primary">{row.mins}</td>
+                    <td className="px-4 py-3 text-right text-muted text-[12.5px]">{row.ratio}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Card>
       </motion.div>
 
@@ -281,24 +283,26 @@ export function WarRoomPage() {
       </SectionTitle>
       <motion.div variants={fadeUp}>
         <Card className="!p-0 overflow-hidden">
-          <table className="w-full text-[13.5px]">
-            <thead className="bg-slate-50">
-              <tr className="text-[11px] uppercase tracking-wider text-muted">
-                <th className="text-left px-4 py-2.5">Function</th>
-                <th className="text-left px-4 py-2.5">Example</th>
-                <th className="text-left px-4 py-2.5">Why for AFM</th>
-              </tr>
-            </thead>
-            <tbody>
-              {FN_LIBRARY.map((f) => (
-                <tr key={f.fn} className="border-t border-border">
-                  <td className="px-4 py-2.5 font-mono text-primary text-[12.5px] whitespace-nowrap">{f.fn}</td>
-                  <td className="px-4 py-2.5 font-mono text-ink text-[12px] whitespace-nowrap">{f.usage}</td>
-                  <td className="px-4 py-2.5 text-ink/80 leading-relaxed">{f.afm}</td>
+          <div className="war-table-scroll">
+            <table className="war-table w-full text-[13.5px]">
+              <thead className="bg-slate-50">
+                <tr className="text-[11px] uppercase tracking-wider text-muted">
+                  <th className="text-left px-4 py-2.5">Function</th>
+                  <th className="text-left px-4 py-2.5">Example</th>
+                  <th className="text-left px-4 py-2.5">Why for AFM</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {FN_LIBRARY.map((f) => (
+                  <tr key={f.fn} className="border-t border-border">
+                    <td className="px-4 py-2.5 font-mono text-primary text-[12.5px] whitespace-nowrap">{f.fn}</td>
+                    <td className="px-4 py-2.5 font-mono text-ink text-[12px] whitespace-nowrap">{f.usage}</td>
+                    <td className="px-4 py-2.5 text-ink/80 leading-relaxed">{f.afm}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Card>
       </motion.div>
 

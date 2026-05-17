@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { askCoach, COACH_SUGGESTIONS, type CoachReply } from '@/lib/coach-ai';
 import { detectPaperReference } from '@/lib/coach-paper-scaffold';
 import {
@@ -740,8 +742,27 @@ function Bubble({ m, onReplay }: { m: Msg; onReplay: () => void }) {
         {m.spotlight && (
           <p className="text-[12.5px] text-muted italic mb-2 leading-snug">{m.spotlight.hookLine}</p>
         )}
-        <div className="prose-coach text-[13.5px] leading-relaxed text-ink whitespace-pre-wrap">
-          {renderMarkdown(m.text)}
+        <div className="prose-coach text-[13.5px] leading-relaxed text-ink coach-markdown">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              table: ({ node: _node, ...props }) => (
+                <div className="coach-table-scroll">
+                  <table className="coach-table" {...props} />
+                </div>
+              ),
+              th: ({ node: _node, ...props }) => <th className="coach-th" {...props} />,
+              td: ({ node: _node, ...props }) => <td className="coach-td" {...props} />,
+              code: ({ node: _node, ...props }) => <code className="coach-code" {...props} />,
+              h1: ({ node: _node, ...props }) => <h3 className="coach-h coach-h1" {...props} />,
+              h2: ({ node: _node, ...props }) => <h3 className="coach-h coach-h2" {...props} />,
+              h3: ({ node: _node, ...props }) => <h3 className="coach-h coach-h3" {...props} />,
+              h4: ({ node: _node, ...props }) => <h4 className="coach-h coach-h4" {...props} />,
+              a: ({ node: _node, ...props }) => <a target="_blank" rel="noopener noreferrer" {...props} />,
+            }}
+          >
+            {m.text}
+          </ReactMarkdown>
           {m.streaming && (
             <span
               className="inline-block w-2 h-4 bg-primary/60 align-text-bottom ml-0.5 animate-pulse"
@@ -781,11 +802,3 @@ function Bubble({ m, onReplay }: { m: Msg; onReplay: () => void }) {
   );
 }
 
-function renderMarkdown(s: string) {
-  const parts = s.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
-  return parts.map((part, i) => {
-    if (/^\*\*[^*]+\*\*$/.test(part)) return <strong key={i}>{part.slice(2, -2)}</strong>;
-    if (/^`[^`]+`$/.test(part)) return <code key={i}>{part.slice(1, -1)}</code>;
-    return <span key={i}>{part}</span>;
-  });
-}

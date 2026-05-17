@@ -6,6 +6,7 @@ import { DataTable } from '../shared/DataTable';
 import { VerifiedNumberCard } from '../shared/VerifiedNumberCard';
 import { SourceBadge } from '../shared/SourceBadge';
 import { Cite } from '@/components/Cite';
+import { ScenarioRender, hasCiteTokens } from '@/components/ScenarioRender';
 import { PAPER_CITATIONS } from '@/data/paperCitations';
 
 interface Props { paper: Paper; }
@@ -34,13 +35,19 @@ export function ScenarioTab({ paper }: Props) {
         <SourceBadge source={paper.primarySource} />
         <h3 className="step-content__title">{step.title}</h3>
 
-        {step.content.split('\n\n').map((para, i) => (
-          <p
-            key={i}
-            className="bionic-text step-content__para"
-            {...bionicHTML(para)}
-          />
-        ))}
+        {step.content.split('\n\n').map((para, i) =>
+          hasCiteTokens(para) ? (
+            <p key={i} className="step-content__para">
+              <ScenarioRender text={para} />
+            </p>
+          ) : (
+            <p
+              key={i}
+              className="bionic-text step-content__para"
+              {...bionicHTML(para)}
+            />
+          ),
+        )}
 
         {step.warning && <WarnBox text={step.warning} />}
 
@@ -53,6 +60,25 @@ export function ScenarioTab({ paper }: Props) {
         )}
       </div>
 
+      {/* Inline citation strip — visible on EVERY step, not just the last. */}
+      {PAPER_CITATIONS[paper.id] && PAPER_CITATIONS[paper.id].length > 0 && (
+        <div className="mt-5 rounded-xl border border-border bg-white/70 p-4">
+          <p className="text-[11px] uppercase tracking-wider text-muted font-bold mb-2">
+            <i className="fa-solid fa-link mr-1.5 text-primary" aria-hidden /> Inline citations · hover or Tab for source
+          </p>
+          <p className="text-[13.5px] leading-relaxed text-ink">
+            {PAPER_CITATIONS[paper.id].map((c, i) => (
+              <span key={i}>
+                {i > 0 && ' · '}
+                <Cite source={c.source} paper={c.paper} note={c.note}>
+                  {c.text}
+                </Cite>
+              </span>
+            ))}
+          </p>
+        </div>
+      )}
+
       {(activeStep === paper.scenarioSteps.length - 1 || paper.scenarioSteps.length <= 2) && (
         <div className="verified-numbers">
           <p className="verified-numbers__label">
@@ -63,24 +89,6 @@ export function ScenarioTab({ paper }: Props) {
               <VerifiedNumberCard key={i} number={n} />
             ))}
           </div>
-
-          {PAPER_CITATIONS[paper.id] && PAPER_CITATIONS[paper.id].length > 0 && (
-            <div className="mt-5 rounded-xl border border-border bg-white/70 p-4">
-              <p className="text-[11px] uppercase tracking-wider text-muted font-bold mb-2">
-                <i className="fa-solid fa-link mr-1.5 text-primary" aria-hidden /> Inline citations · hover or Tab for source
-              </p>
-              <p className="text-[13.5px] leading-relaxed text-ink">
-                {PAPER_CITATIONS[paper.id].map((c, i) => (
-                  <span key={i}>
-                    {i > 0 && ' · '}
-                    <Cite source={c.source} paper={c.paper} note={c.note}>
-                      {c.text}
-                    </Cite>
-                  </span>
-                ))}
-              </p>
-            </div>
-          )}
         </div>
       )}
 

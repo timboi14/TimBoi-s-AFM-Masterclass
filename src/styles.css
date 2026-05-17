@@ -1440,6 +1440,93 @@ html.tba-large-text {
   outline-offset: 2px;
 }
 
+/* ----------------------------------------------------------------------
+   Coach AI markdown rendering (Fix 1 — GFM tables and headings).
+   --------------------------------------------------------------------- */
+.coach-markdown { white-space: normal; }
+.coach-markdown p { margin: 0 0 8px; }
+.coach-markdown ul { margin: 4px 0 8px; padding-left: 18px; list-style: disc; }
+.coach-markdown ol { margin: 4px 0 8px; padding-left: 22px; list-style: decimal; }
+.coach-markdown li { margin: 2px 0; }
+.coach-markdown strong { font-weight: 700; }
+.coach-markdown em { font-style: italic; }
+.coach-markdown blockquote {
+  margin: 8px 0; padding: 4px 12px; border-left: 3px solid var(--accent);
+  background: rgba(245, 184, 0, 0.06); color: var(--ink);
+}
+.coach-h {
+  font-family: 'Anton', system-ui, sans-serif;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--ink); margin: 12px 0 6px; line-height: 1.15;
+}
+.coach-h1 { font-size: 17px; }
+.coach-h2 { font-size: 16px; }
+.coach-h3 { font-size: 14.5px; color: var(--primary); }
+.coach-h4 { font-size: 13px; color: var(--primary); text-transform: none; letter-spacing: 0; }
+
+.coach-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  max-width: 100%;
+}
+.coach-table {
+  width: 100%;
+  min-width: max-content;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.coach-th,
+.coach-td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  text-align: left;
+  white-space: nowrap;
+}
+.coach-th {
+  background: #0b1437;
+  color: #f7c948;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+.coach-table tr:nth-child(even) .coach-td { background: rgba(0,0,0,0.02); }
+.coach-code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  background: rgba(15,23,42,0.06);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ----------------------------------------------------------------------
+   War Room — horizontal scroll wrapper (Fix 2).
+   --------------------------------------------------------------------- */
+.war-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+  /* Bleed to the screen edges on narrow viewports so the table can use
+     the full width before clipping. */
+  margin: 0 -16px;
+  padding: 0 16px;
+  /* Right-edge fade as a "more content this way" affordance. */
+  mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+}
+@media (min-width: 768px) {
+  .war-table-scroll {
+    margin: 0;
+    padding: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+.war-table { min-width: 640px; }
+
 
 /* ----------------------------------------------------------------------
    Print stylesheet for the mock report — Work Item 4.

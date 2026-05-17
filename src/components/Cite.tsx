@@ -27,7 +27,14 @@ interface Props {
 export function Cite({ source, paper, note, children }: Props) {
   const label = LABEL[source];
   return (
-    <span className={`cite cite-${source}`} tabIndex={0} aria-label={`Source: ${label} · ${paper} · ${note}`}>
+    <span
+      className={`cite cite-${source}`}
+      tabIndex={0}
+      aria-label={`Source: ${label} · ${paper} · ${note}`}
+      data-cite-source={source}
+      data-cite-paper={paper}
+      data-cite-note={note}
+    >
       {children}
       <span className="cite-tooltip" role="tooltip">
         <strong>{label}</strong> · {paper}
