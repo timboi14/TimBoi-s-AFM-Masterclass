@@ -27,7 +27,7 @@ export function PaperDetail({ paper, onClose }: Props) {
     <div className="paper-detail" role="region" aria-label={`${paper.name} detail`}>
       <div className="paper-detail__header">
         <div>
-          <h2 className="paper-detail__title">{paper.name}</h2>
+          <h2 className="paper-detail__title" tabIndex={-1}>{paper.name}</h2>
           <p className="paper-detail__meta">
             {paper.session} · Section {paper.paperSection} · {paper.totalMarks} marks · Syllabus {paper.syllabusSection}
           </p>
@@ -48,12 +48,15 @@ export function PaperDetail({ paper, onClose }: Props) {
         )}
       </div>
 
-      <div className="tab-nav" role="tablist">
+      <div className="tab-nav" role="tablist" aria-label={`${paper.name} sections`}>
         {tabs.map((tab) => (
           <button
             key={tab.id}
             role="tab"
+            id={`tab-${paper.id}-${tab.id}`}
             aria-selected={activeTab === tab.id}
+            aria-controls={`tabpanel-${paper.id}-${tab.id}`}
+            tabIndex={activeTab === tab.id ? 0 : -1}
             className={`tab-nav__btn ${activeTab === tab.id ? 'tab-nav__btn--active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
           >
@@ -62,7 +65,12 @@ export function PaperDetail({ paper, onClose }: Props) {
         ))}
       </div>
 
-      <div className="tab-content">
+      <div
+        className="tab-content"
+        role="tabpanel"
+        id={`tabpanel-${paper.id}-${activeTab}`}
+        aria-labelledby={`tab-${paper.id}-${activeTab}`}
+      >
         {activeTab === 'scenario' && <ScenarioTab paper={paper} />}
         {activeTab === 'question' && <QuestionTab paper={paper} />}
         {activeTab === 'solution' && <SolutionTab paper={paper} />}

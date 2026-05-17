@@ -510,7 +510,7 @@ export const PAPERS: Paper[] = [
   {
     id: 'fondir',
     name: 'Fondir Co',
-    session: 'Dec 2022',
+    session: 'Sep/Dec 2022',
     paperSection: 'A',
     totalMarks: 50,
     syllabusSection: 'E',
@@ -2774,7 +2774,7 @@ export const PAPERS: Paper[] = [
   {
     id: 'tonpantau',
     name: 'Tonpantau Co',
-    session: 'Dec 2022',
+    session: 'Sep/Dec 2022',
     paperSection: 'B',
     totalMarks: 25,
     syllabusSection: 'B',
@@ -2863,7 +2863,7 @@ export const PAPERS: Paper[] = [
   {
     id: 'propleis',
     name: 'Propleis / Adictcan Co',
-    session: 'Dec 2022',
+    session: 'Sep/Dec 2022',
     paperSection: 'B',
     totalMarks: 25,
     syllabusSection: 'C',

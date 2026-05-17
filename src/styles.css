@@ -86,6 +86,16 @@ body {
   border-radius: 6px;
 }
 
+/* Stronger focus rings on rounded interactive elements where outline-offset
+   can clash with border-radius. Box-shadow respects the element's own radius. */
+.filter-btn:focus-visible,
+.tab-nav__btn:focus-visible,
+.paper-card:focus-visible,
+.step-nav__btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent), 0 0 0 4px rgba(245,184,0,0.25);
+}
+
 ::selection { background: rgba(0,163,71,0.18); color: var(--ink); }
 
 @layer components {
@@ -354,6 +364,12 @@ body {
 .filter-btn.active {
   background: var(--ink); color: white; border-color: var(--ink);
 }
+.filter-btn__count {
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+  margin-left: 2px;
+}
+.filter-btn.active .filter-btn__count { opacity: 0.8; }
 
 .paper-grid {
   display: grid;

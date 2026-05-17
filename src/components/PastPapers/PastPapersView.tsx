@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { PAPERS } from '@/data/pastpapers/papers';
 import type { PaperSection, TopicCategory } from '@/data/pastpapers/schema';
 import { PaperCard } from './PaperCard';
@@ -17,6 +17,7 @@ export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPape
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filterSection, setFilterSection] = useState<FilterSection>('all');
   const [filterTopic, setFilterTopic] = useState<FilterTopic>('all');
+  const detailRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(
     ref,
@@ -39,7 +40,34 @@ export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPape
     });
   }, [filterSection, filterTopic]);
 
+  const sectionCounts = useMemo(() => {
+    const base = PAPERS.filter((p) => filterTopic === 'all' || p.topics.includes(filterTopic));
+    return {
+      all: base.length,
+      A: base.filter((p) => p.paperSection === 'A').length,
+      B: base.filter((p) => p.paperSection === 'B').length,
+    };
+  }, [filterTopic]);
+
+  const topicCounts = useMemo(() => {
+    const base = PAPERS.filter((p) => filterSection === 'all' || p.paperSection === filterSection);
+    return {
+      all: base.length,
+      inv: base.filter((p) => p.topics.includes('inv')).length,
+      hedg: base.filter((p) => p.topics.includes('hedg')).length,
+      ma: base.filter((p) => p.topics.includes('ma')).length,
+    };
+  }, [filterSection]);
+
   const selectedPaper = PAPERS.find((p) => p.id === selectedId) ?? null;
+
+  useEffect(() => {
+    if (selectedPaper && detailRef.current) {
+      detailRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const heading = detailRef.current.querySelector<HTMLElement>('.paper-detail__title');
+      heading?.focus();
+    }
+  }, [selectedPaper?.id]);
 
   return (
     <div className="past-papers-view">
@@ -53,33 +81,44 @@ export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPape
         </span>
       </div>
 
-      <div id="filters" className="filter-bar">
-        {(['all', 'A', 'B'] as FilterSection[]).map((s) => (
-          <button
-            key={s}
-            className={`filter-btn ${filterSection === s ? 'active' : ''}`}
-            onClick={() => setFilterSection(s)}
-          >
-            {s === 'all' ? 'All papers' : s === 'A' ? 'Section A (50m)' : 'Section B (25m)'}
-          </button>
-        ))}
+      <div id="filters" className="filter-bar" role="group" aria-label="Past paper filters">
+        {(['all', 'A', 'B'] as FilterSection[]).map((s) => {
+          const label = s === 'all' ? 'All papers' : s === 'A' ? 'Section A (50m)' : 'Section B (25m)';
+          const count = sectionCounts[s];
+          return (
+            <button
+              key={s}
+              className={`filter-btn ${filterSection === s ? 'active' : ''}`}
+              aria-pressed={filterSection === s}
+              onClick={() => setFilterSection(s)}
+            >
+              {label} <span className="filter-btn__count">({count})</span>
+            </button>
+          );
+        })}
         <span className="filter-bar__divider" aria-hidden />
         <span id="by-topic" />
-        {(['all', 'inv', 'hedg', 'ma'] as FilterTopic[]).map((t) => (
-          <button
-            key={t}
-            className={`filter-btn ${filterTopic === t ? 'active' : ''}`}
-            onClick={() => setFilterTopic(t)}
-          >
-            {t === 'all'
+        {(['all', 'inv', 'hedg', 'ma'] as FilterTopic[]).map((t) => {
+          const label =
+            t === 'all'
               ? 'All topics'
               : t === 'inv'
                 ? 'Investment appraisal'
                 : t === 'hedg'
                   ? 'Hedging'
-                  : 'M&A'}
-          </button>
-        ))}
+                  : 'M&A';
+          const count = topicCounts[t];
+          return (
+            <button
+              key={t}
+              className={`filter-btn ${filterTopic === t ? 'active' : ''}`}
+              aria-pressed={filterTopic === t}
+              onClick={() => setFilterTopic(t)}
+            >
+              {label} <span className="filter-btn__count">({count})</span>
+            </button>
+          );
+        })}
       </div>
 
       <div id="grid" className="paper-grid">
@@ -97,7 +136,9 @@ export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPape
       </div>
 
       {selectedPaper && (
-        <PaperDetail paper={selectedPaper} onClose={() => setSelectedId(null)} />
+        <div ref={detailRef}>
+          <PaperDetail paper={selectedPaper} onClose={() => setSelectedId(null)} />
+        </div>
       )}
     </div>
   );
