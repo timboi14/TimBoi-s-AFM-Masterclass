@@ -160,20 +160,20 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Transform OpenAI/DeepSeek SSE chunks into plain text chunks the client
-  // can simply append. Keeps the client code trivial.
-  const reader = upstream.body.getReader();
+  // can simply append. Using TransformStream + pipeThrough instead of a
+  // pull-mode ReadableStream because Vercel's Edge runtime was holding
+  // back response headers until the inner ReadableStream produced data,
+  // which never started flowing because `pull` waits for consumer demand
+  // and the consumer (the HTTP response) waits for headers — deadlock.
+  // TransformStream + pipeThrough hands the runtime a piped body that it
+  // can start flushing the moment the Response object is returned.
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();
   let buffer = '';
 
-  const stream = new ReadableStream({
-    async pull(controller) {
-      const { value, done } = await reader.read();
-      if (done) {
-        controller.close();
-        return;
-      }
-      buffer += decoder.decode(value, { stream: true });
+  const transformer = new TransformStream<Uint8Array, Uint8Array>({
+    transform(chunk, controller) {
+      buffer += decoder.decode(chunk, { stream: true });
       // SSE frames are separated by \n\n.
       let idx: number;
       while ((idx = buffer.indexOf('\n\n')) !== -1) {
@@ -181,10 +181,7 @@ export default async function handler(req: Request): Promise<Response> {
         buffer = buffer.slice(idx + 2);
         if (!frame.startsWith('data:')) continue;
         const data = frame.slice(5).trim();
-        if (data === '[DONE]') {
-          controller.close();
-          return;
-        }
+        if (data === '[DONE]') return;
         try {
           const json = JSON.parse(data) as {
             choices?: Array<{ delta?: { content?: string } }>;
@@ -196,21 +193,32 @@ export default async function handler(req: Request): Promise<Response> {
         }
       }
     },
-    cancel() {
-      reader.cancel().catch(() => undefined);
+    flush() {
+      // Flush any trailing decoded bytes.
+      const tail = decoder.decode();
+      if (tail) buffer += tail;
     },
   });
 
   const headers: Record<string, string> = {
     'content-type': 'text/plain; charset=utf-8',
-    'cache-control': 'no-store',
+    'cache-control': 'no-store, no-transform',
+    // x-accel-buffering tells reverse proxies (nginx, Vercel's edge) NOT
+    // to buffer the response. Without this, Vercel may hold chunks back
+    // until a large buffer fills, defeating the streaming UX entirely.
+    'x-accel-buffering': 'no',
+    // Defensive: force no compression on this response. Compressed
+    // streaming responses are buffered until the encoder has enough
+    // bytes to emit a frame, which adds noticeable latency.
+    'content-encoding': 'identity',
   };
   if (rl) {
     headers['x-ratelimit-limit'] = String(rl.limit);
     headers['x-ratelimit-remaining'] = String(rl.remaining);
   }
 
-  return new Response(stream, { status: 200, headers });
+  console.log('[mark] piping response stream to client');
+  return new Response(upstream.body.pipeThrough(transformer), { status: 200, headers });
 }
 
 function numEnv(name: string, fallback: number): number {
