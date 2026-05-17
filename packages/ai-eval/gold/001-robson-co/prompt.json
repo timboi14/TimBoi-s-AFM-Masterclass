@@ -1,0 +1,18 @@
+{
+  "paperName": "Robson Co",
+  "paperSession": "Mar/Jun 2024",
+  "partLabel": "(b)",
+  "partMarks": 8,
+  "partRequirement": "Discuss the merits and limitations of using adjusted present value (APV) rather than weighted average cost of capital (WACC) for appraising the new investment project, in the circumstances facing Robson Co.",
+  "markingPoints": [
+    { "description": "APV separates the project's all-equity NPV from the financing side-effects", "marks": 1 },
+    { "description": "Suitable when the project changes the firm's capital structure or has subsidised debt", "marks": 1 },
+    { "description": "Avoids the WACC assumption of constant capital structure", "marks": 1 },
+    { "description": "Explicit valuation of tax shield gives more transparent sensitivity analysis", "marks": 1 },
+    { "description": "Identification that Robson is taking on subsidised loan / changing gearing — APV strictly preferred", "marks": 2 },
+    { "description": "Limitations: harder to communicate, requires ungeared cost of equity, sensitivity to debt assumptions", "marks": 1 },
+    { "description": "Recommendation drawn from the company's specific circumstances", "marks": 1 }
+  ],
+  "examinerCommentary": "Candidates frequently listed APV vs WACC differences without anchoring them to Robson's specific subsidy and gearing change. Marks were lost where the limitation paragraph was generic theory rather than tied to the scenario.",
+  "studentAnswer": "APV is preferred to WACC here because Robson is taking out a subsidised government loan to fund part of the project. WACC assumes the capital structure stays the same over the project life, but with a chunky subsidised loan that is clearly not the case. APV separates the all-equity NPV from the financing side-effects, so the tax shield on the new debt is valued explicitly. That makes the answer transparent — you can stress-test the tax shield assumption directly. On the limitation side, APV needs the ungeared cost of equity which we have to derive from peers, and the answer is sensitive to how persistent the debt is. On balance APV is the right call for Robson Co given the financing change."
+}

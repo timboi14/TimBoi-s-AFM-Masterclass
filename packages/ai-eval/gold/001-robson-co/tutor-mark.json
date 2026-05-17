@@ -1,0 +1,14 @@
+{
+  "totalMarksAwarded": 6,
+  "perRubric": [
+    { "description": "APV separates the project's all-equity NPV from the financing side-effects", "marks": 1, "awarded": 1, "notes": "Stated directly." },
+    { "description": "Suitable when the project changes the firm's capital structure or has subsidised debt", "marks": 1, "awarded": 1, "notes": "Subsidised loan called out." },
+    { "description": "Avoids the WACC assumption of constant capital structure", "marks": 1, "awarded": 1, "notes": "Explicit." },
+    { "description": "Explicit valuation of tax shield gives more transparent sensitivity analysis", "marks": 1, "awarded": 1, "notes": "Mentions stress-test." },
+    { "description": "Identification that Robson is taking on subsidised loan / changing gearing — APV strictly preferred", "marks": 2, "awarded": 1, "notes": "Half credit — recognised subsidy but didn't quantify or compare WACC numerically." },
+    { "description": "Limitations: harder to communicate, requires ungeared cost of equity, sensitivity to debt assumptions", "marks": 1, "awarded": 1, "notes": "Two limitations given." },
+    { "description": "Recommendation drawn from the company's specific circumstances", "marks": 1, "awarded": 0, "notes": "Recommendation is generic, not Robson-specific." }
+  ],
+  "tutorName": "TBA Tutor (seed)",
+  "markedAt": "2026-05-18T10:00:00Z"
+}

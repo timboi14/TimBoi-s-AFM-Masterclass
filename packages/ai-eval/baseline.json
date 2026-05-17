@@ -1,0 +1,9 @@
+{
+  "attempts": 1,
+  "rubricLines": 7,
+  "mae": 0.0,
+  "correlation": 1.0,
+  "falseCreditRate": 0.0,
+  "missedCreditRate": 0.0,
+  "_seed": "Placeholder baseline — replace by running `node packages/ai-eval/runner.mjs --update-baseline` against a populated /api/mark endpoint with the gold suite expanded to 30 attempts."
+}
