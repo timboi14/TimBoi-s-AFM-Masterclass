@@ -15,6 +15,7 @@ import { TOPIC_LIST, TOPICS } from '@/data/topics';
 import { NEWS } from '@/data/news';
 import { SH_KEY_DATES, SH_WEEKS, getCurrentShWeek } from '@/data/shplus';
 import { siteStats } from '@/lib/site-stats';
+import { TBA_STATS } from '@/data/stats';
 import { PITFALLS } from '@/data/pitfalls';
 import { SPOTLIGHTS } from '@/data/spotlights';
 import { PAPERS } from '@/data/papers';
@@ -203,7 +204,7 @@ export function HomePage() {
                 </p>
                 <div className="mt-3 flex items-center gap-2">
                   <Pill variant="danger">{siteStats.warRoomTraps} traps</Pill>
-                  <Pill variant="accent">8 spreadsheet shortcuts</Pill>
+                  <Pill variant="accent">{TBA_STATS.spreadsheetShortcuts} spreadsheet shortcuts</Pill>
                 </div>
                 <span className="btn-outline mt-4 inline-flex"><i className="fa-solid fa-arrow-right" /> Open War Room</span>
               </div>

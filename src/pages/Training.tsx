@@ -8,6 +8,7 @@ import {
   TwoUp,
   type SubNavAnchor,
 } from '@/components/Blocks';
+import { TBA_STATS } from '@/data/stats';
 
 export function TrainingPage() {
   const anchors: SubNavAnchor[] = [
@@ -22,7 +23,7 @@ export function TrainingPage() {
 
       <SectionShell tone="mist" pad="lg">
         <CenteredHero
-          eyebrow={<>14 sets · 450 marks · 8 examiner markers</>}
+          eyebrow={<>{TBA_STATS.practiceExams} sets · {TBA_STATS.practiceMarks} marks · 8 examiner markers</>}
           headline={<>Get reps in the <HeroGold>simulator</HeroGold>.</>}
           subline={
             <>
@@ -42,8 +43,8 @@ export function TrainingPage() {
       <SectionShell tone="white" pad="md">
         <StatStrip
           stats={[
-            { value: 14, label: 'Practice sets', sub: 'CBE-style multi-panel' },
-            { value: 450, label: 'Marks total', sub: '4.5 full mocks worth' },
+            { value: TBA_STATS.practiceExams, label: 'Practice sets', sub: 'CBE-style multi-panel' },
+            { value: TBA_STATS.practiceMarks, label: 'Marks total', sub: `${Math.round(TBA_STATS.practiceMarks / 100)} full mocks worth` },
             { value: 2, label: 'Modes', sub: 'Practice / Mock' },
             { value: 8, label: 'Examiner markers', sub: 'Per-line mark scheme' },
           ]}

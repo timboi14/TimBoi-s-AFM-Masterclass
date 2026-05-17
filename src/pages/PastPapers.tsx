@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { PAPERS } from '@/data/pastpapers/papers';
+import { TBA_STATS } from '@/data/stats';
 import { PastPapersView, type PastPapersViewHandle } from '@/components/PastPapers';
 import {
   CenteredHero,
@@ -12,9 +13,6 @@ import {
 
 export function PastPapersPage() {
   const viewRef = useRef<PastPapersViewHandle>(null);
-
-  const sectionA = PAPERS.filter((p) => p.paperSection === 'A').length;
-  const sectionB = PAPERS.filter((p) => p.paperSection === 'B').length;
 
   const anchors: SubNavAnchor[] = [
     {
@@ -82,10 +80,10 @@ export function PastPapersPage() {
       {/* Mist exhale strip — quick stats, alternating tone per §12.2 rule 1 */}
       <SectionShell tone="mist" pad="md">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x divide-[var(--mist-200)]">
-          <Stat n={PAPERS.length} label="Verified papers" />
-          <Stat n={sectionA} label="Section A · 50m" />
-          <Stat n={sectionB} label="Section B · 25m" />
-          <Stat n={3} label="Topic groups" />
+          <Stat n={TBA_STATS.verifiedPapers} label="Verified papers" />
+          <Stat n={TBA_STATS.sectionA50m} label="Section A · 50m" />
+          <Stat n={TBA_STATS.sectionB25m} label="Section B · 25m" />
+          <Stat n={TBA_STATS.topicGroups} label="Topic groups" />
         </div>
       </SectionShell>
 

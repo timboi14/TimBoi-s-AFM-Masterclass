@@ -8,6 +8,7 @@ import {
   TwoUp,
   type SubNavAnchor,
 } from '@/components/Blocks';
+import { TBA_STATS } from '@/data/stats';
 
 export function ScoutPage() {
   const anchors: SubNavAnchor[] = [
@@ -41,9 +42,9 @@ export function ScoutPage() {
       <SectionShell tone="mist" pad="md">
         <StatStrip
           stats={[
-            { value: 35, label: 'Pitfalls catalogued', sub: 'Cross-referenced to past papers' },
-            { value: 17, label: 'Examiner reports', sub: 'Sep/Dec 2020 onwards' },
-            { value: 9, label: 'Trap categories', sub: 'TAD · NPV sign · period adj · ...' },
+            { value: TBA_STATS.pitfalls, label: 'Pitfalls catalogued', sub: 'Cross-referenced to past papers' },
+            { value: TBA_STATS.examinerReports, label: 'Examiner reports', sub: 'Sep/Dec 2020 onwards' },
+            { value: TBA_STATS.traps, label: 'Trap categories', sub: 'TAD · NPV sign · period adj · ...' },
           ]}
           dividers
         />

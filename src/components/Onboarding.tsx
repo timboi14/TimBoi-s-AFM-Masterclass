@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/lib/store';
 import { safeOnboarding, safeWriteJson, type SafeOnboarding } from '@/lib/safe-storage';
+import { TBA_STATS } from '@/data/stats';
 
 const KEY = 'tba_onboarding_v1';
 
@@ -12,22 +13,22 @@ const PATHS: { id: OnbState['distance']; label: string; subtitle: string; icon: 
   {
     id: 'tonight', label: 'One night', subtitle: 'Exam tomorrow / very soon', icon: 'fa-bell',
     route: '/war-room',
-    copy: 'Open the War Room. Tickable T-1 / T-0 / opening / closing checklists, command-word translator, 8 spreadsheet shortcuts, and the mistakes that cost the pass.',
+    copy: `Open the War Room. Tickable T-1 / T-0 / opening / closing checklists, command-word translator, ${TBA_STATS.spreadsheetShortcuts} spreadsheet shortcuts, and the mistakes that cost the pass.`,
   },
   {
     id: 'week', label: 'One week', subtitle: '5–7 days to sitting', icon: 'fa-stopwatch',
     route: '/examiner',
-    copy: 'Drill the Examiner Reports digest first — read the 7 cases / 24 traps / 9 quotes, then sit one full mock, then review weak signals via Memory Lab.',
+    copy: `Drill the Examiner Reports digest first — read the ${TBA_STATS.examinerReports} cases / ${TBA_STATS.traps} traps / ${TBA_STATS.examinerQuotes} quotes, then sit one full mock, then review weak signals via Memory Lab.`,
   },
   {
     id: 'month', label: 'About a month', subtitle: '3–4 weeks to sitting', icon: 'fa-calendar-week',
     route: '/course',
-    copy: 'Use the 5-week Resit Roadmap. Each week ticks off exit criteria, with linked TimBoi fixtures, theory cards, and examiner traps. Mock in week 4.',
+    copy: `Use the ${TBA_STATS.courseWeeks}-week Resit Roadmap. Each week ticks off exit criteria, with linked TimBoi fixtures, theory cards, and examiner traps. Mock in week 4.`,
   },
   {
     id: 'twoMonth', label: '8 weeks or more', subtitle: 'Plenty of runway', icon: 'fa-route',
     route: '/',
-    copy: 'Full pass-engine flow: today\'s mission, group-stage topics, 88-card theory bank, Memory Lab spaced repetition, then weekly mocks. Build the streak.',
+    copy: `Full pass-engine flow: today's mission, group-stage topics, ${TBA_STATS.theoryQA}-card theory bank, Memory Lab spaced repetition, then weekly mocks. Build the streak.`,
   },
 ];
 
