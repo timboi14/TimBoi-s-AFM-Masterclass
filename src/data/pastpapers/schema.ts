@@ -20,7 +20,7 @@ export interface MarkingPoint {
   marks: number;
 }
 
-interface QuestionPart {
+export interface QuestionPart {
   label: string;     // e.g. "(a)" or "(b)(i)"
   marks: number;
   requirement: string; // What the question actually asks — plain text, bionic applied at render

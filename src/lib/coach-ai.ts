@@ -1,27 +1,26 @@
 /**
  * Coach AI: local rule-based AFM expert.
  * Pattern-matches on keywords and returns structured, examiner-grade explanations.
- * Fallback path: a remote LLM call if VITE_COACH_API_URL is set.
  *
  * The reply shape is markdown-like text. The chat panel renders it with simple
  * line-break formatting and bold (**...**) handling.
  *
  * Resolution order in askCoach():
- *   1. Paper-specific scaffold (e.g. "para fuels question a") — wins over
- *      the topic KB because it carries the most context.
- *   2. Topic KB regex matches (e.g. "explain APV with subsidised loan").
- *   3. Generic topic-menu FALLBACK — only when no paper and no topic match.
+ *   1. Generic VITE_COACH_API_URL remote (legacy escape hatch).
+ *   2. Paper-specific request → local scaffold (fast quick reference).
+ *      Trigger-phrase requests ("model answer for …") are handled by
+ *      CoachVoice BEFORE askCoach is called — those stream directly
+ *      from /api/coach for an LLM-quality top-achiever answer.
+ *   3. Topic KB regex matches (e.g. "explain APV with subsidised loan").
+ *   4. Generic topic-menu FALLBACK — only when no paper and no topic match.
  *
- * Ghostwrite policy: if the user explicitly asks Coach to write their
- * submission ("write the answer for me"), we still produce the scaffold
- * but prepend a one-line refusal so the user sees the policy.
+ * Policy: Coach writes the model answer when asked. The "won't write your
+ * homework" framing has been removed at the site owner's request — Coach
+ * is a benchmark generator. The Debrief page is where the user's own
+ * submissions go.
  */
 
-import {
-  buildScaffold,
-  detectPaperReference,
-  isGhostwriteRequest,
-} from '@/lib/coach-paper-scaffold';
+import { buildScaffold, detectPaperReference } from '@/lib/coach-paper-scaffold';
 
 export interface CoachReply {
   text: string;
@@ -459,18 +458,17 @@ export async function askCoach(question: string): Promise<CoachReply> {
   // Simulate "thinking" briefly so the UX is alive
   await new Promise((r) => setTimeout(r, 350 + Math.random() * 350));
 
-  // 1. Paper-specific scaffold takes precedence over the topic KB. A user
-  //    typing "create a model answer for para fuels co question a" gets the
-  //    marking-point checklist + outline for that exact part, not the
-  //    generic AFM-topics menu.
+  // 1. Paper-specific (non-trigger) request: return the local scaffold
+  //    as a fast, no-cost quick reference. Trigger-phrase requests
+  //    ("model answer for …") are routed to /api/coach by CoachVoice
+  //    BEFORE askCoach is called, so by the time we get here we know
+  //    the user wanted the lightweight lookup.
   const paperMatch = detectPaperReference(question);
   if (paperMatch) {
-    const refuseGhostwrite = isGhostwriteRequest(question);
     return {
       text: buildScaffold({
         paper: paperMatch.paper,
         partLabel: paperMatch.partLabel,
-        refuseGhostwrite,
       }),
       cite: paperMatch.paper.topics,
     };
@@ -487,12 +485,13 @@ export async function askCoach(question: string): Promise<CoachReply> {
 
 /** Suggested prompts for the chat UI. */
 export const COACH_SUGGESTIONS = [
-  'Scaffold Para Fuels Co part (a) for me',
+  'Write me the model answer for Para Fuels Co part (a)',
+  'Top-achiever model answer for Fondir Co part (b)(i)',
+  'Model answer for Lough Co part (a) with the marking key',
   'How do I structure an APV calculation with a subsidised loan?',
   'Walk me through the 3-column M&A valuation',
   'Map a real option to expand to Black-Scholes inputs',
-  'Show me the marking-point breakdown for Fondir Co (b)(ii)',
   'How do I bank ESG marks in a Section A scenario?',
   'Explain M&M2 ungear-regear step by step',
-  'ELI5 the difference between APV and NPV',
 ];
+

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { askCoach, COACH_SUGGESTIONS, type CoachReply } from '@/lib/coach-ai';
+import { detectPaperReference } from '@/lib/coach-paper-scaffold';
 import {
   createRecognition,
   isSpeechRecognitionSupported,
@@ -16,10 +17,32 @@ import { cn } from '@/lib/cn';
 
 type Msg =
   | { id: string; role: 'user'; text: string }
-  | { id: string; role: 'coach'; text: string; cite?: string[]; ts: number; spotlight?: Spotlight };
+  | { id: string; role: 'coach'; text: string; cite?: string[]; ts: number; spotlight?: Spotlight; streaming?: boolean };
 
 const STORAGE_KEY = 'tba_coach_log_v1';
 const PREFS_KEY = 'tba_coach_prefs_v2';
+
+/**
+ * Trigger phrases that force Model Answer Mode — the message is routed
+ * directly to /api/coach (DeepSeek) with no fallback to the local KB.
+ * The local scaffold produces a canned marking-guide reference, which is
+ * useful for quick lookups but is NOT what someone asking for a "model
+ * answer" wants.
+ */
+const MODEL_ANSWER_TRIGGERS: RegExp[] = [
+  /\bmodel answer\b/i,
+  /\bexaminer[\s-]?grade(?:d)? answer\b/i,
+  /\b10\s*\/\s*10\s*answer\b/i,
+  /\bten[\s-]?out[\s-]?of[\s-]?ten answer\b/i,
+  /\bfull[\s-]?marks? answer\b/i,
+  /\btop[\s-]?scorer answer\b/i,
+  /\bperfect response\b/i,
+  /\bbenchmark answer\b/i,
+];
+
+function isModelAnswerRequest(msg: string): boolean {
+  return MODEL_ANSWER_TRIGGERS.some((rx) => rx.test(msg));
+}
 
 interface Prefs {
   speak: boolean;
@@ -139,6 +162,53 @@ export function CoachVoice() {
     setText('');
     setPartial('');
     setThinking(true);
+
+    const paperRef = detectPaperReference(q);
+    const wantsModelAnswer = isModelAnswerRequest(q);
+
+    // Model Answer Mode: explicit trigger phrases ("model answer", "10/10
+    // answer", "examiner-grade answer", …) ALWAYS route to /api/coach and
+    // never fall back to the local scaffold. The whole point of these
+    // triggers is the LLM-quality answer; silently degrading to a canned
+    // marking guide would defeat the feature.
+    if (wantsModelAnswer) {
+      if (!paperRef) {
+        const helpMsg: Msg = {
+          id: crypto.randomUUID(),
+          role: 'coach',
+          text:
+            "I can write you a top-scorer model answer for any past-paper requirement. " +
+            "Tell me which paper and part — for example:\n\n" +
+            "- **\"Model answer for Para Fuels Co part (a)\"**\n" +
+            "- **\"Examiner-grade answer for Fondir Co (b)(i)\"**\n" +
+            "- **\"10/10 answer for Lough Co part (a)\"**",
+          ts: Date.now(),
+        };
+        setMessages((m) => [...m, helpMsg]);
+        setThinking(false);
+        return;
+      }
+      const ok = await streamPaperAnswer(q, paperRef);
+      if (!ok) {
+        const errMsg: Msg = {
+          id: crypto.randomUUID(),
+          role: 'coach',
+          text:
+            "Model Answer Mode is temporarily unavailable — the AI service didn't respond. " +
+            "Try again in a moment. If it keeps failing, the site owner needs to check that " +
+            "`DEEPSEEK_API_KEY` is set in the Vercel project settings.",
+          ts: Date.now(),
+        };
+        setMessages((m) => [...m, errMsg]);
+      }
+      setThinking(false);
+      return;
+    }
+
+    // No trigger phrase: stay on the fast local path (KB for concepts,
+    // scaffold for papers). Users who want the LLM model answer have to
+    // ask for it explicitly with a trigger phrase. This keeps "Para
+    // Fuels (a)" as a quick reference lookup and protects the API budget.
     let reply: CoachReply;
     try { reply = await askCoach(q); }
     catch { reply = { text: 'Coach is offline right now. Try again in a moment.' }; }
@@ -148,6 +218,89 @@ export function CoachVoice() {
     };
     setMessages((m) => [...m, coachMsg]);
     if (prefs.speak && supportsTTS) speakNow(reply.text);
+  };
+
+  /**
+   * Stream the top-achiever model answer from /api/coach into a single
+   * coach message that grows as tokens arrive. Returns true if the stream
+   * produced any tokens; false on configuration or network failure (in
+   * which case the caller falls back to the local on-device scaffold).
+   */
+  const streamPaperAnswer = async (
+    rawQuestion: string,
+    paperRef: ReturnType<typeof detectPaperReference>,
+  ): Promise<boolean> => {
+    if (!paperRef) return false;
+    const { paper, partLabel } = paperRef;
+    const part = partLabel
+      ? paper.questionParts.find((p) => p.label === partLabel)
+      : undefined;
+
+    const messageId = crypto.randomUUID();
+    setMessages((m) => [
+      ...m,
+      {
+        id: messageId,
+        role: 'coach',
+        text: '',
+        cite: paper.topics,
+        ts: Date.now(),
+        streaming: true,
+      },
+    ]);
+
+    try {
+      const res = await fetch('/api/coach', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          paperName: paper.name,
+          paperSession: paper.session,
+          partLabel: part?.label,
+          partMarks: part?.marks,
+          partRequirement: part?.requirement,
+          markingPoints: part?.markingPoints,
+          examinerCommentary: part?.examinerCommentary,
+          keyAnswerTips: paper.keyAnswerTips,
+          paperContext: rawQuestion,
+        }),
+      });
+
+      if (!res.ok || !res.body) {
+        const txt = await res.text().catch(() => '');
+        setMessages((m) => m.filter((msg) => msg.id !== messageId));
+        // 503 means env var missing — fall back silently.
+        if (res.status === 503) return false;
+        // Other failures: surface a short note then fall back.
+        if (txt) console.warn('[coach] /api/coach failed:', res.status, txt.slice(0, 200));
+        return false;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let acc = '';
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        acc += chunk;
+        setMessages((m) =>
+          m.map((msg) => (msg.id === messageId && msg.role === 'coach' ? { ...msg, text: acc } : msg)),
+        );
+      }
+      // Mark streaming complete.
+      setMessages((m) =>
+        m.map((msg) =>
+          msg.id === messageId && msg.role === 'coach' ? { ...msg, streaming: false } : msg,
+        ),
+      );
+      if (prefs.speak && supportsTTS) speakNow(acc);
+      return acc.trim().length > 0;
+    } catch (e) {
+      console.warn('[coach] stream threw:', e);
+      setMessages((m) => m.filter((msg) => msg.id !== messageId));
+      return false;
+    }
   };
 
   const speakNow = (msg: string) => {
@@ -245,7 +398,7 @@ export function CoachVoice() {
                     <div className="font-display text-lg tracking-wide uppercase text-white leading-none">Coach AI</div>
                     <div className="text-[11px] text-white/60 tracking-wider uppercase mt-1 inline-flex items-center gap-1.5">
                       {speaking ? 'Speaking…' : listening ? 'Listening…' : 'On-device coach · curated AFM technique'}
-                      <span title="Runs entirely on your device. No live LLM call, no homework input, no data leaves your browser." className="cursor-help text-white/50 hover:text-white">
+                      <span title="On-device for concept questions; routes paper-specific model-answer requests to the AI service when one is configured." className="cursor-help text-white/50 hover:text-white">
                         <i className="fa-solid fa-circle-info" />
                       </span>
                     </div>
@@ -331,23 +484,18 @@ export function CoachVoice() {
                 </AnimatePresence>
               </div>
 
-              {/* Honour-rule disclaimer */}
-              <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 text-[11.5px] leading-snug text-amber-900">
-                <i className="fa-solid fa-shield-halved text-amber-700" /> <strong>Coach won&apos;t write your homework.</strong>{' '}
-                For your own attempts use the <span className="font-bold">Debrief</span> page.
-              </div>
-
               {/* Body */}
               <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#fafbfd]">
                 {messages.length === 0 && (
                   <div className="space-y-3">
-                    <div className="rounded-2xl border border-primary/30 bg-primary/[0.06] p-4">
-                      <div className="text-[11px] uppercase tracking-wider text-primary font-bold mb-1">
-                        Two ways to start
+                    <div className="rounded-2xl border border-accent/40 bg-accent/[0.08] p-4">
+                      <div className="text-[11px] uppercase tracking-wider text-accent-dark font-bold mb-1">
+                        <i className="fa-solid fa-bullseye mr-1.5" /> Model Answer Mode available
                       </div>
                       <p className="text-[13.5px] leading-relaxed text-ink">
-                        Hold the green mic below and speak your question, or tap <strong>Teach me something</strong>
-                        to hear a curated AFM nugget.
+                        Ask for a <strong>"model answer"</strong>, <strong>"examiner-grade answer"</strong>, or <strong>"10/10 answer"</strong>
+                        {' '}on any past-paper requirement and Coach will produce a top-scorer response with a marking key.
+                        Use the <strong>Debrief</strong> page to mark your own attempts.
                       </p>
                     </div>
                     <div className="text-[11px] uppercase tracking-wider text-muted font-bold pl-1">Or try one of these</div>
@@ -493,6 +641,12 @@ function Bubble({ m, onReplay }: { m: Msg; onReplay: () => void }) {
         )}
         <div className="prose-coach text-[13.5px] leading-relaxed text-ink whitespace-pre-wrap">
           {renderMarkdown(m.text)}
+          {m.streaming && (
+            <span
+              className="inline-block w-2 h-4 bg-primary/60 align-text-bottom ml-0.5 animate-pulse"
+              aria-label="streaming"
+            />
+          )}
         </div>
         <div className="mt-2 flex items-center gap-2 text-[11px] text-muted flex-wrap">
           <button onClick={onReplay} className="inline-flex items-center gap-1 hover:text-primary">
