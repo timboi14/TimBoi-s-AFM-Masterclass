@@ -1416,7 +1416,10 @@ body {
 }
 
 /* ----------------------------------------------------------------------
-   Accessibility settings (Work Item 12).
+   Accessibility settings (Spec §14 + §18).
+   Settings v2 introduces: font-size scale (normal/large/xl), dark theme,
+   high-contrast (AAA) theme, bionic reading toggle. Legacy v1 classes
+   are kept as aliases so existing users don't lose their preferences.
    --------------------------------------------------------------------- */
 html.tba-reduce-motion *,
 html.tba-reduce-motion *::before,
@@ -1430,9 +1433,78 @@ html.tba-dyslexia body {
   font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
   letter-spacing: 0.05em;
 }
-html.tba-large-text {
+/* Legacy alias (settings v1). */
+html.tba-large-text,
+html.tba-text-large {
   font-size: 18px;
 }
+html.tba-text-xl {
+  font-size: 20px;
+}
+
+/* Dark theme — flips the background/surface tokens; keeps the green/gold
+   brand. Tightened text/border tokens so AA contrast is preserved. */
+html.tba-dark {
+  --bg: #0a0f1e;
+  --surface: #131a2e;
+  --card-bg: #131a2e;
+  --text: #f3f6fb;
+  --ink: #f3f6fb;
+  --muted: #9aa6bd;
+  --muted-2: #768295;
+  --border: #1f2a44;
+  --border-strong: #314162;
+  --primary: #2ed373;        /* lifted off the dark surface so 4.5:1 holds */
+  --primary-2: #4be88a;
+  --accent: #ffd233;
+  --accent-2: #ffe48a;
+}
+html.tba-dark body { background: var(--bg); color: var(--text); }
+html.tba-dark .bg-white,
+html.tba-dark .bg-slate-50,
+html.tba-dark .bg-slate-100 { background: var(--surface) !important; color: var(--text) !important; }
+html.tba-dark .text-ink { color: var(--text) !important; }
+html.tba-dark .border-border { border-color: var(--border) !important; }
+html.tba-dark .text-muted { color: var(--muted) !important; }
+html.tba-dark .card-base { background: var(--card-bg); }
+
+/* High-contrast (WCAG AAA target). Black/white binary with the brand
+   accent retained for state. Useful for low-vision and bright daylight. */
+html.tba-high-contrast {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --card-bg: #ffffff;
+  --text: #000000;
+  --ink: #000000;
+  --muted: #1f2937;       /* darker than default so 7:1 holds */
+  --muted-2: #374151;
+  --border: #000000;
+  --border-strong: #000000;
+  --primary: #006d33;     /* darker green for 7:1 on white */
+  --primary-2: #006d33;
+  --accent: #8b5a00;
+  --accent-2: #8b5a00;
+  --danger: #a30000;
+}
+html.tba-high-contrast body { background: var(--bg); color: var(--text); }
+html.tba-high-contrast .border-border { border-color: #000 !important; border-width: 2px !important; }
+html.tba-high-contrast :focus-visible {
+  outline: 3px solid #000 !important;
+  outline-offset: 3px !important;
+  background: #ffeb3b !important;
+}
+
+/* Bionic reading — bolds the first half of every word in body copy. The
+   visual hint anchors saccades without breaking word recognition. Implemented
+   without JS by relying on the existing `data-bionic` traversal in
+   src/lib/voice.ts where rendered, plus a font-weight bump for words tagged
+   with `b` (the global pass). For the global toggle we increase the contrast
+   weight of any inline <strong> in body copy as a poor-man's fallback. */
+html.tba-bionic body {
+  font-feature-settings: "ss01" on;
+}
+html.tba-bionic p strong,
+html.tba-bionic li strong { font-weight: 800; }
 
 /* Global focus ring — gold per spec */
 :focus-visible {

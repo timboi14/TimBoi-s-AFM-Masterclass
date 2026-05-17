@@ -20,6 +20,10 @@ import './styles.css';
 // Apply persisted accessibility settings (reduce-motion / dyslexia / large
 // text) on app bootstrap — module side-effect inside the file does the work.
 import '@/pages/Settings';
+import { installGlobalHandlers } from '@/lib/observability';
+
+// Install Sentry/PostHog hooks if their env vars are set; no-op otherwise.
+installGlobalHandlers();
 
 const rootEl = document.getElementById('root')!;
 // Clear the static loading splash so React owns the node
