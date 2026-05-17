@@ -5,7 +5,23 @@
  *
  * The reply shape is markdown-like text. The chat panel renders it with simple
  * line-break formatting and bold (**...**) handling.
+ *
+ * Resolution order in askCoach():
+ *   1. Paper-specific scaffold (e.g. "para fuels question a") — wins over
+ *      the topic KB because it carries the most context.
+ *   2. Topic KB regex matches (e.g. "explain APV with subsidised loan").
+ *   3. Generic topic-menu FALLBACK — only when no paper and no topic match.
+ *
+ * Ghostwrite policy: if the user explicitly asks Coach to write their
+ * submission ("write the answer for me"), we still produce the scaffold
+ * but prepend a one-line refusal so the user sees the policy.
  */
+
+import {
+  buildScaffold,
+  detectPaperReference,
+  isGhostwriteRequest,
+} from '@/lib/coach-paper-scaffold';
 
 export interface CoachReply {
   text: string;
@@ -442,20 +458,41 @@ export async function askCoach(question: string): Promise<CoachReply> {
   }
   // Simulate "thinking" briefly so the UX is alive
   await new Promise((r) => setTimeout(r, 350 + Math.random() * 350));
+
+  // 1. Paper-specific scaffold takes precedence over the topic KB. A user
+  //    typing "create a model answer for para fuels co question a" gets the
+  //    marking-point checklist + outline for that exact part, not the
+  //    generic AFM-topics menu.
+  const paperMatch = detectPaperReference(question);
+  if (paperMatch) {
+    const refuseGhostwrite = isGhostwriteRequest(question);
+    return {
+      text: buildScaffold({
+        paper: paperMatch.paper,
+        partLabel: paperMatch.partLabel,
+        refuseGhostwrite,
+      }),
+      cite: paperMatch.paper.topics,
+    };
+  }
+
+  // 2. Topic KB — concept-level questions ("explain APV with subsidies").
   for (const entry of KB) {
     if (entry.match.test(question)) return entry.reply();
   }
+
+  // 3. Only when nothing else matched.
   return FALLBACK;
 }
 
 /** Suggested prompts for the chat UI. */
 export const COACH_SUGGESTIONS = [
+  'Scaffold Para Fuels Co part (a) for me',
   'How do I structure an APV calculation with a subsidised loan?',
-  'Map a real option to expand to Black-Scholes inputs',
   'Walk me through the 3-column M&A valuation',
+  'Map a real option to expand to Black-Scholes inputs',
+  'Show me the marking-point breakdown for Fondir Co (b)(ii)',
   'How do I bank ESG marks in a Section A scenario?',
-  'Show me a money market hedge for a USD payable',
   'Explain M&M2 ungear-regear step by step',
   'ELI5 the difference between APV and NPV',
-  'Teach me a memory palace for the AFM formulas',
 ];
