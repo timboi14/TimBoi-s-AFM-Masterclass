@@ -1,9 +1,10 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PAPERS } from '@/data/pastpapers/papers';
-import type { PaperSection, TopicCategory } from '@/data/pastpapers/schema';
+import type { DataSource, PaperSection, TopicCategory } from '@/data/pastpapers/schema';
 import { PaperCard } from './PaperCard';
 import { PaperDetail } from './PaperDetail';
+import { SOURCE_META } from './shared/SourceBadge';
 
 type FilterSection = 'all' | PaperSection;
 type FilterTopic = 'all' | TopicCategory;
@@ -117,9 +118,19 @@ export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPape
         <span aria-hidden>📎</span>
         <span>
           Every number in this module is pulled directly from verified source files.{' '}
-          <strong>Green</strong> = Question Pack (OCR).{' '}
-          <strong>Blue</strong> = ACCA Model Answer.{' '}
-          <strong>Grey</strong> = Examiner Report.
+          {(['Q', 'A', 'S', 'E'] as DataSource[]).map((code, i, arr) => {
+            const m = SOURCE_META[code];
+            return (
+              <span key={code}>
+                <strong className={`source-legend source-legend--${m.colour}`}>
+                  {m.colour[0].toUpperCase() + m.colour.slice(1)}
+                </strong>
+                {' = '}
+                {m.legendNote}
+                {i < arr.length - 1 ? '. ' : '.'}
+              </span>
+            );
+          })}
         </span>
       </div>
 

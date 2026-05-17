@@ -343,6 +343,9 @@ body {
   line-height: 1.55;
 }
 .source-notice strong { color: var(--primary); }
+.source-legend--green { color: #085041; }
+.source-legend--blue  { color: #0c447c; }
+.source-legend--grey  { color: #334155; }
 
 .filter-bar {
   display: flex; flex-wrap: wrap; gap: 6px;
