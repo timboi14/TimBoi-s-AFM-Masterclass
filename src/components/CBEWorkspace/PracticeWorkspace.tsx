@@ -177,7 +177,7 @@ export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: P
 
       <div className="practice-workspace__pane">
         {pane === 'word' ? (
-          <CBEWordProcessor value={state.word} onChange={setWord} />
+          <CBEWordProcessor value={state.word} onChange={setWord} paperSection={paper.paperSection} />
         ) : (
           <CBESpreadsheet value={state.sheet} onChange={setSheet} />
         )}

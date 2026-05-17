@@ -14,10 +14,8 @@
  *   3. Topic KB regex matches (e.g. "explain APV with subsidised loan").
  *   4. Generic topic-menu FALLBACK — only when no paper and no topic match.
  *
- * Policy: Coach writes the model answer when asked. The "won't write your
- * homework" framing has been removed at the site owner's request — Coach
- * is a benchmark generator. The Debrief page is where the user's own
- * submissions go.
+ * Policy: Coach writes the model answer when asked. Coach is a benchmark
+ * generator. The Debrief page is where the user's own submissions go.
  */
 
 import { buildScaffold, detectPaperReference } from '@/lib/coach-paper-scaffold';

@@ -63,10 +63,12 @@ export function DebriefIndexPage() {
           </div>
 
           {/* Disclaimer banner */}
-          <div className="mt-5 rounded-xl border-l-4 border-l-danger bg-danger/[0.04] p-4 text-[13px] leading-relaxed text-ink">
-            <strong className="text-danger">Honour rule.</strong> This tool will not write your homework for you,
-            and it will not rephrase live ACCA Practice Platform questions. It only reviews <em>your already-submitted attempt</em>
-            against the technique markers the AFM examiner rewards.
+          <div className="mt-5 rounded-xl border-l-4 border-l-primary bg-primary/[0.05] p-4 text-[13px] leading-relaxed text-ink">
+            <strong className="text-primary">Honour rule.</strong> Debrief is for AFTER your attempt — paste what
+            you already wrote and we'll critique it against the eight examiner markers. Want a model answer to benchmark
+            against? Open{' '}
+            <a href="#coach" className="text-primary font-bold underline underline-offset-2">Coach AI</a>{' '}
+            and ask for the "model answer".
           </div>
         </div>
       </motion.section>

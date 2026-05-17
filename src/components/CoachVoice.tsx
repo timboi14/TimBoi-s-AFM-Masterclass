@@ -121,6 +121,22 @@ export function CoachVoice() {
 
   useEffect(() => { if (open && pulse) setPulse(false); }, [open, pulse]);
 
+  /* Honour the #coach hash so any link like <a href="#coach"> opens the
+     panel (used by the Debrief honour-rule callout, the keyboard-help
+     overlay, etc.). */
+  useEffect(() => {
+    const checkHash = () => {
+      if (typeof window !== 'undefined' && window.location.hash === '#coach') {
+        setOpen(true);
+        // Clear the hash so re-clicking the same link reopens it.
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    };
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
+
   /* Hotkeys
      - "/" opens the panel (when not in a field)
      - Esc closes

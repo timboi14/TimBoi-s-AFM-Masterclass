@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { store, useStore, tierFor } from '@/lib/store';
 import { cn } from '@/lib/cn';
 import { CoachVoice } from '@/components/CoachVoice';
+import { StopVoice } from '@/components/StopVoice';
+import { LjqcStrip } from '@/components/LjqcStrip';
 import { TabArtBanner, MascotBob, tabArtFor, prefetchTabArt } from '@/components/TabArt';
 import { SH_KEY_DATES } from '@/data/shplus';
 
@@ -16,6 +18,7 @@ const NAV = [
   { to: '/course', label: 'Course', icon: 'fa-graduation-cap' },
   { to: '/past-papers', label: 'Past Papers', icon: 'fa-file-lines', match: '/past-papers' },
   { to: '/topic/adviser', label: 'Topics', icon: 'fa-list', match: '/topic' },
+  { to: '/syllabus', label: 'Syllabus', icon: 'fa-table-list', match: '/syllabus' },
   { to: '/playbook', label: 'Playbook', icon: 'fa-book', match: '/playbook' },
   { to: '/training', label: 'Training', icon: 'fa-stopwatch', match: '/training' },
   { to: '/scout', label: 'Scout', icon: 'fa-binoculars', match: '/scout' },
@@ -148,6 +151,7 @@ export function Layout() {
             })}
           </nav>
         </div>
+        <LjqcStrip />
       </div>
 
       <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 pt-4 pb-32">
@@ -183,8 +187,9 @@ export function Layout() {
         </footer>
       </div>
 
-      {/* Global voice-enabled coach */}
+      {/* Global voice-enabled coach + voice stop button */}
       <CoachVoice />
+      <StopVoice />
     </div>
   );
 }
