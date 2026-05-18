@@ -42,11 +42,11 @@ export function SectionTitle({
   return (
     <motion.h2
       variants={fadeUp}
-      className="font-display text-3xl tracking-wide flex items-center gap-3 uppercase mt-10 mb-5 text-ink"
+      className="font-display text-3xl tracking-wide flex flex-wrap items-center gap-x-3 gap-y-2 uppercase mt-10 mb-5 text-ink"
     >
-      {icon && <i className={cn('text-primary', icon)} />}
+      {icon && <i className={cn('text-primary shrink-0', icon)} />}
       <span>{children}</span>
-      {badge}
+      {badge && <span className="shrink-0">{badge}</span>}
       {rightSlot && <span className="ml-auto text-sm font-body normal-case tracking-normal text-muted">{rightSlot}</span>}
     </motion.h2>
   );
