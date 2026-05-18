@@ -1,3 +1,7 @@
+// Silence browser-extension console noise before anything else runs so the
+// devtools console stays clean during development AND in user sessions.
+// See src/lib/silence-extension-noise.ts for the rationale.
+import '@/lib/silence-extension-noise';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';

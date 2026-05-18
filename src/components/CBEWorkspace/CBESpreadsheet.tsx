@@ -28,29 +28,26 @@ export function CBESpreadsheet({ value, onChange }: Props) {
   const [selected, setSelected] = useState<CellKey>({ r: 0, c: 0 });
   const [editing, setEditing] = useState<CellKey | null>(null);
   const [draft, setDraft] = useState<string>('');
-  /**
-   * `selectOnFocus` tells the next-frame effect whether to select-all (F2 /
-   * double-click) or place the caret at the end (start-typing). Until now we
-   * unconditionally select-all, which silently dropped the first character
-   * when a user typed `=` to start a formula: draft="=" → input mounts →
-   * select-all picks "=" → user's next keypress replaces it → cell ends up
-   * storing "1+1" instead of "=1+1". Audit feedback 2026-05-18.
-   */
-  const [selectOnFocus, setSelectOnFocus] = useState<boolean>(true);
   const editRef = useRef<HTMLInputElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Cell-input focus rule (Excel parity, audit batch 04):
+   *   - Start-typing path: cell holds the seed character, caret at end so the
+   *     next keystroke appends.
+   *   - F2 / double-click: existing cell content is loaded, caret at end so
+   *     the user can edit a formula without losing it.
+   *   - Never select-all on mount. (Old behaviour cost the `=` prefix when a
+   *     user typed `=1+1`, and silently destroyed formulas under F2 when the
+   *     next typed char replaced the entire selection.)
+   */
   useEffect(() => {
     if (editing && editRef.current) {
       editRef.current.focus();
-      if (selectOnFocus) {
-        editRef.current.select();
-      } else {
-        const len = editRef.current.value.length;
-        editRef.current.setSelectionRange(len, len);
-      }
+      const len = editRef.current.value.length;
+      editRef.current.setSelectionRange(len, len);
     }
-  }, [editing, selectOnFocus]);
+  }, [editing]);
 
   const setCell = useCallback(
     (r: number, c: number, v: string) => {
@@ -64,11 +61,6 @@ export function CBESpreadsheet({ value, onChange }: Props) {
     setSelected({ r, c });
     setEditing({ r, c });
     setDraft(withInitial !== undefined ? withInitial : value[r]?.[c] ?? '');
-    // If the user is starting a fresh edit by typing (withInitial supplied),
-    // the next keystroke must APPEND to the seed character, not replace it.
-    // F2 / double-click paths leave selectOnFocus=true so the existing cell
-    // value is highlighted for one-keystroke replace, matching Excel.
-    setSelectOnFocus(withInitial === undefined);
   };
 
   const commitEdit = () => {
@@ -255,16 +247,46 @@ function evalIfFormula(cell: string, sheet: string[][]): string {
   if (!out.ok) return out.v; // "#ERR" or "#CYCLE" — already a string
   if (typeof out.v === 'number') {
     if (!Number.isFinite(out.v)) return '#NUM';
-    return formatNum(out.v);
+    return formatNum(out.v, inferPrecision(cell));
   }
   if (typeof out.v === 'boolean') return out.v ? 'TRUE' : 'FALSE';
   if (Array.isArray(out.v)) return out.v.map((x) => String(x ?? '')).join(', ');
   return String(out.v ?? '');
 }
 
-function formatNum(n: number): string {
-  // Avoid floating-point garbage tails like 0.30000000000000004 while still
-  // showing four decimal places of useful precision for AFM workings.
+type Precision = 'currency' | 'pv4' | 'integer' | 'auto';
+
+/**
+ * Infer a display precision from the leading function in the formula. ACCA
+ * exam convention is 4dp for present-value factors and probabilities, 2dp
+ * for currency, integer for counts. Audit batch 04: makes display rounding
+ * consistent (`=POWER(1.1,5)` now reads 1.6105, `=NORM.S.INV(0.975)` reads
+ * 1.9600, not 1.96).
+ */
+function inferPrecision(formula: string): Precision {
+  // Strip "=" and any leading whitespace, take the first identifier.
+  const head = /^=\s*([A-Z][A-Z0-9_.]*)/i.exec(formula);
+  if (!head) return 'auto';
+  const fn = head[1].toUpperCase();
+  if (fn === 'NPV' || fn === 'AFM_NPV' || fn === 'AFM.NPV' || fn === 'PV' || fn === 'FV' || fn === 'PMT' || fn === 'WACC' || fn === 'IRR' || fn === 'MIRR') return 'currency';
+  if (fn === 'NORMSDIST' || fn === 'NORM.S.DIST' || fn === 'NORMSINV' || fn === 'NORM.S.INV' || fn === 'BSCALL' || fn === 'BSPUT' || fn === 'PVIF' || fn === 'AF' || fn === 'ANNUITYFACTOR' || fn === 'POWER' || fn === 'POW' || fn === 'EXP' || fn === 'LN' || fn === 'LOG' || fn === 'LOG10' || fn === 'SQRT' || fn === 'CAPM' || fn === 'UNGEAR' || fn === 'REGEAR' || fn === 'FISHER' || fn === 'IRP' || fn === 'PPP') return 'pv4';
+  if (fn === 'COUNT' || fn === 'IF' || fn === 'AND' || fn === 'OR' || fn === 'NOT' || fn === 'CEIL' || fn === 'CEILING' || fn === 'FLOOR' || fn === 'ROUND') return 'integer';
+  return 'auto';
+}
+
+function formatNum(n: number, precision: Precision = 'auto'): string {
+  // Avoid floating-point garbage tails like 0.30000000000000004 while keeping
+  // exam-grade precision. Currency shows 2dp with grouping; pv4 shows 4dp;
+  // integer drops the fractional part; auto picks the tightest non-zero dp
+  // up to 4.
+  if (precision === 'integer') return Math.round(n).toLocaleString();
+  if (precision === 'currency') {
+    return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  if (precision === 'pv4') {
+    return n.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+  }
+  // auto
   if (Number.isInteger(n)) return n.toLocaleString();
   const rounded = Number(n.toFixed(4));
   return rounded.toLocaleString(undefined, { maximumFractionDigits: 4 });

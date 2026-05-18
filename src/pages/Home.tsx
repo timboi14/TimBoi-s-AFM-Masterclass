@@ -25,6 +25,7 @@ import { cn } from '@/lib/cn';
 import { computePersonalTrend, loadLongestStreak, bumpLongestStreak } from '@/lib/personalTrend';
 import { loadFormGuideInputs } from '@/lib/formGuide';
 import { loadAttempts } from '@/lib/attempts';
+import { resolveIdentity } from '@/lib/identity';
 
 const EXAM_DATE = new Date('2026-06-05T09:00:00');
 
@@ -101,7 +102,12 @@ export function HomePage() {
   const t = tierFor(state.points);
   const cd = useCountdown();
 
-  const fanName = state.fanName || 'Fan';
+  // Display identity — always the demo handle pre-auth. fanName persists
+  // for storage continuity but never reaches render paths (Spec §3 + audit
+  // batch 04). resolveIdentity is memoised across re-renders by stability
+  // of state.fanName.
+  const identity = useMemo(() => resolveIdentity(state.fanName), [state.fanName]);
+  const fanName = identity.displayLabel;
 
   const todaysMission = useMemo(() => {
     const idx = (cd.d + state.streak) % TOPIC_LIST.length;

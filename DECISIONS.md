@@ -219,6 +219,118 @@ Actions in Sprint 9, both become deploy-blocking.
 
 ---
 
+## D-014 — Identity display is unconditionally demo-shaped pre-auth
+
+**Spec reference:** Spec §3 + audit batch 04 P1.
+
+**Decision:** Every render path that displays "the user's handle" now reads
+`resolveIdentity().displayLabel` — which is always `Demo · ABC123` until
+auth lands. The previous regression returned the legacy `fanName` as the
+display label when set, so users who had typed "timboi" into NameOverlay
+still saw "TIMBOI" in the Home hero `<h1>`. fanName remains the internal
+`storageKey` so existing CBE state stays addressable.
+
+**Render-path audit (post-fix, repo-grep):**
+- `src/pages/Home.tsx` — fixed (line 110 now reads `identity.displayLabel`).
+- `src/components/CBEWorkspace/PracticeWorkspace.tsx` — already uses identity.
+- `src/components/Layout.tsx`, `src/components/Onboarding.tsx`,
+  `src/NameOverlay.tsx` — only use `state.fanName` as a logic gate (bump
+  streak, show onboarding banner). Not render-path leaks.
+
+**Gate:** `tests/identity-hero.spec.ts` seeds `tba_fanName = "timboi"`,
+reloads, asserts `h1` does NOT contain "timboi" and matches the
+`/welcome back,\s*demo\s*·\s*[A-Z0-9]{4,8}/i` shape.
+
+---
+
+## D-015 — Window-level silence for extension-channel noise
+
+**Spec reference:** Spec §22 + audit batch 04 P2.
+
+**Decision:** `src/lib/silence-extension-noise.ts` patches `console.error`,
+`window.error`, and `window.unhandledrejection` to drop messages matching
+the three known extension-resident patterns (`listener indicated an
+asynchronous response`, `message channel closed before a response`,
+`Extension context invalidated`). Imported as the FIRST line of
+`src/main.tsx` so the patch lands before any third-party script runs.
+
+**Why this is OK:** The repo-wide grep evidence (D-006) confirms zero
+chrome.runtime / postMessage / SW message-handler code originates in
+this project. The errors come exclusively from installed browser
+extensions and are noise from the user's perspective.
+
+**Trade-off:** A bona fide bug that someday emits one of those messages
+from our SW would also be silenced. We accept this for two reasons:
+(a) Sprint 9 will introduce a custom Workbox InjectManifest SW with its
+own message channel, and we'll narrow the silencer to *extension origin*
+at that point; (b) Sentry is already filtering via the same patterns at
+capture time, so the Sprint 9 SW will still report to telemetry.
+
+---
+
+## D-016 — Scout and Training page rebuilds (thin-content fix)
+
+**Spec reference:** Audit batch 04 P2.
+
+**Decision:** `/scout` and `/training` were 1.1 KB and 1.5 KB respectively
+(audit data) — bare hero + 1-2 CTA cards next to War Room's 7.4 KB of
+real content. Rebuilt with concrete study material:
+
+- **`/scout`** now renders: the 7-rule Section A cheat sheet (each rule
+  paired with the examiner's verbatim quote that motivated it); the 9
+  verbatim examiner quotes (sourced from `src/data/examiner.ts`); a
+  sortable capability heatmap (capability × frequency × last-seen ×
+  mark-winning technique, 12 rows from `src/data/scout.seed.ts`); the
+  top 7 highest-risk pitfalls from the existing 35-entry library.
+- **`/training`** now renders: three mode cards (Practice / Mock /
+  Debrief) with feature lists and CTAs; a personal-best table sourced
+  from the live marker log; a "next recommended drill" card driven by
+  the user's weakest scored topic OR the highest-frequency examiner
+  capability they haven't yet drilled.
+
+The Scout findings table mirrors the future
+`packages/db/schema.ts → examiner_findings` shape so this becomes a
+straight server-side read once `DATABASE_URL` lands.
+
+**Gate:** `tests/thin-pages.spec.ts` — body innerText length > 3 KB on
+both routes; 7 rule headings; 9 blockquotes; Practice/Mock/Debrief CTAs
+visible; section anchors present for the StickySubNav scroll-spy.
+
+---
+
+## D-017 — CBE F2 places caret at end without select-all
+
+**Spec reference:** Audit batch 04 P3, item 2.
+
+**Decision:** F2 / double-click no longer auto-select the existing cell
+value. The mount-focus effect always places the caret at the end of the
+input — matching Excel's F2 behaviour. The previous (D-010) fix used a
+`selectOnFocus` toggle that kept select-all for F2; the audit caught
+that F2 + typing destroys an existing formula because the typed chars
+replace the entire selection.
+
+**Excel-parity matrix (current):**
+| Path | Existing content loaded? | Selection on focus |
+|---|---|---|
+| Click-cell + type | No (seed is the typed char) | Caret at end |
+| F2 | Yes | Caret at end |
+| Double-click | Yes | Caret at end |
+
+To replace cell content via F2, the user selects-all manually (Ctrl+A).
+
+**Plus**, decimal display precision is now inferred from the formula head
+in `inferPrecision(formula)`:
+- `NPV / AFM_NPV / PV / FV / PMT / WACC / IRR / MIRR` → 2dp currency
+- `NORMSDIST / NORMSINV / POWER / EXP / LN / SQRT / BSCALL / BSPUT /
+  AF / PVIF / CAPM / UNGEAR / REGEAR / FISHER / IRP / PPP` → 4dp
+- `COUNT / IF / AND / OR / NOT / CEIL / FLOOR / ROUND` → integer
+- everything else → auto (trim trailing zeros up to 4dp)
+
+So `=POWER(1.1,5)` now reads `1.6105`, `=NORM.S.INV(0.975)` reads
+`1.9600`, `=NPV(0.1, B2:B6)` reads `48.04` not `48.0326`.
+
+---
+
 ## Changelog
 
 - **2026-05-18 — Sprint 1 (Foundations)** — Contract recorded, sprint plan drafted, D-001..D-006 logged, kill-list pass (/api/health{,z}+/api/readyz, real PNG manifest icons, sitemap.xml, robots.txt, billing-language sweep clean).
