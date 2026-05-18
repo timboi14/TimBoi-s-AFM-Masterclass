@@ -7,6 +7,17 @@
 
 import { errorMessage } from '@/lib/guards';
 
+/**
+ * Versioned engine marker — checked by CI to assert the engine module
+ * actually reached the deployed bundle. Bump when the function surface
+ * changes incompatibly. The literal string must survive minification —
+ * exporting it keeps it referenced and prevents tree-shaking.
+ *
+ * See scripts/check-deployed-bundle.mjs for the assertion that runs after
+ * each Vercel deploy.
+ */
+export const CBE_ENGINE_V1 = 'CBE_ENGINE_V1';
+
 export type Cell = string;
 export type Sheet = Cell[][];
 

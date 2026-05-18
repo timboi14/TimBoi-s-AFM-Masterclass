@@ -9,7 +9,10 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "icons": "node scripts/generate-icons.mjs",
-    "sitemap": "node scripts/generate-sitemap.mjs"
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "check:bundle": "node scripts/check-deployed-bundle.mjs",
+    "check:bundle:local": "node scripts/check-deployed-bundle.mjs --base ./dist",
+    "test:e2e": "playwright test -c tests/playwright.config.ts"
   },
   "dependencies": {
     "@fontsource/anton": "^5.2.7",

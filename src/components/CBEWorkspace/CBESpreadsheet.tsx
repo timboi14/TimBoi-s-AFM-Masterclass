@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { SHEET_COLS, SHEET_ROWS, colLabel } from '@/lib/cbe-storage';
-import { compute as computeCell } from '@/lib/sheet-engine';
+import { compute as computeCell, CBE_ENGINE_V1 } from '@/lib/sheet-engine';
+
+// Force the engine-version marker to ship into the production bundle so
+// scripts/check-deployed-bundle.mjs can grep for it. A no-op at runtime —
+// minifiers preserve literal string references unless DCE'd. The data-attr
+// in the wrapper below is the production tripwire.
+const _engineMarker = CBE_ENGINE_V1;
 
 interface Props {
   value: string[][];
@@ -22,15 +28,29 @@ export function CBESpreadsheet({ value, onChange }: Props) {
   const [selected, setSelected] = useState<CellKey>({ r: 0, c: 0 });
   const [editing, setEditing] = useState<CellKey | null>(null);
   const [draft, setDraft] = useState<string>('');
+  /**
+   * `selectOnFocus` tells the next-frame effect whether to select-all (F2 /
+   * double-click) or place the caret at the end (start-typing). Until now we
+   * unconditionally select-all, which silently dropped the first character
+   * when a user typed `=` to start a formula: draft="=" → input mounts →
+   * select-all picks "=" → user's next keypress replaces it → cell ends up
+   * storing "1+1" instead of "=1+1". Audit feedback 2026-05-18.
+   */
+  const [selectOnFocus, setSelectOnFocus] = useState<boolean>(true);
   const editRef = useRef<HTMLInputElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (editing && editRef.current) {
       editRef.current.focus();
-      editRef.current.select();
+      if (selectOnFocus) {
+        editRef.current.select();
+      } else {
+        const len = editRef.current.value.length;
+        editRef.current.setSelectionRange(len, len);
+      }
     }
-  }, [editing]);
+  }, [editing, selectOnFocus]);
 
   const setCell = useCallback(
     (r: number, c: number, v: string) => {
@@ -44,6 +64,11 @@ export function CBESpreadsheet({ value, onChange }: Props) {
     setSelected({ r, c });
     setEditing({ r, c });
     setDraft(withInitial !== undefined ? withInitial : value[r]?.[c] ?? '');
+    // If the user is starting a fresh edit by typing (withInitial supplied),
+    // the next keystroke must APPEND to the seed character, not replace it.
+    // F2 / double-click paths leave selectOnFocus=true so the existing cell
+    // value is highlighted for one-keystroke replace, matching Excel.
+    setSelectOnFocus(withInitial === undefined);
   };
 
   const commitEdit = () => {
@@ -122,7 +147,7 @@ export function CBESpreadsheet({ value, onChange }: Props) {
   };
 
   return (
-    <div className="cbe-sheet">
+    <div className="cbe-sheet" data-engine={_engineMarker}>
       <div className="cbe-sheet__toolbar" role="toolbar" aria-label="Spreadsheet">
         <span className="cbe-sheet__addr">
           {colLabel(selected.c)}

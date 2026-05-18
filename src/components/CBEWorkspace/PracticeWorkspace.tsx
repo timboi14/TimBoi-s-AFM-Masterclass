@@ -142,12 +142,10 @@ export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: P
       <div className="practice-workspace__meta">
         <span
           className="practice-workspace__user"
-          title={identity.mode === 'demo' ? 'Demo handle — auto-assigned. Once auth is wired this becomes your signed-in handle.' : 'Local handle saved on this browser.'}
+          title="Demo handle — auto-assigned. Once auth is wired this becomes your signed-in handle."
         >
           <span aria-hidden>👤</span> {identity.displayLabel}
-          {identity.mode === 'demo' && (
-            <span className="ml-1 text-[10px] uppercase tracking-wider text-muted font-bold">· local</span>
-          )}
+          <span className="ml-1 text-[10px] uppercase tracking-wider text-muted font-bold">· local</span>
         </span>
         {savedAgo && <span className="practice-workspace__saved">✓ {savedAgo}</span>}
         <button type="button" onClick={clearAll} className="practice-workspace__clear-all">

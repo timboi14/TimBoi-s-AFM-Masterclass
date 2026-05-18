@@ -2,17 +2,21 @@
  * User identity resolution — Sprint 3 transitional shim.
  *
  * Until auth lands (Spec §3, blocked on DATABASE_URL + OAuth credentials),
- * the workspace uses one of three handles in order:
+ * every visitor is treated as a Demo user. The workspace persists work
+ * under a stable demo handle so a single browser keeps state across visits,
+ * but the BADGE never shows a hand-typed username — that's the spec's
+ * §3 rule "Hard-coded `timboi` username removed — replaced by authenticated
+ * user handle. Anonymous demo mode preserved behind /demo with a watermark
+ * and capped local persistence."
  *
- *   1. The authenticated user's `handle` from the session — TODO Sprint 3.
- *   2. The user's hand-typed `fanName` from store.ts (legacy localStorage).
- *   3. A stable demo handle auto-seeded into localStorage with a 6-char
- *      readable suffix (e.g. "Demo · K7Z3PQ") so the badge never says
- *      "timboi" by default and demo data is keyed predictably.
+ * Legacy fanName (typed into NameOverlay before this refactor) is preserved
+ * as the storageKey suffix so existing users don't lose their attempt data,
+ * but it is NEVER used as the displayed label.
  *
- * Why a deterministic suffix: the badge needs to look intentional rather
- * than blank, and the suffix gives users a way to spot if a different
- * browser/profile is using the same study tool (collision protection).
+ * Regression audit feedback 2026-05-18: previous version showed fanName when
+ * present, which meant existing users still saw "timboi" forever — fix is to
+ * always display the demo handle and confine fanName to internal storage
+ * keying only.
  */
 
 import { safeFanName } from './safe-storage';
@@ -23,24 +27,22 @@ const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // skip I,O,0,1 for readabi
 export interface ResolvedIdentity {
   /** Stable storage key — used everywhere the workspace persists per-user state. */
   storageKey: string;
-  /** Display label — what shows in the workspace badge. */
+  /** Display label — what shows in the workspace badge. Always demo-shaped pre-auth. */
   displayLabel: string;
   /** Source mode for the UI to render a clear badge. */
-  mode: 'authenticated' | 'fan-name' | 'demo';
+  mode: 'authenticated' | 'demo';
 }
 
 export function resolveIdentity(fanName?: string): ResolvedIdentity {
+  // Storage key preserves the legacy fanName verbatim so existing saved
+  // workspace data (cbe_<fanName>__<paperId> in localStorage) is still
+  // reachable. Display label is ALWAYS the demo handle so the badge never
+  // leaks the legacy name.
   const fan = safeFanName(fanName);
-  if (fan) {
-    return {
-      storageKey: fan,
-      displayLabel: fan,
-      mode: 'fan-name',
-    };
-  }
   const demoSuffix = loadOrCreateDemoSuffix();
+  const storageKey = fan || `demo-${demoSuffix.toLowerCase()}`;
   return {
-    storageKey: `demo-${demoSuffix.toLowerCase()}`,
+    storageKey,
     displayLabel: `Demo · ${demoSuffix}`,
     mode: 'demo',
   };

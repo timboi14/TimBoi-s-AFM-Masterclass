@@ -86,6 +86,7 @@ export function FormGuideCompact() {
         <div
           className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] uppercase tracking-wider font-bold border"
           style={{ background: `${bandColour}18`, color: bandColour, borderColor: `${bandColour}55` }}
+          title="Bayesian band derived from posterior mean + 80% CI. Below pass: mean < 45 or CI-low < 38. On the edge: mean < 52 or CI-low < 46. Comfortable: mean < 65. Strong: mean ≥ 65. CI tightens as marker runs accumulate."
         >
           {bayes.band}
         </div>

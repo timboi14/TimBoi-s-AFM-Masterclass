@@ -134,6 +134,91 @@ The contract is a multi-month roadmap. To preserve the live study site (`timboi1
 
 ---
 
+## D-010 — Real CBE regression: select() drops first keystroke
+
+**Spec reference:** Regression audit 2026-05-18, Issue #2.
+
+**Root cause:** When the user typed `=` to start editing a cell, the
+`useEffect` in `CBESpreadsheet.tsx` unconditionally called
+`editRef.current.select()` on mount. This selected the seed character (`=`)
+in the freshly-mounted input. The next keystroke (`1`) replaced the entire
+selection, so the `=` was silently dropped — the cell stored `1+1` and the
+display rendered it as the literal string, not a formula.
+
+**Fix:** Introduce `selectOnFocus` state that distinguishes "start-typing"
+edit mode (caret to end, no select-all) from "F2 / double-click" edit mode
+(select-all so the existing value replaces with one keystroke, Excel-style).
+The unit-level repro test (`compute('=1+1')` → 2) was always passing because
+it bypassed React's input event flow; the Playwright e2e in
+`tests/cbe-formula-eval.spec.ts` catches the regression at the right layer.
+
+**Lesson learned:** Unit-level engine tests are necessary but not sufficient
+for a CBE compute claim. Anything that asserts user-visible behaviour needs
+an e2e through the actual keyboard event chain.
+
+---
+
+## D-011 — `/api/marker` via vercel.json rewrite, not file re-export
+
+**Spec reference:** Regression audit 2026-05-18, Issue #6.
+
+**Root cause:** The first attempt at aliasing was `export { default, config }
+from './mark'` in `api/marker.ts`. Vercel's Edge bundler raised
+`FUNCTION_INVOCATION_FAILED` on cold start because re-exports of `default`
+through Edge-runtime files don't survive the bundle correctly.
+
+**Fix:** Drop the file. Add a rewrite in `vercel.json`:
+`{ "source": "/api/marker", "destination": "/api/mark" }`. Vercel rewrites
+are battle-tested and don't depend on TS export semantics.
+
+---
+
+## D-012 — Identity display: always demo handle pre-auth, even if fanName exists
+
+**Spec reference:** Spec §3 + regression audit Issue #4.
+
+**Decision:** The identity badge above the CBE workspace now ALWAYS renders
+`Demo · ABC123` until auth is wired (Sprint 3, blocked on DATABASE_URL +
+OAuth credentials). The legacy `fanName` localStorage value is kept as the
+internal storageKey so existing users' saved spreadsheet / word answer
+state is still reachable — but it is no longer displayed.
+
+**Why the previous fix was insufficient:** `resolveIdentity(fanName)` was
+returning the fanName as the display label when set. Users who had typed
+"timboi" into the NameOverlay before this refactor were still seeing
+"👤 timboi" in the badge. The display vs storage distinction is the
+correct one — display = always demo until auth, storage = legacy fanName
+for continuity.
+
+---
+
+## D-013 — Quality gates: bundle marker + Playwright e2e
+
+**Spec reference:** Regression audit 2026-05-18, quality-gate section.
+
+**Decision:** Two new gates land alongside the regression fixes:
+
+1. **`scripts/check-deployed-bundle.mjs`** — scans the live (or local
+   `./dist`) JS chunks for required marker strings (`CBE_ENGINE_V1`,
+   `AFM_NPV`, `NORMSINV`, `SUMPRODUCT`). Exits non-zero if any are
+   missing. `CBE_ENGINE_V1` is exported from `src/lib/sheet-engine.ts`
+   and referenced from `CBESpreadsheet.tsx` (`data-engine` attribute) so
+   tree-shaking can't elide it. Run as `npm run check:bundle:local`
+   (local dist) or `npm run check:bundle` (production URL).
+
+2. **`tests/`** — Playwright config + two reproduce e2es:
+   `cbe-formula-eval.spec.ts` types `=1+1` and `=AFM_NPV(...)` into a
+   real CBE workspace and asserts numeric output;
+   `fsrs-grading.spec.ts` visits `/memory-lab`, asserts the FSRS/Leitner
+   toggle exists, both rating-button modes render correctly, and mode
+   persists across reloads. Run as `npm run test:e2e`.
+
+Neither runs in CI yet (the project doesn't have a CI pipeline beyond
+Vercel's build step). The user can run them locally; once we add GitHub
+Actions in Sprint 9, both become deploy-blocking.
+
+---
+
 ## Changelog
 
 - **2026-05-18 — Sprint 1 (Foundations)** — Contract recorded, sprint plan drafted, D-001..D-006 logged, kill-list pass (/api/health{,z}+/api/readyz, real PNG manifest icons, sitemap.xml, robots.txt, billing-language sweep clean).
