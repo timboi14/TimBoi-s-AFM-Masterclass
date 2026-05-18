@@ -63,11 +63,18 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     body = (await req.json()) as CoachRequest;
   } catch {
-    return new Response('Invalid JSON', { status: 400 });
+    return errorJson(400, 'invalid_json', 'Body was not valid JSON.', [{ path: ['body'], message: 'Expected application/json POST body.' }]);
   }
 
-  if (!body.paperName || !body.paperSession) {
-    return new Response('Missing required fields (paperName, paperSession)', { status: 400 });
+  const issues: Array<{ path: string[]; message: string }> = [];
+  if (typeof body.paperName !== 'string' || body.paperName.trim() === '') {
+    issues.push({ path: ['paperName'], message: 'paperName is required.' });
+  }
+  if (typeof body.paperSession !== 'string' || body.paperSession.trim() === '') {
+    issues.push({ path: ['paperSession'], message: 'paperSession is required.' });
+  }
+  if (issues.length > 0) {
+    return errorJson(400, 'invalid_request', 'One or more fields are invalid.', issues);
   }
 
   // Per-IP daily rate limit (separate "coach" prefix from /api/mark's "mark").
@@ -264,6 +271,14 @@ function numEnv(name: string, fallback: number): number {
   if (!raw) return fallback;
   const n = Number(raw);
   return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+interface Issue { path: (string | number)[]; message: string }
+function errorJson(status: number, code: string, message: string, issues: Issue[] = []): Response {
+  return new Response(
+    JSON.stringify({ error: { code, message, issues } }, null, 2),
+    { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } },
+  );
 }
 
 interface RateLimitInfo {

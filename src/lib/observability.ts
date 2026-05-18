@@ -43,9 +43,24 @@ const sentryDsn = SENTRY_DSN ? parseSentryDsn(SENTRY_DSN) : null;
 
 let sentryBreaker = 0;
 
+/**
+ * Browser extensions (1Password, MetaMask, ad-blockers, dev tools) frequently
+ * register chrome.runtime.onMessage listeners that return `true` but never
+ * call sendResponse. When their content script unmounts mid-flight Chrome
+ * raises "A listener indicated an asynchronous response by returning true,
+ * but the message channel closed before a response was received." It is not
+ * our code, but it floods Sentry if forwarded. Filter at capture time.
+ */
+function isExtensionNoise(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : typeof err === 'string' ? err : '';
+  if (!msg) return false;
+  return /asynchronous response by returning true|message channel closed before a response was received|Extension context invalidated|chrome\.runtime/i.test(msg);
+}
+
 export function captureError(err: unknown, ctx?: Record<string, unknown>): void {
   // Pre-Sprint-20: always console.error for local dev visibility.
   console.error('[tba.observability]', err, ctx ?? '');
+  if (isExtensionNoise(err)) return;
   if (!sentryDsn || sentryBreaker >= 3) return;
 
   const event = {

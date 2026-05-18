@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { CenteredHero, HeroGold, SectionShell } from '@/components/Blocks';
+import {
+  type SRMode,
+  getMode as getSrMode,
+  setMode as setSrMode,
+  RATING,
+  type Rating,
+} from '@/lib/sr-engine';
+import { schedule as fsrsSchedule, newCard as newFsrsCard, type FsrsCardState } from '@/lib/fsrs';
 
 /**
  * Memory Lab — Leitner / Palace / Feynman.
@@ -126,15 +134,21 @@ export function MemoryLabPage() {
 }
 
 // ────────────────────────────────────────────────────────────────────
-// Leitner (5-stage queue: 0d → 1d → 3d → 7d → 14d)
+// Spaced repetition (FSRS v5 default, Leitner Classic optional).
+//
+// Spec §7 + audit feedback: Memory Lab uses FSRS v5 by default with a
+// "Classic" toggle that drops back to the legacy 5-stage Leitner. Per-card
+// state stores both shapes so toggling preserves history.
 // ────────────────────────────────────────────────────────────────────
 const LEITNER_KEY = 'tba.memorylab.leitner.v1';
 const STAGE_DAYS = [0, 1, 3, 7, 14] as const;
 
 interface LeitnerEntry {
   cardId: string;
-  stage: number;     // 0..4
+  stage: number;     // 0..4 (Leitner box index)
   nextDueIso: string;
+  /** Populated once the card has been graded under FSRS mode. */
+  fsrs?: FsrsCardState;
 }
 interface LeitnerStore {
   entries: Record<string, LeitnerEntry>;
@@ -151,6 +165,8 @@ function isDue(entry: LeitnerEntry): boolean {
 function LeitnerTab() {
   const [store, setStore] = useState<LeitnerStore>(() => loadLeitner());
   const [revealed, setRevealed] = useState(false);
+  const [mode, setLocalMode] = useState<SRMode>(() => getSrMode());
+  const [lastInterval, setLastInterval] = useState<number | null>(null);
 
   useEffect(() => safeWriteJson(LEITNER_KEY, store), [store]);
 
@@ -175,17 +191,43 @@ function LeitnerTab() {
   });
   const card = due[0];
 
-  const grade = (correct: boolean) => {
+  const switchMode = (next: SRMode) => {
+    setSrMode(next);
+    setLocalMode(next);
+  };
+
+  /** Unified grading — branches on active SR mode. */
+  const handleGrade = (rating: Rating) => {
     if (!card) return;
     setStore((s) => {
       const cur = s.entries[card.id] ?? { cardId: card.id, stage: 0, nextDueIso: new Date(0).toISOString() };
+      if (mode === 'fsrs') {
+        const start = cur.fsrs ?? newFsrsCard(Date.now());
+        const result = fsrsSchedule(start, rating);
+        setLastInterval(result.intervalDays);
+        return {
+          entries: {
+            ...s.entries,
+            [card.id]: {
+              cardId: card.id,
+              stage: Math.min(4, cur.stage + (rating === RATING.Again ? -1 : 1)),
+              nextDueIso: new Date(result.state.due).toISOString(),
+              fsrs: result.state,
+            },
+          },
+        };
+      }
+      // Leitner branch — preserve binary semantics: Again → stage 0, anything
+      // else → promote one box.
+      const correct = rating !== RATING.Again;
       const newStage = correct ? Math.min(4, cur.stage + 1) : 0;
       const days = STAGE_DAYS[newStage];
+      setLastInterval(days);
       const next = new Date(Date.now() + days * 86_400_000).toISOString();
       return {
         entries: {
           ...s.entries,
-          [card.id]: { cardId: card.id, stage: newStage, nextDueIso: next },
+          [card.id]: { cardId: card.id, stage: newStage, nextDueIso: next, fsrs: cur.fsrs },
         },
       };
     });
@@ -196,20 +238,72 @@ function LeitnerTab() {
     Object.values(store.entries).filter((e) => e.stage === idx).length,
   );
 
+  // FSRS lifecycle distribution — only used when FSRS mode is active.
+  const fsrsCounts = useMemo(() => {
+    const c = { fresh: 0, learning: 0, review: 0, relearning: 0 };
+    for (const e of Object.values(store.entries)) {
+      if (!e.fsrs) c.fresh++;
+      else if (e.fsrs.state === 'learning') c.learning++;
+      else if (e.fsrs.state === 'relearning') c.relearning++;
+      else c.review++;
+    }
+    return c;
+  }, [store]);
+
   return (
     <div>
-      <p className="text-[12.5px] uppercase tracking-wider text-muted font-bold mb-2">
-        Leitner 5-stage queue · {due.length} card{due.length === 1 ? '' : 's'} due now
-      </p>
-      <div className="grid grid-cols-5 gap-2 mb-4">
-        {STAGE_DAYS.map((days, i) => (
-          <div key={i} className="rounded-lg bg-slate-50 border border-border p-2 text-center">
-            <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">Stage {i + 1}</div>
-            <div className="text-[11.5px] text-ink">{days === 0 ? 'now' : `${days}d`}</div>
-            <div className="font-display text-lg text-primary leading-none mt-1">{stageCounts[i]}</div>
-          </div>
-        ))}
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <p className="text-[12.5px] uppercase tracking-wider text-muted font-bold">
+          {mode === 'fsrs' ? 'FSRS v5 queue' : 'Leitner 5-stage queue'} · {due.length} card{due.length === 1 ? '' : 's'} due now
+          {lastInterval !== null && <span className="ml-2 text-primary">· next in {lastInterval}d</span>}
+        </p>
+        <div role="radiogroup" aria-label="Scheduler mode" className="inline-flex rounded-lg border border-border bg-white text-[11px] overflow-hidden">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={mode === 'fsrs'}
+            onClick={() => switchMode('fsrs')}
+            className={`px-2.5 py-1 uppercase tracking-wider font-bold ${mode === 'fsrs' ? 'bg-primary text-white' : 'text-ink/70 hover:bg-slate-50'}`}
+          >
+            FSRS v5
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={mode === 'leitner'}
+            onClick={() => switchMode('leitner')}
+            className={`px-2.5 py-1 uppercase tracking-wider font-bold border-l border-border ${mode === 'leitner' ? 'bg-ink text-white' : 'text-ink/70 hover:bg-slate-50'}`}
+          >
+            Leitner (Classic)
+          </button>
+        </div>
       </div>
+
+      {mode === 'leitner' ? (
+        <div className="grid grid-cols-5 gap-2 mb-4">
+          {STAGE_DAYS.map((days, i) => (
+            <div key={i} className="rounded-lg bg-slate-50 border border-border p-2 text-center">
+              <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">Stage {i + 1}</div>
+              <div className="text-[11.5px] text-ink">{days === 0 ? 'now' : `${days}d`}</div>
+              <div className="font-display text-lg text-primary leading-none mt-1">{stageCounts[i]}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-4 gap-2 mb-4">
+          {([
+            { key: 'fresh', label: 'Fresh', tint: 'text-muted' },
+            { key: 'learning', label: 'Learning', tint: 'text-accent-dark' },
+            { key: 'review', label: 'Review', tint: 'text-primary' },
+            { key: 'relearning', label: 'Relearning', tint: 'text-danger' },
+          ] as const).map((row) => (
+            <div key={row.key} className="rounded-lg bg-slate-50 border border-border p-2 text-center">
+              <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">{row.label}</div>
+              <div className={`font-display text-lg leading-none mt-1 ${row.tint}`}>{fsrsCounts[row.key]}</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {card ? (
         <div className="rounded-2xl border border-border bg-white p-5">
@@ -229,21 +323,43 @@ function LeitnerTab() {
             </button>
           )}
           {revealed && (
-            <div className="mt-4 flex gap-2">
+            <div className={`mt-4 grid gap-2 ${mode === 'fsrs' ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2'}`}>
               <button
                 type="button"
-                onClick={() => grade(false)}
-                className="flex-1 px-4 py-2 rounded-lg bg-danger text-white font-bold text-[13px] hover:brightness-110"
+                onClick={() => handleGrade(RATING.Again)}
+                className="px-3 py-2 rounded-lg bg-white border border-danger text-danger font-bold text-[13px] hover:bg-danger hover:text-white"
+                aria-label="Again — forgot the card"
               >
-                Wrong — back to stage 1
+                <i className="fa-solid fa-rotate-left mr-1" /> Again
               </button>
+              {mode === 'fsrs' && (
+                <button
+                  type="button"
+                  onClick={() => handleGrade(RATING.Hard)}
+                  className="px-3 py-2 rounded-lg bg-white border border-accent text-ink font-bold text-[13px] hover:bg-accent"
+                  aria-label="Hard — recalled with serious effort"
+                >
+                  <i className="fa-solid fa-mountain mr-1" /> Hard
+                </button>
+              )}
               <button
                 type="button"
-                onClick={() => grade(true)}
-                className="flex-1 px-4 py-2 rounded-lg bg-primary text-white font-bold text-[13px] hover:brightness-110"
+                onClick={() => handleGrade(RATING.Good)}
+                className="px-3 py-2 rounded-lg bg-primary text-white font-bold text-[13px] hover:brightness-110"
+                aria-label="Good — recalled with normal effort"
               >
-                Right — promote
+                <i className="fa-solid fa-check mr-1" /> Good
               </button>
+              {mode === 'fsrs' && (
+                <button
+                  type="button"
+                  onClick={() => handleGrade(RATING.Easy)}
+                  className="px-3 py-2 rounded-lg bg-white border border-primary text-primary font-bold text-[13px] hover:bg-primary hover:text-white"
+                  aria-label="Easy — trivial recall"
+                >
+                  <i className="fa-solid fa-bolt mr-1" /> Easy
+                </button>
+              )}
             </div>
           )}
         </div>

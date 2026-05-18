@@ -79,13 +79,17 @@ The contract is a multi-month roadmap. To preserve the live study site (`timboi1
 
 ---
 
-## D-006 — SW "message channel closed" exceptions: deferred pending repro
+## D-006 — SW "message channel closed" exceptions: extension noise, filtered
 
-**Spec reference:** §22 "Fix the SW message handler" (9 console exceptions).
+**Spec reference:** §22 "Fix the SW message handler" (originally 9 → audit re-counted 61 console exceptions).
 
-**Decision:** Source-grep across `src/` finds no custom service-worker code, no `postMessage` / `onmessage`, no `serviceWorker.addEventListener` — the SW is auto-registered by `vite-plugin-pwa` with `registerType: 'autoUpdate'` + server-side `skipWaiting: true` + `clientsClaim: true`. With those settings, the plugin's virtual register module sends a one-way activation message to the SW; "message channel closed before a response was received" is the typical browser warning when an extension content-script (password manager, dev tools, ad-blocker) injects a listener that returns `true` then resolves asynchronously — not our code.
+**Confirmation:** Grep across the entire repo (`src/`, `public/`, `api/`) finds zero `chrome.runtime`, `postMessage`, `onmessage`, or `serviceWorker.addEventListener` — the only "chrome" string in our code is the literal English word in a comment about UI chrome. The SW is auto-registered by `vite-plugin-pwa`. The "asynchronous response by returning true; the message channel closed before a response was received" pattern is emitted by Chrome when an *extension* content script (password manager, dev tools, ad-blocker, MetaMask) registers a `chrome.runtime.onMessage` listener that returns `true` (promising an async response) and is then unloaded before calling `sendResponse`. The volume scales with how many extensions are active.
 
-**Trade-off accepted:** Leave the SW config as-is for Sprint 1; the warnings are non-blocking and almost certainly extension-originated. In Sprint 9 (PWA Workbox rewrite) we'll move to an InjectManifest strategy with a custom SW that controls its own message channel and can be observed under a clean profile to confirm.
+**Mitigation shipped 2026-05-18:**
+1. `src/lib/observability.ts → isExtensionNoise()` filters this error pattern at capture time so Sentry doesn't drown in extension noise.
+2. Workbox `cacheId: 'tba-v2'` bump in `vite.config.ts` forces all SW caches to recycle on next activation, which incidentally clears the stale "Stadium League Table" HTML some users were still seeing.
+
+**Still deferred to Sprint 9:** custom Workbox InjectManifest SW that owns its own message channel so the chain can be observed under a clean profile to confirm zero our-code origin.
 
 ---
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from '@/lib/store';
+import { resolveIdentity } from '@/lib/identity';
 import {
   clearWorkspace,
   emptyState,
@@ -34,30 +35,35 @@ type Pane = 'word' | 'sheet';
  */
 export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: Props) {
   const { fanName } = useStore();
+  // Resolve identity — falls back to a stable "Demo · ABC123" handle when
+  // no fanName is set, so the workspace never blocks and the badge never
+  // shows a hard-coded username. Once auth lands (Spec §3) this becomes a
+  // server-resolved handle.
+  const identity = useMemo(() => resolveIdentity(fanName), [fanName]);
+  const userKey = identity.storageKey;
+
   const [pane, setPane] = useState<Pane>('word');
   const [state, setState] = useState<CBEWorkspaceState>(() =>
-    fanName ? reconcileTimer(loadWorkspace(fanName, paperId)) : emptyState(),
+    reconcileTimer(loadWorkspace(userKey, paperId)),
   );
   const lastSavedRef = useRef<string>('');
 
-  // When fanName/paperId changes (user switches paper or first signs in), rehydrate.
+  // When identity/paperId changes (user switches paper or first signs in), rehydrate.
   useEffect(() => {
-    if (!fanName) return;
-    setState(reconcileTimer(loadWorkspace(fanName, paperId)));
+    setState(reconcileTimer(loadWorkspace(userKey, paperId)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fanName, paperId]);
+  }, [userKey, paperId]);
 
   // Debounced autosave.
   useEffect(() => {
-    if (!fanName) return;
     const serialised = JSON.stringify(state);
     if (serialised === lastSavedRef.current) return;
     const id = window.setTimeout(() => {
-      saveWorkspace(fanName, paperId, state);
+      saveWorkspace(userKey, paperId, state);
       lastSavedRef.current = serialised;
     }, 500);
     return () => window.clearTimeout(id);
-  }, [state, fanName, paperId]);
+  }, [state, userKey, paperId]);
 
   const savedAgo = useMemo(() => {
     if (!state.updatedAt) return null;
@@ -67,17 +73,6 @@ export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: P
     if (secs < 3600) return `Saved ${Math.floor(secs / 60)} min ago`;
     return `Saved ${Math.floor(secs / 3600)} h ago`;
   }, [state.updatedAt]);
-
-  if (!fanName) {
-    return (
-      <div className="practice-workspace practice-workspace--locked">
-        <p>
-          Please set a fan name (top of the page) before using the practice workspace.
-          Your work is auto-saved against that name on this browser.
-        </p>
-      </div>
-    );
-  }
 
   const setTimerSeconds = (s: number) =>
     setState((prev) => ({
@@ -117,10 +112,10 @@ export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: P
   const clearAll = () => {
     if (
       window.confirm(
-        `Clear ALL practice work for "${paperName}" under fan name ${fanName}? This cannot be undone.`,
+        `Clear ALL practice work for "${paperName}" under ${identity.displayLabel}? This cannot be undone.`,
       )
     ) {
-      clearWorkspace(fanName, paperId);
+      clearWorkspace(userKey, paperId);
       setState(emptyState());
     }
   };
@@ -145,8 +140,14 @@ export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: P
       </div>
 
       <div className="practice-workspace__meta">
-        <span className="practice-workspace__user">
-          <span aria-hidden>👤</span> {fanName}
+        <span
+          className="practice-workspace__user"
+          title={identity.mode === 'demo' ? 'Demo handle — auto-assigned. Once auth is wired this becomes your signed-in handle.' : 'Local handle saved on this browser.'}
+        >
+          <span aria-hidden>👤</span> {identity.displayLabel}
+          {identity.mode === 'demo' && (
+            <span className="ml-1 text-[10px] uppercase tracking-wider text-muted font-bold">· local</span>
+          )}
         </span>
         {savedAgo && <span className="practice-workspace__saved">✓ {savedAgo}</span>}
         <button type="button" onClick={clearAll} className="practice-workspace__clear-all">
@@ -186,7 +187,7 @@ export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: P
       <AIMarker paper={paper} word={state.word} sheet={state.sheet} />
 
       <p className="practice-workspace__footnote">
-        Everything you type is auto-saved against <strong>{fanName}</strong> for this paper, in this browser.
+        Everything you type is auto-saved against <strong>{identity.displayLabel}</strong> for this paper, in this browser.
         It will be here when you come back.
       </p>
     </div>

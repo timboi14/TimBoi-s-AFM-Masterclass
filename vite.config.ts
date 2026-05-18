@@ -36,6 +36,14 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Bump cacheId when the stored HTML schema changes (e.g. removed
+        // sections) so old caches are abandoned and `cleanupOutdatedCaches`
+        // sweeps them on the next activation. Audit feedback 2026-05-18:
+        // post-personal-trend-board rollout, some users were still seeing
+        // "STADIUM LEAGUE TABLE" because the old NetworkFirst HTML cache
+        // had a 24h max-age. Changing cacheId is the canonical workbox
+        // way to invalidate everything in one shot.
+        cacheId: 'tba-v2',
         // Take over open tabs immediately when a new SW activates so users
         // running on stale HTML get the fresh chunk manifest on next nav.
         skipWaiting: true,

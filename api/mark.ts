@@ -67,12 +67,14 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     body = (await req.json()) as MarkRequest;
   } catch {
-    return new Response('Invalid JSON', { status: 400 });
+    return errorJson(400, 'invalid_json', 'Body was not valid JSON.', [{ path: ['body'], message: 'Expected application/json POST body.' }]);
   }
 
-  // Basic shape check — keeps the prompt clean if the client misbehaves.
-  if (!body.paperName || !body.partLabel || !body.partRequirement) {
-    return new Response('Missing required fields', { status: 400 });
+  // Zod-style shape validation. The FE can surface field-level errors by
+  // mapping issues[].path → form fields. Spec audit response, 2026-05-18.
+  const issues = validateMarkRequest(body);
+  if (issues.length > 0) {
+    return errorJson(400, 'invalid_request', 'One or more fields are invalid.', issues);
   }
 
   // Answer-size guards — cheap rejection before we even hit the upstream.
@@ -81,16 +83,14 @@ export default async function handler(req: Request): Promise<Response> {
   const wordLen = (body.studentWord ?? '').length;
   const sheetLen = (body.studentSheet ?? '').length;
   if (wordLen + sheetLen < minChars) {
-    return new Response(
+    return errorJson(400, 'answer_too_short',
       `Answer too short to mark (minimum ${minChars} characters across the word processor + spreadsheet).`,
-      { status: 400 },
-    );
+      [{ path: ['studentWord'], message: `Need at least ${minChars} total chars, got ${wordLen + sheetLen}.` }]);
   }
   if (wordLen > maxChars) {
-    return new Response(
+    return errorJson(413, 'answer_too_long',
       `Answer too long (${wordLen} chars). Maximum is ${maxChars} characters in the word processor.`,
-      { status: 413 },
-    );
+      [{ path: ['studentWord'], message: `Max ${maxChars} chars, got ${wordLen}.` }]);
   }
 
   // Optional per-IP daily rate limit via Upstash Redis REST API. Only enforced
@@ -226,6 +226,47 @@ function numEnv(name: string, fallback: number): number {
   if (!raw) return fallback;
   const n = Number(raw);
   return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+// ─── Zod-style validation + error envelope ─────────────────────────────────
+//
+// FE expects: { error: { code, message, issues: [{ path, message }] } }
+// path is a string[] modelled after Zod's issue path so FE can dot-walk it
+// to a form field. The error envelope is the same shape returned by every
+// non-success 4xx response from this endpoint and from /api/coach.
+
+interface Issue { path: (string | number)[]; message: string }
+
+function errorJson(status: number, code: string, message: string, issues: Issue[] = []): Response {
+  return new Response(
+    JSON.stringify({ error: { code, message, issues } }, null, 2),
+    { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } },
+  );
+}
+
+function validateMarkRequest(b: MarkRequest): Issue[] {
+  const issues: Issue[] = [];
+  const requireStr = (field: keyof MarkRequest, label: string) => {
+    const v = b[field];
+    if (typeof v !== 'string' || v.trim() === '') {
+      issues.push({ path: [field as string], message: `${label} is required.` });
+    }
+  };
+  const requireNum = (field: keyof MarkRequest, label: string) => {
+    const v = b[field];
+    if (typeof v !== 'number' || !Number.isFinite(v) || v <= 0) {
+      issues.push({ path: [field as string], message: `${label} must be a positive number.` });
+    }
+  };
+  requireStr('paperName', 'paperName');
+  requireStr('paperSession', 'paperSession');
+  requireStr('partLabel', 'partLabel');
+  requireStr('partRequirement', 'partRequirement');
+  requireNum('partMarks', 'partMarks');
+  if (b.markingPoints !== undefined && !Array.isArray(b.markingPoints)) {
+    issues.push({ path: ['markingPoints'], message: 'markingPoints must be an array if provided.' });
+  }
+  return issues;
 }
 
 interface RateLimitInfo {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { SHEET_COLS, SHEET_ROWS, colLabel } from '@/lib/cbe-storage';
+import { compute as computeCell } from '@/lib/sheet-engine';
 
 interface Props {
   value: string[][];
@@ -209,82 +210,40 @@ export function CBESpreadsheet({ value, onChange }: Props) {
   );
 }
 
-/** =SUM(A1:A4), =AVG(...), =MIN(...), =MAX(...), or =A1+B2*C3 (numeric).
- *  Plain text otherwise. Returns the raw string for anything we can't evaluate. */
+/**
+ * Render a cell's display value.
+ *
+ * Routes every `=formula` through the real sheet-engine (`computeCell`),
+ * which supports the full ACCA function library: NPV, AFM_NPV (year-0 aware),
+ * IRR, MIRR, SUMPRODUCT, NORMSDIST / NORM.S.DIST, NORMSINV / NORM.S.INV,
+ * EXP, LN, SQRT, BSCALL/BSPUT, IRP/PPP, etc.
+ *
+ * Audit feedback 2026-05-18: the previous in-file evalIfFormula only handled
+ * SUM/AVG/MIN/MAX ranges + basic arithmetic, so AFM_NPV / SUMPRODUCT etc were
+ * dead code. This delegates to compute() so the engine work in
+ * src/lib/sheet-engine.ts actually reaches users.
+ */
 function evalIfFormula(cell: string, sheet: string[][]): string {
-  if (!cell || !cell.startsWith('=')) return cell;
-  try {
-    const expr = cell.slice(1).trim();
-    const fnMatch = /^(SUM|AVG|AVERAGE|MIN|MAX|COUNT)\(([A-Z]+\d+):([A-Z]+\d+)\)$/i.exec(expr);
-    if (fnMatch) {
-      const [, fn, fromRef, toRef] = fnMatch;
-      const range = collectRange(fromRef, toRef, sheet);
-      const nums = range.map(Number).filter((n) => !Number.isNaN(n));
-      if (nums.length === 0) return '#N/A';
-      switch (fn.toUpperCase()) {
-        case 'SUM':
-          return formatNum(nums.reduce((a, b) => a + b, 0));
-        case 'AVG':
-        case 'AVERAGE':
-          return formatNum(nums.reduce((a, b) => a + b, 0) / nums.length);
-        case 'MIN':
-          return formatNum(Math.min(...nums));
-        case 'MAX':
-          return formatNum(Math.max(...nums));
-        case 'COUNT':
-          return String(nums.length);
-      }
-    }
-    // Generic numeric expression with cell refs (A1, B2, ...)
-    const substituted = expr.replace(/[A-Z]+\d+/g, (ref) => {
-      const v = lookupCell(ref, sheet);
-      const n = Number(v);
-      return Number.isNaN(n) ? '0' : String(n);
-    });
-    // Only allow digits, operators, parens, dot, whitespace
-    if (!/^[\d+\-*/().\s]+$/.test(substituted)) return '#ERR';
-    // eslint-disable-next-line no-new-func
-    const result = Function(`"use strict"; return (${substituted});`)();
-    return typeof result === 'number' && Number.isFinite(result) ? formatNum(result) : '#ERR';
-  } catch {
-    return '#ERR';
+  if (!cell) return '';
+  if (!cell.startsWith('=')) return cell;
+  const out = computeCell(sheet, cell);
+  if (!out.ok) return out.v; // "#ERR" or "#CYCLE" — already a string
+  if (typeof out.v === 'number') {
+    if (!Number.isFinite(out.v)) return '#NUM';
+    return formatNum(out.v);
   }
+  if (typeof out.v === 'boolean') return out.v ? 'TRUE' : 'FALSE';
+  if (Array.isArray(out.v)) return out.v.map((x) => String(x ?? '')).join(', ');
+  return String(out.v ?? '');
 }
 
 function formatNum(n: number): string {
-  // Avoid floating-point garbage tails like 0.30000000000000004
+  // Avoid floating-point garbage tails like 0.30000000000000004 while still
+  // showing four decimal places of useful precision for AFM workings.
   if (Number.isInteger(n)) return n.toLocaleString();
-  return Number(n.toFixed(4)).toLocaleString();
+  const rounded = Number(n.toFixed(4));
+  return rounded.toLocaleString(undefined, { maximumFractionDigits: 4 });
 }
 
-function parseRef(ref: string): { r: number; c: number } | null {
-  const m = /^([A-Z]+)(\d+)$/i.exec(ref);
-  if (!m) return null;
-  const col = m[1].toUpperCase().split('').reduce((acc, ch) => acc * 26 + (ch.charCodeAt(0) - 64), 0) - 1;
-  const row = Number(m[2]) - 1;
-  if (row < 0 || row >= SHEET_ROWS || col < 0 || col >= SHEET_COLS) return null;
-  return { r: row, c: col };
-}
-
-function lookupCell(ref: string, sheet: string[][]): string {
-  const p = parseRef(ref);
-  if (!p) return '';
-  return sheet[p.r]?.[p.c] ?? '';
-}
-
-function collectRange(from: string, to: string, sheet: string[][]): string[] {
-  const a = parseRef(from);
-  const b = parseRef(to);
-  if (!a || !b) return [];
-  const r1 = Math.min(a.r, b.r);
-  const r2 = Math.max(a.r, b.r);
-  const c1 = Math.min(a.c, b.c);
-  const c2 = Math.max(a.c, b.c);
-  const out: string[] = [];
-  for (let r = r1; r <= r2; r++) {
-    for (let c = c1; c <= c2; c++) {
-      out.push(sheet[r]?.[c] ?? '');
-    }
-  }
-  return out;
-}
+// Range / ref helpers used to live here; they've moved into
+// src/lib/sheet-engine.ts where compute() handles all of it natively.
