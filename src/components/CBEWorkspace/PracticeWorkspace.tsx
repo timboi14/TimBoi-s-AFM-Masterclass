@@ -122,8 +122,9 @@ export function PracticeWorkspace({ paper, paperId, paperName, paperSession }: P
 
   return (
     <div className="practice-workspace">
-      <div className="practice-workspace__topbar">
+      <div className="practice-workspace__topbar cbe-header">
         <div className="practice-workspace__brand">
+          <span className="cbe-header-dot" aria-hidden />
           <div className="practice-workspace__brand-label">ACCA-style CBE</div>
           <div className="practice-workspace__brand-paper">
             {paperName} · {paperSession}

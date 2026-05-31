@@ -7,6 +7,14 @@ import { SolutionTab } from './tabs/SolutionTab';
 import { ExaminerTab } from './tabs/ExaminerTab';
 import { PracticeWorkspace } from '@/components/CBEWorkspace/PracticeWorkspace';
 import { ExhibitsPanel } from '@/components/CBEWorkspace/ExhibitsPanel';
+import { CBEProvider } from '@/components/CBEWorkspace/cbe-context';
+import { CBEToolRibbon } from '@/components/CBEWorkspace/CBEToolRibbon';
+import { CBEPopups } from '@/components/CBEWorkspace/CBEPopups';
+import { CBEFooter } from '@/components/CBEWorkspace/CBEFooter';
+import { useStore } from '@/lib/store';
+import { resolveIdentity } from '@/lib/identity';
+
+const REALISTIC_KEY = 'cbe_realistic_mode';
 
 const TAB_IDS = ['scenario', 'question', 'practice', 'solution', 'examiner'] as const;
 type Tab = (typeof TAB_IDS)[number];
@@ -31,6 +39,18 @@ export function PaperDetail({ paper, tab, onTabChange, onClose }: Props) {
     else setInternalTab(next);
   };
   const [practiceLayout, setPracticeLayout] = useState<'split' | 'focus'>('split');
+  const { fanName } = useStore();
+  const guestId = resolveIdentity(fanName).storageKey;
+  const [realistic, setRealistic] = useState<boolean>(() => {
+    try { return localStorage.getItem(REALISTIC_KEY) === 'true'; } catch { return false; }
+  });
+  const toggleRealistic = () => {
+    setRealistic((prev) => {
+      const next = !prev;
+      try { localStorage.setItem(REALISTIC_KEY, String(next)); } catch { /* ignore */ }
+      return next;
+    });
+  };
   const tabRefs = useRef<Record<Tab, HTMLButtonElement | null>>({
     scenario: null, question: null, practice: null, solution: null, examiner: null,
   });
@@ -131,41 +151,57 @@ export function PaperDetail({ paper, tab, onTabChange, onClose }: Props) {
             {t.id === 'scenario' && <ScenarioTab paper={paper} />}
             {t.id === 'question' && <QuestionTab paper={paper} />}
             {t.id === 'practice' && (
-              <div className={`cbe-split cbe-split--${practiceLayout}`}>
-                <div className="cbe-split__layout-toggle">
-                  <button
-                    type="button"
-                    onClick={() => setPracticeLayout('split')}
-                    className={`cbe-split__layout-btn ${practiceLayout === 'split' ? 'cbe-split__layout-btn--active' : ''}`}
-                    aria-pressed={practiceLayout === 'split'}
-                    title="Show question alongside the workspace"
-                  >
-                    ⬛ ⬛ Split view
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPracticeLayout('focus')}
-                    className={`cbe-split__layout-btn ${practiceLayout === 'focus' ? 'cbe-split__layout-btn--active' : ''}`}
-                    aria-pressed={practiceLayout === 'focus'}
-                    title="Hide the question and use the full width for the workspace"
-                  >
-                    ⬛ Focus mode
-                  </button>
-                </div>
-                {practiceLayout === 'split' && (
-                  <div className="cbe-split__left">
-                    <ExhibitsPanel paper={paper} />
+              <CBEProvider paperId={paper.id} guestId={guestId}>
+                <div className={`cbe-practice ${realistic ? 'cbe-realistic' : ''}`}>
+                  <CBEToolRibbon />
+                  <div className="cbe-split__layout-toggle">
+                    <button
+                      type="button"
+                      onClick={() => setPracticeLayout('split')}
+                      className={`cbe-split__layout-btn ${practiceLayout === 'split' ? 'cbe-split__layout-btn--active' : ''}`}
+                      aria-pressed={practiceLayout === 'split'}
+                      title="Show question alongside the workspace"
+                    >
+                      ⬛ ⬛ Split view
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPracticeLayout('focus')}
+                      className={`cbe-split__layout-btn ${practiceLayout === 'focus' ? 'cbe-split__layout-btn--active' : ''}`}
+                      aria-pressed={practiceLayout === 'focus'}
+                      title="Hide the question and use the full width for the workspace"
+                    >
+                      ⬛ Focus mode
+                    </button>
+                    <button
+                      type="button"
+                      onClick={toggleRealistic}
+                      className={`cbe-split__layout-btn ${realistic ? 'cbe-split__layout-btn--active' : ''}`}
+                      aria-pressed={realistic}
+                      title="Flat-grey enterprise skin that mirrors the ACCA iAssess exam shell"
+                    >
+                      🖥 Realistic mode
+                    </button>
                   </div>
-                )}
-                <div className="cbe-split__right">
-                  <PracticeWorkspace
-                    paper={paper}
-                    paperId={paper.id}
-                    paperName={paper.name}
-                    paperSession={paper.session}
-                  />
+                  <div className={`cbe-split cbe-split--${practiceLayout}`}>
+                    {practiceLayout === 'split' && (
+                      <div className="cbe-split__left">
+                        <ExhibitsPanel paper={paper} />
+                      </div>
+                    )}
+                    <div className="cbe-split__right">
+                      <PracticeWorkspace
+                        paper={paper}
+                        paperId={paper.id}
+                        paperName={paper.name}
+                        paperSession={paper.session}
+                      />
+                    </div>
+                  </div>
+                  <CBEFooter paperId={paper.id} />
                 </div>
-              </div>
+                <CBEPopups />
+              </CBEProvider>
             )}
             {t.id === 'solution' && <SolutionTab paper={paper} />}
             {t.id === 'examiner' && <ExaminerTab paper={paper} />}

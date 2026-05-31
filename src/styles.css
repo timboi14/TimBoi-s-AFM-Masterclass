@@ -1625,3 +1625,166 @@ html.tba-bionic li strong { font-weight: 800; }
   }
 }
 
+/* ─────────────────────────────────────────────────────────────
+   iAssess-style CBE tools (ribbon, popups, calculator, navigator)
+   ───────────────────────────────────────────────────────────── */
+.cbe-practice { position: relative; }
+
+/* Tool ribbon */
+.cbe-ribbon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 32px;
+  padding: 0 8px;
+  background: #f0f0f0;
+  border: 1px solid #d0d0d0;
+  border-left: none; border-right: none;
+  font-size: 13px;
+  user-select: none;
+}
+.cbe-ribbon__left, .cbe-ribbon__right { display: flex; align-items: center; gap: 2px; }
+.cbe-ribbon__group-btn { position: relative; display: inline-flex; align-items: center; }
+.cbe-ribbon__btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: none; background: transparent; cursor: pointer;
+  padding: 3px 8px; font-size: 13px; color: #333; border-radius: 4px;
+}
+.cbe-ribbon__btn:hover { background: rgba(0,0,0,0.06); color: #c00000; }
+.cbe-ribbon__btn--active.cbe-ribbon__btn--red { color: #c00000; font-weight: 600; }
+.cbe-ribbon__btn--active.cbe-ribbon__btn--amber { color: #e08a00; font-weight: 600; }
+.cbe-ribbon__icon { font-size: 13px; }
+.cbe-ribbon__hl { display: inline-flex; align-items: center; gap: 1px; }
+.cbe-ribbon__swatch { width: 13px; height: 13px; border: 1px solid #999; display: inline-block; border-radius: 2px; }
+.cbe-ribbon__caret { border: none; background: transparent; cursor: pointer; font-size: 10px; padding: 0 2px; color: #555; }
+.cbe-ribbon__swatch-menu {
+  position: absolute; top: 100%; left: 0; z-index: 60; margin-top: 2px;
+  display: flex; gap: 4px; padding: 5px; background: #fff;
+  border: 1px solid #cfcfcf; border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+.cbe-ribbon__swatch-opt { width: 22px; height: 22px; border: 1px solid #999; border-radius: 4px; cursor: pointer; }
+.cbe-ribbon__swatch-opt:hover { outline: 2px solid #2e8b2e; }
+
+/* Floating popups */
+.cbe-popup {
+  position: fixed; background: #fff; border: 1px solid #b8b8b8; border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.28); display: flex; flex-direction: column;
+  overflow: hidden; min-width: 240px;
+}
+.cbe-popup__bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 8px; background: #2d2d2d; color: #fff; cursor: move;
+  font-size: 12.5px; user-select: none; touch-action: none;
+}
+.cbe-popup__title { font-weight: 600; }
+.cbe-popup__close { border: none; background: transparent; color: #fff; font-size: 18px; line-height: 1; cursor: pointer; padding: 0 4px; }
+.cbe-popup__body { flex: 1; overflow: auto; padding: 10px; }
+.cbe-popup__resize { position: absolute; right: 2px; bottom: 2px; width: 14px; height: 14px; cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, #999 50%, #999 60%, transparent 60%, transparent 70%, #999 70%, #999 80%, transparent 80%); }
+
+.cbe-btn { border: 1px solid #c4c4c4; background: #f3f3f3; border-radius: 5px; padding: 5px 12px; cursor: pointer; font-size: 13px; }
+.cbe-btn:hover { background: #e9e9e9; }
+.cbe-btn--primary { background: var(--primary, #00a347); border-color: var(--primary, #00a347); color: #fff; }
+.cbe-btn--primary:hover { filter: brightness(0.95); }
+.cbe-tool-btn { border: 1px solid #d0d0d0; background: #f7f7f7; border-radius: 4px; padding: 3px 8px; cursor: pointer; font-size: 12px; }
+.cbe-tool-btn:hover { background: #ececec; }
+
+/* Symbol popup */
+.cbe-symbol__row { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
+.cbe-symbol__tile { width: 46px; height: 46px; font-size: 20px; border: 1px solid #cfcfcf; background: #fafafa; border-radius: 6px; cursor: pointer; }
+.cbe-symbol__tile--active { border: 2px solid var(--primary, #00a347); background: #fff; }
+.cbe-symbol__actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* Scratch pad */
+.cbe-scratch { display: flex; flex-direction: column; height: 100%; }
+.cbe-scratch__toolbar { display: flex; gap: 4px; margin-bottom: 6px; }
+.cbe-scratch__area { flex: 1; width: 100%; min-height: 220px; resize: none; border: 1px solid #cfcfcf; border-radius: 6px; padding: 8px; font: 13px/1.5 "DM Sans", system-ui, sans-serif; }
+
+/* TI-30XS calculator */
+.cbe-calc-popup .cbe-popup__body { padding: 8px; background: #2d2d2d; }
+.cbe-calc__brand { font-size: 11px; }
+.cbe-calc__brand strong { letter-spacing: 0.04em; }
+.cbe-calc__modes { color: #cfcfcf; font-size: 11px; margin-bottom: 4px; }
+.cbe-calc__lcd {
+  position: relative; background: #c3ccc0; border: 2px inset #8a948a; border-radius: 4px;
+  min-height: 46px; padding: 14px 8px 6px; margin-bottom: 8px; text-align: right;
+  font-family: "JetBrains Mono", ui-monospace, monospace; color: #1c241c; overflow: hidden;
+}
+.cbe-calc__deg { position: absolute; top: 3px; right: 6px; font-size: 9px; letter-spacing: 0.08em; color: #36473a; }
+.cbe-calc__readout { font-size: 18px; word-break: break-all; }
+.cbe-calc__keys { display: flex; flex-direction: column; gap: 4px; }
+.cbe-calc__row { display: flex; gap: 4px; }
+.cbe-calc__key {
+  flex: 1; min-width: 0; position: relative; border: none; border-radius: 4px;
+  padding: 8px 2px 5px; cursor: pointer; font-size: 12px; color: #fff;
+  background: #5a5a5a; box-shadow: 0 2px 0 rgba(0,0,0,0.35); line-height: 1;
+}
+.cbe-calc__key:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(0,0,0,0.35); }
+.cbe-calc__key-2nd { position: absolute; top: 1px; left: 0; right: 0; font-size: 8px; font-style: italic; color: #8fd0a0; }
+.cbe-calc__key-main { display: block; }
+.cbe-calc__key--num { background: #efefef; color: #1c1c1c; }
+.cbe-calc__key--op { background: #3a3a3a; }
+.cbe-calc__key--second { background: #1d7a3a; }
+.cbe-calc__key--shift-on { outline: 2px solid #8fd0a0; }
+.cbe-calc__key--dpad { background: #444; }
+
+/* Navigator overlay */
+.cbe-nav-overlay { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; }
+.cbe-nav-overlay__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+.cbe-nav { position: relative; width: min(560px, 92vw); max-height: 80vh; display: flex; flex-direction: column;
+  background: #fff; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); overflow: hidden; }
+.cbe-nav__head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #e6e6e6; }
+.cbe-nav__title { font-weight: 700; }
+.cbe-nav__close { border: none; background: transparent; font-size: 22px; cursor: pointer; line-height: 1; }
+.cbe-nav__legend { display: flex; gap: 16px; padding: 8px 16px; font-size: 12px; color: #595959; border-bottom: 1px solid #f0f0f0; }
+.cbe-nav__legend span { display: inline-flex; align-items: center; gap: 5px; }
+.cbe-nav__list { list-style: none; margin: 0; padding: 6px; overflow: auto; }
+.cbe-nav__item { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: none; background: transparent;
+  padding: 9px 10px; border-radius: 8px; cursor: pointer; font-size: 13.5px; }
+.cbe-nav__item:hover { background: #f3f6f4; }
+.cbe-nav__item-name { flex: 1; font-weight: 600; color: #1c1c1c; }
+.cbe-nav__item-meta { font-size: 11.5px; color: #777; display: inline-flex; gap: 6px; align-items: center; }
+.cbe-nav__flag { color: #e08a00; }
+.cbe-nav__dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.cbe-nav__dot--answered { background: #2e8b2e; }
+.cbe-nav__dot--flagged { background: #e08a00; }
+.cbe-nav__dot--none { background: #c4c4c4; }
+
+/* Footer */
+.cbe-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 28px; padding: 0 10px;
+  border-top: 1px solid #e2e2e2; color: #595959; font-size: 12.5px; }
+.cbe-footer__nav { display: flex; gap: 10px; }
+.cbe-footer__link { border: none; background: transparent; color: #595959; cursor: pointer; font-size: 12.5px; }
+.cbe-footer__link a { color: inherit; text-decoration: none; }
+.cbe-footer__link:hover:not(:disabled) { color: #c00000; }
+.cbe-footer__link:disabled { opacity: 0.4; cursor: default; }
+
+/* Word-processor toolbar additions */
+.cbe-word__toolbar--row2 { border-top: none; }
+.cbe-word__select { font-size: 12px; padding: 2px 4px; border: 1px solid #cfcfcf; border-radius: 4px; background: #fff; }
+.cbe-word__find { display: flex; gap: 6px; align-items: center; padding: 6px; background: #f6f6f6; border-bottom: 1px solid #e2e2e2; }
+.cbe-word__find input { font-size: 12px; padding: 3px 6px; border: 1px solid #cfcfcf; border-radius: 4px; }
+.cbe-word__tablewrap { position: relative; display: inline-flex; }
+.cbe-word__tablepick { position: absolute; top: 100%; left: 0; z-index: 60; margin-top: 2px; background: #fff;
+  border: 1px solid #cfcfcf; border-radius: 6px; padding: 6px; box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+.cbe-word__tablepick-row { display: flex; }
+.cbe-word__tablepick-cell { width: 16px; height: 16px; margin: 1px; border: 1px solid #cfcfcf; cursor: pointer; }
+.cbe-word__tablepick-cell.is-on { background: var(--primary, #00a347); border-color: var(--primary, #00a347); }
+.cbe-word__tablepick-label { text-align: center; font-size: 11px; color: #777; margin-top: 4px; }
+
+/* Flag badge on grid card */
+.paper-card { position: relative; }
+.paper-card__flag { position: absolute; top: 6px; right: 8px; color: #e08a00; font-size: 15px; line-height: 1; }
+.cbe-header-dot { width: 10px; height: 10px; background: #2e8b2e; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
+
+/* ── Realistic mode: flat-grey iAssess enterprise skin, scoped to CBE pane ── */
+.cbe-realistic { font-family: "Proxima Nova Regular", Arial, sans-serif; background: #ffffff; color: #000000; }
+.cbe-realistic .cbe-header { background: #e8e8e8; border-bottom: 1px solid #c8c8c8; font-size: 16px; font-weight: 400; }
+.cbe-realistic .tool-ribbon { background: #eeeeee; border-bottom: 1px solid #d0d0d0; }
+.cbe-realistic .sidebar-tile { background: #efefef; border: 1px solid #d7d7d7; border-radius: 0; font-size: 13.3px; }
+.cbe-realistic .sidebar-section-label { color: #595959; font-size: 16px; font-weight: 700; }
+.cbe-realistic .cbe-footer { color: #595959; font-size: 13px; border-top: 1px solid #d0d0d0; height: 25px; }
+.cbe-realistic .wp-editor { font-family: Arial, sans-serif; font-size: 14px; }
+.cbe-realistic .cbe-header-dot { width: 10px; height: 10px; background: #2e8b2e; border-radius: 50%; display: inline-block; margin-right: 8px; }
+

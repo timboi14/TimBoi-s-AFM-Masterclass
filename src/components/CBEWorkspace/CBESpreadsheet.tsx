@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { SHEET_COLS, SHEET_ROWS, colLabel } from '@/lib/cbe-storage';
 import { compute as computeCell, CBE_ENGINE_V1 } from '@/lib/sheet-engine';
+import { useCBE } from './cbe-context';
 
 // Force the engine-version marker to ship into the production bundle so
 // scripts/check-deployed-bundle.mjs can grep for it. A no-op at runtime —
@@ -25,6 +26,7 @@ interface CellKey {
  * No cycle detection — keep formulas non-circular.
  */
 export function CBESpreadsheet({ value, onChange }: Props) {
+  const { reportFocus } = useCBE();
   const [selected, setSelected] = useState<CellKey>({ r: 0, c: 0 });
   const [editing, setEditing] = useState<CellKey | null>(null);
   const [draft, setDraft] = useState<string>('');
@@ -211,6 +213,7 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                           onChange={(e) => setDraft(e.target.value)}
                           onKeyDown={onEditKeyDown}
                           onBlur={commitEdit}
+                          onFocus={() => editRef.current && reportFocus(editRef.current, 'sheet')}
                         />
                       ) : (
                         <span className="cbe-sheet__display">{evalIfFormula(cellValue, value)}</span>
