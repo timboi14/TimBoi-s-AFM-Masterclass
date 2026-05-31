@@ -1,0 +1,6 @@
+- [Project: TimBoi's Academy](project_timboi_academy.md) — React/Vite ACCA AFM exam-prep app deployed to Vercel; gamified Spurs/football theme. (Stack is migrating to Next.js per [[master-build-contract]].)
+- [Project: XAU Cockpit](project_xau_cockpit.md) — Streamlit gold-trading dashboard at C:\Users\Timuhwe\OneDrive\Documents\xau-cockpit; moved to this Windows PC for live MT5/Exness trading. No proven edge — risky experiment.
+- [Project: Master Build contract (2026-05-18)](project_master_build_contract.md) — Canonical 24-section roadmap; backend now sanctioned (Postgres+Drizzle+Redis+Auth); never reintroduce billing/tiers.
+- [User: design taste](user_design_taste.md) — Wants premium "Apple/Anthropic-grade" polish; happy delegating broad redesign.
+- [Feedback: autonomous + auto-deploy](feedback_autonomous.md) — Auto-mode; standing authorization to commit & push to main in this repo (Vercel auto-deploys).
+- [Feedback: Coach gives model answers, not refusals](feedback_coach_model_answers.md) — Coach AI must produce full top-achiever model answers with marking key at the bottom; no homework-refusal policy on Coach.

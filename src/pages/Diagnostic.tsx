@@ -198,7 +198,7 @@ export function DiagnosticPage() {
                   return (
                     <Link
                       key={r.capability}
-                      to={cap?.tbaTopicId ? `/topic/${cap.tbaTopicId}` : '/syllabus'}
+                      to={cap?.tbaTopicId ? `/topic/${cap.tbaTopicId}` : '/course#syllabus'}
                       className="block rounded-xl border border-border bg-white px-4 py-3 hover:border-primary transition-colors"
                     >
                       <div className="flex items-center justify-between">

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { HomePage } from '@/pages/Home';
 import { NameOverlay } from '@/NameOverlay';
@@ -61,7 +61,6 @@ const DebriefNewPage = lazyNamed(() => import('@/pages/Debrief'), 'DebriefNewPag
 const DebriefViewPage = lazyNamed(() => import('@/pages/Debrief'), 'DebriefViewPage');
 const PitfallsPage = lazyNamed(() => import('@/pages/Pitfalls'), 'PitfallsPage');
 const StudyGuidePage = lazyNamed(() => import('@/pages/StudyGuide'), 'StudyGuidePage');
-const SyllabusPage = lazyNamed(() => import('@/pages/Syllabus'), 'SyllabusPage');
 const MemoryLabPage = lazyNamed(() => import('@/pages/MemoryLab'), 'MemoryLabPage');
 const FormGuidePage = lazyNamed(() => import('@/pages/FormGuide'), 'FormGuidePage');
 const MockBriefingPage = lazyNamed(() => import('@/pages/MockComposite'), 'MockBriefingPage');
@@ -122,7 +121,8 @@ export default function App() {
                   <Route path="/debrief/new" element={<DebriefNewPage />} />
                   <Route path="/debrief/:id" element={<DebriefViewPage />} />
                   <Route path="/pitfalls" element={<PitfallsPage />} />
-                  <Route path="/syllabus" element={<SyllabusPage />} />
+                  {/* Syllabus is now folded into the Course hub (capability map section). */}
+                  <Route path="/syllabus" element={<Navigate to="/course#syllabus" replace />} />
                   <Route path="/memory-lab" element={<MemoryLabPage />} />
                   <Route path="/form-guide" element={<FormGuidePage />} />
                   <Route path="/training/mock" element={<MockBriefingPage />} />

@@ -21,6 +21,8 @@ import {
 } from '@/data/shplus';
 import { TOPICS, type Topic } from '@/data/topics';
 import { EXAM_CASES } from '@/data/examiner';
+import { AFM_SYLLABUS } from '@/data/syllabus';
+import { CapabilityMap } from '@/components/CapabilityMap';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { cn } from '@/lib/cn';
 
@@ -102,8 +104,11 @@ export function CoursePage() {
     { id: 'this-week', label: 'This week' },
     { id: 'timeline', label: 'Timeline' },
     { id: 'dates', label: 'Key dates' },
+    { id: 'syllabus', label: 'Syllabus map' },
     { id: 'articles', label: 'Articles' },
   ];
+
+  const syllabusCovered = AFM_SYLLABUS.filter((r) => r.tbaTopicId).length;
 
   return (
     <>
@@ -224,6 +229,20 @@ export function CoursePage() {
             </tbody>
           </table>
         </Card>
+      </motion.div>
+
+      {/* SYLLABUS CAPABILITY MAP — folded in from the former standalone Syllabus tab */}
+      <span id="syllabus" />
+      <SectionTitle icon="fa-solid fa-table-list" badge={<Pill>{AFM_SYLLABUS.length} capabilities · {syllabusCovered} covered</Pill>}>
+        Syllabus capability map
+      </SectionTitle>
+      <motion.div variants={fadeUp}>
+        <p className="text-[14px] text-ink/80 leading-relaxed max-w-3xl mb-5">
+          Every ACCA AFM Study Guide capability (A1 → E5), mapped to its TimBoi topic and drill.
+          Click a capability to jump straight into the topic; greyed rows are the next
+          content-sprint targets with no coverage yet.
+        </p>
+        <CapabilityMap />
       </motion.div>
 
       {/* BLACKBOSCA STUDY COMPANION (Week 1 self-review) */}

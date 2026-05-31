@@ -25,7 +25,7 @@ const NAV_SHORTCUTS: Shortcut[] = [
   { key: 'c', to: '/course', label: 'Course' },
   { key: 'p', to: '/past-papers', label: 'Past Papers' },
   { key: 't', to: '/topic/adviser', label: 'Topics' },
-  { key: 'y', to: '/syllabus', label: 'Syllabus' },
+  { key: 'y', to: '/course#syllabus', label: 'Syllabus map' },
   { key: 'b', to: '/playbook', label: 'Playbook' },
   { key: 'r', to: '/training', label: 'Training' },
   { key: 'x', to: '/scout', label: 'Scout' },

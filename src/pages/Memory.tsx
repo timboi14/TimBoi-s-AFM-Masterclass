@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
 import { MNEMONICS } from '@/lib/mnemonics';
+import { ABBREVIATIONS, ABBREVIATION_COUNT } from '@/data/abbreviations';
 import { store } from '@/lib/store';
 import { speak, isSpeechSynthesisSupported } from '@/lib/voice';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
@@ -139,6 +140,14 @@ export function MemoryPage() {
             <MnemonicCard m={m} />
           </motion.div>
         ))}
+      </motion.div>
+
+      {/* Cheat-sheet abbreviations */}
+      <SectionTitle icon="fa-solid fa-spell-check" badge={<Pill variant="primary">{ABBREVIATION_COUNT} abbreviations</Pill>}>
+        Cheat-sheet abbreviations
+      </SectionTitle>
+      <motion.div variants={fadeUp}>
+        <AbbreviationCheatsheet />
       </motion.div>
 
       {/* Memory palace */}
@@ -419,6 +428,78 @@ function MnemonicCard({ m }: { m: typeof MNEMONICS[number] }) {
         >
           <i className="fa-solid fa-volume-high" /> Read aloud
         </button>
+      )}
+    </Card>
+  );
+}
+
+function AbbreviationCheatsheet() {
+  const [query, setQuery] = useState('');
+  const q = query.trim().toLowerCase();
+
+  const groups = useMemo(() => {
+    if (!q) return ABBREVIATIONS;
+    return ABBREVIATIONS
+      .map((g) => ({
+        ...g,
+        items: g.items.filter(
+          (it) =>
+            it.abbr.toLowerCase().includes(q) ||
+            it.full.toLowerCase().includes(q) ||
+            it.note.toLowerCase().includes(q),
+        ),
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [q]);
+
+  const shown = groups.reduce((n, g) => n + g.items.length, 0);
+
+  return (
+    <Card className="!p-6">
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <div className="relative flex-1 min-w-[220px]">
+          <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[13px]" aria-hidden />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Filter — type WACC, beta, hedge, rights…"
+            aria-label="Filter abbreviations"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-none focus:border-primary"
+          />
+        </div>
+        <span className="text-[12.5px] text-muted">
+          {q ? <>{shown} of {ABBREVIATION_COUNT}</> : <>{ABBREVIATION_COUNT} terms</>}
+        </span>
+      </div>
+
+      {groups.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border p-6 text-center text-[13.5px] text-muted">
+          No abbreviation matches "{query}".
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {groups.map((g) => (
+            <div key={g.category} className="rounded-2xl border border-border bg-white overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border-b border-border">
+                <i className={`fa-solid ${g.icon} text-primary text-[13px]`} aria-hidden />
+                <span className="text-[11px] uppercase tracking-wider font-bold text-ink">{g.category}</span>
+                <span className="ml-auto font-mono text-[11px] text-muted">{g.items.length}</span>
+              </div>
+              <dl className="divide-y divide-border">
+                {g.items.map((it) => (
+                  <div key={it.abbr} className="px-4 py-2.5">
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <dt className="font-mono font-bold text-primary text-[13.5px] shrink-0">{it.abbr}</dt>
+                      <dd className="text-[13px] font-bold text-ink">{it.full}</dd>
+                    </div>
+                    <p className="text-[12.5px] text-ink/75 leading-relaxed mt-0.5">{it.note}</p>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </div>
       )}
     </Card>
   );
