@@ -1166,6 +1166,9 @@ body {
   color: var(--ink); min-height: 22px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.cbe-sheet__rowcount {
+  font-size: 0.7rem; color: var(--muted); white-space: nowrap; align-self: center;
+}
 .cbe-sheet__btn {
   background: white; border: 1px solid var(--border);
   font-size: 0.72rem; font-weight: 600; color: var(--ink);

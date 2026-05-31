@@ -75,13 +75,17 @@ export function loadWorkspace(fanName: string, paperId: string): CBEWorkspaceSta
     if (!raw) return emptyState();
     const parsed = JSON.parse(raw) as Partial<CBEWorkspaceState>;
     const base = emptyState();
+    // Rows are unbounded — accept any saved row count, only normalising each
+    // row's width to SHEET_COLS. (Was a strict === SHEET_ROWS check, which
+    // discarded any sheet grown beyond the original 30 rows.)
+    const normalizeRow = (row: unknown): string[] => {
+      const arr = Array.isArray(row) ? row.map((c) => (typeof c === 'string' ? c : String(c ?? ''))) : [];
+      if (arr.length < SHEET_COLS) return [...arr, ...Array.from({ length: SHEET_COLS - arr.length }, () => '')];
+      return arr.length > SHEET_COLS ? arr.slice(0, SHEET_COLS) : arr;
+    };
     const sheet =
-      Array.isArray(parsed.sheet) && parsed.sheet.length === SHEET_ROWS
-        ? parsed.sheet.map((row) =>
-            Array.isArray(row) && row.length === SHEET_COLS
-              ? row.map((c) => (typeof c === 'string' ? c : String(c ?? '')))
-              : base.sheet[0],
-          )
+      Array.isArray(parsed.sheet) && parsed.sheet.length > 0
+        ? parsed.sheet.map(normalizeRow)
         : base.sheet;
     return {
       version: VERSION,

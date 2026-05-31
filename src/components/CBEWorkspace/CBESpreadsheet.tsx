@@ -9,6 +9,21 @@ import { useCBE } from './cbe-context';
 // in the wrapper below is the production tripwire.
 const _engineMarker = CBE_ENGINE_V1;
 
+// Rows are unbounded. We keep this many empty rows below the furthest-used row
+// (and below the cursor) so navigating/typing downward always has somewhere to
+// go — the grid grows on demand instead of being capped at SHEET_ROWS.
+const ROW_BUFFER = 12;
+const ADD_ROWS_STEP = 25;
+
+const emptyRow = (): string[] => Array.from({ length: SHEET_COLS }, () => '');
+
+function lastNonEmptyRow(sheet: string[][]): number {
+  for (let r = sheet.length - 1; r >= 0; r--) {
+    if (sheet[r]?.some((c) => c !== '')) return r;
+  }
+  return -1;
+}
+
 interface Props {
   value: string[][];
   onChange: (next: string[][]) => void;
@@ -20,8 +35,9 @@ interface CellKey {
 }
 
 /**
- * Minimal ACCA-CBE-style spreadsheet. {SHEET_ROWS} × {SHEET_COLS} editable
- * cells, double-click or type to edit, arrow / tab / enter navigation,
+ * Minimal ACCA-CBE-style spreadsheet. Unlimited rows × {SHEET_COLS} columns;
+ * the grid auto-grows as you fill or navigate downward (plus an "Add rows"
+ * button). Double-click or type to edit, arrow / tab / enter navigation,
  * basic =SUM(A1:A4), =AVG, =MIN, =MAX, =A1+B1 numeric formulas.
  * No cycle detection — keep formulas non-circular.
  */
@@ -51,6 +67,21 @@ export function CBESpreadsheet({ value, onChange }: Props) {
     }
   }, [editing]);
 
+  // Grow the grid on demand: always keep a buffer of empty rows below the last
+  // used row and below the cursor, so rows are effectively unlimited.
+  useEffect(() => {
+    const need = Math.max(
+      SHEET_ROWS,
+      lastNonEmptyRow(value) + 1 + ROW_BUFFER,
+      selected.r + 1 + ROW_BUFFER,
+    );
+    if (value.length < need) {
+      onChange([...value, ...Array.from({ length: need - value.length }, emptyRow)]);
+    }
+  }, [value, selected.r, onChange]);
+
+  const addRows = () => onChange([...value, ...Array.from({ length: ADD_ROWS_STEP }, emptyRow)]);
+
   const setCell = useCallback(
     (r: number, c: number, v: string) => {
       const next = value.map((row, ri) => (ri === r ? row.map((cv, ci) => (ci === c ? v : cv)) : row));
@@ -75,7 +106,9 @@ export function CBESpreadsheet({ value, onChange }: Props) {
 
   const move = (dr: number, dc: number) => {
     setSelected((prev) => ({
-      r: Math.min(SHEET_ROWS - 1, Math.max(0, prev.r + dr)),
+      // Down is only bounded by the current grid length; the grow-effect keeps a
+      // buffer below, so the cursor can always descend (rows are unlimited).
+      r: Math.max(0, Math.min(value.length - 1, prev.r + dr)),
       c: Math.min(SHEET_COLS - 1, Math.max(0, prev.c + dc)),
     }));
   };
@@ -136,7 +169,9 @@ export function CBESpreadsheet({ value, onChange }: Props) {
 
   const clearAll = () => {
     if (window.confirm('Clear all spreadsheet cells for this paper?')) {
-      onChange(Array.from({ length: SHEET_ROWS }, () => Array.from({ length: SHEET_COLS }, () => '')));
+      setEditing(null);
+      setSelected({ r: 0, c: 0 });
+      onChange(Array.from({ length: SHEET_ROWS }, emptyRow));
     }
   };
 
@@ -150,6 +185,12 @@ export function CBESpreadsheet({ value, onChange }: Props) {
         <span className="cbe-sheet__formula" aria-live="polite">
           {editing ? draft : value[selected.r]?.[selected.c] ?? ''}
         </span>
+        <span className="cbe-sheet__rowcount" title="Rows grow automatically as you fill the sheet">
+          {value.length} rows
+        </span>
+        <button type="button" onClick={addRows} className="cbe-sheet__btn">
+          + Add {ADD_ROWS_STEP} rows
+        </button>
         <button type="button" onClick={clearAll} className="cbe-sheet__btn cbe-sheet__btn--danger">
           ✕ Clear sheet
         </button>
