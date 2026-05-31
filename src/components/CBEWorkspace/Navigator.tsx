@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PAPERS } from '@/data/pastpapers/papers';
 import { useCBE } from './cbe-context';
@@ -12,7 +12,17 @@ type Status = 'answered' | 'flagged' | 'none';
  */
 export function Navigator() {
   const { closePopup, guestId } = useCBE();
-  const [, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentId = searchParams.get('p');
+
+  // Close on Escape.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closePopup('navigator');
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [closePopup]);
 
   const rows = useMemo(
     () =>
@@ -55,7 +65,12 @@ export function Navigator() {
         <ul className="cbe-nav__list">
           {rows.map((r) => (
             <li key={r.id}>
-              <button type="button" className="cbe-nav__item" onClick={() => go(r.id)}>
+              <button
+                type="button"
+                className={`cbe-nav__item ${r.id === currentId ? 'cbe-nav__item--active' : ''}`}
+                aria-current={r.id === currentId ? 'true' : undefined}
+                onClick={() => go(r.id)}
+              >
                 <span className={`cbe-nav__dot cbe-nav__dot--${r.status}`} aria-hidden />
                 <span className="cbe-nav__item-name">{r.name}</span>
                 <span className="cbe-nav__item-meta">

@@ -147,6 +147,7 @@ export function CalculatorPopup() {
       }
       onClose={() => closePopup('calculator')}
       width={300}
+      spawnTop={100}
       className="cbe-calc-popup"
     >
       <div className="cbe-calc">

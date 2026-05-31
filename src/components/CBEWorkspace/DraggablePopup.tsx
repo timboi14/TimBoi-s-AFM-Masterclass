@@ -11,6 +11,8 @@ interface Props {
   /** Show a bottom-right resize handle (Scratch Pad). */
   resizable?: boolean;
   className?: string;
+  /** Override the initial top (px). Used by the calculator so it spawns below the ribbon. */
+  spawnTop?: number;
 }
 
 function clamp(v: number, min: number, max: number) {
@@ -22,12 +24,15 @@ function clamp(v: number, min: number, max: number) {
  * (pointer-capture), clamped to the viewport, brought to front on any pointer
  * down, optional bottom-right resize handle. Spawns centred.
  */
-export function DraggablePopup({ id, title, onClose, children, width = 360, height, resizable, className }: Props) {
+export function DraggablePopup({ id, title, onClose, children, width = 360, height, resizable, className, spawnTop }: Props) {
   const { zOf, bringToFront } = useCBE();
   const [pos, setPos] = useState(() => {
     const vw = typeof window !== 'undefined' ? window.innerWidth : 1024;
     const vh = typeof window !== 'undefined' ? window.innerHeight : 768;
-    return { x: Math.max(8, (vw - width) / 2), y: Math.max(8, (vh - (height ?? 420)) / 3) };
+    return {
+      x: Math.max(8, (vw - width) / 2),
+      y: spawnTop ?? Math.max(8, (vh - (height ?? 420)) / 3),
+    };
   });
   const [size, setSize] = useState({ w: width, h: height });
   const drag = useRef<{ dx: number; dy: number } | null>(null);
@@ -35,9 +40,12 @@ export function DraggablePopup({ id, title, onClose, children, width = 360, heig
 
   const onTitlePointerDown = useCallback(
     (e: ReactPointerEvent) => {
+      // Don't start a drag (or capture the pointer) when pressing the close button
+      // or any control in the bar — let its click fire normally.
+      if ((e.target as HTMLElement).closest('button')) return;
       bringToFront(id);
       drag.current = { dx: e.clientX - pos.x, dy: e.clientY - pos.y };
-      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     },
     [bringToFront, id, pos.x, pos.y],
   );
@@ -93,7 +101,13 @@ export function DraggablePopup({ id, title, onClose, children, width = 360, heig
     >
       <div className="cbe-popup__bar" onPointerDown={onTitlePointerDown}>
         <span className="cbe-popup__title">{title}</span>
-        <button type="button" className="cbe-popup__close" onClick={onClose} aria-label="Close">
+        <button
+          type="button"
+          className="cbe-popup__close"
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          onPointerDown={(e) => e.stopPropagation()}
+          aria-label="Close"
+        >
           ×
         </button>
       </div>

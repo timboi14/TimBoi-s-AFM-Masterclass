@@ -1,8 +1,18 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { DraggablePopup } from './DraggablePopup';
 import { useCBE } from './cbe-context';
 
 const SYMBOLS = ['$', '£', '€', '¥', '₱'];
+
+const TILE_STYLE: CSSProperties = {
+  minWidth: 44,
+  minHeight: 44,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: 22,
+  color: '#1c1c1c',
+};
 
 export function SymbolPopup() {
   const { closePopup, insertAtCaret } = useCBE();
@@ -11,7 +21,7 @@ export function SymbolPopup() {
   return (
     <DraggablePopup id="symbol" title="$ Symbol" onClose={() => closePopup('symbol')} width={300}>
       <div className="cbe-symbol">
-        <div className="cbe-symbol__row" role="listbox" aria-label="Symbols">
+        <div className="cbe-symbol__row" role="listbox" aria-label="Symbols" style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
           {SYMBOLS.map((s) => (
             <button
               key={s}
@@ -19,6 +29,7 @@ export function SymbolPopup() {
               role="option"
               aria-selected={selected === s}
               className={`cbe-symbol__tile ${selected === s ? 'cbe-symbol__tile--active' : ''}`}
+              style={TILE_STYLE}
               onClick={() => setSelected(s)}
             >
               {s}
