@@ -211,13 +211,17 @@ export function CoursePage() {
               {SH_KEY_DATES.map((d) => {
                 const days = daysUntil(d.date, now);
                 const past = days < 0;
+                const live = days === 0;
+                const statusVariant = past ? undefined : live ? 'danger' : days <= 7 ? 'danger' : 'primary';
+                const statusLabel = past ? 'Past' : live ? 'Live' : 'Upcoming';
                 return (
-                  <tr key={d.date + d.label} className={cn('border-t border-border', past && 'opacity-50', d.tone === 'critical' && 'bg-danger/5')}>
+                  <tr key={d.date + d.label} className={cn('border-t border-border', past && 'opacity-60', d.tone === 'critical' && 'bg-danger/5')}>
                     <td className="px-4 py-3 font-mono text-[12.5px] text-ink">{fmtDateTime(d.date)}</td>
                     <td className="px-4 py-3 text-ink">
                       {d.tone === 'critical' && <i className="fa-solid fa-flag text-danger mr-2" />}
                       {d.tone === 'warn' && <i className="fa-solid fa-circle-exclamation text-accent-dark mr-2" />}
                       {d.label}
+                      <Pill variant={statusVariant} className="ml-2 align-middle text-[10px]">{statusLabel}</Pill>
                     </td>
                     <td className={cn('px-4 py-3 text-right font-mono text-[13px]',
                       past ? 'text-muted' : days <= 7 ? 'text-danger font-bold' : days <= 21 ? 'text-accent-dark font-bold' : 'text-primary font-bold')}>

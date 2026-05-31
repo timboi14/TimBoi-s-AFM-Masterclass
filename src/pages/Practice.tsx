@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Pill, fadeUp, stagger } from '@/components/primitives';
 import { PRACTICE_SETS, type PracticeSet } from '@/data/practice';
+import { TBA_STATS } from '@/data/stats';
 import { getSampleAnswer, type SampleLine } from '@/data/sample-answers';
 import { GoalBurst } from '@/components/Confetti';
 import { store } from '@/lib/store';
@@ -43,7 +44,7 @@ function PracticeIndex() {
       <motion.div variants={fadeUp}>
         <Card className="!p-7 border-l-4 border-l-primary">
           <Pill variant="primary" className="mb-2">Practice exam centre</Pill>
-          <h1 className="font-display text-4xl tracking-wide uppercase text-ink">14 sets, 450 marks</h1>
+          <h1 className="font-display text-4xl tracking-wide uppercase text-ink">{TBA_STATS.practiceExams} sets, {TBA_STATS.practiceMarks} marks</h1>
           <p className="mt-2 max-w-2xl">
             Football-themed practice questions matching the live ACCA AFM CBE shell. Multi-panel exam simulator
             with a real spreadsheet engine (NPV, IRR, BSCALL, WACC, UNGEAR functions), a Coach AI for stuck moments,

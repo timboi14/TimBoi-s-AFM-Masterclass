@@ -1,4 +1,5 @@
 import { THEORY } from '@/data/theory';
+import { TBA_STATS } from '@/data/stats';
 import {
   CenteredHero,
   HeroGold,
@@ -23,7 +24,7 @@ export function PlaybookPage() {
 
       <SectionShell tone="white" pad="lg">
         <CenteredHero
-          eyebrow={<>Reference · {THEORY.length} Q&A · 5 decks · 1 cheat sheet</>}
+          eyebrow={<>Reference · {TBA_STATS.theoryQA} Q&A · {TBA_STATS.cardDecks} decks · {TBA_STATS.cheatSheets} cheat sheet</>}
           headline={<>The <HeroGold>playbook</HeroGold>.</>}
           subline={
             <>
@@ -43,9 +44,9 @@ export function PlaybookPage() {
       <SectionShell tone="mist" pad="md">
         <StatStrip
           stats={[
-            { value: THEORY.length, label: 'Theory Q&A', sub: 'Bullets + full ACCA model' },
-            { value: 5, label: 'Card decks', sub: 'Biases · Z-scores · Hedging · Formulas · Pitfalls' },
-            { value: 1, label: 'Cheat sheet', sub: 'Print-ready, single page' },
+            { value: TBA_STATS.theoryQA, label: 'Theory Q&A', sub: 'Bullets + full ACCA model' },
+            { value: TBA_STATS.cardDecks, label: 'Card decks', sub: 'Biases · Z-scores · Hedging · Formulas · Pitfalls' },
+            { value: TBA_STATS.cheatSheets, label: 'Cheat sheet', sub: 'Print-ready, single page' },
           ]}
         />
       </SectionShell>
@@ -57,8 +58,8 @@ export function PlaybookPage() {
             eyebrow: 'Theory bank',
             headline: 'Discussion-mark goldmine.',
             subline:
-              '64+ examiner-style questions. Quick Bullets for revision; Full ACCA Model Answer for technique.',
-            actions: <TonePill as="link" to="/theory" variant="primary">Browse all 64+</TonePill>,
+              `${TBA_STATS.theoryQA} examiner-style questions. Quick Bullets for revision; Full ACCA Model Answer for technique.`,
+            actions: <TonePill as="link" to="/theory" variant="primary">Browse all {TBA_STATS.theoryQA}</TonePill>,
           }}
           right={{
             tone: 'white',

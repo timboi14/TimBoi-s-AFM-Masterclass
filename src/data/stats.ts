@@ -50,6 +50,8 @@ export const TBA_STATS = {
   examinerReports: EXAM_CASES.length,
   traps: COMMON_LOSERS.length,
   spreadsheetShortcuts: 8, // matches CALC_SHORTCUTS in src/pages/WarRoom.tsx
+  cardDecks: 5, // matches deck list in src/pages/Cards.tsx (Biases, Z-scores, Hedging, Formulas, Pitfalls)
+  cheatSheets: 1,
 
   // Existing internal counters preserved for back-compat (siteStats) ─
   practiceMarks: totalPracticeMarks,

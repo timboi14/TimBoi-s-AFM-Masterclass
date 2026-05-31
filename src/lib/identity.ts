@@ -41,9 +41,12 @@ export function resolveIdentity(fanName?: string): ResolvedIdentity {
   const fan = safeFanName(fanName);
   const demoSuffix = loadOrCreateDemoSuffix();
   const storageKey = fan || `demo-${demoSuffix.toLowerCase()}`;
+  // Audit 2026-05-26: previous "Demo · …" prefix read as a debug/seed account
+  // to first-time visitors. "Guest · …" keeps the §3 constraint (no legacy
+  // fanName leak) while making the badge feel like an intentional anonymous mode.
   return {
     storageKey,
-    displayLabel: `Demo · ${demoSuffix}`,
+    displayLabel: `Guest · ${demoSuffix}`,
     mode: 'demo',
   };
 }
