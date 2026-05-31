@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { useCBE, type PopupId } from './cbe-context';
 
 interface Props {
@@ -83,7 +84,12 @@ export function DraggablePopup({ id, title, onClose, children, width = 360, heig
     [bringToFront, id, size.w, size.h],
   );
 
-  return (
+  // Portal to <body> so the popup escapes the paper-detail tree (which sits
+  // inside a transformed/animated motion.div — that creates a stacking context
+  // + containing block that would otherwise clip a position:fixed popup behind
+  // the sticky nav and let its clicks bubble into the panel).
+  if (typeof document === 'undefined') return null;
+  return createPortal(
     <div
       className={`cbe-popup ${className ?? ''}`}
       role="dialog"
@@ -104,7 +110,7 @@ export function DraggablePopup({ id, title, onClose, children, width = 360, heig
         <button
           type="button"
           className="cbe-popup__close"
-          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          onClick={(e) => { e.stopPropagation(); e.preventDefault(); onClose(); }}
           onPointerDown={(e) => e.stopPropagation()}
           aria-label="Close"
         >
@@ -120,6 +126,7 @@ export function DraggablePopup({ id, title, onClose, children, width = 360, heig
           title="Resize"
         />
       )}
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -86,7 +86,7 @@ export function CBEProvider({
 }) {
   const [open, setOpen] = useState<Set<PopupId>>(() => new Set());
   const [z, setZ] = useState<Record<string, number>>({});
-  const topZ = useRef(50);
+  const topZ = useRef(4000); // above the sticky site nav + announcement bar
   const [highlightColor, setHighlightColor] = useState('#FFFF00');
   const [flagged, setFlagged] = useState(() => loadFlag(paperId));
 
@@ -201,7 +201,7 @@ export function CBEProvider({
       closePopup,
       togglePopup,
       closeAll,
-      zOf: (id) => z[id] ?? 50,
+      zOf: (id) => z[id] ?? 4000,
       bringToFront,
       registerWordEditor: (el) => {
         wordEditorRef.current = el;

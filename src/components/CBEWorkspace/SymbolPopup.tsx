@@ -19,7 +19,7 @@ export function SymbolPopup() {
   const [selected, setSelected] = useState(SYMBOLS[0]);
 
   return (
-    <DraggablePopup id="symbol" title="$ Symbol" onClose={() => closePopup('symbol')} width={300}>
+    <DraggablePopup id="symbol" title="$ Symbol" onClose={() => closePopup('symbol')} width={300} spawnTop={220}>
       <div className="cbe-symbol">
         <div className="cbe-symbol__row" role="listbox" aria-label="Symbols" style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
           {SYMBOLS.map((s) => (

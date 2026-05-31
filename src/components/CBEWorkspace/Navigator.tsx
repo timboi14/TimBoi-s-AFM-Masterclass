@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { PAPERS } from '@/data/pastpapers/papers';
 import { useCBE } from './cbe-context';
@@ -9,11 +10,15 @@ type Status = 'answered' | 'flagged' | 'none';
 /**
  * iAssess-style Navigator overlay: lists every paper with its status and jumps
  * to one on click (via the ?p= URL param the grid already reads).
+ *
+ * Portalled to <body> so it escapes the transformed page wrapper and covers the
+ * true viewport (otherwise the header + × would sit behind the sticky nav).
  */
 export function Navigator() {
   const { closePopup, guestId } = useCBE();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentId = searchParams.get('p');
+  const activeRef = useRef<HTMLLIElement>(null);
 
   // Close on Escape.
   useEffect(() => {
@@ -23,6 +28,11 @@ export function Navigator() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [closePopup]);
+
+  // Scroll the current paper into view on open.
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: 'center' });
+  }, []);
 
   const rows = useMemo(
     () =>
@@ -47,7 +57,9 @@ export function Navigator() {
     });
   };
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <div className="cbe-nav-overlay" role="dialog" aria-modal="true" aria-label="Question navigator">
       <div className="cbe-nav-overlay__backdrop" onClick={() => closePopup('navigator')} />
       <div className="cbe-nav">
@@ -64,7 +76,7 @@ export function Navigator() {
         </div>
         <ul className="cbe-nav__list">
           {rows.map((r) => (
-            <li key={r.id}>
+            <li key={r.id} ref={r.id === currentId ? activeRef : undefined}>
               <button
                 type="button"
                 className={`cbe-nav__item ${r.id === currentId ? 'cbe-nav__item--active' : ''}`}
@@ -74,14 +86,15 @@ export function Navigator() {
                 <span className={`cbe-nav__dot cbe-nav__dot--${r.status}`} aria-hidden />
                 <span className="cbe-nav__item-name">{r.name}</span>
                 <span className="cbe-nav__item-meta">
-                  {r.flagged && <span className="cbe-nav__flag" aria-label="Flagged">⚑</span>}
                   Sec {r.section} · {r.session}
+                  {r.flagged && <span className="cbe-nav__flag" aria-label="Flagged">⚑</span>}
                 </span>
               </button>
             </li>
           ))}
         </ul>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
