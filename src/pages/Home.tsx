@@ -97,6 +97,41 @@ const STADIUM_STATS = [
   { value: siteStats.drills, label: 'Worked drills', sub: 'Mar/Jun 23 → Sep/Dec 25' },
 ];
 
+const NEXT_MOVES = [
+  {
+    to: '/past-papers',
+    art: 'past-papers',
+    eyebrow: 'Match centre',
+    title: 'Sit a paper',
+    body: 'CBE shell · AI marker',
+    icon: 'fa-file-lines',
+  },
+  {
+    to: '/champions-league',
+    art: 'champions-league',
+    eyebrow: 'Plain-English room',
+    title: 'Unlock a concept',
+    body: 'Football analogies · zero jargon fog',
+    icon: 'fa-trophy',
+  },
+  {
+    to: '/training',
+    art: 'training',
+    eyebrow: 'Training ground',
+    title: 'Get a rep in',
+    body: 'Practice · mock · debrief',
+    icon: 'fa-stopwatch',
+  },
+  {
+    to: '/boot-room',
+    art: 'boot-room',
+    eyebrow: 'Boot room',
+    title: 'Make it stick',
+    body: 'Recall · mnemonics · exam skills',
+    icon: 'fa-brain',
+  },
+];
+
 export function HomePage() {
   const state = useStore();
   const t = tierFor(state.points);
@@ -193,6 +228,11 @@ export function HomePage() {
             sub: s.sub,
           }))}
         />
+      </SectionShell>
+
+      {/* Visual route picker: the academy world should feel explorable, not just navigable. */}
+      <SectionShell tone="white" pad="md">
+        <NextMoves />
       </SectionShell>
 
       {/* §12.3 section 3: white — Coach × Memory */}
@@ -602,6 +642,68 @@ export function HomePage() {
         </div>
       </Card>
     </motion.div>
+  );
+}
+
+function NextMoves() {
+  return (
+    <div>
+      <div className="max-w-2xl">
+        <p className="text-[11px] uppercase tracking-[0.16em] text-primary font-bold mb-2">
+          <i className="fa-solid fa-location-arrow mr-1.5" aria-hidden /> Pick your next move
+        </p>
+        <h2 className="font-display text-3xl md:text-4xl tracking-wide uppercase text-ink leading-[0.95]">
+          Where are we training today?
+        </h2>
+        <p className="mt-3 text-[14px] text-ink/75 leading-relaxed">
+          Jump into the room that matches the gap. Every route is built around a different exam-day muscle.
+        </p>
+      </div>
+
+      <motion.div variants={stagger} className="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+        {NEXT_MOVES.map((move) => (
+          <motion.div key={move.to} variants={fadeUp}>
+            <Link
+              to={move.to}
+              className="group block h-full overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-card"
+            >
+              <div className="relative aspect-[1.45/1] overflow-hidden bg-slate-100">
+                <picture>
+                  <source
+                    type="image/avif"
+                    srcSet={`/spurs/${move.art}.avif 1x, /spurs/${move.art}@2x.avif 2x`}
+                  />
+                  <source
+                    type="image/webp"
+                    srcSet={`/spurs/${move.art}.webp 1x, /spurs/${move.art}@2x.webp 2x`}
+                  />
+                  <img
+                    src={`/spurs/${move.art}.png`}
+                    alt=""
+                    aria-hidden
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                </picture>
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--navy-900)]/45 via-transparent to-white/5" />
+                <div className="absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-xl border border-white/30 bg-white/85 text-primary shadow-sm backdrop-blur">
+                  <i className={`fa-solid ${move.icon}`} aria-hidden />
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="text-[10.5px] uppercase tracking-[0.16em] text-primary font-bold">{move.eyebrow}</div>
+                <h3 className="font-display text-xl uppercase tracking-wide text-ink mt-1">{move.title}</h3>
+                <p className="mt-1 text-[12px] text-muted">{move.body}</p>
+                <div className="mt-3 text-[11px] uppercase tracking-wider text-primary font-bold">
+                  Enter room <i className="fa-solid fa-arrow-right ml-1 transition-transform group-hover:translate-x-1" aria-hidden />
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
   );
 }
 

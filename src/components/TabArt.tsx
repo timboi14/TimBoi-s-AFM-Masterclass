@@ -7,6 +7,7 @@ import { useReducedMotion } from 'framer-motion';
  * Order matters: first matching prefix wins, list longer paths first.
  */
 const ROUTE_ART: Array<{ match: (p: string) => boolean; base: string; label: string }> = [
+  { match: (p) => p.startsWith('/champions-league'), base: 'champions-league', label: 'Champions League' },
   { match: (p) => p.startsWith('/past-papers'), base: 'past-papers', label: 'Past Papers' },
   { match: (p) => p.startsWith('/playbook'),    base: 'playbook',    label: 'Playbook' },
   { match: (p) => p.startsWith('/training'),    base: 'training',    label: 'Training' },
@@ -16,6 +17,10 @@ const ROUTE_ART: Array<{ match: (p: string) => boolean; base: string; label: str
   { match: (p) => p.startsWith('/course'),      base: 'course',      label: 'Course' },
   { match: (p) => p.startsWith('/topic'),       base: 'topics',      label: 'Topics' },
   { match: (p) => p.startsWith('/study-guide'), base: 'tools',       label: 'Tools' },
+  { match: (p) => p.startsWith('/settings'),    base: 'tools',       label: 'Settings' },
+  { match: (p) => p.startsWith('/revision') || p.startsWith('/progress'), base: 'past-papers', label: 'Revision' },
+  { match: (p) => p.startsWith('/form-guide'),  base: 'scout',       label: 'Form Guide' },
+  { match: (p) => p.startsWith('/start'),       base: 'start-here',  label: 'Start Here' },
   // Old sub-routes that fold into the hub pages
   { match: (p) => p.startsWith('/theory') || p.startsWith('/cards') || p.startsWith('/formulas'), base: 'playbook',   label: 'Playbook' },
   { match: (p) => p.startsWith('/practice') || p.startsWith('/mock') || p.startsWith('/debrief'), base: 'training',   label: 'Training' },
@@ -31,7 +36,9 @@ export function tabArtFor(pathname: string) {
 
 const NAV_TO_BASE: Record<string, string> = {
   '/': 'home',
+  '/start': 'start-here',
   '/course': 'course',
+  '/champions-league': 'champions-league',
   '/past-papers': 'past-papers',
   '/topic/adviser': 'topics',
   '/playbook': 'playbook',
@@ -54,8 +61,8 @@ export function prefetchTabArt(to: string) {
 
 /**
  * Soft-faded Spurs backdrop anchored to the right edge of the page content.
- * Renders behind everything via -z-10 and mix-blend-multiply so it tints rather
- * than dominates. Fades in on load to avoid a flash. Hidden under md.
+ * Renders above the opaque section shells at very low opacity so it tints rather
+ * than dominates. Fades in on load to avoid a flash.
  */
 export function TabArtBanner() {
   const { pathname } = useLocation();
@@ -75,7 +82,8 @@ export function TabArtBanner() {
     <picture
       key={base}
       aria-hidden
-      className="pointer-events-none absolute top-0 right-0 hidden md:block w-[40%] max-w-[520px] h-[480px] lg:h-[560px] overflow-hidden -z-10"
+      className="pointer-events-none absolute top-0 right-0 block w-[54%] sm:w-[48%] md:w-[40%] max-w-[520px] h-[360px] sm:h-[480px] lg:h-[560px] overflow-hidden z-[1]"
+      style={{ maskImage: 'linear-gradient(to left, black 64%, transparent 100%)' }}
     >
       <source
         type="image/avif"
@@ -94,7 +102,7 @@ export function TabArtBanner() {
         // React's type for fetchPriority is recent; pass via a typed attr bag.
         {...({ fetchpriority: 'high' } as { fetchpriority: 'high' })}
         onLoad={() => setLoaded(true)}
-        style={{ opacity: loaded ? 0.15 : 0, transition: 'opacity 320ms ease-out' } as CSSProperties}
+        style={{ opacity: loaded ? 0.11 : 0, transition: 'opacity 320ms ease-out' } as CSSProperties}
         className="w-full h-full object-contain object-right-top mix-blend-multiply select-none"
       />
     </picture>
