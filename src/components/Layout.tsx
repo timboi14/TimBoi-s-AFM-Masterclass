@@ -18,6 +18,7 @@ const NAV = [
   { to: '/start', label: 'Start here', icon: 'fa-compass' },
   { to: '/', label: 'Home', icon: 'fa-house' },
   { to: '/course', label: 'Course', icon: 'fa-graduation-cap' },
+  { to: '/champions-league', label: 'Champions League', icon: 'fa-trophy', match: '/champions-league' },
   { to: '/past-papers', label: 'Past Papers', icon: 'fa-file-lines', match: '/past-papers' },
   { to: '/topic/adviser', label: 'Topics', icon: 'fa-list', match: '/topic' },
   { to: '/playbook', label: 'Playbook', icon: 'fa-book', match: '/playbook' },

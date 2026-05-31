@@ -45,6 +45,7 @@ const MemoryPage = lazyNamed(() => import('@/pages/Memory'), 'MemoryPage');
 const WarRoomPage = lazyNamed(() => import('@/pages/WarRoom'), 'WarRoomPage');
 const ExaminerPage = lazyNamed(() => import('@/pages/Examiner'), 'ExaminerPage');
 const CoursePage = lazyNamed(() => import('@/pages/Course'), 'CoursePage');
+const ChampionsLeaguePage = lazyNamed(() => import('@/pages/ChampionsLeague'), 'ChampionsLeaguePage');
 const RevisionDashboard = lazyNamed(() => import('@/pages/Revision'), 'RevisionDashboard');
 const PapersIndex = lazyNamed(() => import('@/pages/Revision'), 'PapersIndex');
 const PaperView = lazyNamed(() => import('@/pages/Revision'), 'PaperView');
@@ -106,6 +107,7 @@ export default function App() {
                   <Route path="/war-room" element={<WarRoomPage />} />
                   <Route path="/examiner" element={<ExaminerPage />} />
                   <Route path="/course" element={<CoursePage />} />
+                  <Route path="/champions-league" element={<ChampionsLeaguePage />} />
                   <Route path="/revision" element={<RevisionDashboard />} />
                   <Route path="/revision/papers" element={<PapersIndex />} />
                   <Route path="/revision/papers/:paperId" element={<PaperView />} />
