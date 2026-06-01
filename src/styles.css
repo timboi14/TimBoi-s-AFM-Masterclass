@@ -937,7 +937,8 @@ body {
 .exhibits-panel { display: flex; flex-direction: column; height: 100%; min-height: 0; }
 .exhibits-panel__header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 12px; gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 12px; gap: 8px 10px;
   background: #1f2937; color: white;
   flex-shrink: 0;
 }
@@ -945,7 +946,7 @@ body {
   font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.12em;
   font-weight: 700; color: rgba(255,255,255,0.65);
 }
-.exhibits-panel__tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.1); padding: 3px; border-radius: 7px; }
+.exhibits-panel__tabs { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(255,255,255,0.1); padding: 3px; border-radius: 7px; }
 .exhibits-panel__tab {
   background: none; border: none;
   padding: 3px 12px; border-radius: 5px;
