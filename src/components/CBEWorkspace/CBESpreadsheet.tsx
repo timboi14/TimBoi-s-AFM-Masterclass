@@ -48,14 +48,15 @@ export function CBESpreadsheet({ value, onChange }: Props) {
   const [draft, setDraft] = useState<string>('');
   const editRef = useRef<HTMLInputElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  // Internal clipboard fallback for when the async Clipboard API is unavailable
-  // or permission-blocked (e.g. non-secure context).
-  const [clipCell, setClipCell] = useState<string | null>(null);
-  // Active fill-handle drag — drag the corner square to copy a value down a
-  // column or across a row (Excel parity).
-  const fillDragRef = useRef<{ startR: number; startC: number; value: string; targetEl: HTMLElement | null } | null>(null);
-  // Active drag-to-move — drag a selected cell's content into another cell.
-  const moveDragRef = useRef<{ fromR: number; fromC: number; value: string } | null>(null);
+  // Internal clipboard — persists across cells; tried before the async
+  // Clipboard API so paste never silently fails when permission is blocked.
+  const [sheetClipboard, setSheetClipboard] = useState<string | null>(null);
+  // Fill-handle drag — imperative (not React state) so pointermove doesn't churn.
+  const fillDragRef = useRef<{ sR: number; sC: number; val: string; last: { r: number; c: number } | null } | null>(null);
+  // Drag-to-move state.
+  const moveDragRef = useRef<{ fR: number; fC: number; val: string } | null>(null);
+  // Formula bar, flashed green on copy / amber on cut.
+  const formulaBarRef = useRef<HTMLSpanElement>(null);
 
   /**
    * Cell-input focus rule (Excel parity, audit batch 04):
@@ -98,6 +99,28 @@ export function CBESpreadsheet({ value, onChange }: Props) {
     [value, onChange],
   );
 
+  // Fill from (sR,sC) to the drag end. Directional auto-detect: whichever axis
+  // was dragged further wins, and the fill runs along the START row/column.
+  // This avoids the column-border misfire where elementFromPoint resolves to
+  // the adjacent column mid-drag.
+  const applyFill = (sR: number, sC: number, eR: number, eC: number, val: string) => {
+    const next = value.map((row) => [...row]);
+    const dR = Math.abs(eR - sR);
+    const dC = Math.abs(eC - sC);
+    if (dR >= dC) {
+      const minR = Math.min(sR, eR), maxR = Math.max(sR, eR);
+      for (let r = minR; r <= maxR; r++) {
+        if (r < next.length && sC < next[r].length) next[r][sC] = val;
+      }
+    } else {
+      const minC = Math.min(sC, eC), maxC = Math.max(sC, eC);
+      for (let c = minC; c <= maxC; c++) {
+        if (sR < next.length && c < next[sR].length) next[sR][c] = val;
+      }
+    }
+    onChange(next);
+  };
+
   const beginEdit = (r: number, c: number, withInitial?: string) => {
     setSelected({ r, c });
     setEditing({ r, c });
@@ -128,26 +151,52 @@ export function CBESpreadsheet({ value, onChange }: Props) {
     // the navigation switch (which only deals with un-modified keys).
     if (e.ctrlKey || e.metaKey) {
       const key = e.key.toLowerCase();
+      const flash = (colour: string) => {
+        if (formulaBarRef.current) formulaBarRef.current.style.background = colour;
+        setTimeout(() => {
+          if (formulaBarRef.current) formulaBarRef.current.style.background = '';
+        }, 400);
+      };
       if (key === 'c' || key === 'x') {
         e.preventDefault();
         const cellVal = value[selected.r]?.[selected.c] ?? '';
-        setClipCell(cellVal);
+        setSheetClipboard(cellVal);
         navigator.clipboard?.writeText(cellVal).catch(() => {});
-        if (key === 'x') setCell(selected.r, selected.c, '');
+        if (key === 'x') {
+          setCell(selected.r, selected.c, ''); // clear source
+          flash('#fde68a'); // amber for cut
+        } else {
+          flash('#bbf7d0'); // green for copy
+        }
         return;
       }
       if (key === 'v') {
         e.preventDefault();
         const { r, c } = selected;
-        if (navigator.clipboard?.readText) {
-          navigator.clipboard
-            .readText()
-            .then((txt) => setCell(r, c, txt))
-            .catch(() => {
-              if (clipCell !== null) setCell(r, c, clipCell);
+        const doPaste = (text: string) => {
+          const rows = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+          while (rows.length && rows[rows.length - 1] === '') rows.pop();
+          if (!rows.length) return;
+          if (rows.length === 1 && !rows[0].includes('\t')) {
+            setCell(r, c, rows[0]); // single-cell paste
+          } else {
+            // Multi-cell paste (tab/newline-delimited, e.g. from Excel).
+            const next = value.map((row) => [...row]);
+            rows.forEach((row, dr) => {
+              row.split('\t').forEach((cellVal, dc) => {
+                const tr = r + dr, tc = c + dc;
+                if (tr < next.length && tc < next[tr].length) next[tr][tc] = cellVal;
+              });
             });
-        } else if (clipCell !== null) {
-          setCell(r, c, clipCell);
+            onChange(next);
+          }
+        };
+        // Internal clipboard first (sync, no permission prompt); fall back to
+        // the async Clipboard API for content copied outside the app.
+        if (sheetClipboard !== null) {
+          doPaste(sheetClipboard);
+        } else {
+          navigator.clipboard?.readText().then(doPaste).catch(() => {});
         }
         return;
       }
@@ -220,7 +269,7 @@ export function CBESpreadsheet({ value, onChange }: Props) {
           {colLabel(selected.c)}
           {selected.r + 1}
         </span>
-        <span className="cbe-sheet__formula" aria-live="polite">
+        <span className="cbe-sheet__formula" aria-live="polite" ref={formulaBarRef}>
           {editing ? draft : value[selected.r]?.[selected.c] ?? ''}
         </span>
         <span className="cbe-sheet__rowcount" title="Rows grow automatically as you fill the sheet">
@@ -264,8 +313,6 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                   return (
                     <td
                       key={c}
-                      data-row={r}
-                      data-col={c}
                       className={`cbe-sheet__cell ${isSelected ? 'cbe-sheet__cell--selected' : ''}`}
                       onPointerDown={(e) => {
                         // Don't preventDefault — we need focus to land on the grid
@@ -290,21 +337,21 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                         if (!moveDragRef.current) return;
                         e.preventDefault();
                         e.dataTransfer.dropEffect = 'move';
+                        document.querySelectorAll('.cbe-sheet__cell--drop-target')
+                          .forEach((el) => el.classList.remove('cbe-sheet__cell--drop-target'));
+                        e.currentTarget.classList.add('cbe-sheet__cell--drop-target');
                       }}
-                      onDragEnter={(e) => {
-                        if (moveDragRef.current) e.currentTarget.setAttribute('data-dragover', 'true');
-                      }}
-                      onDragLeave={(e) => e.currentTarget.removeAttribute('data-dragover')}
+                      onDragLeave={(e) => e.currentTarget.classList.remove('cbe-sheet__cell--drop-target')}
                       onDrop={(e) => {
-                        e.currentTarget.removeAttribute('data-dragover');
+                        e.preventDefault();
+                        e.currentTarget.classList.remove('cbe-sheet__cell--drop-target');
                         const drag = moveDragRef.current;
                         moveDragRef.current = null;
                         if (!drag) return;
-                        e.preventDefault();
-                        if (drag.fromR === r && drag.fromC === c) return; // dropped on self
+                        if (drag.fR === r && drag.fC === c) return; // dropped on self
                         const next = value.map((row) => [...row]);
-                        next[drag.fromR][drag.fromC] = ''; // clear source
-                        next[r][c] = drag.value; // set target
+                        next[drag.fR][drag.fC] = ''; // clear source
+                        next[r][c] = drag.val; // set target
                         onChange(next);
                       }}
                     >
@@ -326,12 +373,14 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                             onDragStart={(e) => {
                               if (!isSelected) return;
                               const v = value[r]?.[c] ?? '';
-                              moveDragRef.current = { fromR: r, fromC: c, value: v };
+                              moveDragRef.current = { fR: r, fC: c, val: v };
                               e.dataTransfer.effectAllowed = 'move';
                               e.dataTransfer.setData('text/plain', v);
                             }}
                             onDragEnd={() => {
                               moveDragRef.current = null;
+                              document.querySelectorAll('.cbe-sheet__cell--drop-target')
+                                .forEach((el) => el.classList.remove('cbe-sheet__cell--drop-target'));
                             }}
                           >
                             {evalIfFormula(cellValue, value)}
@@ -339,38 +388,30 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                           {isSelected && (
                             <span
                               className="cbe-sheet__fill-handle"
+                              title="Drag to fill"
                               onPointerDown={(e) => {
                                 e.stopPropagation(); // don't re-select / focus the grid
+                                e.preventDefault();
                                 e.currentTarget.setPointerCapture(e.pointerId);
-                                fillDragRef.current = {
-                                  startR: r,
-                                  startC: c,
-                                  value: value[r]?.[c] ?? '',
-                                  targetEl: null,
-                                };
+                                fillDragRef.current = { sR: r, sC: c, val: value[r]?.[c] ?? '', last: null };
                               }}
                               onPointerMove={(e) => {
                                 if (!fillDragRef.current) return;
                                 const td = (document.elementFromPoint(e.clientX, e.clientY) as Element | null)
                                   ?.closest('td.cbe-sheet__cell') as HTMLElement | null;
-                                fillDragRef.current.targetEl = td ?? null;
+                                if (!td) return;
+                                const coords = getCellCoords(td);
+                                if (!coords) return;
+                                fillDragRef.current.last = coords;
+                                highlightFillRange(fillDragRef.current.sR, fillDragRef.current.sC, coords.r, coords.c);
                               }}
                               onPointerUp={() => {
                                 const drag = fillDragRef.current;
                                 fillDragRef.current = null;
-                                if (!drag || !drag.targetEl) return;
-                                const tr = Number(drag.targetEl.dataset.row);
-                                const tc = Number(drag.targetEl.dataset.col);
-                                if (Number.isNaN(tr) || Number.isNaN(tc)) return;
-                                const next = value.map((row) => [...row]);
-                                if (tc === drag.startC && tr > drag.startR) {
-                                  for (let rr = drag.startR; rr <= tr; rr++) next[rr][drag.startC] = drag.value;
-                                } else if (tr === drag.startR && tc > drag.startC) {
-                                  for (let cc = drag.startC; cc <= tc; cc++) next[drag.startR][cc] = drag.value;
-                                } else {
-                                  return; // only straight down or straight right
-                                }
-                                onChange(next);
+                                clearFillHighlight();
+                                if (!drag || !drag.last) return;
+                                if (drag.last.r === drag.sR && drag.last.c === drag.sC) return;
+                                applyFill(drag.sR, drag.sC, drag.last.r, drag.last.c, drag.val);
                               }}
                             />
                           )}
@@ -386,6 +427,56 @@ export function CBESpreadsheet({ value, onChange }: Props) {
       </div>
     </div>
   );
+}
+
+/**
+ * Resolve a cell <td>'s data-model {r, c} from its DOM position (row index
+ * within tbody, td index within the row's data cells). Used by the fill handle
+ * so it doesn't depend on per-cell data attributes.
+ */
+function getCellCoords(td: HTMLElement): { r: number; c: number } | null {
+  const tr = td.closest('tr');
+  if (!tr) return null;
+  const tbody = tr.closest('tbody');
+  const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+  const r = rows.indexOf(tr);
+  const cells = Array.from(tr.querySelectorAll('td.cbe-sheet__cell'));
+  const c = cells.indexOf(td);
+  return r >= 0 && c >= 0 ? { r, c } : null;
+}
+
+function clearFillHighlight(): void {
+  document
+    .querySelectorAll('.cbe-sheet__cell--fill-range')
+    .forEach((el) => el.classList.remove('cbe-sheet__cell--fill-range'));
+}
+
+/**
+ * Paint the prospective fill range during a fill-handle drag. Mirrors
+ * applyFill's directional auto-detect (whichever axis was dragged further wins)
+ * so the highlight matches what will actually be filled.
+ */
+function highlightFillRange(sR: number, sC: number, eR: number, eC: number): void {
+  clearFillHighlight();
+  const tbody = document.querySelector('table.cbe-sheet__grid tbody');
+  if (!tbody) return;
+  const rows = Array.from(tbody.querySelectorAll('tr')) as HTMLElement[];
+  const dR = Math.abs(eR - sR), dC = Math.abs(eC - sC);
+  if (dR >= dC) {
+    const minR = Math.min(sR, eR), maxR = Math.max(sR, eR);
+    for (let r = minR; r <= maxR; r++) {
+      (rows[r]?.querySelectorAll('td.cbe-sheet__cell')[sC] as HTMLElement | undefined)
+        ?.classList.add('cbe-sheet__cell--fill-range');
+    }
+  } else {
+    const minC = Math.min(sC, eC), maxC = Math.max(sC, eC);
+    const cells = rows[sR]?.querySelectorAll('td.cbe-sheet__cell');
+    if (cells) {
+      for (let c = minC; c <= maxC; c++) {
+        (cells[c] as HTMLElement | undefined)?.classList.add('cbe-sheet__cell--fill-range');
+      }
+    }
+  }
 }
 
 /**
