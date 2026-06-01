@@ -48,6 +48,14 @@ export function CBESpreadsheet({ value, onChange }: Props) {
   const [draft, setDraft] = useState<string>('');
   const editRef = useRef<HTMLInputElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  // Internal clipboard fallback for when the async Clipboard API is unavailable
+  // or permission-blocked (e.g. non-secure context).
+  const [clipCell, setClipCell] = useState<string | null>(null);
+  // Active fill-handle drag — drag the corner square to copy a value down a
+  // column or across a row (Excel parity).
+  const fillDragRef = useRef<{ startR: number; startC: number; value: string; targetEl: HTMLElement | null } | null>(null);
+  // Active drag-to-move — drag a selected cell's content into another cell.
+  const moveDragRef = useRef<{ fromR: number; fromC: number; value: string } | null>(null);
 
   /**
    * Cell-input focus rule (Excel parity, audit batch 04):
@@ -115,6 +123,36 @@ export function CBESpreadsheet({ value, onChange }: Props) {
 
   const onGridKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (editing) return; // editing handles its own keys
+
+    // Clipboard: Ctrl/Cmd + C / X / V act on the selected cell. Handled before
+    // the navigation switch (which only deals with un-modified keys).
+    if (e.ctrlKey || e.metaKey) {
+      const key = e.key.toLowerCase();
+      if (key === 'c' || key === 'x') {
+        e.preventDefault();
+        const cellVal = value[selected.r]?.[selected.c] ?? '';
+        setClipCell(cellVal);
+        navigator.clipboard?.writeText(cellVal).catch(() => {});
+        if (key === 'x') setCell(selected.r, selected.c, '');
+        return;
+      }
+      if (key === 'v') {
+        e.preventDefault();
+        const { r, c } = selected;
+        if (navigator.clipboard?.readText) {
+          navigator.clipboard
+            .readText()
+            .then((txt) => setCell(r, c, txt))
+            .catch(() => {
+              if (clipCell !== null) setCell(r, c, clipCell);
+            });
+        } else if (clipCell !== null) {
+          setCell(r, c, clipCell);
+        }
+        return;
+      }
+    }
+
     switch (e.key) {
       case 'ArrowUp':
         e.preventDefault();
@@ -226,13 +264,16 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                   return (
                     <td
                       key={c}
+                      data-row={r}
+                      data-col={c}
                       className={`cbe-sheet__cell ${isSelected ? 'cbe-sheet__cell--selected' : ''}`}
                       onPointerDown={(e) => {
                         // Don't preventDefault — we need focus to land on the grid
                         // wrapper so the keyboard handler can pick up typing/F2/arrows.
-                        // If the user taps a cell that's already selected, enter edit
-                        // mode immediately (Google-Sheets-style behaviour on touch).
-                        if (isSelected && !isEditing) {
+                        // Tap-to-edit an already-selected cell is a touch affordance;
+                        // on mouse we leave it un-edited so its content stays draggable
+                        // (drag-to-move). Double-click / F2 still edit on mouse.
+                        if (isSelected && !isEditing && e.pointerType === 'touch') {
                           beginEdit(r, c);
                           return;
                         }
@@ -245,6 +286,27 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                         }
                       }}
                       onDoubleClick={() => beginEdit(r, c)}
+                      onDragOver={(e) => {
+                        if (!moveDragRef.current) return;
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                      }}
+                      onDragEnter={(e) => {
+                        if (moveDragRef.current) e.currentTarget.setAttribute('data-dragover', 'true');
+                      }}
+                      onDragLeave={(e) => e.currentTarget.removeAttribute('data-dragover')}
+                      onDrop={(e) => {
+                        e.currentTarget.removeAttribute('data-dragover');
+                        const drag = moveDragRef.current;
+                        moveDragRef.current = null;
+                        if (!drag) return;
+                        e.preventDefault();
+                        if (drag.fromR === r && drag.fromC === c) return; // dropped on self
+                        const next = value.map((row) => [...row]);
+                        next[drag.fromR][drag.fromC] = ''; // clear source
+                        next[r][c] = drag.value; // set target
+                        onChange(next);
+                      }}
                     >
                       {isEditing ? (
                         <input
@@ -257,7 +319,62 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                           onFocus={() => editRef.current && reportFocus(editRef.current, 'sheet')}
                         />
                       ) : (
-                        <span className="cbe-sheet__display">{evalIfFormula(cellValue, value)}</span>
+                        <>
+                          <span
+                            className="cbe-sheet__display"
+                            draggable={isSelected}
+                            onDragStart={(e) => {
+                              if (!isSelected) return;
+                              const v = value[r]?.[c] ?? '';
+                              moveDragRef.current = { fromR: r, fromC: c, value: v };
+                              e.dataTransfer.effectAllowed = 'move';
+                              e.dataTransfer.setData('text/plain', v);
+                            }}
+                            onDragEnd={() => {
+                              moveDragRef.current = null;
+                            }}
+                          >
+                            {evalIfFormula(cellValue, value)}
+                          </span>
+                          {isSelected && (
+                            <span
+                              className="cbe-sheet__fill-handle"
+                              onPointerDown={(e) => {
+                                e.stopPropagation(); // don't re-select / focus the grid
+                                e.currentTarget.setPointerCapture(e.pointerId);
+                                fillDragRef.current = {
+                                  startR: r,
+                                  startC: c,
+                                  value: value[r]?.[c] ?? '',
+                                  targetEl: null,
+                                };
+                              }}
+                              onPointerMove={(e) => {
+                                if (!fillDragRef.current) return;
+                                const td = (document.elementFromPoint(e.clientX, e.clientY) as Element | null)
+                                  ?.closest('td.cbe-sheet__cell') as HTMLElement | null;
+                                fillDragRef.current.targetEl = td ?? null;
+                              }}
+                              onPointerUp={() => {
+                                const drag = fillDragRef.current;
+                                fillDragRef.current = null;
+                                if (!drag || !drag.targetEl) return;
+                                const tr = Number(drag.targetEl.dataset.row);
+                                const tc = Number(drag.targetEl.dataset.col);
+                                if (Number.isNaN(tr) || Number.isNaN(tc)) return;
+                                const next = value.map((row) => [...row]);
+                                if (tc === drag.startC && tr > drag.startR) {
+                                  for (let rr = drag.startR; rr <= tr; rr++) next[rr][drag.startC] = drag.value;
+                                } else if (tr === drag.startR && tc > drag.startC) {
+                                  for (let cc = drag.startC; cc <= tc; cc++) next[drag.startR][cc] = drag.value;
+                                } else {
+                                  return; // only straight down or straight right
+                                }
+                                onChange(next);
+                              }}
+                            />
+                          )}
+                        </>
                       )}
                     </td>
                   );

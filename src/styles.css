@@ -1230,6 +1230,24 @@ body {
   outline: none; background: #fffbea;
   color: var(--ink);
 }
+/* Fill handle — corner square on the selected cell; drag to copy down/right. */
+.cbe-sheet__fill-handle {
+  position: absolute;
+  bottom: -4px; right: -4px;
+  width: 8px; height: 8px;
+  background: var(--primary);
+  border: 1px solid #fff;
+  border-radius: 1px;
+  cursor: crosshair;
+  z-index: 3;
+  touch-action: none;
+}
+/* Drop target cue while dragging a cell's content to move it. */
+.cbe-sheet__cell[data-dragover="true"] {
+  background: #e8f0fe;
+  outline: 2px dashed var(--primary);
+  outline-offset: -2px;
+}
 
 /* AI marker ─────────────────────────────────────────────── */
 
