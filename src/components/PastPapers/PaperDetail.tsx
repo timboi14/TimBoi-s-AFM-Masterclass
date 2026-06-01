@@ -70,6 +70,21 @@ export function PaperDetail({ paper, tab, onTabChange, onClose }: Props) {
     { id: 'examiner', label: 'Examiner says' },
   ];
 
+  // Open the question (or solution, if that's where you are) in a separate,
+  // chrome-free window sized to sit beside the CBE workspace. Named per paper
+  // so re-clicks reuse the same window rather than stacking new ones.
+  const handlePopOut = () => {
+    const targetTab = activeTab === 'solution' ? 'solution' : 'question';
+    const url = `/past-papers?p=${paper.id}&tab=${targetTab}&popout=true`;
+    const width = Math.round(window.screen.width * 0.48);
+    const height = window.screen.height;
+    window.open(
+      url,
+      `paper_popout_${paper.id}`,
+      `width=${width},height=${height},left=0,top=0,resizable=yes,scrollbars=yes`,
+    );
+  };
+
   const onTabKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const order = TAB_IDS;
     const i = order.indexOf(activeTab);
@@ -133,6 +148,20 @@ export function PaperDetail({ paper, tab, onTabChange, onClose }: Props) {
             {t.label}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={handlePopOut}
+          title="Open in separate window (for side-by-side study)"
+          className="ml-auto flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Pop out
+        </button>
       </div>
 
       {/* A tab panel per tab that has been opened. Inactive panels are kept

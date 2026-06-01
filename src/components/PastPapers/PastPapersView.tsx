@@ -5,6 +5,20 @@ import type { DataSource, PaperSection, TopicCategory } from '@/data/pastpapers/
 import { PaperCard } from './PaperCard';
 import { PaperDetail } from './PaperDetail';
 import { SOURCE_META } from './shared/SourceBadge';
+import { ScenarioTab } from './tabs/ScenarioTab';
+import { QuestionTab } from './tabs/QuestionTab';
+import { SolutionTab } from './tabs/SolutionTab';
+import { ExaminerTab } from './tabs/ExaminerTab';
+
+// Sections available in a pop-out reference window (the timed Practice CBE is
+// never popped out — it's the thing you write in, not a reference).
+const POPOUT_TABS = ['scenario', 'question', 'solution', 'examiner'] as const;
+const POPOUT_LABELS: Record<(typeof POPOUT_TABS)[number], string> = {
+  scenario: 'Scenario',
+  question: 'Question',
+  solution: 'Solution walkthrough',
+  examiner: 'Examiner says',
+};
 
 type FilterSection = 'all' | PaperSection;
 type FilterTopic = 'all' | TopicCategory;
@@ -23,6 +37,7 @@ export interface PastPapersViewHandle {
 export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPapersView(_, ref) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get('p');
+  const isPopout = searchParams.get('popout') === 'true';
   const urlTab = searchParams.get('tab');
   const activeTab: Tab = isTab(urlTab) ? urlTab : 'scenario';
   const setSelectedId = useCallback(
@@ -111,6 +126,50 @@ export const PastPapersView = forwardRef<PastPapersViewHandle>(function PastPape
       heading?.focus();
     }
   }, [selectedPaper?.id]);
+
+  // Standalone reference window: a minimal tab bar + the selected section,
+  // no filters / grid / site chrome. Tab clicks reuse setActiveTab, which keeps
+  // the ?tab param in sync (and preserves ?p and ?popout). Returned after all
+  // hooks above so hook order is identical across both render paths.
+  if (isPopout) {
+    const popTab: (typeof POPOUT_TABS)[number] =
+      activeTab === 'practice' ? 'question' : activeTab;
+    return (
+      <div className="flex h-screen flex-col overflow-hidden bg-white">
+        <div className="flex border-b border-gray-200 px-4 pt-2">
+          {POPOUT_TABS.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`mr-1 rounded-t-md px-4 py-2 text-sm font-medium ${
+                popTab === tab
+                  ? 'bg-white border border-b-white border-gray-200 -mb-px'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {POPOUT_LABELS[tab]}
+            </button>
+          ))}
+        </div>
+        <div className="flex-1 overflow-y-auto p-6">
+          {!selectedPaper ? (
+            <p className="text-gray-500">
+              No paper matches <code>?p={selectedId}</code>.
+            </p>
+          ) : popTab === 'scenario' ? (
+            <ScenarioTab paper={selectedPaper} />
+          ) : popTab === 'question' ? (
+            <QuestionTab paper={selectedPaper} />
+          ) : popTab === 'solution' ? (
+            <SolutionTab paper={selectedPaper} />
+          ) : (
+            <ExaminerTab paper={selectedPaper} />
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="past-papers-view">

@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { store, useStore, tierFor } from '@/lib/store';
@@ -30,6 +30,10 @@ const NAV = [
 
 export function Layout() {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  // Pop-out reference windows (?popout=true) drop all site chrome so the
+  // window is a clean, side-by-side reference next to the CBE workspace.
+  const isPopout = searchParams.get('popout') === 'true';
   const state = useStore();
   const t = tierFor(state.points);
   const [scrolled, setScrolled] = useState(false);
@@ -68,6 +72,16 @@ export function Layout() {
     link.setAttribute('imagesrcset', `/spurs/${art.base}.webp 1x, /spurs/${art.base}@2x.webp 2x`);
     link.setAttribute('imagesizes', '520px');
   }, [location.pathname]);
+
+  // Chrome-free shell for pop-out reference windows. Returned after all hooks
+  // above have run so hook order stays stable across the two render paths.
+  if (isPopout) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Outlet />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative">
