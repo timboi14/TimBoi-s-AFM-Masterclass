@@ -35,6 +35,7 @@ const PRIMARY_NAV: NavItem[] = [
 ];
 
 const MORE_NAV: NavItem[] = [
+  { to: '/ke-finesse', label: 'ke finesse', icon: 'wand', matches: ['/ke-finesse'] },
   { to: '/start', label: 'Start here', icon: 'compass', matches: ['/start'] },
   { to: '/champions-league', label: 'Plain-English concepts', icon: 'lightbulb', matches: ['/champions-league'] },
   { to: '/topic/adviser', label: 'Topic library', icon: 'list', matches: ['/topic'] },

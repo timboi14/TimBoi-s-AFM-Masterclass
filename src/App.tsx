@@ -72,6 +72,7 @@ const SettingsPage = lazyNamed(() => import('@/pages/Settings'), 'SettingsPage')
 const StartPage = lazyNamed(() => import('@/pages/Start'), 'StartPage');
 const DiagnosticPage = lazyNamed(() => import('@/pages/Diagnostic'), 'DiagnosticPage');
 const LeaveItToUsPage = lazyNamed(() => import('@/pages/LeaveItToUs'), 'LeaveItToUsPage');
+const KeFinessePage = lazyNamed(() => import('@/pages/KeFinesse'), 'KeFinessePage');
 
 function RouteFallback() {
   return (
@@ -140,6 +141,7 @@ export default function App() {
                   <Route path="/formulas" element={<FormulasPage />} />
                   <Route path="/exam-skills" element={<ExamSkillsPage />} />
                   <Route path="/leave-it-to-us" element={<LeaveItToUsPage />} />
+                  <Route path="/ke-finesse" element={<KeFinessePage />} />
                   <Route path="*" element={<HomePage />} />
                 </Routes>
               </Suspense>

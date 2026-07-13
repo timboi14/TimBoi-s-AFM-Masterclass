@@ -23,7 +23,10 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: '.',
   fullyParallel: false,
-  workers: 2,
+  // Route chunks compile lazily under the local Vite server. Keeping one
+  // browser worker avoids cold-route compilation contending with the heavy
+  // CBE spreadsheet bundle and makes the release gate deterministic.
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? [['github'], ['list']] : 'list',

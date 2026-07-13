@@ -221,8 +221,8 @@ export function DiagnosticPage() {
                 })}
               </div>
               <div className="mt-5 flex gap-2 flex-wrap">
-                <Link to="/study-guide" className="btn-primary">
-                  <i className="fa-solid fa-rocket" /> Open my 4-week plan
+                <Link to="/leave-it-to-us" className="btn-primary">
+                  <i className="fa-solid fa-wand-magic-sparkles" /> Let the plan use this result
                 </Link>
                 <Link to="/training" className="btn">
                   <i className="fa-solid fa-dumbbell" /> Drill weak areas

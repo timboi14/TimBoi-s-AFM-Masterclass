@@ -12,6 +12,7 @@ const PRIORITIES = [
 ] as const;
 
 const anchors = [
+  { id: 'why-it-works', label: 'Why it works' },
   { id: 'next-moves', label: 'Next 3 moves' },
   { id: 'exam-shape', label: 'Exam shape' },
   { id: 'priority-map', label: 'Priority map' },
@@ -35,6 +36,37 @@ export function LeaveItToUsPage() {
             <Link className="btn btn-secondary" to="/training">Start a timed drill</Link>
           </>}
         />
+      </SectionShell>
+
+      <SectionShell tone="black" pad="lg" id="why-it-works">
+        <div className="max-w-6xl mx-auto text-white">
+          <p className="kicker text-accent">The merit of leaving it to us</p>
+          <div className="mt-3 grid gap-5 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
+            <h2 className="font-display text-4xl leading-none sm:text-6xl">We take ownership of the sequence—not your result.</h2>
+            <p className="max-w-2xl text-base leading-7 text-white/65 lg:justify-self-end">
+              The APM build proved that a good concierge is not motivational copy. It removes planning friction,
+              routes effort from evidence and gives every session a finish line. You still do the thinking; the academy
+              stops making you hunt for the next useful rep.
+            </p>
+          </div>
+          <div className="mt-9 grid gap-4 md:grid-cols-3">
+            {[
+              ['compass', 'Decision fatigue goes first', 'Current exam facts, your weak-area signal and your completed work decide the next move. The loudest topic does not.'],
+              ['lock', 'One plan, one trusted stack', 'The route opens the exact supporting tool in Ke Finesse, so formulas, technique and papers stop competing for attention.'],
+              ['fileCheck', 'Every session leaves evidence', 'The finish line is something observable: a recalled rule, a planned requirement, a timed response or a named repair.'],
+            ].map(([icon, title, body]) => (
+              <article key={title} className="rounded-3xl border border-white/15 bg-white/[.055] p-6">
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent text-ink"><AppIcon name={icon as 'compass' | 'lock' | 'fileCheck'} size={19} /></span>
+                <h3 className="mt-5 font-display text-2xl leading-tight">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/60">{body}</p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-col gap-4 rounded-3xl border border-accent/25 bg-accent/[.07] p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div><span className="text-xs font-black uppercase tracking-[.15em] text-accent">The two-room system</span><p className="mt-2 text-sm text-white/70"><strong className="text-white">Leave It To Us</strong> chooses the work. <strong className="text-white">Ke Finesse</strong> equips the work.</p></div>
+            <Link className="btn btn-primary shrink-0" to="/ke-finesse">Open ke finesse <AppIcon name="arrowRight" size={14} /></Link>
+          </div>
+        </div>
       </SectionShell>
 
       <SectionShell tone="white" pad="lg">

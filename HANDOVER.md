@@ -1,6 +1,24 @@
 # TimBoi's Academy — Live Handover
 
-_Major overhaul shipped locally 13 July 2026; push `main` to auto-deploy on Vercel._
+_Major overhaul deployed 13 July 2026; follow-up concept rooms are covered by the same release gate._
+
+## July 2026 — Leave It To Us + Ke Finesse follow-up
+
+- **`/leave-it-to-us`** now introduces the merit of the concierge model: remove decision
+  fatigue, keep one trusted stack and make every session finish with observable evidence.
+- New **`/ke-finesse`** route turns the APM resource-vault lesson into an AFM-native final-mile
+  room: a five-stage Decide → Retrieve → Shape → Pressure → Repair stack plus 16 searchable,
+  filtered tools. It deliberately links to the academy's maintained live surfaces instead of
+  inventing or silently republishing an unverified PDF pack.
+- Home introduces Ke Finesse as one of the four highest-value rooms; it is also available under
+  More. Leave It To Us and Ke Finesse cross-link, and a completed diagnostic now hands its
+  evidence to Leave It To Us.
+- A dedicated concept-room test covers the handoff, filters, search and 390 px mobile overflow.
+  The full Playwright release gate is now **11 tests** and runs with one worker to avoid cold-route
+  compilation contending with the heavy CBE bundle.
+- A private 29-file AFM blueprint library exists under `~/Downloads/Library/Professional & Study/ACCA AFM`
+  (28 unique files, 442 pages, roughly 469 MB). It was audited but not copied into the public repo:
+  curate, compress and confirm publication rights before adding any of those PDFs to Ke Finesse.
 
 ## July 2026 — APM-parity overhaul
 
@@ -24,7 +42,7 @@ _Major overhaul shipped locally 13 July 2026; push `main` to auto-deploy on Verc
   when a legacy/specialist surface needs it.
 - CBE spreadsheet focus is now synchronous after a cell click and restored after Enter/Tab,
   so fast `=` input and F2 formula editing do not lose the first key. Playwright is a real
-  dev dependency; **8/8 regression tests pass**.
+  dev dependency; the initial overhaul's **8/8 regression tests passed**.
 
 ### Current deploy gate
 

@@ -7,6 +7,7 @@ import { useReducedMotion } from 'framer-motion';
  * Order matters: first matching prefix wins, list longer paths first.
  */
 const ROUTE_ART: Array<{ match: (p: string) => boolean; base: string; label: string }> = [
+  { match: (p) => p.startsWith('/ke-finesse'), base: 'tools', label: 'ke finesse' },
   { match: (p) => p.startsWith('/champions-league'), base: 'champions-league', label: 'Champions League' },
   { match: (p) => p.startsWith('/past-papers'), base: 'past-papers', label: 'Past Papers' },
   { match: (p) => p.startsWith('/playbook'),    base: 'playbook',    label: 'Playbook' },
@@ -36,6 +37,7 @@ export function tabArtFor(pathname: string) {
 
 const NAV_TO_BASE: Record<string, string> = {
   '/': 'home',
+  '/ke-finesse': 'tools',
   '/start': 'start-here',
   '/course': 'course',
   '/champions-league': 'champions-league',

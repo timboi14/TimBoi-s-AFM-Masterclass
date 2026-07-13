@@ -154,6 +154,15 @@ const TRAINING_LOOP = [
 
 const PRODUCT_ROOMS = [
   {
+    eyebrow: 'Ke Finesse',
+    title: 'The final-mile tool stack.',
+    body: 'Let the plan choose, then move through recall, answer shape, pressure and repair without hunting across the academy.',
+    to: '/ke-finesse',
+    cta: 'Open the Finesse room',
+    icon: 'wand',
+    tone: 'navy',
+  },
+  {
     eyebrow: 'Match centre',
     title: 'Past papers without the PDF shuffle.',
     body: `${PUBLIC_STATS.sourcedPaperItems} sourced practice items, requirement-first navigation and a workspace built for exam posture.`,
@@ -512,7 +521,7 @@ export function HomePage() {
         <div className="home-v3__section-heading">
           <div>
             {eyebrow('door', 'Built for the hard parts')}
-            <h2 id="rooms-title">Three rooms worth knowing.</h2>
+            <h2 id="rooms-title">Four rooms worth knowing.</h2>
           </div>
           <p>Every other tool stays available, but these are the shortest routes to better exam behaviour.</p>
         </div>
