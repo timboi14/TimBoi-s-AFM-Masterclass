@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('CBE spreadsheet — formula evaluation', () => {
   test('=1+1 evaluates to 2 and the formula survives to storage', async ({ page }) => {
-    await page.goto('/past-papers?p=robson&tab=practice');
+    await page.goto('/past-papers?view=questions&p=robson&tab=practice');
 
     // Reveal the spreadsheet pane.
     const sheetTab = page.getByRole('tab', { name: /spreadsheet/i });
@@ -22,7 +22,7 @@ test.describe('CBE spreadsheet — formula evaluation', () => {
 
     // Focus the grid and type =1+1 into A1.
     const grid = page.getByRole('grid', { name: /spreadsheet grid/i });
-    await grid.click();
+    await grid.locator('.cbe-sheet__cell').first().click();
     await page.keyboard.type('=1+1');
     await page.keyboard.press('Enter');
 
@@ -31,11 +31,18 @@ test.describe('CBE spreadsheet — formula evaluation', () => {
     await expect(a1Display).toHaveText('2', { timeout: 5000 });
 
     // Storage should preserve the formula verbatim so the user can re-edit it.
+    await expect.poll(async () => page.evaluate(() => {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i)!;
+        if (k.startsWith('tba_cbe_') && (localStorage.getItem(k) ?? '').includes('=1+1')) return true;
+      }
+      return false;
+    })).toBe(true);
     const stored = await page.evaluate(() => {
       const out: Record<string, unknown> = {};
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i)!;
-        if (k.startsWith('cbe_')) out[k] = JSON.parse(localStorage.getItem(k)!);
+        if (k.startsWith('tba_cbe_')) out[k] = JSON.parse(localStorage.getItem(k)!);
       }
       return out;
     });
@@ -44,29 +51,24 @@ test.describe('CBE spreadsheet — formula evaluation', () => {
   });
 
   test('AFM_NPV with a year-0 outflow matches Excel to 4dp', async ({ page }) => {
-    await page.goto('/past-papers?p=robson&tab=practice');
+    await page.goto('/past-papers?view=questions&p=robson&tab=practice');
     const sheetTab = page.getByRole('tab', { name: /spreadsheet/i });
     await sheetTab.click();
     const grid = page.getByRole('grid', { name: /spreadsheet grid/i });
-    await grid.click();
+    await grid.locator('.cbe-sheet__cell').first().click();
 
     // Lay out B1..B6: -100, 30, 35, 40, 45, 50 (year-0 outflow + 5 years of inflows).
     const values = ['-100', '30', '35', '40', '45', '50'];
-    // Navigate to B1: one ArrowRight to leave A1, then enter each value with Enter.
-    await page.keyboard.press('ArrowRight');
-    for (const v of values) {
+    // Enter B1:B6 explicitly so the assertion isolates the formula engine from
+    // spreadsheet navigation (navigation has its own F2/keyboard regression test).
+    for (let row = 0; row < values.length; row++) {
+      const v = values[row];
+      await grid.locator('.cbe-sheet__cell').nth(row * 10 + 1).click();
       await page.keyboard.type(v);
       await page.keyboard.press('Enter');
     }
-    // Move to A1 to enter the AFM_NPV formula. Quick path: Ctrl+Home equivalent.
-    await page.keyboard.press('ArrowUp');
-    await page.keyboard.press('ArrowUp');
-    await page.keyboard.press('ArrowUp');
-    await page.keyboard.press('ArrowUp');
-    await page.keyboard.press('ArrowUp');
-    await page.keyboard.press('ArrowUp');
-    await page.keyboard.press('ArrowLeft');
-
+    // Click A1 explicitly; this also mirrors a normal mouse/touch workflow.
+    await grid.locator('.cbe-sheet__cell').first().click();
     await page.keyboard.type('=AFM_NPV(0.1, B1:B6)');
     await page.keyboard.press('Enter');
 

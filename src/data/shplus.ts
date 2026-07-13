@@ -1,9 +1,10 @@
 /**
- * AFM Resit Course (June 2026 sitting) integration data.
+ * AFM revision course integration data. Dates derive from the current sitting.
  * Mirrors the official course schedule the user is following so progress
  * in one platform reinforces the other. User-facing copy is generic
  * (no name-drops); internal field names retained for compatibility.
  */
+import { EXAM_DATE, SITTING, weekDates } from '@/config/sitting';
 
 export interface ShWeek {
   num: number;
@@ -27,9 +28,7 @@ export const SH_WEEKS: ShWeek[] = [
     num: 1,
     title: 'Investment Appraisal',
     topic: 'NPV, WACC, real options, foreign NPV, sensitivity',
-    weekStart: '2026-04-27',
-    homeworkDue: '2026-05-03T23:59:00',
-    answerUnlocks: '2026-05-04T05:00:00',
+    ...weekDates(1),
     marks: 25,
     tutorScenarios: ['Colvin Co', 'Robson Co'],
     selfReview: 'Blackbosca Co — Üskistan expansion (25 marks + 5 PS)',
@@ -48,9 +47,7 @@ export const SH_WEEKS: ShWeek[] = [
     num: 2,
     title: 'Risk Management & Hedging',
     topic: 'FX hedging, IR hedging, swaps, collars, futures, options',
-    weekStart: '2026-05-04',
-    homeworkDue: '2026-05-10T23:59:00',
-    answerUnlocks: '2026-05-11T05:00:00',
+    ...weekDates(2),
     marks: 25,
     tutorScenarios: ['Lurgshall Co', 'Boullain Co'],
     tbaTopics: ['fx', 'ir', 'risk'],
@@ -68,9 +65,7 @@ export const SH_WEEKS: ShWeek[] = [
     num: 3,
     title: 'Business Valuations',
     topic: 'FCFF, FCFE, multiples, dividend models, M&A premium',
-    weekStart: '2026-05-11',
-    homeworkDue: '2026-05-17T23:59:00',
-    answerUnlocks: '2026-05-18T05:00:00',
+    ...weekDates(3),
     marks: 50,
     tutorScenarios: ['(unlocks 11 May)'],
     tbaTopics: ['val', 'mna'],
@@ -88,9 +83,7 @@ export const SH_WEEKS: ShWeek[] = [
     num: 4,
     title: 'Mock Preparation',
     topic: 'Full 100-mark mock under exam conditions',
-    weekStart: '2026-05-18',
-    homeworkDue: '2026-05-24T23:59:00',
-    answerUnlocks: '2026-05-25T05:00:00',
+    ...weekDates(4),
     marks: 100,
     tutorScenarios: ['(unlocks 18 May)'],
     tbaTopics: ['adviser', 'npv', 'apv', 'fx', 'ir', 'val', 'mna', 'real'],
@@ -108,9 +101,7 @@ export const SH_WEEKS: ShWeek[] = [
     num: 5,
     title: 'Exam Preparation',
     topic: 'Final tips, mindset, pre-exam mock, last-minute drills',
-    weekStart: '2026-05-25',
-    homeworkDue: '2026-06-04T23:59:00',
-    answerUnlocks: '2026-06-05T05:00:00',
+    ...weekDates(5),
     marks: 0,
     tutorScenarios: ['(unlocks 25 May)'],
     tbaTopics: ['adviser'],
@@ -121,20 +112,18 @@ export const SH_WEEKS: ShWeek[] = [
       'Completed both Self-Review Question 1 and 2',
       'Sat the Pre-Exam Mock',
       'Walked the War Room T-1 night and T-0 morning checklists',
-      'Confirmed CBE access, ID, location for 5 June 2026',
+      `Confirmed CBE access, ID and location for ${SITTING.examDayLabel}`,
     ],
   },
 ];
 
 export const SH_KEY_DATES: { date: string; label: string; tone: 'info' | 'warn' | 'critical' }[] = [
-  { date: '2026-04-16T23:59:00', label: 'Exam entry deadline', tone: 'warn' },
-  { date: '2026-04-20T05:00:00', label: 'Course Week 1 unlocks', tone: 'info' },
-  { date: '2026-05-03T23:59:00', label: 'Week 1 homework due (Investment Appraisal)', tone: 'warn' },
-  { date: '2026-05-10T23:59:00', label: 'Week 2 homework due (Hedging)', tone: 'warn' },
-  { date: '2026-05-17T23:59:00', label: 'Week 3 homework due (Valuations 50m)', tone: 'warn' },
-  { date: '2026-05-24T23:59:00', label: 'Week 4 mock due (100 marks)', tone: 'warn' },
-  { date: '2026-06-05T09:00:00', label: 'EXAM DAY · 09:00', tone: 'critical' },
-  { date: '2026-07-13T05:00:00', label: 'Results released', tone: 'info' },
+  { date: SITTING.entryDeadlineAt, label: 'Standard exam entry deadline', tone: 'warn' },
+  { date: SITTING.lateEntryDeadlineAt, label: 'Late exam entry deadline', tone: 'critical' },
+  { date: `${SITTING.courseStartMonday}T05:00:00`, label: 'Course Week 1 unlocks', tone: 'info' },
+  ...SH_WEEKS.slice(0, 4).map((week) => ({ date: week.homeworkDue, label: `Week ${week.num} homework due (${week.title})`, tone: 'warn' as const })),
+  { date: SITTING.examAt, label: 'AFM EXAM DAY · confirm local time in myACCA', tone: 'critical' },
+  { date: SITTING.resultsAt, label: 'Results released', tone: 'info' },
 ];
 
 export const SH_TECHNICAL_ARTICLES = [
@@ -150,7 +139,7 @@ export const SH_TECHNICAL_ARTICLES = [
 /** Auto-detect which course week the user is currently in. */
 export function getCurrentShWeek(now = new Date()): { week: ShWeek | null; status: 'pre' | 'live' | 'post-course' | 'exam-week' } {
   const t = +now;
-  const examT = +new Date('2026-06-05T09:00:00');
+  const examT = +EXAM_DATE;
   if (t >= examT) return { week: null, status: 'post-course' };
 
   for (const w of SH_WEEKS) {

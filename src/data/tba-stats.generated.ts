@@ -1,0 +1,26 @@
+/** Generated from stats-derive.ts. Run npm run stats; do not edit. */
+export const TBA_STATS_SNAPSHOT = {
+  "verifiedPapers": 32,
+  "sectionA50m": 10,
+  "sectionB25m": 22,
+  "topicGroups": 12,
+  "theoryQA": 87,
+  "workedDrills": 12,
+  "practiceExams": 16,
+  "courseWeeks": 5,
+  "pitfalls": 35,
+  "examinerReports": 7,
+  "traps": 14,
+  "spreadsheetShortcuts": 8,
+  "cardDecks": 5,
+  "cheatSheets": 1,
+  "practiceMarks": 450,
+  "practiceMinutes": 810,
+  "formulas": 28,
+  "pitfallsInTopics": 33,
+  "examinerTraps": 20,
+  "examinerQuotes": 9,
+  "warRoomTraps": 14,
+  "spotlights": 20,
+  "mnemonics": 32
+} as const;

@@ -244,10 +244,12 @@ export function CBESpreadsheet({ value, onChange }: Props) {
       e.preventDefault();
       commitEdit();
       move(1, 0);
+      requestAnimationFrame(() => gridRef.current?.focus());
     } else if (e.key === 'Tab') {
       e.preventDefault();
       commitEdit();
       move(0, e.shiftKey ? -1 : 1);
+      requestAnimationFrame(() => gridRef.current?.focus());
     } else if (e.key === 'Escape') {
       e.preventDefault();
       cancelEdit();
@@ -326,10 +328,11 @@ export function CBESpreadsheet({ value, onChange }: Props) {
                         }
                         setSelected({ r, c });
                         if (!isEditing) setEditing(null);
-                        // Pull focus onto the grid wrapper so subsequent keys work.
-                        // Defer to next tick so React's onPointerDown completes first.
+                        // Pull focus onto the grid synchronously. Deferring this to
+                        // requestAnimationFrame can drop the first fast keystroke
+                        // after a mouse click (most damaging when that key is "=").
                         if (!isEditing) {
-                          requestAnimationFrame(() => gridRef.current?.focus());
+                          gridRef.current?.focus();
                         }
                       }}
                       onDoubleClick={() => beginEdit(r, c)}

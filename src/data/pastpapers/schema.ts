@@ -88,4 +88,8 @@ export interface Paper {
   modelAnswerText?: string;
   /** Optional verbatim Kaplan scenario exhibits (rendered on scenario tab). */
   exhibits?: ScenarioExhibit[];
+  /** Editors exposed by the real CBE for this question. Defaults to both. */
+  responseOptions?: ResponseOption[];
 }
+
+export type ResponseOption = 'word' | 'sheet';

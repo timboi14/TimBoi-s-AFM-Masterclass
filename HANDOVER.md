@@ -1,6 +1,43 @@
-# TimBoi's Academy — Project Handover
+# TimBoi's Academy — Live Handover
 
-_Last updated: 2026-05-31 · branch `main` @ `fa770ed` (in sync with origin, deployed)_
+_Major overhaul shipped locally 13 July 2026; push `main` to auto-deploy on Vercel._
+
+## July 2026 — APM-parity overhaul
+
+- The app now targets the **Friday 11 September 2026** AFM sitting. `src/config/sitting.ts`
+  is the single source of truth for exam, entry, results and five-week course dates;
+  `scripts/check-sitting.mjs` blocks builds after an expired sitting.
+- Home is an action-first command centre: entry confirmation, adaptive daily mission,
+  10/25/50-minute session builder, pass loop, on-device cockpit and generated proof counts.
+- New primary route **`/leave-it-to-us`** turns the current A–E AFM syllabus into the next
+  three actions, the 50/25/25 exam shape, a priority map and weekly match plan. ACCA's
+  2026/27 changes file says AFM has **no syllabus changes** from 2025/26.
+- Past papers default to **full sittings**, regrouping the per-question bank into exam
+  assignments. Friendly practice and the full iAssess-style ceremony share answers,
+  support one countdown, item review, unseen guards and self-marking. The question view
+  remains at `?view=questions` for existing deep links and pop-out references.
+- The diagnostic now deterministically shuffles answer positions, removing authoring-order
+  leakage. Accessibility settings bootstrap without eagerly loading the Settings route;
+  fan-name prompting waits for real activity and can be managed in Settings.
+- Build-time stat/mission snapshots and explicit catalogue chunks cut the initial JS from
+  roughly **386 KB gzip to 87 KB gzip**. FontAwesome moved off first paint and loads only
+  when a legacy/specialist surface needs it.
+- CBE spreadsheet focus is now synchronous after a cell click and restored after Enter/Tab,
+  so fast `=` input and F2 formula editing do not lose the first key. Playwright is a real
+  dev dependency; **8/8 regression tests pass**.
+
+### Current deploy gate
+
+```bash
+npm run build
+npm run test:e2e
+git push origin main
+```
+
+Vercel auto-deploys `main` to https://timboi14masterclass.vercel.app. Hard-refresh once if
+the previous PWA shell is still controlling the tab.
+
+_Historical May 2026 baseline follows; the July section above supersedes its dates and status._
 
 A full handover of the AFM Masterclass study site: where it lives, how it ships,
 what was done this cycle, and what to watch. For a one-screen version see

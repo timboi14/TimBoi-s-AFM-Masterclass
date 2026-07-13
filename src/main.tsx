@@ -15,15 +15,9 @@ import '@fontsource/dm-sans/700.css';
 import '@fontsource/dm-sans/800.css';
 import '@fontsource/jetbrains-mono/500.css';
 import '@fontsource/jetbrains-mono/700.css';
-// Self-hosted Font Awesome (previously cdnjs — that origin returned 503 intermittently).
-import '@fortawesome/fontawesome-free/css/fontawesome.min.css';
-import '@fortawesome/fontawesome-free/css/solid.min.css';
-import '@fortawesome/fontawesome-free/css/regular.min.css';
-import '@fortawesome/fontawesome-free/css/brands.min.css';
 import './styles.css';
-// Apply persisted accessibility settings (reduce-motion / dyslexia / large
-// text) on app bootstrap — module side-effect inside the file does the work.
-import '@/pages/Settings';
+// Apply persisted accessibility settings without eagerly loading the Settings route.
+import '@/lib/user-settings';
 import { installGlobalHandlers } from '@/lib/observability';
 
 // Install Sentry/PostHog hooks if their env vars are set; no-op otherwise.

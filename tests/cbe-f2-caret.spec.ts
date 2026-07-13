@@ -13,13 +13,13 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('CBE spreadsheet — F2 caret-at-end (Excel parity)', () => {
   test('F2 does not select-all; subsequent typing appends to the existing formula', async ({ page }) => {
-    await page.goto('/past-papers?p=robson&tab=practice');
+    await page.goto('/past-papers?view=questions&p=robson&tab=practice');
 
     const sheetTab = page.getByRole('tab', { name: /spreadsheet/i });
     await sheetTab.click();
 
     const grid = page.getByRole('grid', { name: /spreadsheet grid/i });
-    await grid.click();
+    await grid.locator('.cbe-sheet__cell').first().click();
 
     // Seed A1 = "=1+1" → display "2".
     await page.keyboard.type('=1+1');

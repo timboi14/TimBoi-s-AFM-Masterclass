@@ -1,7 +1,7 @@
 /**
  * News flashes that link real-world finance to AFM topics.
  * Static editorial items styled like a live feed.
- * Refreshed for the June 2026 sitting.
+ * Refreshed for the September 2026 sitting.
  * No em dashes anywhere.
  */
 export interface NewsItem {

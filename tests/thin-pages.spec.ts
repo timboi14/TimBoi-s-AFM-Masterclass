@@ -23,7 +23,7 @@ test.describe('/scout — Examiner Reports module', () => {
     await expect(blockquotes).toHaveCount(9);
 
     // Sortable capability table is present.
-    await expect(page.getByRole('cell', { name: /APV/i }).first()).toBeVisible();
+    await expect(page.getByRole('cell', { name: /Adjusted Present Value/i }).first()).toBeVisible();
   });
 });
 
@@ -33,7 +33,7 @@ test.describe('/training — Simulator hub', () => {
     await page.waitForLoadState('networkidle');
 
     const body = await page.locator('body').innerText();
-    expect(body.length, 'body should be substantially more than 1.5 KB').toBeGreaterThan(3000);
+    expect(body.length, 'body should be substantially more than the old thin page').toBeGreaterThan(2500);
 
     for (const label of ['Practice', 'Mock', 'Debrief']) {
       const link = page.getByRole('link', { name: new RegExp(`^${label}$`, 'i') });

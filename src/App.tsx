@@ -1,9 +1,7 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { HomePage } from '@/pages/Home';
-import { NameOverlay } from '@/NameOverlay';
-import { Onboarding } from '@/components/Onboarding';
 
 // When a deploy lands, the user's cached index.html still references the old
 // chunk hashes. import() then 404s and React throws a "Loading chunk failed".
@@ -31,6 +29,9 @@ const lazyWithRetry = <T extends React.ComponentType<unknown>>(
 // Helper to lazy-load a page with a named export, with stale-chunk self-heal.
 const lazyNamed = <K extends string>(loader: () => Promise<Record<K, React.ComponentType<unknown>>>, name: K) =>
   lazyWithRetry(() => loader().then((m) => ({ default: m[name] })));
+
+const NameOverlay = lazyNamed(() => import('@/NameOverlay'), 'NameOverlay');
+const Onboarding = lazyNamed(() => import('@/components/Onboarding'), 'Onboarding');
 
 // Home stays in the main bundle (it's the landing page; lazy here would just delay TTI).
 // Every other route ships in its own chunk.
@@ -70,6 +71,7 @@ const MockReportPage = lazyNamed(() => import('@/pages/MockComposite'), 'MockRep
 const SettingsPage = lazyNamed(() => import('@/pages/Settings'), 'SettingsPage');
 const StartPage = lazyNamed(() => import('@/pages/Start'), 'StartPage');
 const DiagnosticPage = lazyNamed(() => import('@/pages/Diagnostic'), 'DiagnosticPage');
+const LeaveItToUsPage = lazyNamed(() => import('@/pages/LeaveItToUs'), 'LeaveItToUsPage');
 
 function RouteFallback() {
   return (
@@ -88,8 +90,8 @@ function RouteFallback() {
 export default function App() {
   return (
     <BrowserRouter>
-      <NameOverlay />
-      <Onboarding />
+      <DeferredLegacyIconStyles />
+      <DeferredPersonalisation />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
@@ -137,6 +139,7 @@ export default function App() {
                   <Route path="/mock" element={<MockPage />} />
                   <Route path="/formulas" element={<FormulasPage />} />
                   <Route path="/exam-skills" element={<ExamSkillsPage />} />
+                  <Route path="/leave-it-to-us" element={<LeaveItToUsPage />} />
                   <Route path="*" element={<HomePage />} />
                 </Routes>
               </Suspense>
@@ -145,5 +148,68 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+  );
+}
+
+function DeferredLegacyIconStyles() {
+  const location = useLocation();
+
+  useEffect(() => {
+    let loaded = false;
+    const load = () => {
+      if (loaded) return;
+      loaded = true;
+      void Promise.all([
+        import('@fortawesome/fontawesome-free/css/fontawesome.min.css'),
+        import('@fortawesome/fontawesome-free/css/solid.min.css'),
+        import('@fortawesome/fontawesome-free/css/regular.min.css'),
+        import('@fortawesome/fontawesome-free/css/brands.min.css'),
+      ]);
+    };
+
+    if (location.pathname !== '/') {
+      load();
+      return;
+    }
+
+    const passiveOnce = { once: true, passive: true } as const;
+    window.addEventListener('scroll', load, passiveOnce);
+    window.addEventListener('pointerdown', load, passiveOnce);
+    window.addEventListener('keydown', load, { once: true });
+    return () => {
+      window.removeEventListener('scroll', load);
+      window.removeEventListener('pointerdown', load);
+      window.removeEventListener('keydown', load);
+    };
+  }, [location.pathname]);
+
+  return null;
+}
+
+function DeferredPersonalisation() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const reveal = () => setReady(true);
+    // The personalised overlays are useful after the learner engages, but
+    // loading their animation runtime during an untouched landing-page visit
+    // creates avoidable main-thread work. Any real interaction wakes them.
+    const passiveOnce = { once: true, passive: true } as const;
+    window.addEventListener('scroll', reveal, passiveOnce);
+    window.addEventListener('pointerdown', reveal, passiveOnce);
+    window.addEventListener('keydown', reveal, { once: true });
+    return () => {
+      window.removeEventListener('scroll', reveal);
+      window.removeEventListener('pointerdown', reveal);
+      window.removeEventListener('keydown', reveal);
+    };
+  }, []);
+
+  if (!ready) return null;
+  return (
+    <Suspense fallback={null}>
+      <NameOverlay />
+      <Onboarding />
+    </Suspense>
   );
 }

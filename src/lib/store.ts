@@ -15,6 +15,8 @@ const KEY = {
   notesRead: 'tba_notesRead',
   theoryRead: 'tba_theoryRead',
   weakAreas: 'tba_weakAreas',
+  examEntryConfirmedAt: 'tba_examEntryConfirmedAt',
+  fanPromptDismissedAt: 'tba_fanPromptDismissedAt',
 } as const;
 
 export type Tier = 'Academy' | 'Reserve' | 'First Team' | 'Club Legend' | 'COYS Legend';
@@ -27,11 +29,11 @@ const TIER_THRESHOLDS: Array<{ tier: Tier; min: number; emoji: string; color: st
   { tier: 'COYS Legend', min: 3000, emoji: '👑', color: '#ec4899' },
 ];
 
-export function tierFor(points: number): { tier: Tier; emoji: string; color: string; next?: { tier: Tier; min: number } } {
+export function tierFor(points: number): { tier: Tier; emoji: string; color: string; min: number; next?: { tier: Tier; min: number } } {
   let current = TIER_THRESHOLDS[0];
   for (const t of TIER_THRESHOLDS) if (points >= t.min) current = t;
   const next = TIER_THRESHOLDS.find((t) => t.min > points);
-  return { tier: current.tier, emoji: current.emoji, color: current.color, next };
+  return { tier: current.tier, emoji: current.emoji, color: current.color, min: current.min, next };
 }
 
 function readNum(key: string, fallback: number): number {
@@ -61,6 +63,8 @@ export interface State {
   theoryRead: string[];
   weakAreas: string[];
   lastVisit: string;
+  examEntryConfirmedAt: string;
+  fanPromptDismissedAt: string;
 }
 
 const listeners = new Set<() => void>();
@@ -84,6 +88,8 @@ function readSnapshot(): State {
     theoryRead: readArr(KEY.theoryRead),
     weakAreas: readArr(KEY.weakAreas),
     lastVisit: readStr(KEY.lastVisit, ''),
+    examEntryConfirmedAt: readStr(KEY.examEntryConfirmedAt, ''),
+    fanPromptDismissedAt: readStr(KEY.fanPromptDismissedAt, ''),
   };
 }
 function rebuildAndNotify() {
@@ -104,6 +110,8 @@ export const store = {
     if (patch.theoryRead) localStorage.setItem(KEY.theoryRead, JSON.stringify(patch.theoryRead));
     if (patch.weakAreas) localStorage.setItem(KEY.weakAreas, JSON.stringify(patch.weakAreas));
     if (patch.lastVisit !== undefined) localStorage.setItem(KEY.lastVisit, patch.lastVisit);
+    if (patch.examEntryConfirmedAt !== undefined) localStorage.setItem(KEY.examEntryConfirmedAt, patch.examEntryConfirmedAt);
+    if (patch.fanPromptDismissedAt !== undefined) localStorage.setItem(KEY.fanPromptDismissedAt, patch.fanPromptDismissedAt);
     const points = readNum(KEY.points, 0);
     localStorage.setItem(KEY.tier, tierFor(points).tier);
     rebuildAndNotify();

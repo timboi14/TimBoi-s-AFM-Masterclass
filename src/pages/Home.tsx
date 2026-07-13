@@ -1,1106 +1,554 @@
-import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { store, tierFor, useStore } from '@/lib/store';
-import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
-import {
-  CenteredHero,
-  HeroGold,
-  PremiumDarkTile,
-  SectionShell,
-  StatStrip,
-  TonePill,
-} from '@/components/Blocks';
-import { TOPIC_LIST, TOPICS } from '@/data/topics';
-import { NEWS } from '@/data/news';
-import { SH_KEY_DATES, SH_WEEKS, getCurrentShWeek } from '@/data/shplus';
-import { siteStats } from '@/lib/site-stats';
-import { TBA_STATS } from '@/data/stats';
 import { FormGuideCompact } from '@/components/FormGuideCompact';
-import { PITFALLS } from '@/data/pitfalls';
-import { SPOTLIGHTS } from '@/data/spotlights';
-import { PAPERS } from '@/data/papers';
-import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
-import { cn } from '@/lib/cn';
-import { computePersonalTrend, loadLongestStreak, bumpLongestStreak } from '@/lib/personalTrend';
-import { loadFormGuideInputs } from '@/lib/formGuide';
+import { AppIcon, type AppIconName } from '@/components/AppIcon';
+import { PUBLIC_STATS } from '@/data/public-stats.generated';
+import { HOME_MISSIONS } from '@/data/public-missions.generated';
+import { EXAM_DATE, SITTING, SYLLABUS } from '@/config/sitting';
 import { loadAttempts } from '@/lib/attempts';
-import { resolveIdentity } from '@/lib/identity';
+import { store, tierFor, useStore } from '@/lib/store';
+import { cn } from '@/lib/cn';
 
-const EXAM_DATE = new Date('2026-06-05T09:00:00');
+type SessionLength = 10 | 25 | 50;
+
+type SessionStep = {
+  minutes: number;
+  label: string;
+  title: string;
+  body: string;
+  to: string;
+  icon: AppIconName;
+};
+
+const SESSION_PLANS: Record<SessionLength, { label: string; promise: string; steps: SessionStep[] }> = {
+  10: {
+    label: 'Quick reset',
+    promise: 'One idea in. One idea back out. Keep the streak alive.',
+    steps: [
+      {
+        minutes: 3,
+        label: 'Recall',
+        title: 'Open one memory card',
+        body: 'Retrieve before you reread. The struggle is the useful bit.',
+        to: '/memory',
+        icon: 'brain',
+      },
+      {
+        minutes: 5,
+        label: 'Repair',
+        title: 'Fix one examiner trap',
+        body: 'Turn a common mark-loser into a sentence you can use.',
+        to: '/pitfalls',
+        icon: 'alert',
+      },
+      {
+        minutes: 2,
+        label: 'Commit',
+        title: 'Say the rule out loud',
+        body: 'Explain the fix without notes, then stop. Short and clean.',
+        to: '/theory',
+        icon: 'mic',
+      },
+    ],
+  },
+  25: {
+    label: 'Daily session',
+    promise: 'Learn it, use it, then lock in the mark-winning move.',
+    steps: [
+      {
+        minutes: 6,
+        label: 'Warm-up',
+        title: 'Learn the model in plain English',
+        body: 'Start with the commercial point, not a memorised definition.',
+        to: '/champions-league',
+        icon: 'lightbulb',
+      },
+      {
+        minutes: 14,
+        label: 'Main set',
+        title: 'Plan a requirement to time',
+        body: 'Read the verb, mine the scenario and build a mark-budgeted plan.',
+        to: '/practice',
+        icon: 'stopwatch',
+      },
+      {
+        minutes: 5,
+        label: 'Cool-down',
+        title: 'Debrief the technique',
+        body: 'Name the exact behaviour you will repeat in the next answer.',
+        to: '/debrief/new',
+        icon: 'clipboard',
+      },
+    ],
+  },
+  50: {
+    label: 'Deep work',
+    promise: 'Build real exam evidence: timed work, feedback and a repair.',
+    steps: [
+      {
+        minutes: 5,
+        label: 'Brief',
+        title: 'Choose one 25-mark requirement',
+        body: 'Commit to the requirement before opening supporting material.',
+        to: '/past-papers',
+        icon: 'files',
+      },
+      {
+        minutes: 36,
+        label: 'Perform',
+        title: 'Write inside the CBE workspace',
+        body: 'Plan, write and move on at 1.8 minutes per mark.',
+        to: '/training/mock',
+        icon: 'laptop',
+      },
+      {
+        minutes: 9,
+        label: 'Review',
+        title: 'Mark the pattern, not your mood',
+        body: 'Record one strength, one leak and one specific next rep.',
+        to: '/form-guide',
+        icon: 'chart',
+      },
+    ],
+  },
+};
+
+const TRAINING_LOOP = [
+  {
+    number: '01',
+    eyebrow: 'Understand',
+    title: 'Get the commercial point',
+    body: 'Plain-English explanations and football analogies make the model usable before the jargon arrives.',
+    to: '/champions-league',
+    cta: 'Learn a concept',
+    icon: 'lightbulb',
+  },
+  {
+    number: '02',
+    eyebrow: 'Apply',
+    title: 'Make it belong to the scenario',
+    body: 'Train the issue → evidence → impact → action chain that turns knowledge into professional marks.',
+    to: '/training',
+    cta: 'Enter training',
+    icon: 'pen',
+  },
+  {
+    number: '03',
+    eyebrow: 'Perform',
+    title: 'Write with the clock running',
+    body: 'Use a focused CBE-style workspace and published-paper practice instead of comfortable rereading.',
+    to: '/past-papers',
+    cta: 'Sit a paper',
+    icon: 'stopwatch',
+  },
+  {
+    number: '04',
+    eyebrow: 'Repair',
+    title: 'Turn feedback into the next rep',
+    body: 'Debrief structure, update your form guide and revisit the exact skill that leaked marks.',
+    to: '/debrief',
+    cta: 'Run a debrief',
+    icon: 'wrench',
+  },
+];
+
+const PRODUCT_ROOMS = [
+  {
+    eyebrow: 'Match centre',
+    title: 'Past papers without the PDF shuffle.',
+    body: `${PUBLIC_STATS.sourcedPaperItems} sourced practice items, requirement-first navigation and a workspace built for exam posture.`,
+    to: '/past-papers',
+    cta: 'Explore papers',
+    icon: 'fileCheck',
+    tone: 'green',
+  },
+  {
+    eyebrow: 'Boot room',
+    title: 'Memory that survives exam morning.',
+    body: 'Spaced repetition, mnemonics and active recall turn models into cues you can retrieve under pressure.',
+    to: '/boot-room',
+    cta: 'Train recall',
+    icon: 'brain',
+    tone: 'gold',
+  },
+  {
+    eyebrow: 'Coach + scout',
+    title: 'Feedback with a job to do.',
+    body: 'Ask a focused question, inspect examiner patterns and leave with a concrete change for the next answer.',
+    to: '/scout',
+    cta: 'Open the scout report',
+    icon: 'headset',
+    tone: 'blue',
+  },
+];
 
 function useCountdown() {
   const [now, setNow] = useState(() => new Date());
+
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 60_000);
-    return () => clearInterval(id);
+    const id = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(id);
   }, []);
-  const ms = +EXAM_DATE - +now;
-  const d = Math.max(0, Math.floor(ms / 86_400_000));
-  const h = Math.max(0, Math.floor((ms % 86_400_000) / 3_600_000));
-  return { d, h, ms };
+
+  const remaining = Math.max(0, +EXAM_DATE - +now);
+  return {
+    days: Math.floor(remaining / 86_400_000),
+    hours: Math.floor((remaining % 86_400_000) / 3_600_000),
+  };
 }
 
-/** Counts up from 0 to target on mount. Cheap, no library. */
-function useCountUp(target: number, duration = 900) {
-  const [v, setV] = useState(0);
-  const reduced = useReducedMotion();
-  useEffect(() => {
-    if (reduced) { setV(target); return; }
-    let raf = 0;
-    const t0 = performance.now();
-    const step = (t: number) => {
-      const p = Math.min(1, (t - t0) / duration);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setV(Math.round(target * eased));
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration, reduced]);
-  return v;
-}
-
-const PASS_QUOTES = [
-  { who: 'Aisha O. · Sep/Dec 2025 sitting', score: '68%', quote: '"The Coach AI walked me through APV when I froze. I quoted scenario figures the examiner literally asked for."' },
-  { who: 'Mateo R. · Mar/Jun 2025', score: '74%', quote: '"Memory Palace stuck the Black-Scholes inputs in my head — I never flipped Pa and Pe again."' },
-  { who: 'Priya S. · Sep/Dec 2024', score: '61%', quote: '"Voice dictation while doing housework. Got 6 weeks of revision out of dead time."' },
-];
-
-/** Auto-hides once the user visits /start. */
-function NewUserTourBanner() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    setShow(localStorage.getItem('tba.onboarding.completed') !== '1');
-  }, []);
-  if (!show) return null;
+function eyebrow(icon: AppIconName, text: string) {
   return (
-    <div className="rounded-2xl border-l-4 border-l-accent bg-accent/[0.10] p-3 mb-3 flex items-center gap-3 flex-wrap">
-      <span className="text-[12px] uppercase tracking-wider text-accent-dark font-bold">
-        <i className="fa-solid fa-bullseye mr-1.5" aria-hidden /> New here?
-      </span>
-      <span className="text-[13.5px] text-ink flex-1 min-w-[200px]">
-        Take the 60-second tour to learn what each section does and what you should do today.
-      </span>
-      <Link to="/start" className="px-3 py-1.5 rounded-lg bg-accent text-ink font-bold text-[12px]">
-        Start the tour →
-      </Link>
-    </div>
+    <span className="home-v3__eyebrow">
+      <AppIcon name={icon} size={14} />
+      {text}
+    </span>
   );
 }
 
-const STADIUM_STATS = [
-  { value: siteStats.practiceSets, label: 'Practice exams', sub: `${siteStats.practiceMarks} marks · CBE shell` },
-  { value: siteStats.theoryCards, label: 'Theory Q&A', sub: 'Bullets + full model' },
-  { value: siteStats.topics, label: 'Group-stage topics', sub: 'A · B · C · D/E mapped' },
-  { value: siteStats.drills, label: 'Worked drills', sub: 'Mar/Jun 23 → Sep/Dec 25' },
-];
+const ENTRY_SNOOZE_KEY = 'tba_entrySnoozedThisVisit';
+const shortDate = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
 
-const NEXT_MOVES = [
-  {
-    to: '/past-papers',
-    art: 'past-papers',
-    eyebrow: 'Match centre',
-    title: 'Sit a paper',
-    body: 'CBE shell · AI marker',
-    icon: 'fa-file-lines',
-  },
-  {
-    to: '/champions-league',
-    art: 'champions-league',
-    eyebrow: 'Plain-English room',
-    title: 'Unlock a concept',
-    body: 'Football analogies · zero jargon fog',
-    icon: 'fa-trophy',
-  },
-  {
-    to: '/training',
-    art: 'training',
-    eyebrow: 'Training ground',
-    title: 'Get a rep in',
-    body: 'Practice · mock · debrief',
-    icon: 'fa-stopwatch',
-  },
-  {
-    to: '/boot-room',
-    art: 'boot-room',
-    eyebrow: 'Boot room',
-    title: 'Make it stick',
-    body: 'Recall · mnemonics · exam skills',
-    icon: 'fa-brain',
-  },
-];
+/**
+ * Being entered for the sitting is pass-factor #1 — no amount of studying
+ * counts if the entry window closes. This banner owns that risk on Home until
+ * the learner confirms entry (persisted), then gets out of the way for good.
+ * The X snoozes it for the current visit only: an unconfirmed entry must
+ * come back next visit, by design.
+ */
+function EntryDeadlineBanner({ entered }: { entered: boolean }) {
+  const [snoozed, setSnoozed] = useState(
+    () => typeof window !== 'undefined' && sessionStorage.getItem(ENTRY_SNOOZE_KEY) === '1',
+  );
+
+  const now = Date.now();
+  const standardAt = +new Date(SITTING.entryDeadlineAt);
+  const lateAt = +new Date(SITTING.lateEntryDeadlineAt);
+  if (entered || snoozed || now >= lateAt) return null;
+
+  const lateWindow = now >= standardAt;
+  const daysLeft = Math.max(1, Math.ceil(((lateWindow ? lateAt : standardAt) - now) / 86_400_000));
+
+  const snooze = () => {
+    try {
+      sessionStorage.setItem(ENTRY_SNOOZE_KEY, '1');
+    } catch { /* ignore */ }
+    setSnoozed(true);
+  };
+
+  return (
+    <aside
+      className={cn('home-v3__entry', lateWindow && 'home-v3__entry--late')}
+      aria-label="Exam entry deadline"
+    >
+      <div className="home-v3__entry-copy">
+        <span className="home-v3__entry-eyebrow">
+          <AppIcon name="bell" size={13} /> Pass-factor #1
+        </span>
+        <strong>
+          {lateWindow
+            ? `Standard entry has closed — late entry ends in ${daysLeft}d (${shortDate(SITTING.lateEntryDeadlineAt)}, higher fee).`
+            : `Entered for ${SITTING.examDayLabel}? Standard entry closes in ${daysLeft}d (${shortDate(SITTING.entryDeadlineAt)}).`}
+        </strong>
+        <span>Being entered beats every study plan. Confirm it, then forget it.</span>
+      </div>
+      <div className="home-v3__entry-actions">
+        <a href="https://myacca.accaglobal.com" target="_blank" rel="noopener noreferrer">
+          Open myACCA <AppIcon name="arrowUpRight" size={13} />
+        </a>
+        <button
+          type="button"
+          onClick={() => store.set({ examEntryConfirmedAt: new Date().toISOString() })}
+        >
+          <AppIcon name="check" size={13} /> I&apos;m entered
+        </button>
+      </div>
+      <button
+        type="button"
+        className="home-v3__entry-snooze"
+        onClick={snooze}
+        aria-label="Hide until next visit"
+        title="Hide until next visit"
+      >
+        <AppIcon name="x" size={14} />
+      </button>
+    </aside>
+  );
+}
 
 export function HomePage() {
   const state = useStore();
-  const t = tierFor(state.points);
-  const cd = useCountdown();
-
-  // Display identity — always the demo handle pre-auth. fanName persists
-  // for storage continuity but never reaches render paths (Spec §3 + audit
-  // batch 04). resolveIdentity is memoised across re-renders by stability
-  // of state.fanName.
-  const identity = useMemo(() => resolveIdentity(state.fanName), [state.fanName]);
-  const fanName = identity.displayLabel;
+  const countdown = useCountdown();
+  const tier = tierFor(state.points);
+  const [sessionLength, setSessionLength] = useState<SessionLength>(25);
 
   const todaysMission = useMemo(() => {
-    const idx = (cd.d + state.streak) % TOPIC_LIST.length;
-    return TOPIC_LIST[idx];
-  }, [cd.d, state.streak]);
+    const daySeed = Math.floor(Date.now() / 86_400_000);
+    return HOME_MISSIONS[(daySeed + state.streak) % HOME_MISSIONS.length];
+  }, [state.streak]);
 
-  // Personal trend board — replaces the old fake leaderboard. Computed
-  // from real marker + attempt + streak data so the board stays meaningful
-  // for a single-author tool. (Spec §10 + Sprint 17 follow-up.)
-  const trend = useMemo(() => {
-    const longestEver = bumpLongestStreak(state.streak);
-    const fg = loadFormGuideInputs();
-    const attempts = loadAttempts().map((a) => ({
-      id: a.id,
-      startedAt: a.startedAt,
-      finishedAt: a.finishedAt ?? null,
-      marks: 25, // attempt log doesn't yet store paper marks per item — TODO Sprint 4 schema
-    }));
-    return computePersonalTrend({
-      marker: fg.marker,
-      attempts,
-      streak: { current: state.streak, longest: longestEver },
-    });
-  // Recompute on points changes too so the board refreshes after a marker
-  // run/debrief saves through the side-effect chain.
-  }, [state.points, state.streak, state.drills]);
-  const longestStreakEver = trend.streak.longest || loadLongestStreak();
+  const completedAttempts = useMemo(
+    () => loadAttempts().filter((attempt) => Boolean(attempt.finishedAt)).length,
+    [state.points],
+  );
+
+  const nextTierPoints = tier.next ? Math.max(0, tier.next.min - state.points) : 0;
+  const plan = SESSION_PLANS[sessionLength];
 
   return (
-    <motion.div initial="hidden" animate="show" variants={stagger}>
-      {/* One-time "Take the 60-second tour" banner. Hides forever once /start
-          has been visited (sets tba.onboarding.completed=1). */}
-      <NewUserTourBanner />
+    <div className="home-v3">
+      <EntryDeadlineBanner entered={Boolean(state.examEntryConfirmedAt)} />
+      <section className="home-v3__hero" aria-labelledby="home-title">
+        <picture aria-hidden="true" className="home-v3__hero-picture">
+          <source srcSet="/spurs/home@2x.avif" type="image/avif" />
+          <img
+            src="/spurs/home@2x.webp"
+            alt=""
+            width="1040"
+            height="580"
+            {...({ fetchpriority: 'high' } as { fetchpriority: 'high' })}
+          />
+        </picture>
+        <div className="home-v3__hero-wash" aria-hidden="true" />
+        <div className="home-v3__hero-grid" aria-hidden="true" />
 
-      {/* §12.3 Home tone sequence — section 1: white (welcoming) */}
-      <SectionShell tone="white" pad="lg">
-        <CenteredHero
-          eyebrow={
-            <>
-              <span aria-hidden>●</span> LIVE · MATCH-DAY BRIEF · {cd.d}d {cd.h}h to sitting
-            </>
-          }
-          headline={
-            <>
-              Welcome back, <HeroGold>{fanName}</HeroGold>.
-            </>
-          }
-          subline={
-            <>
-              Today, train like the examiner is in the dugout. One fixture, one drill, one model answer.
-              Stuck? Tap the headset bottom-right and ask out loud.
-            </>
-          }
-          actions={
-            <>
-              <TonePill as="link" to={`/topic/${todaysMission.id}`} variant="primary">
-                Today&apos;s mission
-              </TonePill>
-              <TonePill as="link" to="/practice" variant="secondary">
-                Open practice centre
-              </TonePill>
-            </>
-          }
-        />
-
-        {/* Form Guide compact card — directly under the hero per Work Item 3 */}
-        <div className="mt-8">
-          <FormGuideCompact />
-        </div>
-
-        {/* Course-this-week widget kept inline as a secondary surface */}
-        <div className="mt-10">
-          <ShPlusWidget />
-        </div>
-      </SectionShell>
-
-      {/* §12.3 section 2: mist exhale — stat strip */}
-      <SectionShell tone="mist" pad="md">
-        <StatStrip
-          stats={STADIUM_STATS.map((s) => ({
-            value: s.value,
-            label: s.label,
-            sub: s.sub,
-          }))}
-        />
-      </SectionShell>
-
-      {/* Visual route picker: the academy world should feel explorable, not just navigable. */}
-      <SectionShell tone="white" pad="md">
-        <NextMoves />
-      </SectionShell>
-
-      {/* §12.3 section 3: white — Coach × Memory */}
-      <SectionShell tone="white" pad="lg">
-        <SectionTitle icon="fa-solid fa-bolt" badge={<Pill variant="accent">New</Pill>}>
-          Built-in AI, built for revision
-        </SectionTitle>
-        <motion.div variants={stagger} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <motion.div variants={fadeUp}>
-            <CoachShowcase />
-          </motion.div>
-          <motion.div variants={fadeUp}>
-            <MemoryShowcase />
-          </motion.div>
-        </motion.div>
-      </SectionShell>
-
-      {/* §12.3 section 4: navy — Examiner Reports premium tile */}
-      <PremiumDarkTile
-        eyebrow={`${siteStats.examinerCases} cases · ${siteStats.examinerTraps} traps catalogued`}
-        headline={<>Don&apos;t lose the marks they keep flagging.</>}
-        subline={
-          <>
-            The exact mistakes the examiner has flagged across recent sittings, with the technique
-            that earns the mark instead. {siteStats.examinerQuotes} verbatim quotes, 7-rule cheat sheet.
-          </>
-        }
-        actions={
-          <>
-            <TonePill as="link" to="/examiner" variant="primary">
-              Open Examiner Reports
-            </TonePill>
-            <TonePill as="link" to="/scout" variant="secondary">
-              View scout report
-            </TonePill>
-          </>
-        }
-      />
-
-      {/* §12.3 section 5: mist — War Room standalone (Examiner now in PremiumDarkTile above) */}
-      <SectionShell tone="mist" pad="md">
-        <motion.div variants={fadeUp}>
-          <Link to="/war-room">
-            <Card className="overflow-hidden relative hover:border-danger transition-colors shine border-l-4 border-l-danger">
-              <div className="absolute -bottom-8 -left-8 w-44 h-44 rounded-full" style={{ background: 'radial-gradient(circle, rgba(220,38,38,0.20), transparent 70%)', filter: 'blur(20px)' }} />
-              <div className="relative">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="chip text-danger" style={{ borderColor: 'rgba(220,38,38,0.4)', background: 'rgba(220,38,38,0.10)' }}>
-                    <i className="fa-solid fa-shield-halved" /> War Room
-                  </span>
-                  <span className="chip">T-1 to submit</span>
-                </div>
-                <h3 className="font-display text-2xl tracking-wide uppercase text-ink leading-tight">
-                  The 24 hours<br />before exam day.
-                </h3>
-                <p className="mt-3 text-ink/75 text-[14px] leading-relaxed">
-                  Tonight&apos;s checklist, tomorrow&apos;s opening 10 minutes, the closing 5 minutes,
-                  command-word translator, CBE shortcuts, and the {siteStats.warRoomTraps} mistakes that cost the pass.
-                </p>
-                <div className="mt-3 flex items-center gap-2">
-                  <Pill variant="danger">{siteStats.warRoomTraps} traps</Pill>
-                  <Pill variant="accent">{TBA_STATS.spreadsheetShortcuts} spreadsheet shortcuts</Pill>
-                </div>
-                <span className="btn-outline mt-4 inline-flex"><i className="fa-solid fa-arrow-right" /> Open War Room</span>
-              </div>
-            </Card>
-          </Link>
-        </motion.div>
-      </SectionShell>
-
-      {/* DAILY QUEST */}
-      <SectionTitle icon="fa-solid fa-medal" badge={<Pill variant="accent">+30 pts</Pill>}>
-        Today&apos;s quest
-      </SectionTitle>
-      <motion.div variants={fadeUp}>
-        <DailyQuest />
-      </motion.div>
-
-      {/* REVISION TOOLKIT */}
-      <SectionTitle icon="fa-solid fa-toolbox" badge={<Pill variant="primary">Revision loop</Pill>}>
-        Your study toolkit
-      </SectionTitle>
-      <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <motion.div variants={fadeUp}>
-          <Link to="/debrief">
-            <Card className="h-full hover:border-sky-500 transition-colors group">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-sky-500/15 grid place-items-center text-sky-600">
-                  <i className="fa-solid fa-clipboard-check" />
-                </div>
-                <h3 className="font-display text-lg uppercase tracking-wide text-ink">Debrief</h3>
-              </div>
-              <p className="text-[13px] text-ink/75 leading-relaxed">
-                Paste your <em>own</em> attempt. Get a structural critique against the eight markers the
-                examiner rewards. Won&apos;t rewrite, won&apos;t solve — only review.
-              </p>
-              <span className="text-[12px] text-primary font-bold mt-2 inline-block group-hover:underline">
-                Start a session <i className="fa-solid fa-arrow-right" />
+        <div className="home-v3__hero-copy">
+          <div className="home-v3__live-line">
+            <span><AppIcon name="circle" size={8} /> Live match plan</span>
+            <span>{countdown.days}d {countdown.hours}h to {SITTING.label}</span>
+            {state.examEntryConfirmedAt && (
+              <span className="home-v3__entered-chip" title={`Entry confirmed for ${SITTING.examDayLabel}`}>
+                Entered ✓
               </span>
-            </Card>
-          </Link>
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <Link to="/study-guide">
-            <Card className="h-full hover:border-primary transition-colors group">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-primary/15 grid place-items-center text-primary">
-                  <i className="fa-solid fa-toolbox" />
-                </div>
-                <h3 className="font-display text-lg uppercase tracking-wide text-ink">Tools</h3>
-              </div>
-              <p className="text-[13px] text-ink/75 leading-relaxed">
-                Mark Budget calculator, keyboard-driven Timer with pivot log, four Answer-Plan canvases,
-                requirement-verb cards.
-              </p>
-              <span className="text-[12px] text-primary font-bold mt-2 inline-block group-hover:underline">
-                Open Study Guide <i className="fa-solid fa-arrow-right" />
-              </span>
-            </Card>
-          </Link>
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <Link to="/pitfalls">
-            <Card className="h-full hover:border-danger transition-colors group border-l-4 border-l-danger">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-danger/15 grid place-items-center text-danger">
-                  <i className="fa-solid fa-triangle-exclamation" />
-                </div>
-                <h3 className="font-display text-lg uppercase tracking-wide text-ink">Pitfalls</h3>
-              </div>
-              <p className="text-[13px] text-ink/75 leading-relaxed">
-                {siteStats.pitfallsLibrary} traps catalogued. Symptom → why it loses marks → fix. Searchable,
-                filterable by topic and risk level.
-              </p>
-              <span className="text-[12px] text-primary font-bold mt-2 inline-block group-hover:underline">
-                Browse traps <i className="fa-solid fa-arrow-right" />
-              </span>
-            </Card>
-          </Link>
-        </motion.div>
-      </motion.div>
-
-      {/* TODAY'S MISSION */}
-      <SectionTitle icon="fa-solid fa-crosshairs">Today&apos;s mission</SectionTitle>
-      <motion.div variants={fadeUp}>
-        <Link to={`/topic/${todaysMission.id}`}>
-          <Card glow className="!p-7 hover:border-primary transition-colors shine">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-primary/15 grid place-items-center text-primary">
-                <i className={`fa-solid ${todaysMission.badge} text-2xl`} />
-              </div>
-              <div className="flex-1 min-w-[240px]">
-                <div className="flex items-center gap-2 mb-1">
-                  <Pill variant="primary">{todaysMission.matchday}</Pill>
-                  <Pill>Section {todaysMission.syllabus}</Pill>
-                  <Pill>{todaysMission.papers[0]}</Pill>
-                </div>
-                <h3 className="font-display text-2xl tracking-wide uppercase">{todaysMission.title}</h3>
-                <p className="text-text/80 mt-1.5 text-[14px] max-w-2xl">{todaysMission.hook}</p>
-              </div>
-              <span className="btn-primary"><i className="fa-solid fa-play" /> Train now</span>
-            </div>
-          </Card>
-        </Link>
-      </motion.div>
-
-      {/* HEADLINE DRILLS */}
-      <SectionTitle icon="fa-solid fa-fire" badge={<Pill variant="primary">For June 2026 sitting</Pill>}>
-        Headline drills
-      </SectionTitle>
-      <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <motion.div variants={fadeUp}>
-          <Link to="/mock">
-            <Card className="border-accent/30 hover:border-accent transition-colors">
-              <div className="absolute top-0 right-0 px-3 py-1 bg-accent text-bg text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
-                Real exam
-              </div>
-              <div className="text-[11px] uppercase tracking-[0.2em] text-accent-dark font-bold mb-1">
-                Sep/Dec 2025 official paper
-              </div>
-              <h3 className="font-display text-2xl tracking-wide uppercase">Drimpton, Marnhall, Passmore</h3>
-              <p className="text-text/80 mt-2 text-[14px]">
-                Three real cases worth 100 marks. Drimpton 50m NPV with ESG. Marnhall 25m M&amp;A synergy.
-                Passmore 25m FX hedge across forward, futures and option.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Pill variant="accent">100 marks</Pill>
-                <Pill>3h 15m timed</Pill>
-                <Pill>Model answers</Pill>
-              </div>
-            </Card>
-          </Link>
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <Link to="/theory">
-            <Card className="border-primary/30 hover:border-primary transition-colors">
-              <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-bg text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
-                64 Q&amp;A
-              </div>
-              <div className="text-[11px] uppercase tracking-[0.2em] text-primary font-bold mb-1">
-                Discussion-mark goldmine, dual mode
-              </div>
-              <h3 className="font-display text-2xl tracking-wide uppercase">64 frequently-asked theory</h3>
-              <p className="text-text/80 mt-2 text-[14px]">
-                Two modes per card: Quick Bullets for revision, Full ACCA Model Answer for exam-style essays.
-                BSOP, APV, M&amp;A, FX, IR, Islamic, ESG, M&amp;M propositions.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Pill variant="primary">Bullets + Full</Pill>
-                <Pill>11 categories</Pill>
-                <Pill>+5 pts per card</Pill>
-              </div>
-            </Card>
-          </Link>
-        </motion.div>
-      </motion.div>
-
-      {/* GROUP STAGE: 12 fixtures */}
-      <SectionTitle icon="fa-solid fa-trophy" badge={<Pill variant="primary">12 fixtures</Pill>}>
-        Group stage
-      </SectionTitle>
-      <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {TOPIC_LIST.map((t) => (
-          <motion.div key={t.id} variants={fadeUp}>
-            <Link to={`/topic/${t.id}`}>
-              <Card className="h-full hover:border-primary transition-colors group">
-                <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-bg text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
-                  {t.matchday}
-                </div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-11 h-11 rounded-xl bg-primary/15 grid place-items-center text-primary group-hover:bg-primary group-hover:text-bg transition-colors">
-                    <i className={`fa-solid ${t.badge}`} />
-                  </div>
-                  <Pill>Section {t.syllabus}</Pill>
-                </div>
-                <h3 className="font-display text-xl tracking-wide uppercase leading-tight">{t.title}</h3>
-                <p className="text-text/70 text-[13.5px] mt-2 leading-relaxed">{t.hook}</p>
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {t.papers.slice(0, 2).map((p) => (
-                    <Pill key={p}>{p}</Pill>
-                  ))}
-                  <Pill variant="primary">{t.drills.length} drill</Pill>
-                </div>
-              </Card>
-            </Link>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* WEEKLY PLAN STRIP */}
-      <SectionTitle icon="fa-solid fa-calendar-week">12-week plan, scrolling</SectionTitle>
-      <motion.div variants={fadeUp} className="overflow-x-auto -mx-4 px-4 pb-2">
-        <div className="flex gap-3 min-w-max">
-          {WEEKLY_PLAN.map((w, i) => (
-            <Card key={i} className="!p-4 w-[260px] shrink-0">
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="font-display text-2xl text-accent-dark">W{i + 1}</span>
-                <Pill>{w.label}</Pill>
-              </div>
-              <p className="text-[13px] text-text/80 leading-relaxed">{w.body}</p>
-              <div className="mt-2 flex flex-wrap gap-1">
-                {w.topics.map((tid) => {
-                  const tp = TOPICS[tid];
-                  return tp ? (
-                    <Link key={tid} to={`/topic/${tid}`} className="pill border border-border text-[10px] hover:border-primary transition-colors">
-                      {tp.title}
-                    </Link>
-                  ) : null;
-                })}
-              </div>
-            </Card>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* SOCIAL PROOF */}
-      <SectionTitle icon="fa-solid fa-medal" badge={<Pill variant="accent">Pass stories</Pill>}>
-        From the dressing room
-      </SectionTitle>
-      <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {PASS_QUOTES.map((q) => (
-          <motion.div key={q.who} variants={fadeUp}>
-            <Card className="h-full">
-              <div className="flex items-center justify-between mb-2">
-                <Pill variant="primary">{q.score}</Pill>
-                <i className="fa-solid fa-quote-right text-accent-dark/40 text-2xl" />
-              </div>
-              <p className="text-[14px] leading-relaxed text-ink">{q.quote}</p>
-              <div className="mt-3 text-[11px] uppercase tracking-wider text-muted font-bold">{q.who}</div>
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* NEWS TICKER */}
-      <SectionTitle icon="fa-regular fa-newspaper" badge={<Pill variant="danger">LIVE</Pill>}>
-        Real-world AFM
-      </SectionTitle>
-      <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {NEWS.map((n) => (
-          <motion.div key={n.title} variants={fadeUp}>
-            <Card className="border-l-4 border-l-primary">
-              <Pill variant="primary" className="mb-2">{n.tag}</Pill>
-              <h3 className="font-bold text-[15px] leading-snug">{n.title}</h3>
-              <p className="text-text/75 mt-2 leading-relaxed text-[13.5px]">{n.body}</p>
-              <Link to={`/topic/${n.topic}`} className="btn-outline mt-3 !py-2 !px-3 !text-xs">
-                {n.cta} <i className="fa-solid fa-arrow-right" />
-              </Link>
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* PERSONAL TREND BOARD (replaces the old fake league table) */}
-      <SectionTitle icon="fa-solid fa-chart-line" badge={<Pill>Your form, your data</Pill>}>
-        Personal trend board
-      </SectionTitle>
-      <Card>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-border bg-white p-4">
-            <div className="text-[11px] uppercase tracking-wider text-muted mb-1">Current streak</div>
-            <div className="font-display text-3xl uppercase text-ink">
-              {trend.streak.current >= 7 ? '🔥 ' : ''}{trend.streak.current}d
-            </div>
-            <div className="text-[12px] text-muted mt-1">Longest ever: {longestStreakEver}d</div>
-          </div>
-          <div className="rounded-2xl border border-border bg-white p-4">
-            <div className="text-[11px] uppercase tracking-wider text-muted mb-1">Fastest 25-mark debrief</div>
-            <div className="font-display text-3xl uppercase text-ink">
-              {trend.fastestDebrief25 ? `${trend.fastestDebrief25.minutes}m` : '—'}
-            </div>
-            <div className="text-[12px] text-muted mt-1">
-              {trend.fastestDebrief25
-                ? new Date(trend.fastestDebrief25.finishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
-                : 'Sit a 25-mark answer to set a baseline'}
-            </div>
-          </div>
-          <div className="rounded-2xl border border-border bg-white p-4">
-            <div className="text-[11px] uppercase tracking-wider text-muted mb-1">Week-on-week shift</div>
-            {trend.weekOnWeek ? (
-              <>
-                <div className={cn('font-display text-3xl uppercase', trend.weekOnWeek.deltaPct >= 0 ? 'text-primary' : 'text-danger')}>
-                  {trend.weekOnWeek.deltaPct >= 0 ? '+' : ''}{trend.weekOnWeek.deltaPct} pts
-                </div>
-                <div className="text-[12px] text-muted mt-1">
-                  Last 7d {trend.weekOnWeek.lastWeekMean}% · prior 7d {trend.weekOnWeek.priorWeekMean}%
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="font-display text-3xl uppercase text-ink">—</div>
-                <div className="text-[12px] text-muted mt-1">Two weeks of marker runs unlocks this</div>
-              </>
             )}
           </div>
+          <h1 id="home-title">
+            Know what to do next.
+            <span>Then do it under pressure.</span>
+          </h1>
+          <p>
+            A focused ACCA AFM training loop: understand the model, apply it to the scenario,
+            write to time and repair what cost marks.
+          </p>
+          <div className="home-v3__hero-actions">
+            <Link to={`/topic/${todaysMission.id}`} className="home-v3__button home-v3__button--gold">
+              <AppIcon name="zap" size={16} />
+              Start today&apos;s mission
+            </Link>
+            <Link to="/past-papers" className="home-v3__button home-v3__button--glass">
+              Sit a past paper <AppIcon name="arrowRight" size={16} />
+            </Link>
+          </div>
+          <div className="home-v3__trust-row" aria-label="Product trust signals">
+            <span><AppIcon name="cloud" size={14} /> Offline-first</span>
+            <span><AppIcon name="shield" size={14} /> Progress stays on device</span>
+            <span><AppIcon name="accessibility" size={14} /> Keyboard friendly</span>
+          </div>
         </div>
 
-        {trend.topicHighs.length > 0 ? (
-          <div className="mt-5">
-            <div className="text-[11px] uppercase tracking-wider text-muted mb-2">Personal bests by topic</div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {trend.topicHighs.map((h) => (
-                <Link
-                  key={h.topicId}
-                  to={`/topic/${h.topicId}`}
-                  className="rounded-xl border border-border bg-white px-3 py-2 hover:border-primary transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-ink uppercase text-[12px] tracking-wider">{h.topicId}</span>
-                    <span className="font-mono text-primary">{h.bestPct}%</span>
+        <aside className="home-v3__mission-card" aria-label="Today's recommended mission">
+          <div className="home-v3__mission-topline">
+            <span>Recommended today</span>
+            <span>{todaysMission.matchday}</span>
+          </div>
+          <div className="home-v3__mission-icon" aria-hidden>
+            <AppIcon name="target" size={22} />
+          </div>
+          <p>Section {todaysMission.syllabus} · adaptive pick</p>
+          <h2>{todaysMission.title}</h2>
+          <span className="home-v3__mission-hook">{todaysMission.hook}</span>
+          <Link to={`/topic/${todaysMission.id}`}>
+            Open the fixture <AppIcon name="arrowUpRight" size={14} />
+          </Link>
+        </aside>
+
+        <div className="home-v3__hero-scoreboard" aria-label="Your current training status">
+          <div>
+            <span>Streak</span>
+            <strong>{state.streak}<small>d</small></strong>
+          </div>
+          <div>
+            <span>Points</span>
+            <strong>{state.points}</strong>
+          </div>
+          <div>
+            <span>Squad</span>
+            <strong className="home-v3__tier">{tier.emoji} {tier.tier}</strong>
+          </div>
+          <div>
+            <span>Timed attempts</span>
+            <strong>{completedAttempts}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-v3__section home-v3__session" aria-labelledby="session-title">
+        <div className="home-v3__section-heading">
+          <div>
+            {eyebrow('stopwatch', 'Build today\'s session')}
+            <h2 id="session-title">How much time have you got?</h2>
+          </div>
+          <p>Choose a window. The academy turns it into a useful loop with a clear finish line.</p>
+        </div>
+
+        <div className="home-v3__session-picker" role="group" aria-label="Choose session length">
+          {([10, 25, 50] as SessionLength[]).map((minutes) => (
+            <button
+              key={minutes}
+              type="button"
+              aria-pressed={sessionLength === minutes}
+              onClick={() => setSessionLength(minutes)}
+              className={cn(sessionLength === minutes && 'is-active')}
+            >
+              <strong>{minutes}</strong>
+              <span>minutes</span>
+            </button>
+          ))}
+        </div>
+
+        <div key={sessionLength} className="home-v3__plan home-v3__plan--enter">
+            <div className="home-v3__plan-intro">
+              <span>{plan.label}</span>
+              <h3>Win the next {sessionLength} minutes.</h3>
+              <p>{plan.promise}</p>
+              <div className="home-v3__plan-time" aria-hidden>
+                {plan.steps.map((step) => (
+                  <span key={step.label} style={{ flexGrow: step.minutes }} />
+                ))}
+              </div>
+            </div>
+            <div className="home-v3__plan-steps">
+              {plan.steps.map((step, index) => (
+                <Link to={step.to} key={step.label} className="home-v3__plan-step">
+                  <div className="home-v3__step-number">{String(index + 1).padStart(2, '0')}</div>
+                  <div className="home-v3__step-icon" aria-hidden>
+                    <AppIcon name={step.icon} size={18} />
                   </div>
-                  <div className="text-[11px] text-muted mt-0.5">
-                    on {h.bestPaperId} · most recent {h.recentPct}%
+                  <div>
+                    <span>{step.label} · {step.minutes} min</span>
+                    <h4>{step.title}</h4>
+                    <p>{step.body}</p>
                   </div>
+                  <AppIcon name="arrowRight" size={18} className="home-v3__step-arrow" />
                 </Link>
               ))}
             </div>
+        </div>
+      </section>
+
+      <section className="home-v3__section" aria-labelledby="loop-title">
+        <div className="home-v3__section-heading home-v3__section-heading--center">
+          <div>
+            {eyebrow('repeat', 'The pass loop')}
+            <h2 id="loop-title">Content is not the finish line.</h2>
           </div>
-        ) : (
-          <div className="mt-5 rounded-2xl border border-dashed border-border p-4 text-center">
-            <i className="fa-solid fa-bullseye text-2xl text-primary mb-1" />
-            <p className="text-[13.5px] text-ink/80">
-              Sit a past paper and submit it to the AI marker — your topic highs and week-on-week shift will populate here.
-            </p>
-            <Link to="/past-papers" className="btn-primary mt-3 inline-block">
-              <i className="fa-solid fa-play" /> Open Match Centre
+          <p>The platform keeps moving you from knowing to doing—the gap that decides AFM.</p>
+        </div>
+        <div className="home-v3__loop-grid">
+          {TRAINING_LOOP.map((item) => (
+            <Link to={item.to} key={item.number} className="home-v3__loop-card">
+              <span className="home-v3__loop-number" aria-hidden="true">{item.number}</span>
+              <div className="home-v3__loop-icon" aria-hidden>
+                <AppIcon name={item.icon as AppIconName} size={18} />
+              </div>
+              <span className="home-v3__loop-eyebrow">{item.eyebrow}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <span className="home-v3__text-link">{item.cta} <AppIcon name="arrowRight" size={14} /></span>
             </Link>
-          </div>
-        )}
-
-        <div className="mt-4 flex items-center justify-between text-xs text-muted flex-wrap gap-2">
-          <span>
-            <i className="fa-solid fa-shield-halved" /> Personal — saved on this device only.
-          </span>
-          <button
-            className="text-danger hover:underline"
-            onClick={() => {
-              if (confirm('Reset all progress and points? Your name stays.')) {
-                const name = state.fanName;
-                store.reset();
-                store.set({ fanName: name });
-              }
-            }}
-          >
-            Reset progress
-          </button>
-        </div>
-      </Card>
-    </motion.div>
-  );
-}
-
-function NextMoves() {
-  return (
-    <div>
-      <div className="max-w-2xl">
-        <p className="text-[11px] uppercase tracking-[0.16em] text-primary font-bold mb-2">
-          <i className="fa-solid fa-location-arrow mr-1.5" aria-hidden /> Pick your next move
-        </p>
-        <h2 className="font-display text-3xl md:text-4xl tracking-wide uppercase text-ink leading-[0.95]">
-          Where are we training today?
-        </h2>
-        <p className="mt-3 text-[14px] text-ink/75 leading-relaxed">
-          Jump into the room that matches the gap. Every route is built around a different exam-day muscle.
-        </p>
-      </div>
-
-      <motion.div variants={stagger} className="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-        {NEXT_MOVES.map((move) => (
-          <motion.div key={move.to} variants={fadeUp}>
-            <Link
-              to={move.to}
-              className="group block h-full overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-card"
-            >
-              <div className="relative aspect-[1.45/1] overflow-hidden bg-slate-100">
-                <picture>
-                  <source
-                    type="image/avif"
-                    srcSet={`/spurs/${move.art}.avif 1x, /spurs/${move.art}@2x.avif 2x`}
-                  />
-                  <source
-                    type="image/webp"
-                    srcSet={`/spurs/${move.art}.webp 1x, /spurs/${move.art}@2x.webp 2x`}
-                  />
-                  <img
-                    src={`/spurs/${move.art}.png`}
-                    alt=""
-                    aria-hidden
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                  />
-                </picture>
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--navy-900)]/45 via-transparent to-white/5" />
-                <div className="absolute left-3 top-3 grid h-8 w-8 place-items-center rounded-xl border border-white/30 bg-white/85 text-primary shadow-sm backdrop-blur">
-                  <i className={`fa-solid ${move.icon}`} aria-hidden />
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="text-[10.5px] uppercase tracking-[0.16em] text-primary font-bold">{move.eyebrow}</div>
-                <h3 className="font-display text-xl uppercase tracking-wide text-ink mt-1">{move.title}</h3>
-                <p className="mt-1 text-[12px] text-muted">{move.body}</p>
-                <div className="mt-3 text-[11px] uppercase tracking-wider text-primary font-bold">
-                  Enter room <i className="fa-solid fa-arrow-right ml-1 transition-transform group-hover:translate-x-1" aria-hidden />
-                </div>
-              </div>
-            </Link>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
-  );
-}
-
-/* ── Hero ───────────────────────────────────────────────────── */
-function Hero({
-  fanName, state, t, cd, todaysMissionId,
-}: {
-  fanName: string;
-  state: { points: number; streak: number; drills: number };
-  t: { tier: string; emoji: string; next?: { tier: string; min: number } };
-  cd: { d: number; h: number };
-  todaysMissionId: string;
-}) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
-  const [parallax, setParallax] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    if (reduced) return;
-    const el = containerRef.current; if (!el) return;
-    const handler = (e: MouseEvent) => {
-      const r = el.getBoundingClientRect();
-      const dx = ((e.clientX - r.left) / r.width - 0.5) * 18;
-      const dy = ((e.clientY - r.top) / r.height - 0.5) * 12;
-      setParallax({ x: dx, y: dy });
-    };
-    el.addEventListener('mousemove', handler);
-    return () => el.removeEventListener('mousemove', handler);
-  }, [reduced]);
-
-  return (
-    <motion.section
-      ref={containerRef}
-      variants={fadeUp}
-      className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-accent/[0.10]" />
-      <div className="absolute inset-0 pitch-grid opacity-40" />
-      <motion.div
-        className="aurora w-[420px] h-[420px] -top-32 -right-32"
-        style={{ background: 'radial-gradient(circle, rgba(245,184,0,0.55), transparent 70%)' }}
-        animate={{ x: parallax.x, y: parallax.y }}
-        transition={{ type: 'spring', stiffness: 80, damping: 20 }}
-      />
-      <motion.div
-        className="aurora w-[400px] h-[400px] -bottom-28 -left-28"
-        style={{ background: 'radial-gradient(circle, rgba(0,163,71,0.45), transparent 70%)' }}
-        animate={{ x: -parallax.x, y: -parallax.y }}
-        transition={{ type: 'spring', stiffness: 80, damping: 20 }}
-      />
-
-      <div className="relative p-6 md:p-10">
-        <div className="flex flex-wrap items-start gap-6">
-          <div className="flex-1 min-w-[260px]">
-            <div className="flex items-center gap-2 mb-3 flex-wrap">
-              <span className="chip text-danger">
-                <span className="w-1.5 h-1.5 rounded-full bg-danger animate-ping" /> LIVE
-              </span>
-              <span className="chip">Match-day brief</span>
-              <span className="chip text-primary">
-                <i className="fa-solid fa-headset" /> Voice Coach inside
-              </span>
-            </div>
-            <h1 className="font-display leading-[0.92] tracking-wide uppercase text-ink"
-                style={{ fontSize: 'var(--fs-hero)' }}>
-              Welcome back,<br />
-              <span className="text-gradient">{fanName}</span>
-            </h1>
-            <p className="mt-4 text-ink/80 max-w-xl leading-relaxed">
-              Today, train like the examiner is in the dugout. One fixture, one drill, one model answer.
-              Stuck? Tap the headset bottom-right and ask out loud.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Link to={`/topic/${todaysMissionId}`} className="btn-primary">
-                <i className="fa-solid fa-bolt" /> Today&apos;s mission
-              </Link>
-              <Link to="/practice" className="btn-accent">
-                <i className="fa-solid fa-stopwatch-20" /> Open practice centre
-              </Link>
-              <Link to="/memory" className="btn-outline">
-                <i className="fa-solid fa-brain" /> Memory Lab
-              </Link>
-            </div>
-          </div>
-
-          {/* SCOREBOARD */}
-          <div className="rounded-2xl border border-ink/20 bg-ink p-4 min-w-[300px] text-white shadow-floodlight relative overflow-hidden">
-            <div className="absolute inset-0 opacity-30 pitch-grid" />
-            <div className="relative">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Scoreboard</span>
-                <span className="text-[11px] font-mono text-accent">{t.emoji} {t.tier}</span>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <ScoreCell label="Points" value={state.points} accent="primary" />
-                <ScoreCell label="Streak" value={state.streak} accent="accent" suffix="d" />
-                <ScoreCell label="Drills" value={state.drills} accent="primary" />
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/10">
-                <div className="flex items-baseline justify-between mb-2">
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">Kick-off in</span>
-                  <span className="text-[11px] font-mono text-accent">5 JUNE 2026</span>
-                </div>
-                <div className="flex items-end gap-1.5">
-                  <span className="stadium-num text-5xl scoreboard-led" style={{ color: '#f5b800' }}>{cd.d}</span>
-                  <span className="text-white/60 text-xs mb-1.5">days</span>
-                  <span className="stadium-num text-3xl scoreboard-led ml-3" style={{ color: '#ffffff' }}>{cd.h}</span>
-                  <span className="text-white/60 text-xs mb-1">hrs</span>
-                </div>
-                {t.next && (() => {
-                  const prevMin = TIER_PREV_MIN(state.points);
-                  const span = Math.max(1, t.next.min - prevMin);
-                  const pct = Math.max(0, Math.min(100, ((state.points - prevMin) / span) * 100));
-                  return (
-                    <div className="mt-3">
-                      <div className="text-[11px] text-white/60 mb-1">
-                        To {t.next.tier}: {Math.max(0, t.next.min - state.points)} pts
-                      </div>
-                      <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                        <motion.div
-                          className="h-full bg-gradient-to-r from-primary to-accent"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${pct}%` }}
-                          transition={{ duration: 1, ease: 'easeOut' }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </motion.section>
-  );
-}
-
-function DailyQuest() {
-  const todayKey = `tba_quest_${new Date().toISOString().slice(0, 10)}`;
-  const [done, setDone] = useState<{ pitfall: boolean; spotlight: boolean; question: boolean; rewarded: boolean }>(() => {
-    const defaults = { pitfall: false, spotlight: false, question: false, rewarded: false };
-    // Spread merge so a partial blob (e.g. from a future flag) still hydrates known defaults.
-    return { ...defaults, ...safeReadJson<Partial<typeof defaults>>(todayKey, {}) };
-  });
-
-  // Deterministic pick per day so the quest is consistent if user reloads
-  const seed = useMemo(() => {
-    const k = todayKey;
-    let h = 0; for (let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) | 0;
-    return Math.abs(h);
-  }, [todayKey]);
-
-  const pitfall = PITFALLS[seed % PITFALLS.length];
-  const spotlight = SPOTLIGHTS[(seed >> 3) % SPOTLIGHTS.length];
-  const allQuestions = useMemo(() => PAPERS.flatMap((p) => p.questions.map((q) => ({ p, q }))), []);
-  const question = allQuestions[(seed >> 7) % allQuestions.length];
-
-  useEffect(() => {
-    safeWriteJson(todayKey, done);
-    if (done.pitfall && done.spotlight && done.question && !done.rewarded) {
-      store.set({ points: store.get().points + 30 });
-      setDone((d) => ({ ...d, rewarded: true }));
-    }
-  }, [done, todayKey]);
-
-  const allDone = done.pitfall && done.spotlight && done.question;
-
-  return (
-    <Card className={cn('!p-5 transition-colors', allDone ? 'border-primary shadow-glow' : '')}>
-      <div className="flex items-baseline justify-between gap-3 mb-3">
-        <div className="text-[11px] uppercase tracking-wider text-muted font-bold">
-          {allDone ? 'Quest complete · +30 banked' : 'Three small wins, one fixed reward'}
-        </div>
-        <div className="font-mono text-[12px] text-primary">
-          {[done.pitfall, done.spotlight, done.question].filter(Boolean).length}/3
-        </div>
-      </div>
-      <div className="grid md:grid-cols-3 gap-3">
-        <Link to="/pitfalls" onClick={() => setDone((d) => ({ ...d, pitfall: true }))}
-          className={cn('rounded-xl border p-3 hover:border-primary transition-colors', done.pitfall ? 'border-primary bg-primary/5' : 'border-border bg-white')}>
-          <div className="flex items-center gap-2 mb-1.5 text-[10.5px] uppercase tracking-wider font-bold">
-            <span className={cn('w-4 h-4 rounded grid place-items-center', done.pitfall ? 'bg-primary text-white' : 'bg-slate-200 text-muted')}>
-              {done.pitfall ? <i className="fa-solid fa-check text-[8px]" /> : '1'}
-            </span>
-            <span className="text-danger">Read a pitfall</span>
-          </div>
-          <p className="text-[13px] leading-snug text-ink line-clamp-3">"{pitfall.symptom}"</p>
-        </Link>
-        <button onClick={() => setDone((d) => ({ ...d, spotlight: true }))}
-          className={cn('text-left rounded-xl border p-3 hover:border-primary transition-colors', done.spotlight ? 'border-primary bg-primary/5' : 'border-border bg-white')}>
-          <div className="flex items-center gap-2 mb-1.5 text-[10.5px] uppercase tracking-wider font-bold">
-            <span className={cn('w-4 h-4 rounded grid place-items-center', done.spotlight ? 'bg-primary text-white' : 'bg-slate-200 text-muted')}>
-              {done.spotlight ? <i className="fa-solid fa-check text-[8px]" /> : '2'}
-            </span>
-            <span className="text-accent-dark">Hear a spotlight</span>
-          </div>
-          <p className="text-[13px] font-bold text-ink leading-tight">{spotlight.title}</p>
-          <p className="text-[12px] text-muted mt-1 line-clamp-2">{spotlight.hookLine}</p>
-          <span className="mt-2 inline-flex items-center gap-1 text-[11px] text-primary font-bold">
-            <i className="fa-solid fa-headset" /> Open Coach to listen
-          </span>
-        </button>
-        <Link to={`/revision/papers/${question.p.id}/q/${question.q.number}`} onClick={() => setDone((d) => ({ ...d, question: true }))}
-          className={cn('rounded-xl border p-3 hover:border-primary transition-colors', done.question ? 'border-primary bg-primary/5' : 'border-border bg-white')}>
-          <div className="flex items-center gap-2 mb-1.5 text-[10.5px] uppercase tracking-wider font-bold">
-            <span className={cn('w-4 h-4 rounded grid place-items-center', done.question ? 'bg-primary text-white' : 'bg-slate-200 text-muted')}>
-              {done.question ? <i className="fa-solid fa-check text-[8px]" /> : '3'}
-            </span>
-            <span className="text-primary">Open one question</span>
-          </div>
-          <p className="text-[13px] font-bold text-ink leading-tight">{question.p.label} · Q{question.q.number}</p>
-          <p className="text-[12px] text-muted mt-1 line-clamp-2">{question.q.caseName || question.q.hookLine || `${question.q.marks} marks`}</p>
-        </Link>
-      </div>
-    </Card>
-  );
-}
-
-function ShPlusWidget() {
-  const now = new Date();
-  const { week, status } = getCurrentShWeek(now);
-  const nextDate = SH_KEY_DATES.find((d) => +new Date(d.date) > +now);
-  const days = (iso: string) => Math.ceil((+new Date(iso) - +now) / 86_400_000);
-  const totalWeeks = SH_WEEKS.length;
-  const weekIdx = week ? SH_WEEKS.findIndex((w) => w.num === week.num) : 0;
-  const pctOfCourse = Math.round(((weekIdx + (status === 'live' ? 0.5 : status === 'pre' ? 0 : 1)) / totalWeeks) * 100);
-
-  return (
-    <Link to="/course">
-      <Card className="!p-5 hover:border-primary transition-colors group">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-accent text-white grid place-items-center font-display text-xl">
-            {week ? `W${week.num}` : '—'}
-          </div>
-          <div className="flex-1 min-w-[260px]">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <Pill variant="primary"><i className="fa-solid fa-graduation-cap" /> Resit Course</Pill>
-              <Pill variant={status === 'live' ? 'accent' : 'outline'}>
-                {status === 'live' ? 'Live this week' : status === 'pre' ? 'Up next' : status === 'exam-week' ? 'Exam week' : 'Course complete'}
-              </Pill>
-              {week?.tutorScenarios.length ? <Pill>{`Walkthroughs: ${week.tutorScenarios.join(' & ')}`}</Pill> : null}
-            </div>
-            <h2 className="font-display text-xl tracking-wide uppercase text-ink leading-tight">
-              {week ? week.title : 'Course complete'}
-            </h2>
-            <p className="text-[13px] text-ink/75 mt-1 leading-relaxed">
-              {week ? week.mowerEmphasis : 'You sat the exam. Wait for results 13 July 2026.'}
-            </p>
-          </div>
-          <div className="text-right min-w-[140px]">
-            <div className="text-[10px] uppercase tracking-wider text-muted font-bold">Next deadline</div>
-            {nextDate ? (
-              <>
-                <div className={cn('font-display text-3xl leading-none mt-0.5',
-                  days(nextDate.date) <= 2 ? 'text-danger' : days(nextDate.date) <= 7 ? 'text-accent-dark' : 'text-primary')}>
-                  {days(nextDate.date)}d
-                </div>
-                <div className="text-[11px] text-ink/70 mt-1 leading-tight">{nextDate.label}</div>
-              </>
-            ) : (
-              <div className="text-[12px] text-muted">No deadlines remaining</div>
-            )}
-          </div>
-        </div>
-        <div className="mt-3 h-1.5 rounded-full bg-slate-100 overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${pctOfCourse}%` }} />
-        </div>
-        <div className="mt-1.5 flex items-center justify-between text-[11px] text-muted">
-          <span>Progress · {pctOfCourse}% through the 5-week course</span>
-          <span className="text-primary font-bold group-hover:underline">Open companion <i className="fa-solid fa-arrow-right" /></span>
-        </div>
-      </Card>
-    </Link>
-  );
-}
-
-function CoachShowcase() {
-  return (
-    <Card className="!p-0 overflow-hidden h-full">
-      <div className="p-6 md:p-7" style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #122046 80%)' }}>
-        <div className="flex items-center gap-2 mb-3">
-          <span className="chip text-accent" style={{ borderColor: 'rgba(245,184,0,0.4)', background: 'rgba(245,184,0,0.10)' }}>
-            <i className="fa-solid fa-headset" /> Coach AI
-          </span>
-          <span className="chip text-white/70" style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.10)' }}>
-            Voice + text
-          </span>
-        </div>
-        <h3 className="font-display text-2xl md:text-3xl tracking-wide uppercase text-white leading-tight">
-          Ask out loud.<br />Get an examiner-grade answer.
-        </h3>
-        <p className="text-white/70 mt-3 leading-relaxed text-[14px]">
-          Hands-on the spreadsheet? Speak the question — the Coach hears you, replies in markdown,
-          and reads it back so you can keep typing. Tap the green headset (bottom-right) any time.
-        </p>
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          {[
-            { icon: 'fa-microphone', label: 'Dictate' },
-            { icon: 'fa-volume-high', label: 'Speak back' },
-            { icon: 'fa-link', label: 'Cite topics' },
-          ].map((b) => (
-            <div key={b.label} className="stat-tile text-center">
-              <i className={`fa-solid ${b.icon} text-accent`} />
-              <div className="text-[11px] uppercase tracking-wider text-white/70 font-bold mt-1">{b.label}</div>
-            </div>
           ))}
         </div>
-        <div className="mt-4 rounded-xl bg-white/[0.04] border border-white/10 p-3 text-[13px] text-white/85 leading-relaxed">
-          <span className="text-accent font-bold">You:</span> "How do I bank ESG marks in Section A?"<br />
-          <span className="text-primary-light font-bold">Coach:</span> "Three sentences. Issue → costed action → quantified outcome…"
-        </div>
-      </div>
-    </Card>
-  );
-}
+      </section>
 
-function MemoryShowcase() {
-  return (
-    <Card className="h-full overflow-hidden relative">
-      <div className="absolute -top-8 -right-8 w-44 h-44 rounded-full bg-primary/15 blur-3xl" />
-      <div className="absolute -bottom-8 -left-8 w-44 h-44 rounded-full bg-accent/15 blur-3xl" />
-      <div className="relative">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="chip text-primary"><i className="fa-solid fa-brain" /> Memory Lab</span>
-          <span className="chip">Spaced · palace · Feynman</span>
-        </div>
-        <h3 className="font-display text-2xl md:text-3xl tracking-wide uppercase text-ink leading-tight">
-          Remember the formulas<br /><span className="text-gradient">before exam morning.</span>
-        </h3>
-        <p className="text-ink/75 mt-3 leading-relaxed text-[14px]">
-          Drive a Leitner spaced-repetition queue, build a 10-room memory palace, and stress-test understanding
-          with the Feynman technique. All offline; all on your device.
-        </p>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <div className="rounded-xl border border-border bg-white p-3">
-            <div className="text-[11px] uppercase tracking-wider text-muted font-bold">Leitner box</div>
-            <div className="font-display text-2xl text-primary mt-1">5 stages</div>
-            <div className="text-[11.5px] text-ink/70">0d → 1d → 3d → 7d → 14d</div>
+      <section className="home-v3__section home-v3__cockpit" aria-labelledby="cockpit-title">
+        <div className="home-v3__section-heading">
+          <div>
+            {eyebrow('bars', 'Your cockpit')}
+            <h2 id="cockpit-title">See evidence, not vibes.</h2>
           </div>
-          <div className="rounded-xl border border-border bg-white p-3">
-            <div className="text-[11px] uppercase tracking-wider text-muted font-bold">Mnemonic library</div>
-            <div className="font-display text-2xl text-accent-dark mt-1">{siteStats.mnemonics} acronyms</div>
-            <div className="text-[11.5px] text-ink/70">WACC, CAPM, BSOP…</div>
+          <p>Your activity and form guide are built from work completed on this device.</p>
+        </div>
+        <div className="home-v3__cockpit-grid">
+          <div className="home-v3__form-guide-wrap">
+            <FormGuideCompact />
+          </div>
+          <div className="home-v3__activity-card">
+            <div className="home-v3__activity-title">
+              <div>
+                <span>This device</span>
+                <h3>Training activity</h3>
+              </div>
+              <span className="home-v3__privacy"><AppIcon name="lock" size={12} /> Private</span>
+            </div>
+            <div className="home-v3__activity-grid">
+              <div><strong>{state.notesRead.length}</strong><span>lesson notes opened</span></div>
+              <div><strong>{state.theoryRead.length}</strong><span>theory prompts reviewed</span></div>
+              <div><strong>{state.drills}</strong><span>drills completed</span></div>
+              <div><strong>{completedAttempts}</strong><span>timed attempts finished</span></div>
+            </div>
+            <div className="home-v3__tier-progress">
+              <div>
+                <span>{tier.emoji} {tier.tier}</span>
+                <span>{tier.next ? `${nextTierPoints} pts to ${tier.next.tier}` : 'Top tier reached'}</span>
+              </div>
+              <div className="home-v3__tier-track" aria-hidden>
+                <span
+                  style={{
+                    // Progress within the current tier band, not from zero —
+                    // this card promises evidence, so the bar must not flatter.
+                    width: tier.next
+                      ? `${Math.min(100, Math.max(5, ((state.points - tier.min) / (tier.next.min - tier.min)) * 100))}%`
+                      : '100%',
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <Link to="/memory" className="btn-primary mt-4">
-          <i className="fa-solid fa-arrow-right" /> Open Memory Lab
-        </Link>
-      </div>
-    </Card>
-  );
-}
+      </section>
 
-function StatCard({ value, label, sub }: { value: number; label: string; sub: string }) {
-  const v = useCountUp(value, 1100);
-  return (
-    <motion.div variants={fadeUp} className="rounded-2xl border border-border bg-white p-4 shadow-soft">
-      <div className="stadium-num text-4xl text-primary leading-none">{v}</div>
-      <div className="text-[12px] uppercase tracking-wider text-ink font-bold mt-1.5">{label}</div>
-      <div className="text-[11px] text-muted mt-0.5">{sub}</div>
-    </motion.div>
-  );
-}
+      <section className="home-v3__section" aria-labelledby="rooms-title">
+        <div className="home-v3__section-heading">
+          <div>
+            {eyebrow('door', 'Built for the hard parts')}
+            <h2 id="rooms-title">Three rooms worth knowing.</h2>
+          </div>
+          <p>Every other tool stays available, but these are the shortest routes to better exam behaviour.</p>
+        </div>
+        <div className="home-v3__rooms-grid">
+          {PRODUCT_ROOMS.map((room) => (
+            <Link to={room.to} key={room.title} className={`home-v3__room home-v3__room--${room.tone}`}>
+              <div className="home-v3__room-icon" aria-hidden><AppIcon name={room.icon as AppIconName} size={20} /></div>
+              <span>{room.eyebrow}</span>
+              <h3>{room.title}</h3>
+              <p>{room.body}</p>
+              <span className="home-v3__room-cta">{room.cta} <AppIcon name="arrowUpRight" size={14} /></span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-const WEEKLY_PLAN: { label: string; body: string; topics: string[] }[] = [
-  { label: 'Foundations', body: 'Set up the proforma. WACC ungear-regear drills. Read the syllabus once.', topics: ['coc', 'adviser'] },
-  { label: 'NPV core', body: 'Inflation, tax timing, working capital. Drill three Section A problems.', topics: ['npv'] },
-  { label: 'APV', body: 'Project finance, subsidised loans, tax shield. Two worked APV examples.', topics: ['apv'] },
-  { label: 'Real options', body: 'BSOP mapping for delay, expand, abandon. Drill d1 and d2 by hand.', topics: ['real'] },
-  { label: 'Valuation', body: 'FCFE vs FCFF. Two-stage growth. PE relative.', topics: ['val'] },
-  { label: 'M&A', body: '3-column valuation table. Synergy stress-test. Bootstrapping comment.', topics: ['mna'] },
-  { label: 'FX hedge', body: 'Compare forward, MMH, futures, option in a table. Recommend.', topics: ['fx'] },
-  { label: 'IR hedge', body: 'FRA settlement, swap diagram, collar trade-off.', topics: ['ir'] },
-  { label: 'Islamic', body: 'Murabaha, sukuk, mudaraba. One paragraph each.', topics: ['islam'] },
-  { label: 'Risk + VaR', body: 'z values cold. T-day scaling. Limitations of VaR.', topics: ['risk'] },
-  { label: 'Behav + ESG', body: 'NEA pattern. Three biases applied. Issue-action-outcome.', topics: ['behav'] },
-  { label: 'Mocks', body: 'Two full mocks. Mark with model answers. Identify weak areas.', topics: [] },
-];
-
-function ScoreCell({ label, value, accent, suffix }: { label: string; value: number; accent: 'primary' | 'accent'; suffix?: string }) {
-  const color = accent === 'primary' ? '#33d375' : '#f5b800';
-  const v = useCountUp(value, 800);
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
-      <div className="text-[10px] uppercase tracking-[0.18em] text-white/60">{label}</div>
-      <div className="stadium-num text-3xl scoreboard-led mt-1" style={{ color }}>
-        {v}
-        {suffix && <span className="text-white/40 text-base ml-0.5">{suffix}</span>}
-      </div>
+      <section className="home-v3__proof" aria-labelledby="proof-title">
+        <div>
+          {eyebrow('shield', 'Built on exam evidence')}
+          <h2 id="proof-title">A serious study tool wearing a football shirt.</h2>
+          <p>
+            Practice is mapped to the {SYLLABUS.label} {SYLLABUS.structure} syllabus structure.
+            Dates and requirements remain clearly labelled so you can distinguish verified exam data from coaching guidance.
+          </p>
+          <div className="home-v3__proof-actions">
+            <Link to="/course" className="home-v3__button home-v3__button--gold">View the course map</Link>
+            <Link to="/examiner" className="home-v3__button home-v3__button--glass">Read examiner patterns</Link>
+          </div>
+        </div>
+        <dl>
+          <div><dt>{PUBLIC_STATS.sourcedPaperItems}</dt><dd>sourced paper items</dd></div>
+          <div><dt>{PUBLIC_STATS.topicGroups}</dt><dd>syllabus topic groups</dd></div>
+          <div><dt>{PUBLIC_STATS.theoryPrompts}</dt><dd>theory prompts</dd></div>
+          <div><dt>{PUBLIC_STATS.examinerCases}</dt><dd>examiner cases</dd></div>
+        </dl>
+      </section>
     </div>
   );
-}
-
-function TIER_PREV_MIN(points: number): number {
-  const ts = [0, 250, 750, 1500, 3000];
-  let prev = 0;
-  for (const v of ts) if (points >= v) prev = v;
-  return prev;
 }

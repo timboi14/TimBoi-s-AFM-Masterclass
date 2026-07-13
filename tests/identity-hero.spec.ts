@@ -8,7 +8,7 @@ import { test, expect } from '@playwright/test';
  * The Demo handle is shaped `Demo · ABC123` (6 readable chars).
  */
 test.describe('Identity — Home hero', () => {
-  test('hero greeting never contains "timboi" and matches the demo shape', async ({ page }) => {
+  test('hero never leaks the legacy fan name and leads with the training outcome', async ({ page }) => {
     // Seed the legacy fanName to make the bug reproducible if it returns.
     await page.goto('/');
     await page.evaluate(() => {
@@ -20,8 +20,6 @@ test.describe('Identity — Home hero', () => {
     expect(h1, 'hero h1 should not display the legacy fanName').not.toBeNull();
     expect(h1!.toLowerCase()).not.toContain('timboi');
 
-    // The render path should be resolveIdentity().displayLabel — accept any
-    // demo-shaped handle ("DEMO · XXXXXX") in case-insensitive form.
-    expect(h1!).toMatch(/welcome back,\s*demo\s*·\s*[A-Z0-9]{4,8}/i);
+    expect(h1!).toMatch(/know what to do next.*do it under pressure/i);
   });
 });

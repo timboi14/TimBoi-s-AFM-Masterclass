@@ -21,6 +21,7 @@ const NOW = new Date().toISOString().slice(0, 10);
 // new routes ship.
 const STATIC_ROUTES = [
   { path: '/',            priority: 1.0, changefreq: 'weekly' },
+  { path: '/leave-it-to-us', priority: 0.9, changefreq: 'weekly' },
   { path: '/start',       priority: 0.8, changefreq: 'monthly' },
   { path: '/study-guide', priority: 0.8, changefreq: 'monthly' },
   { path: '/playbook',    priority: 0.8, changefreq: 'monthly' },

@@ -154,3 +154,22 @@ export function rankWeakAreas(mastery: Record<string, number>): Array<{ capabili
     .map(([capability, m]) => ({ capability, mastery: m }))
     .sort((a, b) => a.mastery - b.mastery);
 }
+
+/** Stable per-item shuffle so authoring order never telegraphs the answer. */
+export function shuffledView(item: DiagItem): { options: string[]; correctIdx: number } {
+  let seed = 2166136261;
+  for (let i = 0; i < item.id.length; i++) {
+    seed ^= item.id.charCodeAt(i);
+    seed = Math.imul(seed, 16777619);
+  }
+  const rand = () => {
+    seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5;
+    return (seed >>> 0) / 4294967296;
+  };
+  const order = [0, 1, 2, 3];
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return { options: order.map((k) => item.options[k]), correctIdx: order.indexOf(item.correctIdx) };
+}

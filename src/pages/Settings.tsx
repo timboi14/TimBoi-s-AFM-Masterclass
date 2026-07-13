@@ -7,6 +7,15 @@ import {
   todayStamp,
   wipeAllLocalData,
 } from '@/lib/exporter';
+import {
+  applySettings,
+  loadSettings,
+  SETTINGS_KEY,
+  type FontScale,
+  type SettingsState,
+  type Theme,
+} from '@/lib/user-settings';
+import { store, useStore } from '@/lib/store';
 
 /**
  * /settings — accessibility + data controls.
@@ -24,101 +33,17 @@ import {
  * (see styles.css), keeping the FOUC cost zero on subsequent visits.
  */
 
-const KEY = 'tba.settings.v2';
-
-export type FontScale = 'normal' | 'large' | 'xl';
-export type Theme = 'light' | 'dark' | 'high-contrast';
-
-interface SettingsState {
-  reduceMotion: boolean;
-  dyslexia: boolean;
-  bionic: boolean;
-  fontScale: FontScale;
-  theme: Theme;
-}
-
-const DEFAULT: SettingsState = {
-  reduceMotion: false,
-  dyslexia: false,
-  bionic: false,
-  fontScale: 'normal',
-  theme: 'light',
-};
-
-function load(): SettingsState {
-  if (typeof window === 'undefined') return DEFAULT;
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) {
-      // One-time migration from the v1 schema (reduceMotion/dyslexia/largeText).
-      const v1 = localStorage.getItem('tba.settings.v1');
-      if (v1) {
-        const old = JSON.parse(v1) as Partial<{ reduceMotion: boolean; dyslexia: boolean; largeText: boolean }>;
-        return {
-          ...DEFAULT,
-          reduceMotion: !!old.reduceMotion,
-          dyslexia: !!old.dyslexia,
-          fontScale: old.largeText ? 'large' : 'normal',
-        };
-      }
-      return DEFAULT;
-    }
-    const v = JSON.parse(raw) as Partial<SettingsState>;
-    return { ...DEFAULT, ...v };
-  } catch {
-    return DEFAULT;
-  }
-}
-
-function apply(state: SettingsState): void {
-  if (typeof document === 'undefined') return;
-  const root = document.documentElement;
-  root.classList.toggle('tba-reduce-motion', state.reduceMotion);
-  root.classList.toggle('tba-dyslexia', state.dyslexia);
-  root.classList.toggle('tba-bionic', state.bionic);
-  root.classList.toggle('tba-text-large', state.fontScale === 'large');
-  root.classList.toggle('tba-text-xl', state.fontScale === 'xl');
-  root.classList.toggle('tba-dark', state.theme === 'dark');
-  root.classList.toggle('tba-high-contrast', state.theme === 'high-contrast');
-  // Update theme-color meta so iOS status bar matches the active palette.
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) {
-    const color = state.theme === 'dark' || state.theme === 'high-contrast' ? '#000000' : '#0a0f1e';
-    meta.setAttribute('content', color);
-  }
-  // Lazy-load Atkinson Hyperlegible when dyslexia mode is enabled. Use a
-  // preconnect to fonts.gstatic.com so the first paint is fast.
-  if (state.dyslexia) {
-    const id = 'tba-dyslexia-font';
-    if (!document.getElementById(id)) {
-      const pre = document.createElement('link');
-      pre.rel = 'preconnect';
-      pre.href = 'https://fonts.gstatic.com';
-      pre.crossOrigin = 'anonymous';
-      document.head.appendChild(pre);
-      const link = document.createElement('link');
-      link.id = id;
-      link.rel = 'stylesheet';
-      link.href = 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap';
-      document.head.appendChild(link);
-    }
-  }
-}
-
-/** Module-level apply so the settings stick across SPA route changes. */
-if (typeof window !== 'undefined') {
-  apply(load());
-}
-
 export function SettingsPage() {
-  const [s, setS] = useState<SettingsState>(() => load());
+  const [s, setS] = useState<SettingsState>(() => loadSettings());
   const [exportBusy, setExportBusy] = useState(false);
   const [wipeBusy, setWipeBusy] = useState(false);
+  const { fanName } = useStore();
+  const [nameDraft, setNameDraft] = useState(() => store.get().fanName);
 
   useEffect(() => {
-    apply(s);
+    applySettings(s);
     try {
-      localStorage.setItem(KEY, JSON.stringify(s));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
     } catch { /* ignore */ }
   }, [s]);
 
@@ -172,7 +97,7 @@ export function SettingsPage() {
 
   return (
     <>
-      <SectionShell tone="white" pad="lg">
+      <SectionShell tone="white" pad="lg" aura>
         <CenteredHero
           eyebrow={<>Accessibility · WCAG 2.2 AA</>}
           headline={<>Make it <HeroGold>fit you</HeroGold>.</>}
@@ -255,6 +180,43 @@ export function SettingsPage() {
             />
           </div>
 
+          {/* FAN NAME — the invite sheet points here ("set one any time in Settings") */}
+          <div className="rounded-2xl border border-border bg-white p-5 md:col-span-2">
+            <h2 className="font-display text-lg uppercase tracking-wide text-ink mb-1">Fan name</h2>
+            <p className="text-[12.5px] text-muted mb-3">
+              Shows on this device&apos;s leaderboard and squad chips. Saved locally — it never leaves the browser.
+            </p>
+            <div className="flex gap-2 flex-wrap">
+              <input
+                value={nameDraft}
+                onChange={(e) => setNameDraft(e.target.value)}
+                placeholder="e.g. Sonny_07"
+                maxLength={24}
+                aria-label="Fan name"
+                className="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl bg-slate-50 border border-border focus:border-accent focus:outline-none text-ink"
+              />
+              <button
+                className="btn-primary disabled:opacity-50"
+                disabled={!nameDraft.trim() || nameDraft.trim() === fanName}
+                onClick={() => store.set({ fanName: nameDraft })}
+              >
+                Save name
+              </button>
+              {fanName && (
+                <button
+                  className="btn border border-border bg-white text-ink hover:bg-slate-50"
+                  onClick={() => {
+                    // Deliberate clear — also stop the invite sheet re-nagging.
+                    store.set({ fanName: '', fanPromptDismissedAt: new Date().toISOString() });
+                    setNameDraft('');
+                  }}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* DATA EXPORT (§22) */}
           <div className="rounded-2xl border border-border bg-white p-5 md:col-span-2">
             <h2 className="font-display text-lg uppercase tracking-wide text-ink mb-1">Your data</h2>
@@ -292,7 +254,7 @@ export function SettingsPage() {
         </div>
 
         <p className="mt-4 text-[11.5px] text-muted max-w-2xl">
-          Settings stored under <code>{KEY}</code>. Clear browser storage or use "Delete all my data" to revert.
+          Settings stored under <code>{SETTINGS_KEY}</code>. Clear browser storage or use "Delete all my data" to revert.
         </p>
       </SectionShell>
     </>

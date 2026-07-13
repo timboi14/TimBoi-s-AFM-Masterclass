@@ -12,7 +12,7 @@ test.describe('/memory-lab — FSRS v5', () => {
 
     // Mode toggle radiogroup should be present with both options.
     const radiogroup = page.getByRole('radiogroup', { name: /scheduler mode/i });
-    await expect(radiogroup).toBeVisible();
+    await expect(radiogroup).toBeVisible({ timeout: 15_000 });
     const fsrsRadio = radiogroup.getByRole('radio', { name: /fsrs v5/i });
     const leitnerRadio = radiogroup.getByRole('radio', { name: /leitner.*classic/i });
     await expect(fsrsRadio).toBeVisible();

@@ -100,5 +100,27 @@ export default defineConfig({
     alias: { '@': path.resolve(__dirname, 'src') },
   },
   server: { port: 5173 },
-  build: { outDir: 'dist', sourcemap: false },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        onlyExplicitManualChunks: true,
+        manualChunks(id) {
+          if (id.includes('/src/data/pastpapers/papers.ts')) return 'paper-bank';
+          const catalogModules = [
+            '/src/data/theory.ts',
+            '/src/data/topics.ts',
+            '/src/data/pitfalls.ts',
+            '/src/data/examiner.ts',
+            '/src/data/spotlights.ts',
+            '/src/data/war-room.ts',
+            '/src/lib/mnemonics.ts',
+          ];
+          if (catalogModules.some((modulePath) => id.includes(modulePath))) return 'academy-catalog';
+          return undefined;
+        },
+      },
+    },
+  },
 });

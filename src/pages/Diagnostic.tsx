@@ -11,6 +11,7 @@ import {
   applyResponse,
   mastery,
   rankWeakAreas,
+  shuffledView,
 } from '@/lib/diagnostic';
 import { AFM_SYLLABUS } from '@/data/syllabus';
 import { safeWriteJson } from '@/lib/safe-storage';
@@ -36,10 +37,11 @@ export function DiagnosticPage() {
 
   const answered = state.responses.length;
   const progress = Math.round((answered / N_QUESTIONS) * 100);
+  const view = useMemo(() => (currentItem ? shuffledView(currentItem) : null), [currentItem]);
 
   const submit = () => {
-    if (chosen === null || !currentItem) return;
-    const isCorrect = chosen === currentItem.correctIdx;
+    if (chosen === null || !currentItem || !view) return;
+    const isCorrect = chosen === view.correctIdx;
     setRevealed(true);
     const next = applyResponse(state, currentItem, isCorrect);
     setState(next);
@@ -111,8 +113,8 @@ export function DiagnosticPage() {
               </div>
               <p className="text-[15.5px] text-ink leading-relaxed mb-4">{currentItem.stem}</p>
               <div className="space-y-2" role="radiogroup" aria-label="Answer options">
-                {currentItem.options.map((opt, i) => {
-                  const isCorrect = i === currentItem.correctIdx;
+                {(view?.options ?? currentItem.options).map((opt, i) => {
+                  const isCorrect = i === (view?.correctIdx ?? currentItem.correctIdx);
                   const isChosen = chosen === i;
                   const showResult = revealed;
                   return (
