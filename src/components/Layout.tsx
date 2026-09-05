@@ -27,6 +27,7 @@ type NavItem = {
 const PRIMARY_NAV: NavItem[] = [
   { to: '/', label: 'Home', icon: 'home' },
   { to: '/leave-it-to-us', label: 'Leave it to us', icon: 'sparkles', matches: ['/leave-it-to-us'] },
+  { to: '/classroom', label: 'Classroom', icon: 'book', matches: ['/classroom'] },
   { to: '/course', label: 'Learn', icon: 'graduation', matches: ['/course', '/champions-league', '/topic'] },
   { to: '/training', label: 'Training', icon: 'stopwatch', matches: ['/training', '/practice', '/mock', '/debrief'] },
   { to: '/past-papers', label: 'Papers', icon: 'files', matches: ['/past-papers', '/revision/papers'] },
@@ -184,7 +185,8 @@ export function Layout() {
       <div
         ref={headerShellRef}
         className={cn(
-          'sticky top-0 z-30 transition-all duration-300',
+          // The embedded study room scrolls independently; keep its controls unobscured.
+          location.pathname === '/classroom' ? 'relative z-30 transition-all duration-300' : 'sticky top-0 z-30 transition-all duration-300',
           scrolled ? 'glass border-b border-border/70 shadow-[0_4px_20px_-12px_rgba(15,23,42,0.20)]' : 'bg-transparent',
         )}
       >

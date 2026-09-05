@@ -52,7 +52,7 @@ export default defineConfig({
         navigateFallback: '/index.html',
         // Only fall back to cached index.html for genuine navigations, never
         // for hashed asset URLs (which would mask a stale-chunk 404).
-        navigateFallbackDenylist: [/^\/assets\//, /\/sw\.js$/, /\/workbox-.*\.js$/],
+        navigateFallbackDenylist: [/^\/afm-classroom\//, /^\/assets\//, /\/sw\.js$/, /\/workbox-.*\.js$/],
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],
         runtimeCaching: [
           {

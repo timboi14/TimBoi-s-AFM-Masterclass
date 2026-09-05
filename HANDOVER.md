@@ -154,3 +154,12 @@ npm install          # reinstall deps (now includes mathjs)
 npm run dev          # http://localhost:5173
 npm run build        # tsc -b && vite build  (the deploy gate)
 ```
+
+
+## 5 September 2026: classroom integration
+
+`/classroom` is now a primary navigation tab with the 44-slide deck, 42-question study room, 14 unchanged source papers, plan, method sheets, voice handover and progress backup/restore. Static assets are under `public/afm-classroom`; the offline ZIP can also be downloaded there. Local-file progress must be exported and restored into the hosted origin.
+
+The room is embedded from the same origin. Only `/afm-classroom/*` allows same-origin framing; the rest of the site retains frame denial. That static prefix bypasses SPA rewrites and the service-worker navigation fallback.
+
+Full official answer/marking-scheme coverage is not claimed. Six question landing pages were matched on aCOWtancy; 21 additional links were located in its catalogue but remain content-unverified. Pittu margin subpart answer/mark guide was inspected. See the answer-source document for limitations. Voice prompts hand over to an existing conversation; no new paid tutor backend was added.

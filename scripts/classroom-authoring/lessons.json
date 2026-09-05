@@ -1,0 +1,530 @@
+[
+  {
+    "title": "AFM classroom",
+    "body": "Fourteen papers. Forty-two questions.\nReadiness checkpoint: Wednesday 9 September.\nExam: Friday 11 September 2026.",
+    "prompt": "What evidence would show that you can answer a question independently?",
+    "answer": "A blank-page approach, a valid calculation, a case-based judgement and a successful later retry. Completion ticks measure exposure, not mastery. This classroom is teaching guidance, not an official answer book.",
+    "refs": [],
+    "day": 1,
+    "hint": "Distinguish recognition from retrieval."
+  },
+  {
+    "title": "The study loop",
+    "body": "Read the requirement and locate its evidence.\nAttempt the method before opening hints.\nCompare, record one error, then retry later.",
+    "prompt": "In 90 seconds, outline one question without reading its answer.",
+    "answer": "For each 12-minute exposure: 3 minutes requirements/exhibits, 4 minutes a calculation setup or numerical checkpoint, 3 minutes a case-based paragraph, 2 minutes error and confidence record. Deep practice adds full workings. Revisit after a break and the following day.",
+    "refs": [],
+    "day": 1,
+    "hint": "State what the board needs to decide."
+  },
+  {
+    "title": "Exam output and timing",
+    "body": "195 minutes for 100 marks.\nSection A: 50 marks. Section B: 25 + 25.\nProfessional skills account for 20 marks.",
+    "prompt": "How long will you allow for a 25-mark question?",
+    "answer": "About 49 minutes: 195 × 25/100 = 48.75. A 50-mark question gets about 98 minutes. These budgets include planning and review. Skills are demonstrated through the answer, not a separate 20-minute skills section.",
+    "refs": [
+      "https://www.accaglobal.com/gb/en/student/exam-support-resources/professional-exams-study-resources/p4/introduction/advanced-financial-management-essentials-on-one-page.html",
+      "https://studentaccountant.accaglobal.com/2025/04/28/afm-qcl/content.html"
+    ],
+    "day": 1,
+    "hint": "Allocate time by the full question marks."
+  },
+  {
+    "title": "The board report",
+    "body": "To, from, date and a useful subject.\nHeadings that match the requirements.\nWorkings with units, followed by interpretation.\nA conclusion supported by your own results.",
+    "prompt": "How would you turn “PPP may be wrong” into an evaluative point?",
+    "answer": "Example teaching wording: PPP may not hold over the project horizon. If the overseas currency weakens more than forecast, home-currency receipts and NPV fall. I would test a downside exchange-rate case before committing. Adapt direction to the actual quotation and exposure.",
+    "refs": [
+      "https://www.accaglobal.com/content/dam/acca/global/PDF-students/acca/p4/examinersreports/J24%20AFM%20examiner%27s%20report.pdf#page=8",
+      "https://studentaccountant.accaglobal.com/2025/04/28/afm-qcl/content.html"
+    ],
+    "day": 1,
+    "hint": "Explain how the assumption changes the decision."
+  },
+  {
+    "title": "The recurring work",
+    "body": "Treasury: 13 questions. Acquisitions: 12.\nInvestment: 11. Capital and valuation: 4.\nPerformance: 2. All require applied judgement.",
+    "prompt": "Why should you still practise the two performance questions?",
+    "answer": "These are counts of primary teaching categories in the supplied 42-question corpus. They are not forecasts of exam frequency. Low frequency does not mean low importance, and every live question is compulsory.",
+    "refs": [],
+    "day": 1,
+    "hint": "The corpus is a study map, not a prediction."
+  },
+  {
+    "title": "Project cash-flow timeline",
+    "body": "Time 0: assets and initial working capital.\nOperating years: incremental cash and tax.\nFinal year: disposal and working-capital release.\nLater years: any delayed tax settlements.",
+    "prompt": "Which belongs in NPV: working-capital balance or its change?",
+    "answer": "Use changes in the required balance, with a cash outflow for an increase and an inflow for a reduction. Release the remaining balance at the end if recoverable. Exclude sunk costs. Keep financing separate when the discount rate already reflects financing.",
+    "refs": [
+      "P1-Q1",
+      "MS26-Q1"
+    ],
+    "day": 1,
+    "hint": "A balance is an amount tied up. A change is a cash movement."
+  },
+  {
+    "title": "Helios: working capital",
+    "body": "Initial working capital is $12m.\nAt the start of Years 2–4, it is 18% of sales.\nYear 2 sales are $44m, then grow by 15%.",
+    "prompt": "Calculate the cash flow at the end of Year 1 and the release at the end of Year 4.",
+    "answer": "Teaching calculation, $m: required balances at t0,t1,t2,t3 are 12, 7.92, 9.108, 10.4742. Cash movements are −12, +4.08, −1.188, −1.3662, then +10.4742 at t4. The first adjustment releases cash even though later sales grow.",
+    "refs": [
+      "MS26-Q1"
+    ],
+    "day": 1,
+    "hint": "18% × 44 = 7.92. Compare that with the existing 12."
+  },
+  {
+    "title": "International investment",
+    "body": "Forecast nominal cash flows in local currency.\nCalculate local tax and remittance restrictions.\nTranslate remittances at forecast exchange rates.\nAdd incremental parent cash flows and home tax.",
+    "prompt": "With a quote of foreign currency per home unit, which inflation rate goes on top in PPP?",
+    "answer": "S(t)=S(0)×[(1+foreign inflation)/(1+home inflation)]^t. Divide foreign cash by S(t) to obtain home cash. For the inverse quotation, invert the relation. Separate genuine parent contribution from a transfer already charged to the subsidiary.",
+    "refs": [
+      "SP-Q2",
+      "SD23-Q1",
+      "SD25-Q1"
+    ],
+    "day": 2,
+    "hint": "Higher foreign inflation should reduce the foreign currency’s purchasing power."
+  },
+  {
+    "title": "Tax and terminal value",
+    "body": "Accounting depreciation is not a cash outflow.\nTax allowances change the tax calculation.\nTax timing follows the question’s payment rule.\nDisposal can trigger a balancing adjustment.",
+    "prompt": "Why can a four-year project have a cash flow in Year 5?",
+    "answer": "Tax paid one year in arrears creates a t5 settlement for Year 4 operating tax and any taxable balancing adjustment. Helios has this timing. The $22m equipment value is already within the $48m project disposal value, so adding both would double count.",
+    "refs": [
+      "MS26-Q1"
+    ],
+    "day": 1,
+    "hint": "Read the words “payable one year in arrears”."
+  },
+  {
+    "title": "Risk and the discount rate",
+    "body": "Ungear the comparator’s equity beta.\nIsolate the relevant business activity.\nUse the asset beta for an all-equity base case.\nRegear only when the valuation method requires it.",
+    "prompt": "Write the zero-debt-beta formula and explain the market values.",
+    "answer": "βa=βe E/[E+D(1−T)]. CAPM: ke=rf+βe×market risk premium. Use βa in CAPM to estimate an ungeared return. Market equity and debt represent investor exposures. An overall mixed-company beta may not represent the new project.",
+    "refs": [
+      "SP-Q1",
+      "MS26-Q1",
+      "MJ26-Q2"
+    ],
+    "day": 1,
+    "hint": "The tax adjustment belongs with debt in this formula."
+  },
+  {
+    "title": "APV separates financing effects",
+    "body": "Base NPV uses an ungeared discount rate.\nAdd the present value of financing benefits.\nDeduct issue costs at their payment date.\nDisclose the discount rate for each benefit.",
+    "prompt": "Robson has βa=1.222, rf=3% and market premium=9%. What is its base discount rate?",
+    "answer": "Teaching calculation: ku = 3% + 1.222×9% = 13.998%, about 14%. Base NPV = −120 +20.9/1.14 +20.6/1.14² +28.7/1.14³ +104.6/1.14⁴ = approximately −$4.51m. This is not the completed APV. Financing benefits and issue costs still need separate schedules.",
+    "refs": [
+      "P2-Q2"
+    ],
+    "day": 2,
+    "hint": "Use the asset beta directly for the all-equity base case."
+  },
+  {
+    "title": "APV financing traps",
+    "body": "Interest tax shields follow outstanding debt.\nSubsidies compare equivalent market borrowing.\nIssue-cost grossing depends on funding terms.\nTax relief timing follows the stated rules.",
+    "prompt": "Why does Helios need gross funding of more than $87m?",
+    "answer": "Its $75m asset investment plus $12m initial working capital require $87m net. With costs of 3.5% of gross finance, gross finance = 87/0.965 = $90.1554m, so issue costs = $3.1554m. Robson’s issue costs come from reserves, so the same gross-up must not be imposed automatically. Avoid double counting subsidy tax effects and tax shields.",
+    "refs": [
+      "MS26-Q1",
+      "P2-Q2"
+    ],
+    "day": 2,
+    "hint": "Net proceeds = gross finance × (1 − issue-cost rate)."
+  },
+  {
+    "title": "Real options",
+    "body": "Expansion or delay often behaves like a call.\nAbandonment at a guaranteed price behaves like a put.\nThe asset is the cash flows subject to that choice.\nThe exercise price is the cash paid or received.",
+    "prompt": "Jigu’s NPV is $10m in Year 4 and its investment is $60m then. What is its asset value today?",
+    "answer": "Teaching calculation: operating value at Year 4 = 10+60 = $70m. Discount at 11% for four years: 70/1.11⁴ = $46.1112m. The question supplies the accurate call value of $15.3m. The call replaces the value of the flexible opportunity, so do not add both the stand-alone project NPV and the full call value for the same opportunity.",
+    "refs": [
+      "P1-Q1"
+    ],
+    "day": 1,
+    "hint": "NPV equals the operating asset value less the investment cost."
+  },
+  {
+    "title": "BSOP input discipline",
+    "body": "Pa: present value of relevant underlying cash flows.\nPe: exercise cash amount at the decision date.\nt: years to the decision. σ: annual volatility.\nr: risk-free rate in the model convention.",
+    "prompt": "What makes a real-option valuation uncertain in a project?",
+    "answer": "The underlying project may not be traded. Volatility and future investment cost may be difficult to estimate. Competition or operational constraints can prevent exercise. Explain the consequence for this decision. For a non-dividend-paying underlying, put-call parity is P=C−Pa+Pe×exp(−rt).",
+    "refs": [
+      "MJ24-Q2",
+      "D22-Q3",
+      "P1-Q1"
+    ],
+    "day": 1,
+    "hint": "Connect each assumption to flexibility that may not really exist."
+  },
+  {
+    "title": "Value creation and transfer",
+    "body": "Standalone acquirer + target + synergy = combined value.\nTarget gain is consideration less standalone target value.\nAcquirer gain is remaining wealth less its old value.\nCash and share offers distribute value differently.",
+    "prompt": "Why can an EPS increase coexist with a poor acquisition?",
+    "answer": "EPS is an accounting ratio affected by the P/E ratios, financing and share count. A company can overpay for the target even if EPS rises. Calculate wealth before and after and test whether expected synergies compensate for the premium.",
+    "refs": [
+      "SD24-Q2",
+      "MJ25-Q1",
+      "MS26-Q2"
+    ],
+    "day": 2,
+    "hint": "Separate the size of the pie from how it is divided."
+  },
+  {
+    "title": "Valdero: the value bridge",
+    "body": "Acquirer: 120m shares at $4.10, earnings $34.56m.\nTarget: earnings $9.75m, P/E 10% below acquirer.\nAnnual post-tax synergy: $3.45m.\nCombined P/E equals the old acquirer P/E.",
+    "prompt": "Estimate standalone target equity and total value created.",
+    "answer": "Teaching calculations, $m: acquirer equity=492. P/E=492/34.56=14.236111. Target equity=9.75×0.9×14.236111=124.921875. Combined equity=(34.56+9.75+3.45)×14.236111=679.916667. Value created=679.916667−492−124.921875=62.994792. This includes the target P/E rerating as well as capitalised synergy.",
+    "refs": [
+      "MS26-Q2"
+    ],
+    "day": 2,
+    "hint": "Apply the P/E discount to the target before combining."
+  },
+  {
+    "title": "Valdero: cash versus shares",
+    "body": "Cash: $3.10 for each of 50m target shares.\nShares: 3 new acquirer shares for every 4 target shares.\nCompare the gain for each shareholder group.",
+    "prompt": "Calculate the acquirer gain under cash and the enlarged share price under shares.",
+    "answer": "Teaching calculations ignoring unspecified costs/financing effects: cash consideration=$155m. Acquirer wealth=679.916667−155=$524.916667m, gain=6.69%. Target gain=(155/124.921875−1)=24.08%. New shares=37.5m. Enlarged price=679.916667/157.5=$4.316931. Acquirer gain=5.29%. Target share consideration=37.5×4.316931=$161.884921m, gain=29.59%. Both cases distribute the same $62.994792m total gain.",
+    "refs": [
+      "MS26-Q2"
+    ],
+    "day": 2,
+    "hint": "Cash leaves the combined value. Share consideration changes ownership."
+  },
+  {
+    "title": "Equity and enterprise value",
+    "body": "FCFF discounts at WACC, then bridges to equity.\nFCFE discounts at cost of equity.\nTerminal value belongs at the end of the forecast.\nA multiple needs a comparable earnings basis.",
+    "prompt": "When would subtracting debt be a double count?",
+    "answer": "When the cash flows are already FCFE and the present value is equity value. FCFF = EBIT(1−T)+depreciation−capital expenditure−increase in working capital. FCFE = profit after tax+depreciation−capital expenditure−increase in working capital+net borrowing. For a constant-growth perpetuity at t=n, TVn=CF(n+1)/(k−g), then discount TVn to today.",
+    "refs": [
+      "MJ24-Q3",
+      "SD24-Q3",
+      "MJ26-Q3"
+    ],
+    "day": 2,
+    "hint": "Identify whose cash flow you have valued."
+  },
+  {
+    "title": "Bonds and changing capital structure",
+    "body": "Coupon and redemption are separate cash flows.\nSpot yield plus credit spread prices each maturity.\nPost-tax debt cost uses net coupon cash flows.\nMarket-value weights drive WACC.",
+    "prompt": "Kingtim has 25m shares at $5.56 and 0.45m bonds at $104. What are its old market weights?",
+    "answer": "Teaching calculations, $m: E=139 and D=46.8. E/(E+D)=74.8116%, D/(E+D)=25.1884%. ke=4%+0.9×9%=12.1%. With the supplied after-tax kd=4.1%, WACC=10.0849%. For new bonds, price each cash flow at its maturity’s spot rate plus the appropriate credit spread, then solve the after-tax yield. Do not simply tax-adjust a spot curve.",
+    "refs": [
+      "SP-Q1"
+    ],
+    "day": 1,
+    "hint": "Count instruments, then multiply by market price."
+  },
+  {
+    "title": "FX hedge direction",
+    "body": "Write the exposure in words and currencies.\nChoose the contract currency and maturity.\nMake the derivative gain in the adverse case.\nCompare final home-currency cash flows.",
+    "prompt": "Boullain receives $18.6m. The forward quote is €0.8729–0.8744 per $1. What is the euro receipt?",
+    "answer": "Teaching calculation: the bank buys dollars at €0.8729, so receipt = $18.6m × €0.8729/$ = €16.236m. With euro contracts quoted in dollars per euro, a dollar recipient needs euros and buys euro futures or calls. Direction is based on contract currency, not a memorised rule about all receipts.",
+    "refs": [
+      "SP-Q3"
+    ],
+    "day": 1,
+    "hint": "The bank gives the less favourable side to its customer."
+  },
+  {
+    "title": "FX futures and options",
+    "body": "Round contracts exactly as instructed.\nCover residual exposure using the stated method.\nInclude premium in the comparison currency.\nBasis assumptions and margin affect the decision.",
+    "prompt": "Why can a nearly correct futures calculation still miss the hedge outcome?",
+    "answer": "It may omit the residual or excess cover after rounding, reverse the futures gain, or mix quotation currencies. The March/June 2024 examiner report highlights residual forward cover, hedge direction and rounding. A premium is a cost whether or not the option is exercised. Initial margin is refundable collateral, with liquidity/opportunity costs.",
+    "refs": [
+      "https://www.accaglobal.com/content/dam/acca/global/PDF-students/acca/p4/examinersreports/J24%20AFM%20examiner%27s%20report.pdf#page=6",
+      "MJ24-Q1",
+      "MJ26-Q1"
+    ],
+    "day": 2,
+    "hint": "Reconcile cash-market exposure and derivative proceeds."
+  },
+  {
+    "title": "Pittu: daily margin",
+    "body": "A dollar futures contract is $125,000.\nIt opens at W£3.2200 per dollar.\nDay 1 closes at 3.2230 and Day 2 at 3.2219.\nInitial margin is W£10,000. Maintenance is W£9,750.",
+    "prompt": "For one short contract, find each day’s gain/loss and any top-up.",
+    "answer": "Teaching calculation per contract: Day 1 loss=(3.2200−3.2230)×125,000= W£375. Balance=9,625, below maintenance, so top up W£375 to 10,000. Day 2 gain=(3.2230−3.2219)×125,000=W£137.50. Balance=10,137.50. Multiply by the contract count used in the full hedge. Margin movements affect liquidity even when the hedge is economically effective.",
+    "refs": [
+      "MJ26-Q1"
+    ],
+    "day": 3,
+    "hint": "Short futures lose when price rises."
+  },
+  {
+    "title": "Interest-rate hedging",
+    "body": "Borrower fears a rate rise: short futures or buy puts.\nDepositor fears a rate fall: long futures or buy calls.\nFutures price is 100 minus the annual rate.\nUse exposure months ÷ contract months in sizing.",
+    "prompt": "Lurgshall borrows $84m for six months. Three-month contracts are $2m. How many?",
+    "answer": "Teaching calculation: 84/2 × 6/3 = 84 contracts. Compare cash interest, futures/option payoff and premium over the six-month loan period. Divide net cost by principal × 6/12 to annualise the effective rate. A basis point is 0.01 percentage points.",
+    "refs": [
+      "P1-Q3",
+      "SD23-Q3"
+    ],
+    "day": 3,
+    "hint": "The loan lasts twice the contract interest period."
+  },
+  {
+    "title": "Collars and swaps",
+    "body": "A collar combines a bought and written option.\nLower premium sacrifices some favourable movement.\nA swap exchanges interest cash flows on a notional.\nA comparison includes fees and counterparty exposure.",
+    "prompt": "Lurgshall’s fixed-rate gap is 0.5% and floating-rate gap is 1.0%. Each party pays a 0.1% fee. What is each equal net saving?",
+    "answer": "Teaching calculation: gross comparative advantage = 1.0%−0.5%=0.5%. Total fees =0.2%. Net shared saving =0.3%, hence 0.15% each. Lurgshall’s fixed-rate benchmark is 5.6%, giving 5.45% all-in fixed if it takes that equal saving. Show actual borrowing and swap legs to reconcile the result.",
+    "refs": [
+      "P1-Q3",
+      "SD24-Q1"
+    ],
+    "day": 3,
+    "hint": "Deduct both parties’ fees before splitting the saving."
+  },
+  {
+    "title": "Netting and treasury",
+    "body": "Convert all balances to one settlement currency.\nTotal each company’s receipts and payments.\nSettle its net amount and reconcile to zero.\nAssess liquidity, controls and remaining exposures.",
+    "prompt": "Does multilateral netting eliminate all foreign-exchange risk?",
+    "answer": "No. It reduces gross settlements and may reduce transaction costs and the exposure to hedge, but residual currency positions remain. In Mahoney, delayed settlement can strain companies owed significant balances. The examiner report specifically cautions against claiming that netting eliminates all currency risk.",
+    "refs": [
+      "MJ24-Q1",
+      "https://www.accaglobal.com/content/dam/acca/global/PDF-students/acca/p4/examinersreports/J24%20AFM%20examiner%27s%20report.pdf#page=6"
+    ],
+    "day": 3,
+    "hint": "Fewer transfers do not imply zero net exposure."
+  },
+  {
+    "title": "Performance as a business explanation",
+    "body": "Calculate a trend or relevant ratio.\nConnect it to evidence in the scenario.\nExplain the financing or shareholder consequence.\nName the missing data needed to test your explanation.",
+    "prompt": "Southmed’s operating profit falls from 9,800 to 7,700 on revenue 121,900 to 120,900. What is the margin change?",
+    "answer": "Teaching calculation: operating margin falls from 8.0394% to 6.3689%, a decline of 1.6705 percentage points. Profit falls 21.43% while revenue falls 0.82%. This suggests cost pressure beyond the slight sales decline. Competition may limit price increases, but segment-level margins and like-for-like sales are needed to test that explanation.",
+    "refs": [
+      "SD23-Q2",
+      "MJ25-Q3"
+    ],
+    "day": 3,
+    "hint": "Distinguish percentage points from percentage change."
+  },
+  {
+    "title": "Dividends, restructuring and ethics",
+    "body": "Dividend capacity begins with cash availability.\nA sale and a demerger have different ownership effects.\nSynergy needs an integration mechanism.\nEthical concerns need practical actions.",
+    "prompt": "How would you challenge “the project has positive NPV, so the dividend is safe”?",
+    "answer": "Positive NPV measures discounted value. It does not guarantee cash at the dividend payment date. In Pittu, calculate the project payment and other cash commitments before dividend capacity and any shortfall. Then discuss shareholder expectations, financing choices and how the board communicates a policy change.",
+    "refs": [
+      "MJ26-Q1",
+      "MJ26-Q2",
+      "SD25-Q2",
+      "P1-Q1"
+    ],
+    "day": 3,
+    "hint": "A profitable project can still create a funding gap."
+  },
+  {
+    "title": "VaR and sensitivity",
+    "body": "VaR describes a confidence-level threshold.\nIt is not a worst possible loss.\nTime scaling needs a stated dependence assumption.\nSensitivity asks when NPV changes sign.",
+    "prompt": "Helios has annual cash-flow σ=$1.1m. Estimate a four-year, 95% adverse deviation using z=1.645.",
+    "answer": "Teaching calculation assuming independent, similarly distributed annual cash-flow uncertainty: 1.645×1.1×√4 = $3.619m below the expected aggregate cash flow. This is an undiscounted cash-flow approximation, not automatically a project-NPV VaR. Correlation, varying annual risk and discounting require a different aggregation. For sensitivity, vary post-tax operating cash flows consistently and re-solve NPV=0 for the cost of capital.",
+    "refs": [
+      "MS26-Q1"
+    ],
+    "day": 4,
+    "hint": "Four independent years scale standard deviation by √4, not 4."
+  },
+  {
+    "title": "A stronger discussion paragraph",
+    "body": "Case evidence establishes the issue.\nFinancial reasoning explains its effect.\nScepticism tests the assumption.\nAdvice answers the requirement.",
+    "prompt": "Hav has commercialisation skills and Strand has scientific know-how. Draft a revenue-synergy paragraph.",
+    "answer": "Teaching example: Hav’s ability to bring products to market could help commercialise Strand’s research and create new sales. The benefit depends on retaining Strand’s scientists and funding viable development. Integration should preserve the research capability and set milestones for product launches. A generic definition of revenue synergy would not make these links.",
+    "refs": [
+      "P1-Q2",
+      "https://studentaccountant.accaglobal.com/2025/04/28/afm-qcl/content.html"
+    ],
+    "day": 2,
+    "hint": "Connect complementary capabilities to a cash-flow mechanism."
+  },
+  {
+    "title": "Readiness by Wednesday",
+    "body": "One 195-minute rehearsal on Tuesday.\nWednesday: another timed paper and careful debrief.\nRetry weak methods from a blank page.\nUse Thursday for short repair and recovery.",
+    "prompt": "What triggers another deep attempt rather than another slide read?",
+    "answer": "A missing method, wrong exposure direction, repeated timing error, unsupported conclusion, or an answer you cannot reproduce without cues. Readiness is stronger when you can complete the timing, explain your own result and correct recurring errors. Neither coverage nor confidence guarantees a pass.",
+    "refs": [],
+    "day": 4,
+    "hint": "Use the error log to decide the next action."
+  },
+  {
+    "title": "SP: paper workshop",
+    "body": "Q1 Kingtim: WACC\nQ2 Colvin: International NPV\nQ3 Boullain: FX forwards",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "SP-Q1: Price new bonds with term-specific spot yields, then estimate post-tax debt cost and revised WACC. Evaluate shareholder reactions and employee pay. Expected output (teaching guidance): Existing WACC, new bond value and revised WACC, then a board recommendation. Watch for: Using book debt or one spot rate for all coupons.\n\nSP-Q2: Build remittable overseas cash flows plus home contribution. Compare NPV at the requested risk-adjusted rate with the unadjusted rate. Expected output (teaching guidance): Cash-flow timeline in CL and euros, two NPVs and a critique of the risk premium. Watch for: Double counting transfer income or taxing losses immediately when they must be carried forward.\n\nSP-Q3: Compare receipt hedges including residual forward cover. Explain the value of a communicated hedging policy and margin liquidity. Expected output (teaching guidance): EUR receipt for each strategy, contract count, premium and residual cover. Watch for: Rounding contrary to the explicit round-down instruction.",
+    "refs": [
+      "SP-Q1",
+      "SP-Q2",
+      "SP-Q3"
+    ],
+    "day": 1,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "S22: paper workshop",
+    "body": "Q1 Para Fuels: NPV\nQ2 Lough: Netting\nQ3 Felinhen: Restructuring",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "S22-Q1: Compare traditional and new technology before and after the sale option, then address board comments. Expected output (teaching guidance): Two base NPVs, an abandonment-option adjustment and a conditional recommendation. Watch for: Adding sale proceeds and the option value for the same benefit.\n\nS22-Q2: Tabulate group settlements and minimise the Swedish supplier payment. Weigh central and local treasury decisions. Expected output (teaching guidance): A net settlement table, comparative supplier costs and a treasury discussion. Watch for: Netting balances without first converting to one currency.\n\nS22-Q3: Value the woodcraft business in all three scenarios and compare the available courses of action. Expected output (teaching guidance): Three valuations, commercial implications and an explicit recommended course. Watch for: Recommending one scenario without evaluating the other disposal or recovery choices.",
+    "refs": [
+      "S22-Q1",
+      "S22-Q2",
+      "S22-Q3"
+    ],
+    "day": 1,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "D22: paper workshop",
+    "body": "Q1 Fondir: FX forward\nQ2 Propleis / Adictcan: Combined equity value\nQ3 Tonpantau: NPV",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "D22-Q1: Compare receipt hedges and the interest return under futures. Answer the board’s margin and risk-policy queries. Expected output (teaching guidance): USD receipts, investment return, futures gain/loss and a board report. Watch for: Confusing falling overseas competitiveness with a contracted transaction exposure.\n\nD22-Q2: Estimate combined equity and acquirer benefit. Challenge synergy assumptions and plan integration. Expected output (teaching guidance): Value bridge, acquirer gain and specific integration actions. Watch for: Equating all combined-company value with acquisition benefit.\n\nD22-Q3: Evaluate the investment and explain how real options extend the NPV decision in this case. Expected output (teaching guidance): NPV decision plus project-specific flexibility and valuation limitations. Watch for: Describing BSOP assumptions without explaining how they affect this project.",
+    "refs": [
+      "D22-Q1",
+      "D22-Q2",
+      "D22-Q3"
+    ],
+    "day": 1,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "P1: paper workshop",
+    "body": "Q1 Talam: NPV\nQ2 Hav / Strand: Synergy\nQ3 Lurgshall: IR options",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "P1-Q1: Calculate Uwa NPV, explain the Jigu asset value and value Honua’s offer. Address sustainability and child-labour issues. Expected output (teaching guidance): Base project valuation, separate option workings and an ethical response. Watch for: Treating Jigu’s $10m future NPV as the option’s underlying asset value.\n\nP1-Q2: Compare premium valuations based on excess earnings and combined value. Evaluate cash and convertible payment. Expected output (teaching guidance): Two premium ceilings, per-share payment comparison and seller preference. Watch for: Comparing a bond’s nominal amount with cash without a valuation basis.\n\nP1-Q3: Compare options and the swap with the supplied FRA and futures rates. Critique the CEO’s view of treasury staffing. Expected output (teaching guidance): Effective loan rates, a swap cash-flow schedule and treasury value. Watch for: Forgetting each party’s swap fee or the six-month exposure adjustment.",
+    "refs": [
+      "P1-Q1",
+      "P1-Q2",
+      "P1-Q3"
+    ],
+    "day": 1,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "MJ23: paper workshop",
+    "body": "Q1 Joshua: WACC\nQ2 Oxwick / Ludham: Combined valuation\nQ3 Blackbosca: International NPV",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "MJ23-Q1: Estimate post-acquisition WACC and value, then gains and dividends for both groups. Evaluate defence motives and buyback. Expected output (teaching guidance): Valuation and ownership bridge, dividend effects and an agency critique. Watch for: Using the old share count after a share exchange.\n\nMJ23-Q2: Test whether the acquisition meets the acquirer’s 15% wealth-gain requirement and challenge the director’s views. Expected output (teaching guidance): Combined equity, acquirer percentage gain against 15% and assumptions. Watch for: Using target premium as the acquirer’s percentage gain.\n\nMJ23-Q3: Evaluate the overseas project while challenging the consultant’s estimates and distinguishing business and financial risk. Expected output (teaching guidance): Adjusted investment analysis and scenario-linked risk discussion. Watch for: Accepting the consultant’s figures without considering the CEO’s specific concerns.",
+    "refs": [
+      "MJ23-Q1",
+      "MJ23-Q2",
+      "MJ23-Q3"
+    ],
+    "day": 2,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "SD23: paper workshop",
+    "body": "Q1 McKeever: International NPV\nQ2 Southmed: Ratios\nQ3 Abertafol: IR loan hedge",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "SD23-Q1: Convert overseas flows, calculate dollar NPV and test the alternative exchange assumption. Address political and discount-rate risk. Expected output (teaching guidance): Local flow schedule, dollar NPV, alternative case and supported recommendation. Watch for: Reversing the inflation ratio for a stated exchange-rate quotation.\n\nSD23-Q2: Evaluate business situation and financial performance using ratios and trends. Identify useful missing information. Expected output (teaching guidance): Calculated evidence, business explanation, financing implication and data gaps. Watch for: Listing ratio changes without explaining competitive or financing implications.\n\nSD23-Q3: Advise separately on the $24m loan and $18m investment and answer each director’s query. Expected output (teaching guidance): Two exposure-specific comparisons with results and explanations. Watch for: Using the same derivative direction for a borrower and a depositor.",
+    "refs": [
+      "SD23-Q1",
+      "SD23-Q2",
+      "SD23-Q3"
+    ],
+    "day": 2,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "MJ24: paper workshop",
+    "body": "Q1 Mahoney: Netting\nQ2 Littlebredy: NPV\nQ3 Garnod: FCFE",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "MJ24-Q1: Calculate group settlements and divestment hedges, then compare project NPVs under swap and option cover. Expected output (teaching guidance): Settlement table, hedge comparison, two NPVs and trade-policy discussion. Watch for: Ignoring unhedged or overhedged balances and different coverage of final-year cash flow.\n\nMJ24-Q2: Evaluate office pods and the schools/universities option, then discuss diversification and strategy reporting. Expected output (teaching guidance): Base NPV, option calculation, decisions and investment reporting advice. Watch for: Discounting the option exercise price at the project WACC in BSOP.\n\nMJ24-Q3: Analyse both targets. Calculate the target minimum and price allocating 60% of gains to the acquirer. Evaluate defence strategies. Expected output (teaching guidance): Target minimum, FCFE valuation, gain split and separate defence discussion. Watch for: Confusing share of total synergy with percentage gain on the acquirer’s equity.",
+    "refs": [
+      "MJ24-Q1",
+      "MJ24-Q2",
+      "MJ24-Q3"
+    ],
+    "day": 2,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "P2: paper workshop",
+    "body": "Q1 Lahla / Kawa: Demerger\nQ2 Robson: APV\nQ3 Gogarth: FX hedging",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "P2-Q1: Value demerged Kawa and the combination. Compare shareholder gains and capital structures for each payment method. Expected output (teaching guidance): Standalone price, combination value, offer matrix and capital-structure discussion. Watch for: Discussing acquisition regulation without identifying affected stakeholders.\n\nP2-Q2: Calculate APV and assess whether external shareholders and the subsidy provider will approve funding. Expected output (teaching guidance): Ungeared NPV, financing-benefit schedule and funding feasibility. Watch for: Charging finance costs in operating cash flows and again in APV adjustments.\n\nP2-Q3: Recommend a hedge for August dollar flows and explain treasury’s role in economic exposure. Expected output (teaching guidance): Comparable home-currency outcomes and an economic-risk response. Watch for: Hedging gross receipts and payments separately when eligible net flows matter.",
+    "refs": [
+      "P2-Q1",
+      "P2-Q2",
+      "P2-Q3"
+    ],
+    "day": 2,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "SD24: paper workshop",
+    "body": "Q1 Northney: Netting\nQ2 Mortexa / Yekkon: Equity valuation\nQ3 Zulla: DDM",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "SD24-Q1: Assess group treasury organisation, tabulate settlements, demonstrate FX and collar hedges and evaluate a new subsidiary. Expected output (teaching guidance): Settlement table, FX result, two collar scenarios and subsidiary risk analysis. Watch for: Omitting the written option payoff or net premium from a collar.\n\nSD24-Q2: Estimate equity and acquisition value, both groups’ wealth and majority-holder EPS. Evaluate approval and competition scrutiny. Expected output (teaching guidance): Value and ownership bridge, EPS effect and competition factors. Watch for: Treating EPS improvement as proof of wealth creation.\n\nSD24-Q3: Value equity using dividends and free cash flows, compare their suitability and assess reverse takeover versus IPO. Expected output (teaching guidance): Two equity estimates, method critique and route-to-listing comparison. Watch for: Assuming low early dividends imply low business value.",
+    "refs": [
+      "SD24-Q1",
+      "SD24-Q2",
+      "SD24-Q3"
+    ],
+    "day": 3,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "MJ25: paper workshop",
+    "body": "Q1 Kampai / Skal: PE\nQ2 Sohbet: IR futures\nQ3 GCR: Ratios",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "MJ25-Q1: Estimate value and gains under cash and shares, then discuss financing, a mixed offer and factory closure. Expected output (teaching guidance): Offer comparison for both groups, financing judgement and closure response. Watch for: Applying the old acquirer price to new shares without valuing the enlarged group.\n\nMJ25-Q2: Calculate hedge results at a 3.8% base rate and justify futures/options or other choices. Compare OTC and traded options. Expected output (teaching guidance): Net interest outcomes, recommendation and instrument suitability. Watch for: Selecting solely on a forecast rate while ignoring uncertainty and premium.\n\nMJ25-Q3: Evaluate financial performance and position from company and investor perspectives, with missing information. Expected output (teaching guidance): Trend and ratio evidence, investor consequences and essential data gaps. Watch for: Ignoring threatened franchise renewal when interpreting current financial ratios.",
+    "refs": [
+      "MJ25-Q1",
+      "MJ25-Q2",
+      "MJ25-Q3"
+    ],
+    "day": 3,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "SD25: paper workshop",
+    "body": "Q1 Drimpton: International NPV\nQ2 Halstock / Marnhall: Synergy scenarios\nQ3 Passmore: FX receipt hedging",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "SD25-Q1: Evaluate the Edricer investment and trade-area advantages. Discuss assumptions and recommend ESG actions. Expected output (teaching guidance): International NPV, financial recommendation and scenario-specific ESG actions. Watch for: Omitting parent cash flows or turning the ESG requirement into generic definitions.\n\nSD25-Q2: Compare acquirer share gains with and without synergies, challenge estimates and address integration barriers. Expected output (teaching guidance): Two wealth outcomes, sceptical evaluation and practical barrier-removal actions. Watch for: Presenting synergies as certain rather than testing the no-synergy scenario.\n\nSD25-Q3: Compare hedges for the R202m receipt and discuss treasury’s positive financial contribution. Expected output (teaching guidance): Hedge workings, net proceeds and treasury activities linked to financial value. Watch for: Recommending a hedge without net proceeds or the decision factors.",
+    "refs": [
+      "SD25-Q1",
+      "SD25-Q2",
+      "SD25-Q3"
+    ],
+    "day": 3,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "MD25: paper workshop",
+    "body": "Q1 TAS: International NPV\nQ2 Sheakam: IR investment\nQ3 Mackosso / Ade: Acquisition payment",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "MD25-Q1: Value the project before and after NDT’s offer, explain assumptions, business risks and tariff effects. Expected output (teaching guidance): Two project values, a conditional decision and trade/business risk discussion. Watch for: Counting an entire disposal receipt as incremental value without considering surrendered flows.\n\nMD25-Q2: Recommend a hedge for the $35m investment after a 0.7% rate fall and critically evaluate three directors. Expected output (teaching guidance): Investment-return comparison and separate responses to the directors. Watch for: Buying borrower protection for a depositor’s falling-rate exposure.\n\nMD25-Q3: Calculate Ade shareholder gains under all three proposals and justify preference. Explain acquisition failure risks. Expected output (teaching guidance): Three comparable gain estimates and an explained seller preference. Watch for: Skipping one proposal or comparing percentages with different starting valuations.",
+    "refs": [
+      "MD25-Q1",
+      "MD25-Q2",
+      "MD25-Q3"
+    ],
+    "day": 3,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "MJ26: paper workshop",
+    "body": "Q1 Pittu: FX futures\nQ2 Colmcille: Divestment\nQ3 Trimpley / Rushock: MBI",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "MJ26-Q1: Evaluate the project hedge, daily margin, dividend capacity/shortfall and alternative hedges and dividend policy. Expected output (teaching guidance): Contract and margin schedules, cash-based dividend capacity and policy report. Watch for: Treating refundable margin as a permanent hedge expense.\n\nMJ26-Q2: Distinguish sell-off and demerger, discuss shareholder benefits, extract divisional beta and compare valuations. Expected output (teaching guidance): Unbundling discussion, beta decomposition and two disposal values. Watch for: Using the group beta directly for a division with a different business mix.\n\nMJ26-Q3: Evaluate the MBI and calculate maximum offer and acquirer share gain/loss in both acquisition scenarios. Expected output (teaching guidance): Two valuations, two price ceilings, per-share effects and assumptions. Watch for: Using only the favourable scenario to justify the price.",
+    "refs": [
+      "MJ26-Q1",
+      "MJ26-Q2",
+      "MJ26-Q3"
+    ],
+    "day": 4,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  },
+  {
+    "title": "MS26: paper workshop",
+    "body": "Q1 Helios: APV\nQ2 Valdero / Fenwick: Vertical integration\nQ3 Novara: FX futures",
+    "prompt": "For each question: one method setup, one case paragraph, one error to retry.",
+    "answer": "MS26-Q1: Compare APV with NPV, estimate a project discount rate, base NPV, financing effects and risk sensitivities. Expected output (teaching guidance): Beta and cash-flow schedules, APV bridge, VaR and sensitivity interpretation. Watch for: Using revenue weights as if they were observed market-value weights without disclosure.\n\nMS26-Q2: Explain vertical-integration value and compare value creation and transfer under cash and share offers. Expected output (teaching guidance): Standalone and combined values, offer gains for both shareholder groups. Watch for: Ignoring the cash payment when calculating remaining acquirer wealth.\n\nMS26-Q3: Recommend an FX payment hedge and compare interest-rate hedges under both 0.9% rate changes. Expected output (teaching guidance): FX comparison plus two interest-rate scenarios and a justified recommendation. Watch for: Using one rate outcome to recommend an option without evaluating the other.",
+    "refs": [
+      "MS26-Q1",
+      "MS26-Q2",
+      "MS26-Q3"
+    ],
+    "day": 4,
+    "hint": "Open the original requirement in the classroom library, then use the staged question guide."
+  }
+]
