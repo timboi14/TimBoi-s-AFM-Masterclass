@@ -27,6 +27,7 @@ type NavItem = {
 const PRIMARY_NAV: NavItem[] = [
   { to: '/', label: 'Home', icon: 'home' },
   { to: '/leave-it-to-us', label: 'Leave it to us', icon: 'sparkles', matches: ['/leave-it-to-us'] },
+  { to: '/classroom-14', label: 'Classroom 14', icon: 'book', matches: ['/classroom-14'] },
   { to: '/classroom', label: 'Classroom', icon: 'book', matches: ['/classroom'] },
   { to: '/course', label: 'Learn', icon: 'graduation', matches: ['/course', '/champions-league', '/topic'] },
   { to: '/training', label: 'Training', icon: 'stopwatch', matches: ['/training', '/practice', '/mock', '/debrief'] },
@@ -49,6 +50,7 @@ const MORE_NAV: NavItem[] = [
 const ALL_NAV = [...PRIMARY_NAV, ...MORE_NAV];
 
 function isNavActive(item: NavItem, pathname: string) {
+  if (item.to === '/classroom') return pathname === '/classroom';
   if (item.to === '/') return pathname === '/';
   return (item.matches ?? [item.to]).some((prefix) => pathname.startsWith(prefix));
 }
@@ -186,7 +188,7 @@ export function Layout() {
         ref={headerShellRef}
         className={cn(
           // The embedded study room scrolls independently; keep its controls unobscured.
-          location.pathname === '/classroom' ? 'relative z-30 transition-all duration-300' : 'sticky top-0 z-30 transition-all duration-300',
+          ['/classroom', '/classroom-14'].includes(location.pathname) ? 'relative z-30 transition-all duration-300' : 'sticky top-0 z-30 transition-all duration-300',
           scrolled ? 'glass border-b border-border/70 shadow-[0_4px_20px_-12px_rgba(15,23,42,0.20)]' : 'bg-transparent',
         )}
       >

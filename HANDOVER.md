@@ -163,3 +163,7 @@ npm run build        # tsc -b && vite build  (the deploy gate)
 The room is embedded from the same origin. Only `/afm-classroom/*` allows same-origin framing; the rest of the site retains frame denial. That static prefix bypasses SPA rewrites and the service-worker navigation fallback.
 
 Full official answer/marking-scheme coverage is not claimed. Six question landing pages were matched on aCOWtancy; 21 additional links were located in its catalogue but remain content-unverified. Pittu margin subpart answer/mark guide was inspected. See the answer-source document for limitations. Voice prompts hand over to an existing conversation; no new paid tutor backend was added.
+
+## Classroom 14 — academy styling
+
+`/classroom-14` adds an alternate academy-styled study room while preserving `/classroom`. The shared React wrapper chooses `public/afm-classroom/classroom14.html`; its stylesheet and licensed local fonts apply only to the new room. Data, materials, study logic and local-storage progress are shared. The original offline ZIP retains its original appearance. Regression coverage exercises both versions and verifies font loading and cross-version progress continuity.

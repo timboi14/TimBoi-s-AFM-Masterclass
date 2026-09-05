@@ -72,6 +72,7 @@ const SettingsPage = lazyNamed(() => import('@/pages/Settings'), 'SettingsPage')
 const StartPage = lazyNamed(() => import('@/pages/Start'), 'StartPage');
 const DiagnosticPage = lazyNamed(() => import('@/pages/Diagnostic'), 'DiagnosticPage');
 const LeaveItToUsPage = lazyNamed(() => import('@/pages/LeaveItToUs'), 'LeaveItToUsPage');
+const Classroom14Page = lazyNamed(() => import('@/pages/Classroom'), 'Classroom14Page');
 const ClassroomPage = lazyNamed(() => import('@/pages/Classroom'), 'ClassroomPage');
 const KeFinessePage = lazyNamed(() => import('@/pages/KeFinesse'), 'KeFinessePage');
 
@@ -142,6 +143,7 @@ export default function App() {
                   <Route path="/formulas" element={<FormulasPage />} />
                   <Route path="/exam-skills" element={<ExamSkillsPage />} />
                   <Route path="/leave-it-to-us" element={<LeaveItToUsPage />} />
+                  <Route path="/classroom-14" element={<Classroom14Page />} />
                   <Route path="/classroom" element={<ClassroomPage />} />
                   <Route path="/ke-finesse" element={<KeFinessePage />} />
                   <Route path="*" element={<HomePage />} />
