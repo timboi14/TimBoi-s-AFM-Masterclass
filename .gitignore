@@ -34,3 +34,5 @@ reports/tmp-jscpd/
 
 # Playwright run output
 test-results/
+
+.vercel
