@@ -102,6 +102,8 @@ export function Layout() {
     if (state.fanName) store.bumpStreak();
   }, [state.fanName]);
 
+  useEffect(() => { window.dispatchEvent(new Event('afm-voice-navigation')); }, [location.pathname, location.search]);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setMenuOpen(false);

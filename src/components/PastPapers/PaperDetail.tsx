@@ -1,3 +1,4 @@
+import { QuestionReadAloud } from '@/components/QuestionReadAloud';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import type { Paper } from '@/data/pastpapers/schema';
 import { SourceBadge } from './shared/SourceBadge';
@@ -116,6 +117,7 @@ export function PaperDetail({ paper, tab, onTabChange, onClose }: Props) {
         </button>
       </div>
 
+      <QuestionReadAloud paper={paper} />
       <div className="paper-detail__source">
         <SourceBadge source={paper.primarySource} />
         {paper.tags.length > 0 && (

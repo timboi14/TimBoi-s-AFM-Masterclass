@@ -1,3 +1,4 @@
+import { QuestionReadAloud } from '@/components/QuestionReadAloud';
 import { useEffect, useRef } from 'react';
 import type { Paper } from '@/data/pastpapers/schema';
 import { bionicHTML } from '@/utils/bionic';
@@ -52,6 +53,7 @@ export function ExamReader({ paper, onSeenToEnd }: Props) {
 
   return (
     <div className="exam-reader" ref={bodyRef}>
+      <QuestionReadAloud paper={paper} />
       <div className="exam-reader__scenario">
         <h3 className="exam-reader__h">Scenario</h3>
         {paper.scenarioSteps.map((step) => (

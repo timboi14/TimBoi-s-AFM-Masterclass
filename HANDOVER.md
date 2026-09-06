@@ -167,3 +167,9 @@ Full official answer/marking-scheme coverage is not claimed. Six question landin
 ## Classroom 14 — academy styling
 
 `/classroom-14` adds an alternate academy-styled study room while preserving `/classroom`. The shared React wrapper chooses `public/afm-classroom/classroom14.html`; its stylesheet and licensed local fonts apply only to the new room. Data, materials, study logic and local-storage progress are shared. The original offline ZIP retains its original appearance. Regression coverage exercises both versions and verifies font loading and cross-version progress continuity.
+
+## 6 September 2026: browser reading, commands and dictation
+
+The shared implementation is `public/afm-classroom/voice-access.js` and `.css`, loaded by the academy entry and every classroom HTML page. `QuestionReadAloud.tsx` connects full original source questions to the existing past-paper viewer and exam reader. It reuses the 42-source data script and enables reading only after loading; unmatched native papers carry an explicit completeness notice.
+
+Use Voice & reading to choose a browser voice/rate, preview, control playback, or explicitly start Commands/Dictation. Text-block readers, full-question/exhibit controls and selected-text reading cover study content. Dictation supports named editable text fields and CBE rich text. `afm-voice-exclusive` coordinates playback/recognition with the legacy Coach and embedded classroom; route changes stop voice activity. No audio is stored by this feature. Speech tests are mocked, not real microphone/audio certification. See `reports/voice-release-2026-09-06.md` for validation and limitations.

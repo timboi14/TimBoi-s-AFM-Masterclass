@@ -1,6 +1,6 @@
 # Voice tutor companion
 
-This guide works with an existing Codex voice conversation. The local classroom can select a question, read a prompt aloud when browser speech is available, and save your written notes. It does not listen to your microphone, assess speech or connect to an AI service. Live adaptive tuition comes from the conversation with your tutor.
+Use Voice & reading for browser read-aloud, voice commands and dictation into notes, answers and editable text fields. Start microphone is opt-in. Choose Commands or Dictation and a target field before speaking. The browser may use its recognition service; this feature does not save audio or assess your answer. Reading switches the microphone off. Live adaptive tuition still comes from your existing Codex voice conversation.
 
 ## Opening prompt to use in voice
 

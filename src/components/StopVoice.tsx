@@ -22,7 +22,7 @@ export function StopVoice() {
   return (
     <button
       type="button"
-      onClick={() => window.speechSynthesis?.cancel()}
+      onClick={() => { window.dispatchEvent(new CustomEvent('afm-voice-exclusive', {detail:{owner:'stop-button',kind:'stop'}})); window.speechSynthesis?.cancel(); }}
       aria-label="Stop voice playback"
       className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-danger text-white font-bold text-[13px] uppercase tracking-wider shadow-[0_8px_24px_-6px_rgba(220,38,38,0.55)] motion-safe:transition-opacity motion-safe:animate-in motion-safe:fade-in hover:brightness-110"
     >

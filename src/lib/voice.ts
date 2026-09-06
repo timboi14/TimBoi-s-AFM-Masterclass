@@ -64,8 +64,10 @@ export function createRecognition({
   r.interimResults = true;
   r.maxAlternatives = 1;
 
-  r.onstart = () => onState?.('listening');
-  r.onend = () => onState?.('idle');
+  const stopForOtherVoice = () => { try { r.abort(); } catch {} };
+  r.onstart = () => { window.addEventListener('afm-voice-exclusive', stopForOtherVoice); onState?.('listening'); };
+
+  r.onend = () => { window.removeEventListener('afm-voice-exclusive', stopForOtherVoice); onState?.('idle'); };
   r.onerror = (e: SpeechRecognitionErrorEvent) => {
     onState?.('error');
     onError?.(e.error || 'Speech recognition error.');
@@ -84,6 +86,8 @@ export function createRecognition({
 
   return {
     start: () => {
+      window.dispatchEvent(new CustomEvent('afm-voice-exclusive', {detail:{owner:'coach',kind:'mic'}}));
+      window.speechSynthesis?.cancel();
       try { r.start(); } catch (err) {
         onError?.(errorMessage(err, 'Could not start microphone'));
       }
@@ -186,10 +190,13 @@ export function speak(
 ): { stop: () => void } {
   if (!isSpeechSynthesisSupported()) return { stop: () => {} };
   const synth = window.speechSynthesis;
+  window.dispatchEvent(new CustomEvent('afm-voice-exclusive', {detail:{owner:'coach',kind:'speech'}}));
   synth.cancel();
 
   let cancelled = false;
-  const handle = { stop: () => { cancelled = true; synth.cancel(); } };
+  const stopForOtherVoice = () => { cancelled = true; synth.cancel(); window.removeEventListener('afm-voice-exclusive', stopForOtherVoice); };
+  window.addEventListener('afm-voice-exclusive', stopForOtherVoice, {once:true});
+  const handle = { stop: stopForOtherVoice };
 
   const cleaned = text
     .replace(/\*\*/g, '')
@@ -215,7 +222,7 @@ export function speak(
       if (defName) chosen = voices.find((v) => v.name === defName);
     }
 
-    chunks.forEach((chunk) => {
+    chunks.forEach((chunk, index) => {
       if (cancelled) return;
       const u = new SpeechSynthesisUtterance(chunk);
       // Slightly slower than 1.0 sounds more deliberate / less robotic
@@ -223,6 +230,8 @@ export function speak(
       u.pitch = opts.pitch ?? 1.0;
       if (chosen) u.voice = chosen;
       u.lang = chosen?.lang || 'en-GB';
+      if (index === chunks.length - 1) u.onend = () => window.removeEventListener('afm-voice-exclusive', stopForOtherVoice);
+      u.onerror = () => window.removeEventListener('afm-voice-exclusive', stopForOtherVoice);
       synth.speak(u);
     });
   });
