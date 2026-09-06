@@ -7,3 +7,5 @@ The endpoint uses Gemini 3.1 Flash TTS Preview via Interactions, with store=fals
 Validation: production build and server TypeScript check passed. Seventeen focused classroom/voice/API checks passed, including all 42 full source questions. Cloud playback tests use mocked audio; live provider verification is recorded separately after deployment.
 
 Sources: https://ai.google.dev/gemini-api/docs/speech-generation and https://ai.google.dev/api/interactions-api
+
+Follow-up: settings now synchronize between the academy page and embedded classroom. Three Google-specific tests pass, including cancellation while generation is pending. Production GET confirms Gemini configuration, but actual generation currently returns 503 because the pre-existing Upstash host does not resolve. Browser reading remains operational. Upstash account sign-in is needed to restore the quota connection; Google audio has not yet been verified live.

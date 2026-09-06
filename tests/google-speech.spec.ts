@@ -39,3 +39,16 @@ test('Google reader pauses, resumes, repeats from cache and stops playback',asyn
   await ui.locator('[data-va="repeat"]').click();await expect(ui.locator('[data-va="status"]')).toContainText('with Google');expect(requests).toBe(1);
   await ui.locator('[data-va="stop-all"]').click();await expect(ui.locator('[data-va="status"]')).toContainText('stopped');
 });
+
+test('Google voice choice reaches the embedded classroom and stop cancels preparation',async({page})=>{
+  let pending:any;
+  await page.route('**/api/speech',async route=>{
+    if(route.request().method()==='GET')return route.fulfill({json:{available:true,voices:['Kore']}});
+    pending=route;await new Promise<void>(resolve=>{(route as any).release=resolve;});
+  });
+  await page.goto('/classroom-14');const root=page.locator('body > .va-ui');
+  await root.locator('[data-va="toggle"]').click();await expect(root.locator('option[value="google:Kore"]')).toHaveCount(1);await root.locator('[data-va="voice"]').selectOption('google:Kore');await root.locator('[data-va="toggle"]').click();
+  const frame=page.frameLocator('iframe');const ui=frame.locator('.va-ui');await ui.locator('[data-va="toggle"]').click();await expect(ui.locator('[data-va="voice"]')).toHaveValue('google:Kore');
+  await ui.locator('[data-va="preview"]').click();await expect(ui.locator('[data-va="status"]')).toContainText('Preparing Google');await expect.poll(()=>!!pending).toBe(true);
+  await ui.locator('[data-va="stop-all"]').click();pending.release();await expect(ui.locator('[data-va="status"]')).toContainText('stopped');await expect(ui.locator('[data-va="resume"]')).toBeDisabled();
+});
