@@ -10,7 +10,7 @@
     let bus = window; try { if (window.top.location.origin === location.origin) bus = window.top; } catch (_) {}
     const owner = Math.random().toString(36).slice(2), KEY = 'afm-reading-preferences-v1';
     let prefs = {rate:1,voice:''}; try { prefs = {...prefs,...JSON.parse(localStorage.getItem(KEY)||'{}')}; } catch (_) {}
-    let reading = false, paused = false, token = 0, lastText = '', lastLabel = '', activeElement = null;
+    let reading = false, paused = false, token = 0, lastText = '', lastLabel = '', activeElement = null, collapsedByUser = false;
     let savedRange=null;
     let cloudReady=false, cloudVoices=[], audio=null, audioUrl='', cloudAbort=null; const audioCache=new Map();
     let rec = null, listening = false, micToken = 0, lockedTarget = null, selection = '', lastTarget = null;
@@ -30,7 +30,8 @@
     doc.body.append(ui);
     const $ = name => ui.querySelector(`[data-va="${name}"]`);
     function status(message) { $('status').textContent = message; $('short').textContent = listening ? 'Mic on' : paused ? 'Paused' : reading ? 'Reading' : 'Ready'; }
-    function expand() { $('toggle').setAttribute('aria-expanded','true'); ui.querySelector('.va-panel').hidden=false; }
+    // Reading reveals the controls, but never reopens a panel the reader deliberately minimised.
+    function expand() { if(collapsedByUser)return; $('toggle').setAttribute('aria-expanded','true'); ui.querySelector('.va-panel').hidden=false; }
     function exclusive(kind) { bus.dispatchEvent(new CustomEvent('afm-voice-exclusive',{detail:{owner,kind}})); }
     function visible(el) {
       if (!el || !el.isConnected || el.closest('[hidden],[aria-hidden="true"],.va-ui,.va-read')) return false;
@@ -70,6 +71,21 @@
       if(message)status(message);
     }
     function stopAll(message='Reading and microphone stopped.') { stopMic();stopRead();status(message); }
+    // Break on sentence boundaries so the voice pauses where a reader would, rather than
+    // mid-clause at an arbitrary character count.
+    function speechChunks(text,max) {
+      const out=[];let buf='';
+      for(let sentence of text.match(/[^.!?]+[.!?]+["')\]]*\s*|[^.!?]+$/g)||[text]){
+        while(sentence.length>max){
+          const space=sentence.lastIndexOf(' ',max),at=space>max*0.5?space:max;
+          if(buf){out.push(buf.trim());buf='';}
+          out.push(sentence.slice(0,at).trim());sentence=sentence.slice(at);
+        }
+        if(buf&&(buf+sentence).length>max){out.push(buf.trim());buf=sentence;}else buf+=sentence;
+      }
+      if(buf.trim())out.push(buf.trim());
+      return out.length?out:[text];
+    }
     function speakText(text,label='text',el=null) {
       if(!canRead){status('Read-aloud is unavailable in this browser. You can still use the text.');return;}
       if(!text.trim()){status('There is no visible text to read here. Open the section first.');return;}
@@ -77,8 +93,7 @@
       activeElement?.classList.add('va-reading');reading=true;expand();status(`Reading ${label}. Microphone is off.`);
       $('pause').disabled=false;$('resume').disabled=true;$('repeat').disabled=false;
       if(prefs.voice.startsWith('google:')&&cloudReady){cloudSpeak(text,label,++token);return;}
-      // Bound utterance length without dropping trailing sentences or long paragraphs.
-      const chunks=text.match(/[\s\S]{1,260}(?:\s|$)|[\s\S]{1,260}/g)||[text];
+      const chunks=speechChunks(text,260);
       const run=++token; let i=0;
       function next(){
         if(run!==token)return;
@@ -90,7 +105,7 @@
       }next();
     }
     async function cloudSpeak(text,label,run){
-      const voice=prefs.voice.slice(7), chunks=text.match(/[\s\S]{1,1000}(?:\s|$)|[\s\S]{1,1000}/g)||[text];let index=0;
+      const voice=prefs.voice.slice(7), chunks=speechChunks(text,1000);let index=0;
       async function next(){
         if(run!==token)return;
         if(index===chunks.length){stopRead();status(`Finished ${label}. Microphone remains off.`);return;}
@@ -130,7 +145,7 @@
     function read(el,label){speakText(textOf(el),label||'section',el);}
     function pause(){if(reading&&!paused){if(prefs.voice.startsWith('google:')&&cloudReady)audio?.pause();else synth.pause();paused=true;$('pause').disabled=true;$('resume').disabled=false;status('Reading paused. Microphone is off.');}}
     function resume(){if(reading&&paused){stopMic();if(prefs.voice.startsWith('google:')&&cloudReady){audio?.play().catch(()=>{stopRead();status('Press Read again to restart audio.');});}else synth.resume();paused=false;$('pause').disabled=false;$('resume').disabled=true;status(`Reading ${lastLabel}. Microphone is off.`);}}
-    function voices(){if(!canRead)return;const picker=$('voice');picker.replaceChildren(new Option('Browser default',''));if(cloudReady)for(const name of cloudVoices)picker.add(new Option('Google · '+name,'google:'+name));for(const v of synth.getVoices())picker.add(new Option(`${v.name} · ${v.lang}`,v.voiceURI));if(!prefs.voice){let preferred='';try{preferred=JSON.parse(localStorage.getItem('tba_coach_prefs_v2')||'{}').voiceName||'';}catch(_){}const available=synth.getVoices();const chosen=available.find(v=>v.name===preferred)||available.find(v=>/^en/i.test(v.lang)&&/natural|premium|enhanced|neural/i.test(v.name))||available.find(v=>v.lang==='en-GB');if(chosen)prefs.voice=chosen.voiceURI;}picker.value=prefs.voice; if(picker.selectedIndex<0)picker.value='';}
+    function voices(){if(!canRead)return;const picker=$('voice');picker.replaceChildren(new Option('Browser default',''));if(cloudReady)for(const name of cloudVoices)picker.add(new Option('Google · '+name+' (natural)','google:'+name));for(const v of synth.getVoices())picker.add(new Option(`${v.name} · ${v.lang}`,v.voiceURI));if(!prefs.voice){let preferred='';try{preferred=JSON.parse(localStorage.getItem('tba_coach_prefs_v2')||'{}').voiceName||'';}catch(_){}const available=synth.getVoices();const chosen=available.find(v=>v.name===preferred)||available.find(v=>/^en/i.test(v.lang)&&/natural|premium|enhanced|neural/i.test(v.name))||available.find(v=>v.lang==='en-GB');if(chosen)prefs.voice=chosen.voiceURI;}picker.value=prefs.voice; if(picker.selectedIndex<0)picker.value='';}
     function preference(){prefs={rate:Number($('rate').value),voice:$('voice').value};try{localStorage.setItem(KEY,JSON.stringify(prefs));}catch(_){}if(reading)stopRead('Reading stopped. Choose Read again to use the new settings.');bus.dispatchEvent(new CustomEvent('afm-reading-preference',{detail:{owner,prefs}}));}
     bus.addEventListener('afm-reading-preference',e=>{if(e.detail?.owner===owner||!e.detail?.prefs)return;if(reading)stopRead('Reading settings changed. Choose Read again.');prefs={...e.detail.prefs};$('rate').value=String(prefs.rate);voices();});
     function fieldLabel(el){return el.labels?.[0]?.innerText?.trim()||el.getAttribute('aria-label')||el.placeholder||el.name||'Text field';}
@@ -196,7 +211,7 @@
       instance.onend=()=>{if(run!==micToken)return;rec=null;listening=false;lockedTarget=null;$('mic').disabled=false;$('mic-stop').disabled=true;status('Microphone off. Start it again when ready.');};
       status('Starting microphone. Your browser may ask permission.');try{instance.start();}catch(_){stopMic('Microphone could not start. Use the keyboard or try again.');}
     }
-    $('toggle').onclick=()=>{const panel=ui.querySelector('.va-panel');panel.hidden=!panel.hidden;$('toggle').setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden){refreshTargets();voices();}};
+    $('toggle').onclick=()=>{const panel=ui.querySelector('.va-panel');panel.hidden=!panel.hidden;collapsedByUser=panel.hidden;$('toggle').setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden){refreshTargets();voices();}};
     $('stop-all').onclick=()=>{exclusive('stop');stopAll();};$('page').onclick=()=>read(doc.querySelector('main')||doc.body,'page');$('selection').onclick=()=>speakText(selection,'selected text');$('pause').onclick=pause;$('resume').onclick=resume;$('repeat').onclick=()=>speakText(lastText,lastLabel);
     $('preview').onclick=()=>speakText('This is your AFM reading voice. Take one requirement at a time, explain your method, and check the result.','voice preview');
     $('rate').value=String(prefs.rate);if($('rate').selectedIndex<0)$('rate').value='1';$('rate').onchange=preference;$('voice').onchange=preference;
@@ -219,7 +234,15 @@
       }
       refreshTargets();questionControls();
     }
-    function schedule(records){if(records && records.every(r=>r.target.nodeType===1&&(r.target.closest?.('.va-ui')||r.target.classList?.contains('va-read'))))return;if(!scheduled){scheduled=true;requestAnimationFrame(decorate);}}
+    // Ignore this widget's own churn: its panel updates, the Read-aloud buttons it inserts
+    // (reported against the host element) and text edits, whose target is a node, not an element.
+    function ownMutation(r){
+      const el=r.target.nodeType===1?r.target:r.target.parentElement;
+      if(el&&(el.closest('.va-ui')||el.classList?.contains('va-read')))return true;
+      const touched=[...r.addedNodes,...r.removedNodes];
+      return touched.length>0&&touched.every(n=>n.nodeType===1&&(n.classList?.contains('va-read')||n.classList?.contains('va-ui')));
+    }
+    function schedule(records){if(records&&records.every(ownMutation))return;if(!scheduled){scheduled=true;requestAnimationFrame(decorate);}}
     const observer=new MutationObserver(schedule);observer.observe(doc.body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','open','aria-hidden'],characterData:true});
     doc.addEventListener('selectionchange',()=>{const field=doc.activeElement;if(field?.matches('textarea,input')&&field.selectionEnd>field.selectionStart){selection=field.value.slice(field.selectionStart,field.selectionEnd);return;}const s=window.getSelection();if(s?.rangeCount&&s.anchorNode?.parentElement?.closest('[contenteditable="true"]'))savedRange=s.getRangeAt(0).cloneRange();if(s&&!s.isCollapsed&&s.toString().trim()&&!s.anchorNode?.parentElement?.closest('.va-ui'))selection=s.toString();});
     doc.addEventListener('focusin',e=>{if(e.target.matches?.('textarea,input,[contenteditable="true"]')&&!e.target.closest('.va-ui')){lastTarget=e.target;refreshTargets();$('target').value=e.target.dataset.vaTarget||'';}});
@@ -236,7 +259,7 @@
     if(oldQuestion)oldQuestion.onclick=()=>read(doc.getElementById('q-requirements'),'question requirements');
     doc.addEventListener('visibilitychange',()=>{if(doc.hidden)stopAll('Page hidden. Reading and microphone stopped.');});
     // A second legacy voice feature must never feed its output into this microphone.
-    setInterval(()=>{if(listening&&synth?.speaking&&!synth?.paused)stopMic('Microphone stopped because speech playback started.');if(activeElement&&!visible(activeElement))stopRead('Reading stopped because the section is no longer visible.');},200);
+    setInterval(()=>{if(!listening&&!activeElement)return;if(listening&&synth?.speaking&&!synth?.paused)stopMic('Microphone stopped because speech playback started.');if(activeElement&&!visible(activeElement))stopRead('Reading stopped because the section is no longer visible.');},200);
     schedule();
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();

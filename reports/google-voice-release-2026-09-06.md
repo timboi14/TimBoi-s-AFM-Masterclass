@@ -9,3 +9,13 @@ Validation: production build and server TypeScript check passed. Seventeen focus
 Sources: https://ai.google.dev/gemini-api/docs/speech-generation and https://ai.google.dev/api/interactions-api
 
 Follow-up: settings now synchronize between the academy page and embedded classroom. Three Google-specific tests pass, including cancellation while generation is pending. Production GET confirms Gemini configuration, but actual generation currently returns 503 because the pre-existing Upstash host does not resolve. Browser reading remains operational. Upstash account sign-in is needed to restore the quota connection; Google audio has not yet been verified live.
+
+## 6 September 2026 — quota decoupling and reading-panel fixes
+
+Google speech no longer depends on a reachable Upstash instance. Every Google request in production was returning `503 Speech quota service unavailable`, so the natural voices were selectable but never produced audio and every read fell back to a browser voice. `/api/speech` now treats the durable counter as the preferred layer and drops to a best-effort per-isolate budget — 20,000 characters per IP and 50,000 in total per isolate per UTC day — when the store is absent or unreachable, logging `[speech] durable quota unavailable`. Genuine limit breaches still return 429 in both modes, so a dead quota store throttles speech instead of disabling it.
+
+This is a deliberate change of posture: the best-effort ceiling is per isolate, not a durable site-wide guarantee, so worst-case spend scales with however many edge isolates are warm. Restoring Upstash, or setting a spend cap on the Gemini key, returns the hard bound. `GET /api/speech` now reports `durableQuota` so the active mode is visible, and `available` no longer requires the quota variables.
+
+The reading panel no longer reopens itself. `expand()` forced the panel visible on every read, so minimising it was undone by the next Read aloud press. An explicit collapse is now remembered until the reader opens the panel again. The MutationObserver's self-filter also failed to recognise its own work — text-node targets are not elements, and inserted Read-aloud buttons are reported against the host element — so the expensive full-document decorate pass ran far more often than needed. Browser reading now splits on sentence boundaries rather than a blind 260-character cut, removing mid-clause pauses.
+
+Validation: production build and 30/30 Playwright checks pass, including new regression tests for the minimised panel and for best-effort quota exhaustion. Live Gemini audio remains unverified — the quota gate returned 503 before any request reached Google — and needs one hosted playback check after deploy.

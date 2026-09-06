@@ -111,6 +111,17 @@ test('dictation reaches a named form field and the CBE rich-text editor',async({
   await ui.getByRole('button',{name:'Stop microphone',exact:true}).click();await expect.poll(()=>page.evaluate(()=>Object.values(localStorage).some(v=>v.includes('Additional reasoning')))).toBe(true);await page.reload();await expect(page.getByRole('textbox',{name:'Word processor',exact:true})).toContainText('Additional reasoning <b>literal</b>');
 });
 
+test('a deliberately minimised panel stays minimised while reading',async({page})=>{
+  await mockSpeech(page);await page.goto('/afm-classroom/classroom14.html');
+  const ui=page.locator('.va-ui'),panel=ui.locator('.va-panel'),toggle=ui.getByRole('button',{name:'Voice & reading',exact:true});
+  await toggle.click();await expect(panel).toBeVisible();
+  await toggle.click();await expect(panel).toBeHidden();
+  await page.evaluate(()=>window.dispatchEvent(new CustomEvent('afm-read-source',{detail:{text:'Reading while the controls are collapsed.',label:'probe'}})));
+  await expect(ui.locator('[data-va="short"]')).toHaveText('Reading');
+  await expect(panel).toBeHidden();
+  await toggle.click();await expect(panel).toBeVisible();
+});
+
 test('academy microphone can request the embedded full question without self-triggering',async({page})=>{
   await mockSpeech(page);await page.goto('/classroom-14');const room=page.frameLocator('iframe');await room.getByRole('button',{name:'Question studio',exact:true}).click();
   const ui=page.locator('.va-ui');await ui.getByRole('button',{name:'Voice & reading',exact:true}).click();await ui.getByRole('button',{name:'Start microphone',exact:true}).click();await mock(page,"window.__voiceMock.emit('read full question')");

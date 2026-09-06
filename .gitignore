@@ -31,3 +31,6 @@ dist/
 # Scratch/working dirs
 .spec-blocks/
 reports/tmp-jscpd/
+
+# Playwright run output
+test-results/

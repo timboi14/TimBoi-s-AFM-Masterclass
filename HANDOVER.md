@@ -172,4 +172,11 @@ Full official answer/marking-scheme coverage is not claimed. Six question landin
 
 The shared implementation is `public/afm-classroom/voice-access.js` and `.css`, loaded by the academy entry and every classroom HTML page. `QuestionReadAloud.tsx` connects full original source questions to the existing past-paper viewer and exam reader. It reuses the 42-source data script and enables reading only after loading; unmatched native papers carry an explicit completeness notice.
 
+Google speech is served by `api/speech.ts` (Gemini TTS). Its durable Upstash quota is now a
+preferred layer rather than a hard requirement: an absent or unreachable store degrades to a
+tighter per-isolate budget instead of returning 503, which is what had left every Google read
+falling back to a browser voice. That trades a durable spend bound for availability — restore
+Upstash or cap the Gemini key to get the hard bound back. `GET /api/speech` reports `durableQuota`
+so the active mode is visible.
+
 Use Voice & reading to choose a browser voice/rate, preview, control playback, or explicitly start Commands/Dictation. Text-block readers, full-question/exhibit controls and selected-text reading cover study content. Dictation supports named editable text fields and CBE rich text. `afm-voice-exclusive` coordinates playback/recognition with the legacy Coach and embedded classroom; route changes stop voice activity. No audio is stored by this feature. Speech tests are mocked, not real microphone/audio certification. See `reports/voice-release-2026-09-06.md` for validation and limitations.

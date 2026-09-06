@@ -1,23 +1,37 @@
 import {test,expect} from '@playwright/test';
 import handler from '../api/speech';
 
-test('speech endpoint validates input, fails closed and wraps PCM as WAV',async()=>{
+test('speech endpoint validates input, keeps working without a quota store and wraps PCM as WAV',async()=>{
   const original=globalThis.fetch;const saved={...process.env};
   process.env.GEMINI_API_KEY='test-only';process.env.UPSTASH_REDIS_REST_URL='https://quota.example';process.env.UPSTASH_REDIS_REST_TOKEN='test-only';
-  const request=(body:any)=>new Request('https://site.example/api/speech',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+  const request=(body:any,ip='203.0.113.1')=>new Request('https://site.example/api/speech',{method:'POST',headers:{'content-type':'application/json','x-forwarded-for':ip},body:JSON.stringify(body)});
+  const audio=()=>Response.json({steps:[{type:'model_output',content:[{type:'audio',data:'AAAAAA=='}]}]});
+  const offlineQuota=async(url:any)=>{if(String(url).includes('quota.example'))throw new Error('quota offline');return audio();};
   let calls=0;
   try{
     globalThis.fetch=async()=>{calls++;return Response.json([{result:10},{result:1},{result:10},{result:1}]);};
     expect((await handler(request({text:'hello',voice:'invalid'}))).status).toBe(400);expect(calls).toBe(0);
-    globalThis.fetch=async()=>{throw new Error('quota offline');};expect((await handler(request({text:'hello',voice:'Kore'}))).status).toBe(503);
-    globalThis.fetch=async()=>Response.json([{result:100001},{result:1},{result:100001},{result:1}]);expect((await handler(request({text:'hello',voice:'Kore'}))).status).toBe(429);
+    // A quota store that is down throttles speech; it must not take the feature offline.
+    globalThis.fetch=offlineQuota as any;
+    expect((await handler(request({text:'hello',voice:'Kore'},'203.0.113.2'))).status).toBe(200);
+    // Durable limits still refuse once the store answers and the day's budget is spent.
+    globalThis.fetch=(async(url:any)=>String(url).includes('quota.example')?Response.json([{result:100001},{result:1},{result:100001},{result:1}]):audio()) as any;
+    expect((await handler(request({text:'hello',voice:'Kore'},'203.0.113.3'))).status).toBe(429);
+    // The best-effort budget refuses once exhausted, so a dead store cannot mean unlimited spend.
+    globalThis.fetch=offlineQuota as any;
+    const long='x'.repeat(1200);let last=200;
+    for(let i=0;i<25&&last===200;i++)last=(await handler(request({text:long,voice:'Kore'},'203.0.113.4'))).status;
+    expect(last).toBe(429);
     globalThis.fetch=async(url,options)=>{
       if(String(url).includes('quota.example'))return Response.json([{result:10},{result:1},{result:10},{result:1}]);
       expect((options?.headers as any)['x-goog-api-key']).toBe('test-only');
-      return Response.json({steps:[{type:'model_output',content:[{type:'audio',data:'AAAAAA=='}]}]});
+      return audio();
     };
-    const result=await handler(request({text:'hello',voice:'Kore'}));expect(result.status).toBe(200);expect(result.headers.get('cache-control')).toContain('no-store');
+    const result=await handler(request({text:'hello',voice:'Kore'},'203.0.113.5'));expect(result.status).toBe(200);expect(result.headers.get('cache-control')).toContain('no-store');
     const buffer=await result.arrayBuffer();expect(new TextDecoder().decode(buffer.slice(0,4))).toBe('RIFF');expect(new DataView(buffer).getUint32(24,true)).toBe(24000);expect(buffer.byteLength).toBe(48);
+    // Google voices stay on offer when only the optional quota store is unset.
+    process.env.UPSTASH_REDIS_REST_URL='';process.env.UPSTASH_REDIS_REST_TOKEN='';
+    expect(await (await handler(new Request('https://site.example/api/speech'))).json()).toMatchObject({available:true,durableQuota:false});
   }finally{globalThis.fetch=original;process.env=saved;}
 });
 

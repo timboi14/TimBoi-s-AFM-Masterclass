@@ -1,14 +1,29 @@
-/** Server-only Gemini speech. Durable character quotas fail closed. */
+/**
+ * Server-only Gemini speech. Character quotas are durable while Upstash answers and
+ * best-effort otherwise, so losing the quota store throttles speech instead of disabling it.
+ */
 export const config = { runtime: 'edge' };
 const VOICES = ['Kore', 'Puck', 'Charon', 'Aoede'];
+const DURABLE_IP = 100000, DURABLE_GLOBAL = 250000;
+// Best-effort counters live in a single edge isolate and reset when it recycles, so they sit
+// well below the durable limits to bound spend across however many isolates are warm.
+const LOCAL_IP = 20000, LOCAL_GLOBAL = 50000;
+const localUse = new Map<string, number>(); let localDay = -1;
+function localQuota(ip: string, day: number, chars: number): boolean {
+  if (day !== localDay) { localUse.clear(); localDay = day; }
+  const perIp = (localUse.get(ip) || 0) + chars, total = (localUse.get('*') || 0) + chars;
+  localUse.set(ip, perIp); localUse.set('*', total);
+  return perIp <= LOCAL_IP && total <= LOCAL_GLOBAL;
+}
 const reply = (message: string, status: number) => new Response(message, {status, headers:{'cache-control':'no-store'}});
 export default async function handler(req: Request): Promise<Response> {
   const key = process.env.GEMINI_API_KEY;
   const redis = process.env.UPSTASH_REDIS_REST_URL;
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (req.method === 'GET') return Response.json({available:!!(key && redis && redisToken), voices:VOICES}, {headers:{'cache-control':'no-store'}});
+  const durable = !!(redis && redisToken);
+  if (req.method === 'GET') return Response.json({available:!!key, durableQuota:durable, voices:VOICES}, {headers:{'cache-control':'no-store'}});
   if (req.method !== 'POST') return reply('Method not allowed',405);
-  if (!key || !redis || !redisToken) return reply('Google speech is unavailable. Choose a browser voice.',503);
+  if (!key) return reply('Google speech is unavailable. Choose a browser voice.',503);
   const origin = req.headers.get('origin');
   if (origin && origin !== new URL(req.url).origin) return reply('Origin not allowed',403);
   if (Number(req.headers.get('content-length')) > 12000) return reply('Text too long',413);
@@ -16,16 +31,26 @@ export default async function handler(req: Request): Promise<Response> {
   try { const raw=await req.text(); if(raw.length>12000)return reply('Text too long',413); body=JSON.parse(raw); } catch {return reply('Invalid request',400);}
   if (!body || typeof body.text !== 'string' || !body.text.trim() || body.text.length>1200 || !VOICES.includes(body.voice)) return reply('Use 1–1200 characters and a supported voice.',400);
   const day=Math.floor(Date.now()/86400000), ip=(req.headers.get('x-forwarded-for')||'unknown').split(',')[0].trim();
-  try {
-    const quota=await fetch(`${redis.replace(/\/$/,'')}/pipeline`,{method:'POST',signal:AbortSignal.timeout(3000),headers:{authorization:`Bearer ${redisToken}`,'content-type':'application/json'},body:JSON.stringify([
-      ['INCRBY',`speech:ip:${ip}:${day}`,body.text.length],['EXPIRE',`speech:ip:${ip}:${day}`,86400,'NX'],
-      ['INCRBY',`speech:global:${day}`,body.text.length],['EXPIRE',`speech:global:${day}`,86400,'NX']
-    ])});
-    if(!quota.ok) return reply('Speech quota service unavailable. Choose a browser voice.',503);
-    const counts=await quota.json();
-    if(!Number.isFinite(counts?.[0]?.result)||!Number.isFinite(counts?.[2]?.result)||counts.some((x:any)=>x.error))return reply('Speech quota service unavailable. Choose a browser voice.',503);
-    if(counts[0].result>100000||counts[2].result>250000)return reply('Daily Google speech limit reached. Choose a browser voice.',429);
-  } catch {return reply('Speech quota service unavailable. Choose a browser voice.',503);}
+  let counted=false;
+  if (durable) {
+    try {
+      const quota=await fetch(`${redis!.replace(/\/$/,'')}/pipeline`,{method:'POST',signal:AbortSignal.timeout(3000),headers:{authorization:`Bearer ${redisToken}`,'content-type':'application/json'},body:JSON.stringify([
+        ['INCRBY',`speech:ip:${ip}:${day}`,body.text.length],['EXPIRE',`speech:ip:${ip}:${day}`,86400,'NX'],
+        ['INCRBY',`speech:global:${day}`,body.text.length],['EXPIRE',`speech:global:${day}`,86400,'NX']
+      ])});
+      const counts=quota.ok?await quota.json():null;
+      if(Array.isArray(counts)&&Number.isFinite(counts[0]?.result)&&Number.isFinite(counts[2]?.result)&&!counts.some((x:any)=>x.error)){
+        if(counts[0].result>DURABLE_IP||counts[2].result>DURABLE_GLOBAL)return reply('Daily Google speech limit reached. Choose a browser voice.',429);
+        counted=true;
+      }
+    } catch {}
+  }
+  // An absent or unreachable durable store degrades to the tighter in-isolate budget rather
+  // than taking the whole feature offline.
+  if (!counted) {
+    console.warn('[speech] durable quota unavailable; applying best-effort limits');
+    if(!localQuota(ip,day,body.text.length))return reply('Daily Google speech limit reached. Choose a browser voice.',429);
+  }
   try {
     const res=await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {method:'POST',signal:AbortSignal.timeout(55000),headers:{'x-goog-api-key':key,'content-type':'application/json'},body:JSON.stringify({
       model:process.env.GEMINI_TTS_MODEL||'gemini-3.1-flash-tts-preview',
