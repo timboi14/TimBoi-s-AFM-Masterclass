@@ -1,4 +1,4 @@
-/* Shared browser-native reading and explicit microphone accessibility. No AI API. */
+/* Shared browser and optional server-side Gemini reading with explicit microphone access. */
 (() => {
   'use strict';
   if (window.__afmVoiceAccess) return;
@@ -12,11 +12,12 @@
     let prefs = {rate:1,voice:''}; try { prefs = {...prefs,...JSON.parse(localStorage.getItem(KEY)||'{}')}; } catch (_) {}
     let reading = false, paused = false, token = 0, lastText = '', lastLabel = '', activeElement = null;
     let savedRange=null;
+    let cloudReady=false, cloudVoices=[], audio=null, audioUrl='', cloudAbort=null; const audioCache=new Map();
     let rec = null, listening = false, micToken = 0, lockedTarget = null, selection = '', lastTarget = null;
     const controls = new Map(), targets = new Map(); let targetCounter = 0, scheduled = false;
     const ui = doc.createElement('aside'); ui.className = 'va-ui'; ui.setAttribute('aria-label','Voice and reading controls');
     ui.innerHTML = `<div class="va-launch"><button type="button" data-va="toggle" aria-expanded="false">Voice & reading</button><button type="button" data-va="stop-all">Stop all</button><span data-va="short" aria-live="polite">Ready</span></div>
-      <div class="va-panel" hidden><h2>Listen and speak</h2><p class="va-note">Browser reading, voice commands and dictation. This is not a conversational AI tutor.</p>
+      <div class="va-panel" hidden><h2>Listen and speak</h2><p class="va-note">Choose a browser voice or a natural Google voice. Google reading sends the chosen text to Google to generate audio. Voice commands and dictation use your browser.</p>
       <div class="va-actions"><button type="button" data-va="page">Read page</button><button type="button" data-va="selection">Read selected text</button><button type="button" data-va="pause">Pause</button><button type="button" data-va="resume">Resume</button><button type="button" data-va="repeat">Read again</button><button type="button" data-va="preview">Preview voice</button></div>
       <label>Reading speed<select data-va="rate"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1×</option><option value="1.15">1.15×</option><option value="1.3">1.3×</option><option value="1.5">1.5×</option></select></label>
       <label>Reading voice<select data-va="voice"><option value="">Browser default</option></select></label>
@@ -56,6 +57,7 @@
       return parts.join(' ').replace(/\s+/g,' ').trim();
     }
     function stopRead(message) {
+      cloudAbort?.abort();cloudAbort=null;if(audio){audio.pause();audio.src='';audio=null;}if(audioUrl){URL.revokeObjectURL(audioUrl);audioUrl='';}
       const owned=reading;token++; reading=false;paused=false; if(canRead&&owned) synth.cancel();
       activeElement?.classList.remove('va-reading');activeElement=null;
       $('pause').disabled=true;$('resume').disabled=true;
@@ -74,6 +76,7 @@
       stopMic();exclusive('speech');stopRead();lastText=text;lastLabel=label;activeElement=el;
       activeElement?.classList.add('va-reading');reading=true;expand();status(`Reading ${label}. Microphone is off.`);
       $('pause').disabled=false;$('resume').disabled=true;$('repeat').disabled=false;
+      if(prefs.voice.startsWith('google:')&&cloudReady){cloudSpeak(text,label,++token);return;}
       // Bound utterance length without dropping trailing sentences or long paragraphs.
       const chunks=text.match(/[\s\S]{1,260}(?:\s|$)|[\s\S]{1,260}/g)||[text];
       const run=++token; let i=0;
@@ -85,6 +88,24 @@
         utter.onend=next;utter.onerror=e=>{if(run!==token)return;stopRead();status(`Reading stopped: ${e.error||'speech unavailable'}. Try another voice.`);};
         synth.speak(utter);
       }next();
+    }
+    async function cloudSpeak(text,label,run){
+      const voice=prefs.voice.slice(7), chunks=text.match(/[\s\S]{1,1000}(?:\s|$)|[\s\S]{1,1000}/g)||[text];let index=0;
+      async function next(){
+        if(run!==token)return;
+        if(index===chunks.length){stopRead();status(`Finished ${label}. Microphone remains off.`);return;}
+        const chunk=chunks[index++],cacheKey=voice+'|'+chunk;status(`Preparing Google voice: ${label} (${index}/${chunks.length}). Microphone is off.`);
+        try{
+          let blob=audioCache.get(cacheKey);
+          if(!blob){cloudAbort=new AbortController();const response=await fetch('/api/speech',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text:chunk,voice}),signal:cloudAbort.signal});
+            if(!response.ok)throw new Error(await response.text());blob=await response.blob();if(!blob.type.startsWith('audio/'))throw new Error('Google speech returned no audio.');
+            if(run!==token)return;audioCache.set(cacheKey,blob);while(audioCache.size>5)audioCache.delete(audioCache.keys().next().value);
+          }
+          if(run!==token)return;if(audioUrl)URL.revokeObjectURL(audioUrl);audioUrl=URL.createObjectURL(blob);audio=new Audio(audioUrl);audio.playbackRate=Number(prefs.rate)||1;
+          audio.onended=next;audio.onerror=()=>{if(run===token){stopRead();status('Audio playback failed. Choose a browser voice or try again.');}};
+          if(!paused){await audio.play();if(run===token)status(`Reading ${label} with Google. Microphone is off.`);}
+        }catch(error){if(run!==token)return;stopRead();status((error.message||'Google speech unavailable.')+' Choose a browser voice to continue.');}
+      }await next();
     }
     function sourceText(html){const parsed=new DOMParser().parseFromString(html,'text/html');return textOf(parsed.body,true);}
     function sourceSections(html){
@@ -107,9 +128,9 @@
       button.disabled=!canRead;
     }
     function read(el,label){speakText(textOf(el),label||'section',el);}
-    function pause(){if(reading&&!paused){synth.pause();paused=true;$('pause').disabled=true;$('resume').disabled=false;status('Reading paused. Microphone is off.');}}
-    function resume(){if(reading&&paused){stopMic();synth.resume();paused=false;$('pause').disabled=false;$('resume').disabled=true;status(`Reading ${lastLabel}. Microphone is off.`);}}
-    function voices(){if(!canRead)return;const picker=$('voice');picker.replaceChildren(new Option('Browser default',''));for(const v of synth.getVoices())picker.add(new Option(`${v.name} · ${v.lang}`,v.voiceURI));if(!prefs.voice){let preferred='';try{preferred=JSON.parse(localStorage.getItem('tba_coach_prefs_v2')||'{}').voiceName||'';}catch(_){}const available=synth.getVoices();const chosen=available.find(v=>v.name===preferred)||available.find(v=>/^en/i.test(v.lang)&&/natural|premium|enhanced|neural/i.test(v.name))||available.find(v=>v.lang==='en-GB');if(chosen)prefs.voice=chosen.voiceURI;}picker.value=prefs.voice; if(picker.selectedIndex<0)picker.value='';}
+    function pause(){if(reading&&!paused){if(prefs.voice.startsWith('google:')&&cloudReady)audio?.pause();else synth.pause();paused=true;$('pause').disabled=true;$('resume').disabled=false;status('Reading paused. Microphone is off.');}}
+    function resume(){if(reading&&paused){stopMic();if(prefs.voice.startsWith('google:')&&cloudReady){audio?.play().catch(()=>{stopRead();status('Press Read again to restart audio.');});}else synth.resume();paused=false;$('pause').disabled=false;$('resume').disabled=true;status(`Reading ${lastLabel}. Microphone is off.`);}}
+    function voices(){if(!canRead)return;const picker=$('voice');picker.replaceChildren(new Option('Browser default',''));if(cloudReady)for(const name of cloudVoices)picker.add(new Option('Google · '+name,'google:'+name));for(const v of synth.getVoices())picker.add(new Option(`${v.name} · ${v.lang}`,v.voiceURI));if(!prefs.voice){let preferred='';try{preferred=JSON.parse(localStorage.getItem('tba_coach_prefs_v2')||'{}').voiceName||'';}catch(_){}const available=synth.getVoices();const chosen=available.find(v=>v.name===preferred)||available.find(v=>/^en/i.test(v.lang)&&/natural|premium|enhanced|neural/i.test(v.name))||available.find(v=>v.lang==='en-GB');if(chosen)prefs.voice=chosen.voiceURI;}picker.value=prefs.voice; if(picker.selectedIndex<0)picker.value='';}
     function preference(){prefs={rate:Number($('rate').value),voice:$('voice').value};try{localStorage.setItem(KEY,JSON.stringify(prefs));}catch(_){}if(reading)stopRead('Reading stopped. Choose Read again to use the new settings.');}
     function fieldLabel(el){return el.labels?.[0]?.innerText?.trim()||el.getAttribute('aria-label')||el.placeholder||el.name||'Text field';}
     function refreshTargets(){
@@ -184,6 +205,7 @@
     if(!canRead){for(const n of ['page','selection','rate','voice','preview'])$(n).disabled=true;status('Read-aloud is unavailable in this browser. Text and study controls still work.');}
     if(!SR){const note=doc.createElement('p');note.className='va-note';note.textContent='Speech recognition is unavailable here. Use typed answers and regular navigation.';$('mic').parentElement.after(note);}
     voices();synth?.addEventListener('voiceschanged',voices);
+    if(location.protocol==='https:'||location.hostname==='localhost')fetch('/api/speech').then(r=>r.ok?r.json():null).then(data=>{if(data?.available){cloudReady=true;cloudVoices=data.voices;voices();}}).catch(()=>{});
     function decorate(){
       scheduled=false;
       for(const [el,btn]of controls){if(!visible(el)){btn.remove();controls.delete(el);}}
