@@ -9,6 +9,7 @@ const DURABLE_IP = 100000, DURABLE_GLOBAL = 250000;
 // well below the durable limits to bound spend across however many isolates are warm.
 const LOCAL_IP = 20000, LOCAL_GLOBAL = 50000;
 const localUse = new Map<string, number>(); let localDay = -1;
+let durableFailures = 0, durableRetryAt = 0;
 function localQuota(ip: string, day: number, chars: number): boolean {
   if (day !== localDay) { localUse.clear(); localDay = day; }
   const perIp = (localUse.get(ip) || 0) + chars, total = (localUse.get('*') || 0) + chars;
@@ -32,7 +33,8 @@ export default async function handler(req: Request): Promise<Response> {
   if (!body || typeof body.text !== 'string' || !body.text.trim() || body.text.length>1200 || !VOICES.includes(body.voice)) return reply('Use 1–1200 characters and a supported voice.',400);
   const day=Math.floor(Date.now()/86400000), ip=(req.headers.get('x-forwarded-for')||'unknown').split(',')[0].trim();
   let counted=false;
-  if (durable) {
+  if (durable && Date.now()>=durableRetryAt) {
+    let answered=false, over=false;
     try {
       const quota=await fetch(`${redis!.replace(/\/$/,'')}/pipeline`,{method:'POST',signal:AbortSignal.timeout(3000),headers:{authorization:`Bearer ${redisToken}`,'content-type':'application/json'},body:JSON.stringify([
         ['INCRBY',`speech:ip:${ip}:${day}`,body.text.length],['EXPIRE',`speech:ip:${ip}:${day}`,86400,'NX'],
@@ -40,10 +42,12 @@ export default async function handler(req: Request): Promise<Response> {
       ])});
       const counts=quota.ok?await quota.json():null;
       if(Array.isArray(counts)&&Number.isFinite(counts[0]?.result)&&Number.isFinite(counts[2]?.result)&&!counts.some((x:any)=>x.error)){
-        if(counts[0].result>DURABLE_IP||counts[2].result>DURABLE_GLOBAL)return reply('Daily Google speech limit reached. Choose a browser voice.',429);
-        counted=true;
+        answered=true;over=counts[0].result>DURABLE_IP||counts[2].result>DURABLE_GLOBAL;counted=!over;
       }
     } catch {}
+    // Stop a dead store adding its latency to every chunk of a long read.
+    if(answered)durableFailures=0;else if(++durableFailures>=3){durableRetryAt=Date.now()+60000;durableFailures=0;}
+    if(over)return reply('Daily Google speech limit reached. Choose a browser voice.',429);
   }
   // An absent or unreachable durable store degrades to the tighter in-isolate budget rather
   // than taking the whole feature offline.

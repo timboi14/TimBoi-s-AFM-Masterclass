@@ -17,11 +17,6 @@ test('speech endpoint validates input, keeps working without a quota store and w
     // Durable limits still refuse once the store answers and the day's budget is spent.
     globalThis.fetch=(async(url:any)=>String(url).includes('quota.example')?Response.json([{result:100001},{result:1},{result:100001},{result:1}]):audio()) as any;
     expect((await handler(request({text:'hello',voice:'Kore'},'203.0.113.3'))).status).toBe(429);
-    // The best-effort budget refuses once exhausted, so a dead store cannot mean unlimited spend.
-    globalThis.fetch=offlineQuota as any;
-    const long='x'.repeat(1200);let last=200;
-    for(let i=0;i<25&&last===200;i++)last=(await handler(request({text:long,voice:'Kore'},'203.0.113.4'))).status;
-    expect(last).toBe(429);
     globalThis.fetch=async(url,options)=>{
       if(String(url).includes('quota.example'))return Response.json([{result:10},{result:1},{result:10},{result:1}]);
       expect((options?.headers as any)['x-goog-api-key']).toBe('test-only');
@@ -29,6 +24,14 @@ test('speech endpoint validates input, keeps working without a quota store and w
     };
     const result=await handler(request({text:'hello',voice:'Kore'},'203.0.113.5'));expect(result.status).toBe(200);expect(result.headers.get('cache-control')).toContain('no-store');
     const buffer=await result.arrayBuffer();expect(new TextDecoder().decode(buffer.slice(0,4))).toBe('RIFF');expect(new DataView(buffer).getUint32(24,true)).toBe(24000);expect(buffer.byteLength).toBe(48);
+    // The best-effort budget refuses once exhausted, so a dead store cannot mean unlimited spend,
+    // and a store that keeps failing stops being called ahead of every chunk of a long read.
+    let quotaCalls=0;
+    globalThis.fetch=(async(url:any)=>{if(String(url).includes('quota.example')){quotaCalls++;throw new Error('quota offline');}return audio();}) as any;
+    const long='x'.repeat(1200);let last=200;
+    for(let i=0;i<25&&last===200;i++)last=(await handler(request({text:long,voice:'Kore'},'203.0.113.4'))).status;
+    expect(last).toBe(429);
+    expect(quotaCalls).toBeLessThanOrEqual(3);
     // Google voices stay on offer when only the optional quota store is unset.
     process.env.UPSTASH_REDIS_REST_URL='';process.env.UPSTASH_REDIS_REST_TOKEN='';
     expect(await (await handler(new Request('https://site.example/api/speech'))).json()).toMatchObject({available:true,durableQuota:false});
