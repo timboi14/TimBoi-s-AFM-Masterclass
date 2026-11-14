@@ -14,7 +14,8 @@ identical file for file.
 - **Stack.** React 19, React Router 7, Vite 8 (Rolldown), Tailwind 4, TypeScript 7, vite-plugin-pwa 2.
   Manual chunks became `build.rolldownOptions.output.codeSplitting.groups` in `vite.config.ts`.
   `esbuild` is now a direct dev dependency because Vite 8 no longer ships it and the stats script needs it.
-  Installs need `--legacy-peer-deps` while a Babel 7/8 peer conflict in the toolchain remains.
+  A clean install works from the lockfile. Adding or upgrading a package may need
+  `--legacy-peer-deps` while a Babel 7/8 peer conflict in the toolchain remains.
 - **Sitting is a list, and the learner chooses.** `src/config/sitting.ts` exports `SITTINGS`
   (December 2026, Friday 11 December, and March 2027). `SITTING` resolves at module load from `tba_sitting_choice`;
   the default is the first sitting whose entry is still open. `chooseSitting()` reloads the app.
