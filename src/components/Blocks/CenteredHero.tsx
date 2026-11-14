@@ -25,7 +25,11 @@ interface CenteredHeroProps {
 
 /** Highlight a single word inside the headline in gold. */
 export function HeroGold({ children }: { children: ReactNode }) {
-  return <span className="text-(--gold-500)">{children}</span>;
+  // Light surfaces: solid gold text cannot reach AA without turning olive, so
+  // the word keeps the ink colour and sits on a thick gold marker stroke.
+  const tone = useTone();
+  const dark = tone === 'navy' || tone === 'black';
+  return <span className={dark ? 'text-(--gold-500)' : 'hero-gold--marker'}>{children}</span>;
 }
 
 const ease = [0.2, 0.8, 0.2, 1] as const;
@@ -62,7 +66,7 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
     >
       {eyebrow && (
         <motion.div
-          variants={v(8, 0.2, 0.4, prefersReduced)}
+          variants={v(8, 0, 0.3, prefersReduced)}
           className={cn(
             'inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] mb-6',
             dark
@@ -75,7 +79,7 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
       )}
 
       <motion.h1
-        variants={v(16, 0.4, 0.5, prefersReduced)}
+        variants={v(14, 0.04, 0.42, prefersReduced)}
         style={{
           fontSize: slim ? 'clamp(2rem, 4.5vw, 3.5rem)' : 'var(--fs-display-xl)',
           lineHeight: slim ? 1.05 : 'var(--lh-tight)',
@@ -90,7 +94,7 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
 
       {subline && (
         <motion.p
-          variants={v(12, 0.5, 0.45, prefersReduced)}
+          variants={v(10, 0.1, 0.4, prefersReduced)}
           style={{
             fontSize: 'var(--fs-subline)',
             lineHeight: 'var(--lh-snug)',
@@ -106,7 +110,7 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
 
       {actions && (
         <motion.div
-          variants={v(8, 0.6, 0.4, prefersReduced)}
+          variants={v(8, 0.16, 0.36, prefersReduced)}
           className="mt-8 flex flex-wrap items-center justify-center gap-3"
         >
           {actions}
@@ -116,7 +120,7 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
       {artwork && !slim && (
         <motion.div
           initial={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1, transition: { duration: prefersReduced ? 0.2 : 0.8, delay: 0.8, ease } }}
+          animate={{ opacity: 1, scale: 1, transition: { duration: prefersReduced ? 0.2 : 0.8, delay: 0.25, ease } }}
           className="mt-20 w-[78%] max-w-[920px]"
           style={{ maxHeight: '60vh' }}
         >

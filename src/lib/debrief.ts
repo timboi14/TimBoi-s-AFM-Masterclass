@@ -40,6 +40,7 @@ export interface StructuralCritique {
   noticesNotReWrite: string;   // disclaimer string echoed in output
 }
 
+import { recordEvent } from '@/lib/db/events';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 
 const STORE_KEY = 'tba_debrief_v1';
@@ -52,7 +53,10 @@ export function saveSession(s: DebriefSession) {
   const all = loadSessions();
   const idx = all.findIndex((x) => x.id === s.id);
   if (idx >= 0) all[idx] = s;
-  else all.unshift(s);
+  else {
+    all.unshift(s);
+    recordEvent('debrief_done', { ref: s.id });
+  }
   safeWriteJson(STORE_KEY, all.slice(0, 50));
 }
 

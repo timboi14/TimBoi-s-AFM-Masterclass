@@ -16,12 +16,18 @@ import '@fontsource/dm-sans/800.css';
 import '@fontsource/jetbrains-mono/500.css';
 import '@fontsource/jetbrains-mono/700.css';
 import './styles.css';
+import './styles/overhaul.css';
 // Apply persisted accessibility settings without eagerly loading the Settings route.
 import '@/lib/user-settings';
 import { installGlobalHandlers } from '@/lib/observability';
+import { bootstrapData } from '@/lib/db/bootstrap';
 
 // Install Sentry/PostHog hooks if their env vars are set; no-op otherwise.
 installGlobalHandlers();
+
+// Load the study event log, seed it on first run, mirror the streak and take
+// the daily snapshot. Asynchronous: never delays first paint.
+void bootstrapData();
 
 const rootEl = document.getElementById('root')!;
 // Clear the static loading splash so React owns the node

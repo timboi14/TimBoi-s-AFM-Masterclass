@@ -1,3 +1,4 @@
+import { recordEvent } from '@/lib/db/events';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
@@ -213,6 +214,8 @@ function SRQueue() {
   const handleGrade = (rating: Rating) => {
     if (!current) return;
     const { card, intervalDays } = gradeCard(current, rating);
+    recordEvent('card_review', { ref: current.id, value: rating });
+    recordEvent('card_review', { ref: current.id, value: rating });
     setItems((prev) => prev.map((i) => (i.id === current.id ? card : i)));
     setFlipped(false);
     setLastInterval(intervalDays);

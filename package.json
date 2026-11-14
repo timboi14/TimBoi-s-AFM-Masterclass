@@ -14,7 +14,9 @@
     "sitemap": "node scripts/generate-sitemap.mjs",
     "check:bundle": "node scripts/check-deployed-bundle.mjs",
     "check:bundle:local": "node scripts/check-deployed-bundle.mjs --base ./dist",
-    "test:e2e": "playwright test -c tests/playwright.config.ts"
+    "test:e2e": "playwright test -c tests/playwright.config.ts",
+    "test:unit": "node tests/unit/run.mjs",
+    "test": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
     "@fontsource/anton": "^5.2.7",

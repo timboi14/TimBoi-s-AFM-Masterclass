@@ -1,3 +1,4 @@
+import { recordEvent } from '@/lib/db/events';
 import { useEffect, useMemo, useState } from 'react';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { CenteredHero, HeroGold, SectionShell } from '@/components/Blocks';
@@ -199,6 +200,7 @@ function LeitnerTab() {
   /** Unified grading — branches on active SR mode. */
   const handleGrade = (rating: Rating) => {
     if (!card) return;
+    recordEvent('card_review', { ref: card.id, value: rating });
     setStore((s) => {
       const cur = s.entries[card.id] ?? { cardId: card.id, stage: 0, nextDueIso: new Date(0).toISOString() };
       if (mode === 'fsrs') {

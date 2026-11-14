@@ -84,7 +84,7 @@ export function TabArtBanner() {
     <picture
       key={base}
       aria-hidden
-      className="pointer-events-none absolute top-0 right-0 block w-[54%] sm:w-[48%] md:w-[40%] max-w-[520px] h-[360px] sm:h-[480px] lg:h-[560px] overflow-hidden z-1"
+      className="tab-art pointer-events-none absolute top-0 right-0 block w-[54%] sm:w-[48%] md:w-[40%] max-w-[520px] h-[360px] sm:h-[480px] lg:h-[560px] overflow-hidden z-1"
       style={{ maskImage: 'linear-gradient(to left, black 64%, transparent 100%)' }}
     >
       <source

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { AppIcon } from '@/components/AppIcon';
 import { CenteredHero, HeroGold, SectionShell, StickySubNav } from '@/components/Blocks';
-import { SITTING, SYLLABUS } from '@/config/sitting';
+import { SITTING, SITTING_TEXT, SYLLABUS } from '@/config/sitting';
 import { store, useStore } from '@/lib/store';
 
 const PRIORITIES = [
@@ -74,7 +74,7 @@ export function LeaveItToUsPage() {
           <p className="kicker">Your next three moves</p>
           <h2 className="font-display text-3xl md:text-5xl text-ink mt-2">Action before architecture.</h2>
           <div className="grid md:grid-cols-3 gap-4 mt-8">
-            <Move n="01" urgent={!entered} title={entered ? 'Entry confirmed' : 'Confirm exam entry'} body={entered ? `${SITTING.examDayLabel} is locked in. Keep the docket time as the final authority.` : `Standard entry closes 27 July. Confirm in myACCA before study work gets another minute.`} to={entered ? '/settings' : 'https://myacca.accaglobal.com'} external={!entered} />
+            <Move n="01" urgent={!entered} title={entered ? 'Entry confirmed' : 'Confirm exam entry'} body={entered ? `${SITTING_TEXT.examPhrase[0].toUpperCase()}${SITTING_TEXT.examPhrase.slice(1)} is locked in. Keep the docket time as the final authority.` : `${SITTING_TEXT.entryLine} Confirm in myACCA before study work gets another minute.`} to={entered ? '/settings' : 'https://myacca.accaglobal.com'} external={!entered} />
             <Move n="02" title={state.weakAreas.length ? 'Attack the weakest area' : 'Calibrate the engine'} body={state.weakAreas.length ? `Your device has flagged ${state.weakAreas[0]}. Turn that evidence into one focused rep.` : 'Ten adaptive questions create a useful starting signal instead of guessing what to revise.'} to="/start/diagnostic" />
             <Move n="03" title="Produce 25 minutes of evidence" body="Plan or write one requirement in the CBE workspace, then record one strength and one leak." to="/practice" />
           </div>

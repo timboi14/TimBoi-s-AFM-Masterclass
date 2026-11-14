@@ -1,3 +1,4 @@
+import { recordEvent } from '@/lib/db/events';
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -57,6 +58,7 @@ export function DiagnosticPage() {
         weakAreas: ranked.map((r) => r.capability),
       };
       safeWriteJson(PROFILE_KEY, profile);
+      recordEvent('diagnostic_done', { value: Math.round(next.theta * 100) / 100 });
       // Mirror weakest 3 caps into the global store so other pages can read them.
       store.set({ weakAreas: ranked.slice(0, 3).map((r) => r.capability) });
       setFinished(true);

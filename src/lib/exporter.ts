@@ -17,7 +17,8 @@
  *   - PDF progress certificate — server-side pdfkit; Sprint 10.
  */
 
-const TBA_PREFIX_RX = /^tba[._]/i;
+// Hyphenated keys (theme, accessibility, per-paper attempts) belong to the app too.
+const TBA_PREFIX_RX = /^(tba|afm)[._-]/i;
 
 export interface ExportManifest {
   version: 1;

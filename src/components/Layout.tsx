@@ -8,6 +8,9 @@ import { KeyboardHelp } from '@/components/KeyboardHelp';
 import { TabArtBanner, tabArtFor, prefetchTabArt } from '@/components/TabArt';
 import { AppIcon, type AppIconName } from '@/components/AppIcon';
 import { SH_KEY_DATES } from '@/data/shplus';
+import { SITTING } from '@/config/sitting';
+import { BottomTabs } from '@/components/BottomTabs';
+import { RecoveryBanner } from '@/components/RecoveryBanner';
 
 // Coach carries the local knowledge base, markdown renderer and paper lookup.
 // Delay it until after first paint so those hundreds of KB never block the
@@ -99,13 +102,15 @@ export function Layout() {
   const headerShellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (state.fanName) store.bumpStreak();
-  }, [state.fanName]);
+    store.bumpStreak();
+  }, []);
 
   useEffect(() => { window.dispatchEvent(new Event('afm-voice-navigation')); }, [location.pathname, location.search]);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Instant: a smooth scroll from deep in one page into the top of the next
+    // reads as lag, and fights the route-enter animation.
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setMenuOpen(false);
   }, [location.pathname]);
 
@@ -184,6 +189,7 @@ export function Layout() {
       <div className="pointer-events-none fixed inset-0 z-0 pitch-grid floodlight" />
 
       <DeadlineBanner />
+      <RecoveryBanner />
 
       {/* Sticky glass header */}
       <div
@@ -206,7 +212,7 @@ export function Layout() {
                   TIMBOI&apos;S <span className="text-primary">ACADEMY</span>
                 </div>
                 <div className="text-[10.5px] text-muted uppercase tracking-[0.18em] mt-1">
-                  ACCA AFM · September 2026
+                  ACCA AFM · {SITTING.label}
                 </div>
               </div>
             </NavLink>
@@ -358,6 +364,7 @@ export function Layout() {
       </div>
 
       {/* Global voice-enabled coach + voice stop button + keyboard help */}
+      <BottomTabs />
       <DeferredCoach />
       <StopVoice />
       <KeyboardHelp />
@@ -397,7 +404,7 @@ function DeferredCoach() {
           window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#coach`);
           setReady(true);
         }}
-        className="fixed bottom-5 right-5 z-40 group h-14 w-14 md:h-16 md:w-16 rounded-2xl flex items-center justify-center text-white shadow-[0_18px_40px_-12px_rgba(0,163,71,0.55)] transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98]"
+        className="coach-fab fixed bottom-5 right-5 z-40 group h-14 w-14 md:h-16 md:w-16 rounded-2xl flex items-center justify-center text-white shadow-[0_18px_40px_-12px_rgba(0,163,71,0.55)] transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98]"
         style={{ backgroundImage: 'linear-gradient(135deg, #00b54e 0%, #008f3d 55%, #f5b800 140%)' }}
         aria-label="Open Coach AI"
         title="Open Coach AI"

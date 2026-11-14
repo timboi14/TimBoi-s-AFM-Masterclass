@@ -1,3 +1,5 @@
+import { parseMarkerScore, stripScoreLine } from '@/lib/marker-score';
+import { recordEvent } from '@/lib/db/events';
 import { useMemo, useRef, useState } from 'react';
 import type { Paper } from '@/data/pastpapers/schema';
 import { SHEET_COLS, SHEET_ROWS, colLabel } from '@/lib/cbe-storage';
@@ -76,14 +78,15 @@ export function AIMarker({ paper, word, sheet }: Props) {
 
       // Persist the run for Form Guide. Extract a % score if the marker
       // surfaced one (e.g. "Score: 7/10" or "Marks awarded: 12 / 16").
-      const pct = extractScorePercent(acc);
-      if (pct !== null) {
+      const score = parseMarkerScore(acc);
+      if (score !== null) {
         appendMarkerResult({
           paperId: paper.id,
           topicId: paper.topics?.[0] ?? 'unknown',
-          pct,
+          pct: score.pct,
           ts: Date.now(),
         });
+        recordEvent('answer_marked', { ref: `${paper.id}:${selectedPart.label}`, value: score.pct });
         window.dispatchEvent(new CustomEvent(FORM_GUIDE_EVENT));
       }
     } catch (e: unknown) {
@@ -172,7 +175,8 @@ export function AIMarker({ paper, word, sheet }: Props) {
               <span className="ai-marker__dot" /> Marking your answer for {selectedPart?.label}…
             </p>
           )}
-          {feedback && <FeedbackMarkdown text={feedback} />}
+          {feedback && <FeedbackMarkdown text={stripScoreLine(feedback)} />}
+          {!busy && <ScoreBreakdown feedback={feedback} labels={selectedPart?.markingPoints?.map((m) => m.description) ?? []} />}
           <PitfallToasts feedback={feedback} busy={busy} />
         </div>
       )}
@@ -278,30 +282,6 @@ function htmlToPlainText(html: string): string {
   return (div.textContent ?? '').replace(/\n{3,}/g, '\n\n').trim();
 }
 
-/**
- * Pull a percentage out of the marker's freeform feedback. Looks for the
- * common patterns "X / Y", "Marks awarded: X / Y", "Score: X%" etc. and
- * returns the percentage clamped to [0, 100], or null if nothing matched.
- */
-function extractScorePercent(feedback: string): number | null {
-  // "X / Y" — e.g. "Marks awarded: 7 / 10" or "Total: 12.5 / 16"
-  const fraction = feedback.match(/(?:marks?\s*(?:awarded|earned|scored|given)?[:\s]*)?(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/i);
-  if (fraction) {
-    const num = parseFloat(fraction[1]);
-    const den = parseFloat(fraction[2]);
-    if (den > 0 && Number.isFinite(num) && Number.isFinite(den)) {
-      return Math.max(0, Math.min(100, (num / den) * 100));
-    }
-  }
-  // Explicit percentage — "Score: 65%"
-  const pct = feedback.match(/(\d+(?:\.\d+)?)\s*%/);
-  if (pct) {
-    const v = parseFloat(pct[1]);
-    if (Number.isFinite(v)) return Math.max(0, Math.min(100, v));
-  }
-  return null;
-}
-
 function appendMarkerResult(r: MarkerResult): void {
   try {
     const raw = localStorage.getItem(AI_MARKER_KEY);
@@ -349,4 +329,26 @@ function friendlyError(status: number, body: string): string {
     return 'The AI provider returned an error. Please try again in a minute.';
   }
   return trimmed || `Marker error (HTTP ${status}).`;
+}
+
+/** Per-marking-point bars, shown when the marker returned a structured score. */
+function ScoreBreakdown({ feedback, labels }: { feedback: string; labels: string[] }) {
+  const score = parseMarkerScore(feedback);
+  if (!score || score.points.length === 0) return null;
+  return (
+    <div className="ai-score" aria-label="Marks by marking point">
+      <p className="ai-score__title">
+        Where the marks went <span>{score.awarded} / {score.available}</span>
+      </p>
+      <ol>
+        {score.points.map((p) => (
+          <li key={p.n}>
+            <span className="ai-score__label">{labels[p.n - 1] ?? `Marking point ${p.n}`}</span>
+            <span className="ai-score__bar" aria-hidden><i style={{ width: `${(p.awarded / p.available) * 100}%` }} /></span>
+            <span className="ai-score__num">{p.awarded} / {p.available}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
 }
