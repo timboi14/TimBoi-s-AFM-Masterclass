@@ -26,7 +26,7 @@ export function ExaminerPage() {
     <motion.div initial="hidden" animate="show" variants={stagger}>
       {/* Hero */}
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-500/[0.06] via-white to-primary/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-sky-500/6 via-white to-primary/10" />
         <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.45), transparent 70%)' }} />
         <div className="aurora w-72 h-72 -bottom-12 -left-12" style={{ background: 'radial-gradient(circle, rgba(0,163,71,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
@@ -111,7 +111,7 @@ export function ExaminerPage() {
         The 7-rule cheat-sheet
       </SectionTitle>
       <motion.div variants={fadeUp}>
-        <Card className="!p-6">
+        <Card className="p-6!">
           <ol className="space-y-3 text-[14px] leading-relaxed text-ink list-decimal pl-5">
             <li><strong>FCFF → WACC, FCFE → Ke.</strong> Mnemonic: "F goes with W, E goes with E." Always end with EV − Debt = Equity.</li>
             <li><strong>Sunk cost = ignored. Amortisation = added back. Working capital = released at end.</strong> Three rules, three marks.</li>
@@ -126,7 +126,7 @@ export function ExaminerPage() {
 
       {/* Mantra */}
       <motion.div variants={fadeUp} className="mt-10">
-        <Card className="!p-7 text-center" glow>
+        <Card className="p-7! text-center" glow>
           <p className="font-display text-3xl md:text-4xl tracking-wide uppercase text-ink leading-tight">
             Apply the scenario.<br />Challenge the assumption.<br />Quote the figure.
           </p>
@@ -141,7 +141,7 @@ export function ExaminerPage() {
 
 function CaseCard({ c, open, onToggle }: { c: ExamCase; open: boolean; onToggle: () => void }) {
   return (
-    <Card className="h-full !p-5">
+    <Card className="h-full p-5!">
       <button onClick={onToggle} className="w-full text-left">
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           <Pill variant="primary">{c.paper}</Pill>
@@ -173,7 +173,7 @@ function CaseCard({ c, open, onToggle }: { c: ExamCase; open: boolean; onToggle:
             </div>
           ))}
           {c.examinerQuote && (
-            <div className="rounded-xl border border-dashed border-accent/60 bg-accent/[0.08] p-3">
+            <div className="rounded-xl border border-dashed border-accent/60 bg-accent/8 p-3">
               <div className="text-[10px] uppercase tracking-wider text-accent-dark font-bold mb-1">
                 <i className="fa-solid fa-quote-right" /> Examiner said
               </div>

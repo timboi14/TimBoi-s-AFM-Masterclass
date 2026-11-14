@@ -45,7 +45,7 @@ export function FormulasPage() {
       className={cn(printMode && 'bg-white text-black')}
     >
       <motion.div variants={fadeUp}>
-        <Card className="!p-7 border-l-4 border-l-primary">
+        <Card className="p-7! border-l-4 border-l-primary">
           <Pill variant="primary" className="mb-2">Formula sheet</Pill>
           <h1 className="font-display text-4xl tracking-wide uppercase">Cheat-sheet, with context</h1>
           <p className="text-text/80 mt-2 max-w-2xl">
@@ -59,7 +59,7 @@ export function FormulasPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search formulas, e.g. WACC, parity, beta..."
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-50 border border-border focus:border-primary focus:outline-none text-text placeholder:text-muted"
+                className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-50 border border-border focus:border-primary focus:outline-hidden text-text placeholder:text-muted"
               />
             </div>
             <button className="btn-outline" onClick={() => setPrintMode(!printMode)}>

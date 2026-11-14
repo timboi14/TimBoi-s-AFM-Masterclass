@@ -64,13 +64,13 @@ export function KeFinessePage() {
             </div>
           </div>
 
-          <div className="relative min-h-[390px] overflow-hidden rounded-[2rem] border border-white/15 bg-white/[.055] p-5 shadow-2xl sm:p-7">
+          <div className="relative min-h-[390px] overflow-hidden rounded-4xl border border-white/15 bg-white/5.5 p-5 shadow-2xl sm:p-7">
             <picture aria-hidden="true" className="absolute inset-0 opacity-[.14]">
               <source type="image/avif" srcSet="/spurs/tools.avif 1x, /spurs/tools@2x.avif 2x" />
               <source type="image/webp" srcSet="/spurs/tools.webp 1x, /spurs/tools@2x.webp 2x" />
               <img className="h-full w-full object-cover" src="/spurs/tools.png" alt="" />
             </picture>
-            <div className="relative z-10 rounded-3xl border border-white/10 bg-[rgba(5,15,34,.82)] p-5 backdrop-blur-sm sm:p-7">
+            <div className="relative z-10 rounded-3xl border border-white/10 bg-[rgba(5,15,34,.82)] p-5 backdrop-blur-xs sm:p-7">
               <span className="text-xs font-black uppercase tracking-[.16em] text-accent">The handoff</span>
               <h2 className="mt-3 font-display text-4xl text-white">Direction becomes evidence.</h2>
               <div className="mt-6 grid gap-3">
@@ -103,7 +103,7 @@ export function KeFinessePage() {
           </div>
           <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {KE_FINESSE_MERITS.map((merit) => (
-              <article key={merit.title} className="rounded-3xl border border-border bg-white p-6 shadow-sm">
+              <article key={merit.title} className="rounded-3xl border border-border bg-white p-6 shadow-xs">
                 <span className="grid h-11 w-11 place-items-center rounded-2xl bg-ink text-accent"><AppIcon name={merit.icon} size={19} /></span>
                 <h3 className="mt-5 font-display text-2xl leading-tight text-ink">{merit.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted">{merit.body}</p>
@@ -122,7 +122,7 @@ export function KeFinessePage() {
           </div>
           <div className="mt-9 grid gap-3 md:grid-cols-5">
             {KE_FINESSE_STACK.map((step) => (
-              <Link key={step.n} to={step.to} className="group rounded-3xl border border-white/15 bg-white/[.055] p-5 transition hover:-translate-y-1 hover:border-accent/60 hover:bg-white/10">
+              <Link key={step.n} to={step.to} className="group rounded-3xl border border-white/15 bg-white/5.5 p-5 transition hover:-translate-y-1 hover:border-accent/60 hover:bg-white/10">
                 <div className="flex items-center justify-between"><span className="font-display text-4xl text-accent">{step.n}</span><AppIcon name={step.icon} size={18} className="text-white/45 transition group-hover:text-accent" /></div>
                 <span className="mt-5 block text-[.68rem] font-black uppercase tracking-[.15em] text-white/45">{step.label}</span>
                 <h3 className="mt-2 font-display text-2xl leading-tight">{step.title}</h3>
@@ -145,7 +145,7 @@ export function KeFinessePage() {
             <label className="block">
               <span className="mb-2 block text-xs font-black uppercase tracking-[.14em] text-muted">Search the vault</span>
               <input
-                className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm font-bold text-ink outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+                className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm font-bold text-ink outline-hidden transition focus:border-primary focus:ring-4 focus:ring-primary/10"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Try formulas, examiner, mock..."
@@ -171,7 +171,7 @@ export function KeFinessePage() {
           <p className="mt-5 text-xs font-bold text-muted" aria-live="polite">Showing {resources.length} of {KE_FINESSE_TOTALS.resources} tools</p>
           <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {resources.map((resource) => (
-              <Link key={resource.id} to={resource.to} className="group flex min-h-[22rem] flex-col rounded-3xl border border-border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-primary/35 hover:shadow-xl">
+              <Link key={resource.id} to={resource.to} className="group flex min-h-88 flex-col rounded-3xl border border-border bg-white p-6 shadow-xs transition hover:-translate-y-1 hover:border-primary/35 hover:shadow-xl">
                 <div className="flex items-start justify-between gap-4">
                   <span className="grid h-11 w-11 place-items-center rounded-2xl bg-ink text-accent"><AppIcon name={resource.icon} size={19} /></span>
                   <div className="text-right">

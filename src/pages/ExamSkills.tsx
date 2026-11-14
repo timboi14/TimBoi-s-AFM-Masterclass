@@ -5,7 +5,7 @@ export function ExamSkillsPage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.div variants={fadeUp}>
-        <Card className="!p-7 border-l-4 border-l-accent">
+        <Card className="p-7! border-l-4 border-l-accent">
           <Pill variant="accent" className="mb-2">Coach&apos;s playbook</Pill>
           <h1 className="font-display text-4xl tracking-wide uppercase">Technique &gt; Knowledge</h1>
           <p className="text-text/80 mt-2 max-w-2xl">

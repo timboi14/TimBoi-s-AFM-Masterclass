@@ -152,8 +152,8 @@ export function StartPage() {
             For grading your own attempt, use Debrief (8 examiner markers) or the AI marker on the practice page.
           </li>
           <li>
-            <strong className="text-primary">Press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">?</kbd> anywhere</strong>{' '}
-            to see all keyboard shortcuts. <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">g p</kbd> jumps to past papers, <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">g t</kbd> to topics, etc.
+            <strong className="text-primary">Press <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border">?</kbd> anywhere</strong>{' '}
+            to see all keyboard shortcuts. <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border">g p</kbd> jumps to past papers, <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border">g t</kbd> to topics, etc.
           </li>
           <li>
             <strong className="text-primary">Mocks lock Coach off.</strong> Starting a composite mock greys out the green
@@ -164,7 +164,7 @@ export function StartPage() {
 
       {/* E — CTA footer */}
       <SectionShell tone="white" pad="lg">
-        <div className="rounded-3xl border-2 border-primary bg-primary/[0.04] p-6 text-center">
+        <div className="rounded-3xl border-2 border-primary bg-primary/4 p-6 text-center">
           <h2 className="font-display text-2xl tracking-wide uppercase text-ink mb-2">Tour done. Time to sit a paper.</h2>
           <p className="text-[14px] text-muted mb-4">Ten minutes of effort now will calibrate the entire dashboard around your real level.</p>
           <Link to={FIRST_DRILL_HREF} className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-primary text-white font-display tracking-wide uppercase text-[14px] hover:brightness-110">

@@ -54,7 +54,7 @@ export function RevisionDashboard() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-sky-500/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/6 via-white to-sky-500/10" />
         <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(0,163,71,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -83,7 +83,7 @@ export function RevisionDashboard() {
           <SectionTitle icon="fa-solid fa-rotate-right" badge={<Pill variant="primary">Resume</Pill>}>Pick up where you left off</SectionTitle>
           <motion.div variants={fadeUp}>
             <Link to={`/revision/papers/${lastPaper.id}/q/${lastQ.number}`}>
-              <Card className="!p-5 hover:border-primary transition-colors shine">
+              <Card className="p-5! hover:border-primary transition-colors shine">
                 <div className="flex flex-wrap items-center gap-3">
                   <Pill variant="primary">{lastPaper.label}</Pill>
                   <Pill>Q{lastQ.number} · {lastQ.marks}m</Pill>
@@ -114,7 +114,7 @@ export function RevisionDashboard() {
       {/* HEATMAP */}
       <SectionTitle icon="fa-solid fa-table-cells">Attempt heatmap</SectionTitle>
       <motion.div variants={fadeUp}>
-        <Card className="!p-5">
+        <Card className="p-5!">
           <Heatmap years={years} attempts={attempts} />
           <p className="mt-3 text-[12px] text-muted">Each cell = one calendar month. Darker green = more attempts.</p>
         </Card>
@@ -150,7 +150,7 @@ export function PapersIndex() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-accent/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/6 via-white to-accent/10" />
         <div className="relative p-6 md:p-10">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <span className="chip text-primary"><i className="fa-solid fa-folder" /> Papers index</span>
@@ -207,7 +207,7 @@ export function PapersIndex() {
           return (
             <motion.div key={p.id} variants={fadeUp}>
               <Link to={`/revision/papers/${p.id}`}>
-                <Card className="hover:border-primary transition-colors !p-4">
+                <Card className="hover:border-primary transition-colors p-4!">
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="chip" style={{ borderColor: `${tone.color}66`, color: tone.color, background: `${tone.color}10` }}>
                       {tone.label}
@@ -221,7 +221,7 @@ export function PapersIndex() {
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {p.questions.map((q) => (
-                      <span key={q.id} className="chip text-[10px] !text-[10px]">
+                      <span key={q.id} className="chip text-[10px] text-[10px]!">
                         Q{q.number}{q.caseName ? ` · ${q.caseName}` : ''}
                       </span>
                     ))}
@@ -232,7 +232,7 @@ export function PapersIndex() {
           );
         })}
         {filtered.length === 0 && (
-          <Card className="!p-6 text-center text-muted">No papers match those filters.</Card>
+          <Card className="p-6! text-center text-muted">No papers match those filters.</Card>
         )}
       </motion.div>
     </motion.div>
@@ -276,7 +276,7 @@ export function PaperView() {
         {paper.questions.map((q) => (
           <motion.div key={q.id} variants={fadeUp}>
             <Link to={`/revision/papers/${paper.id}/q/${q.number}`}>
-              <Card className="hover:border-primary transition-colors !p-5">
+              <Card className="hover:border-primary transition-colors p-5!">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <Pill variant="primary">Q{q.number}</Pill>
                   <Pill>Section {q.section}</Pill>
@@ -412,7 +412,7 @@ export function QuestionDeepDive() {
 
       <div className="mt-6 grid lg:grid-cols-[2fr_1fr] gap-4">
         {/* Scratch + self-debrief */}
-        <Card className="!p-5">
+        <Card className="p-5!">
           <h2 className="font-display text-xl tracking-wide uppercase text-ink mb-2">Scratchpad & self-debrief</h2>
           <p className="text-[12.5px] text-muted mb-3">Auto-saves to this device. After your attempt, log a self-rating to track mastery.</p>
 
@@ -475,7 +475,7 @@ export function QuestionDeepDive() {
           </div>
 
           {savedId && (
-            <div className="mt-3 rounded-lg border border-primary/40 bg-primary/[0.06] p-2.5 text-[12.5px] text-ink">
+            <div className="mt-3 rounded-lg border border-primary/40 bg-primary/6 p-2.5 text-[12.5px] text-ink">
               <i className="fa-solid fa-circle-check text-primary" /> Attempt saved. View it on the <Link to="/progress" className="text-primary font-bold hover:underline">progress dashboard</Link>.
             </div>
           )}
@@ -497,7 +497,7 @@ export function QuestionDeepDive() {
 
         {/* Linked theory + similar */}
         <div className="space-y-4">
-          <Card className="!p-5">
+          <Card className="p-5!">
             <h2 className="font-display text-lg tracking-wide uppercase text-ink mb-2">Linked theory</h2>
             {linkedTheory.length === 0 && <p className="text-[13px] text-muted">Nothing in the theory bank tagged with these topics yet.</p>}
             <ul className="space-y-2">
@@ -512,7 +512,7 @@ export function QuestionDeepDive() {
             </ul>
           </Card>
 
-          <Card className="!p-5">
+          <Card className="p-5!">
             <h2 className="font-display text-lg tracking-wide uppercase text-ink mb-2">Similar past questions</h2>
             {similar.length === 0 && <p className="text-[13px] text-muted">No overlapping past questions yet.</p>}
             <ul className="space-y-1.5">
@@ -565,14 +565,14 @@ export function TopicsIndex() {
           const pct = ratio === null ? null : Math.round(ratio * 100);
           return (
             <motion.div key={t.id} variants={fadeUp}>
-              <Card className="!p-4">
+              <Card className="p-4!">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-primary/15 grid place-items-center text-primary"><i className={`fa-solid ${t.badge}`} /></div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-display text-lg uppercase tracking-wide text-ink leading-tight">{t.title}</h3>
                     <div className="text-[11.5px] text-muted">{occurrences} questions in scope · Section {t.syllabus}</div>
                   </div>
-                  <Link to={`/topic/${t.id}`} className="btn-outline !py-1.5 !px-2.5 !text-[11px]">
+                  <Link to={`/topic/${t.id}`} className="btn-outline py-1.5! px-2.5! text-[11px]!">
                     <i className="fa-solid fa-arrow-right" /> Drill
                   </Link>
                 </div>
@@ -638,7 +638,7 @@ export function ProgressDashboard() {
 
       <SectionTitle icon="fa-solid fa-list">Recent attempts</SectionTitle>
       <motion.div variants={fadeUp}>
-        <Card className="!p-0 overflow-hidden">
+        <Card className="p-0! overflow-hidden">
           {attempts.length === 0 ? (
             <p className="p-5 text-center text-muted">No attempts yet. Open <Link to="/revision/papers" className="text-primary hover:underline">Papers</Link> and pick one.</p>
           ) : (
@@ -741,7 +741,7 @@ function Heatmap({ years, attempts }: { years: number[]; attempts: { startedAt: 
                   <td key={m} className="p-0.5">
                     <div
                       title={`${months[m]} ${y}: ${n} attempt${n === 1 ? '' : 's'}`}
-                      className="w-7 h-7 rounded"
+                      className="w-7 h-7 rounded-sm"
                       style={{ background: a === 0 ? '#e2e8f0' : `rgba(0,163,71,${a.toFixed(2)})` }}
                     />
                   </td>

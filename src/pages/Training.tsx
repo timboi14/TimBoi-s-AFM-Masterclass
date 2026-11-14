@@ -196,7 +196,7 @@ export function TrainingPage() {
                   const cap = AFM_SYLLABUS.find((c) => c.tbaTopicId === h.topic);
                   const trending = h.lastPct > h.best - 5;
                   return (
-                    <tr key={h.topic} className="border-b border-border/60 last:border-b-0 hover:bg-primary/[0.03]">
+                    <tr key={h.topic} className="border-b border-border/60 last:border-b-0 hover:bg-primary/3">
                       <td className="p-3">
                         <Link to={`/topic/${h.topic}`} className="font-bold text-ink hover:text-primary">
                           {cap?.capability ?? h.topic}
@@ -254,7 +254,7 @@ export function TrainingPage() {
         {weakestFinding && (
           <div className="mt-8 rounded-2xl border border-border bg-white p-6 shadow-soft">
             <div className="flex items-start gap-4 flex-wrap">
-              <div className="shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary-dark grid place-items-center text-white">
+              <div className="shrink-0 w-14 h-14 rounded-2xl bg-linear-to-br from-primary to-primary-dark grid place-items-center text-white">
                 <i className="fa-solid fa-bolt text-2xl" aria-hidden />
               </div>
               <div className="flex-1 min-w-[260px]">

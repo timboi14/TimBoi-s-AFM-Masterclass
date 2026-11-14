@@ -25,7 +25,7 @@ interface CenteredHeroProps {
 
 /** Highlight a single word inside the headline in gold. */
 export function HeroGold({ children }: { children: ReactNode }) {
-  return <span className="text-[var(--gold-500)]">{children}</span>;
+  return <span className="text-(--gold-500)">{children}</span>;
 }
 
 const ease = [0.2, 0.8, 0.2, 1] as const;
@@ -66,8 +66,8 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
           className={cn(
             'inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] mb-6',
             dark
-              ? 'border-[var(--gold-500)]/60 text-white'
-              : 'border-[var(--mist-200)] text-[var(--navy-800)] bg-white/60 backdrop-blur',
+              ? 'border-(--gold-500)/60 text-white'
+              : 'border-(--mist-200) text-(--navy-800) bg-white/60 backdrop-blur-sm',
           )}
         >
           {eyebrow}
@@ -82,7 +82,7 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
         }}
         className={cn(
           'font-display uppercase tracking-[-0.005em] max-w-[22ch] m-0',
-          dark ? 'text-white' : 'text-[var(--navy-900)]',
+          dark ? 'text-white' : 'text-(--navy-900)',
         )}
       >
         {headline}
@@ -97,7 +97,7 @@ export function CenteredHero({ eyebrow, headline, subline, actions, artwork, sli
           }}
           className={cn(
             'mt-4 max-w-[58ch]',
-            dark ? 'text-[var(--mist-200)]' : 'text-[var(--mist-500)]',
+            dark ? 'text-(--mist-200)' : 'text-(--mist-500)',
           )}
         >
           {subline}

@@ -37,7 +37,7 @@ export function TheoryPage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.div variants={fadeUp}>
-        <Card className="!p-7 relative overflow-hidden border-l-4 border-l-accent">
+        <Card className="p-7! relative overflow-hidden border-l-4 border-l-accent">
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex-1 min-w-[260px]">
               <Pill variant="accent" className="mb-2">64 Q&amp;A bank, dual mode</Pill>
@@ -71,7 +71,7 @@ export function TheoryPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search: synergy, BSOP, Mudaraba, ESG, M&M..."
-              className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border border-border focus:border-accent focus:outline-none text-text placeholder:text-muted"
+              className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border border-border focus:border-accent focus:outline-hidden text-text placeholder:text-muted"
             />
           </div>
 

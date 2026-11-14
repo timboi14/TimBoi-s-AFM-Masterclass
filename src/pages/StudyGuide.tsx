@@ -79,7 +79,7 @@ export function StudyGuidePage() {
     <motion.div initial="hidden" animate="show" variants={stagger}>
       {/* Hero */}
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-accent/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/6 via-white to-accent/10" />
         <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(0,163,71,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -111,7 +111,7 @@ export function StudyGuidePage() {
       <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {VERB_CARDS.map((v) => (
           <motion.div key={v.word} variants={fadeUp}>
-            <Card className="!p-4 h-full">
+            <Card className="p-4! h-full">
               <div className="font-display text-lg uppercase tracking-wide text-primary">{v.word}</div>
               <p className="mt-1.5 text-[13px] text-ink leading-relaxed">{v.shape}</p>
             </Card>
@@ -142,7 +142,7 @@ function MarkBudget() {
   }, [verb]);
 
   return (
-    <Card className="!p-6">
+    <Card className="p-6!">
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <Field label="Total marks">
@@ -221,7 +221,7 @@ function SplitBar({ split, marks }: { split: { calc: number; app: number; rec: n
       <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11.5px]">
         {segments.map((s) => (
           <div key={s.label} className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm" style={{ background: s.color }} aria-hidden="true" />
+            <span className="w-2.5 h-2.5 rounded-xs" style={{ background: s.color }} aria-hidden="true" />
             <span className="text-muted">{s.label}</span>
             <span className="text-ink font-mono ml-auto">{s.marks}m</span>
           </div>
@@ -307,7 +307,7 @@ function TimerTool() {
   const ss = String(secLeft % 60).padStart(2, '0');
 
   return (
-    <Card className="!p-6">
+    <Card className="p-6!">
       <div className="grid md:grid-cols-[1fr_280px] gap-6">
         <div>
           <div className="flex items-baseline gap-2 mb-1">
@@ -334,9 +334,9 @@ function TimerTool() {
             <button onClick={reset} className="btn-ghost"><i className="fa-solid fa-rotate-left" /> Reset</button>
             <button onClick={pivot} className="btn-accent"><i className="fa-solid fa-arrow-right-arrow-left" /> Pivot · log</button>
             <span className="text-[11px] text-muted ml-auto self-center">
-              Keyboard: <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">Space</kbd> start/pause ·
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border ml-1">P</kbd> pivot ·
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border ml-1">R</kbd> reset
+              Keyboard: <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border">Space</kbd> start/pause ·
+              <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border ml-1">P</kbd> pivot ·
+              <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border ml-1">R</kbd> reset
             </span>
           </div>
           <div className="mt-3 grid grid-cols-4 gap-2">
@@ -400,7 +400,7 @@ function AnswerPlanCanvas() {
   };
 
   return (
-    <Card className="!p-5">
+    <Card className="p-5!">
       <div className="flex flex-wrap gap-2 mb-4">
         {PLAN_TEMPLATES.map((t) => {
           const filled = plans[t.id] ? Object.values(plans[t.id]).filter((v) => v && v.trim()).length : 0;

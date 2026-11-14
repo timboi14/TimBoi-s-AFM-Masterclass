@@ -33,7 +33,7 @@ export function StatStrip({ stats, dividers = true }: StatStripProps) {
       className={cn(
         'grid grid-cols-2 md:gap-0 gap-y-8',
         stats.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4',
-        dividers && 'md:divide-x divide-[var(--mist-200)] dark:divide-white/10',
+        dividers && 'md:divide-x divide-(--mist-200) dark:divide-white/10',
       )}
     >
       {stats.map((s, i) => (
@@ -60,7 +60,7 @@ function Tile({ stat, dark }: { stat: StatItem; dark: boolean }) {
         style={{ fontSize: 'var(--fs-micro)' }}
         className={cn(
           'mt-2 uppercase tracking-[0.08em] font-bold',
-          dark ? 'text-white/80' : 'text-[var(--mist-500)]',
+          dark ? 'text-white/80' : 'text-(--mist-500)',
         )}
       >
         {stat.label}
@@ -68,7 +68,7 @@ function Tile({ stat, dark }: { stat: StatItem; dark: boolean }) {
       {stat.sub && (
         <span
           style={{ fontSize: 'var(--fs-small)' }}
-          className={cn('mt-1', dark ? 'text-white/60' : 'text-[var(--mist-500)]')}
+          className={cn('mt-1', dark ? 'text-white/60' : 'text-(--mist-500)')}
         >
           {stat.sub}
         </span>
@@ -116,7 +116,7 @@ function CountUpNumber({
       style={{ fontSize: 'var(--fs-display-md)', lineHeight: 1 }}
       className={cn(
         'font-display',
-        dark ? 'text-[var(--gold-500)]' : 'text-[var(--navy-900)]',
+        dark ? 'text-(--gold-500)' : 'text-(--navy-900)',
       )}
     >
       {isNumeric ? (play ? '0' : `${value}${suffix ?? ''}`) : value}

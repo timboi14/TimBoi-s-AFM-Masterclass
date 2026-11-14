@@ -79,7 +79,7 @@ export function DiagnosticPage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger} className="max-w-3xl mx-auto">
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-accent/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/6 via-white to-accent/10" />
         <div className="relative p-6 md:p-10">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <span className="chip text-primary"><i className="fa-solid fa-stopwatch" /> 10-minute screener</span>
@@ -144,7 +144,7 @@ export function DiagnosticPage() {
                 })}
               </div>
               {revealed && currentItem.rationale && (
-                <div className="mt-4 rounded-xl border border-accent/40 bg-accent/[0.08] px-4 py-3 text-[13.5px] text-ink leading-relaxed">
+                <div className="mt-4 rounded-xl border border-accent/40 bg-accent/8 px-4 py-3 text-[13.5px] text-ink leading-relaxed">
                   <strong className="text-accent-dark">Why:</strong> {currentItem.rationale}
                 </div>
               )}

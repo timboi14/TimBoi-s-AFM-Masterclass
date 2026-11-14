@@ -113,7 +113,7 @@ export function CardsPage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.div variants={fadeUp}>
-        <Card className="!p-7 border-l-4 border-l-accent">
+        <Card className="p-7! border-l-4 border-l-accent">
           <Pill variant="accent" className="mb-2">Flashcard drill station</Pill>
           <h1 className="font-display text-4xl tracking-wide uppercase">Recall, Apply, Repeat</h1>
           <p className="text-text/80 mt-2 max-w-2xl">
@@ -152,7 +152,7 @@ export function CardsPage() {
         </span>
         <div className="flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-primary to-accent"
+            className="h-full bg-linear-to-r from-primary to-accent"
             initial={{ width: 0 }}
             animate={{ width: `${((idx + 1) / cards.length) * 100}%` }}
             transition={{ duration: 0.4 }}
@@ -223,8 +223,8 @@ function FlipFace({ face, tag, text }: { face: 'front' | 'back'; tag: string; te
       className={cn(
         'absolute inset-0 rounded-3xl p-8 flex flex-col items-center justify-center text-center border-2',
         face === 'front'
-          ? 'bg-gradient-to-br from-card to-bg border-accent/50'
-          : 'bg-gradient-to-br from-primary/15 to-card border-primary/50'
+          ? 'bg-linear-to-br from-card to-bg border-accent/50'
+          : 'bg-linear-to-br from-primary/15 to-card border-primary/50'
       )}
       style={{ backfaceVisibility: 'hidden', transform: face === 'back' ? 'rotateY(180deg)' : undefined }}
     >

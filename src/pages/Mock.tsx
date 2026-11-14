@@ -126,7 +126,7 @@ export function MockPage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.div variants={fadeUp}>
-        <Card className="!p-7 border-l-4 border-l-danger">
+        <Card className="p-7! border-l-4 border-l-danger">
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex-1 min-w-[260px]">
               <Pill variant="danger" className="mb-2">
@@ -144,7 +144,7 @@ export function MockPage() {
                 {fmt(Math.max(0, exam.secs))}
               </div>
               <button
-                className={cn('mt-2 btn !py-1.5 !px-3 !text-xs', exam.on ? 'btn-outline border-danger text-danger' : 'btn-primary')}
+                className={cn('mt-2 btn py-1.5! px-3! text-xs!', exam.on ? 'btn-outline border-danger text-danger' : 'btn-primary')}
                 onClick={() =>
                   exam.on
                     ? setExam({ on: false, secs: 3 * 3600 + 15 * 60 })
@@ -225,7 +225,7 @@ export function MockPage() {
                           className="overflow-hidden mt-4"
                         >
                           <div className="grid md:grid-cols-2 gap-4">
-                            <div className="p-4 rounded-xl border-2 border-primary bg-primary/[0.06]">
+                            <div className="p-4 rounded-xl border-2 border-primary bg-primary/6">
                               <div className="text-[11px] uppercase tracking-[0.18em] text-primary font-bold mb-2">
                                 <i className="fa-solid fa-trophy mr-1" /> Model answer
                               </div>
@@ -235,7 +235,7 @@ export function MockPage() {
                                 ))}
                               </ol>
                             </div>
-                            <div className="p-4 rounded-xl border border-accent bg-accent/[0.05]">
+                            <div className="p-4 rounded-xl border border-accent bg-accent/5">
                               <div className="text-[11px] uppercase tracking-[0.18em] text-accent font-bold mb-2">
                                 <i className="fa-solid fa-list-check mr-1" /> Mark scheme
                               </div>
@@ -285,7 +285,7 @@ function ScoreSummary({ score }: { score: Record<string, number> }) {
             : { label: 'Resit risk', tone: 'danger', note: 'Step back. Two weeks of fixtures and pitfalls before another mock. Knowledge gaps will fix themselves with deliberate practice.' };
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
-      <Card className="!p-7">
+      <Card className="p-7!">
         <div className="flex items-center gap-4 flex-wrap">
           <div>
             <div className="text-[11px] uppercase tracking-[0.2em] text-muted">Final score</div>

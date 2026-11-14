@@ -177,7 +177,7 @@ export function Layout() {
       {/* Skip link for keyboard / screen-reader users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-accent focus:text-ink focus:px-3 focus:py-2 focus:rounded-lg focus:font-bold focus:shadow-floodlight"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-60 focus:bg-accent focus:text-ink focus:px-3 focus:py-2 focus:rounded-lg focus:font-bold focus:shadow-floodlight"
       >
         Skip to main content
       </a>
@@ -199,7 +199,7 @@ export function Layout() {
             <NavLink to="/" className="flex items-center gap-3 group">
               <div className="relative w-11 h-11 grid place-items-center rounded-xl bg-ink overflow-hidden border border-ink/30">
                 <span className="font-display text-[15px] text-accent tracking-wider">TBA</span>
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-accent/10 to-primary/0 group-hover:via-accent/30 transition-colors" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/0 via-accent/10 to-primary/0 group-hover:via-accent/30 transition-colors" />
               </div>
               <div>
                 <div className="font-display text-xl md:text-2xl tracking-wider leading-none text-ink">
@@ -352,7 +352,7 @@ export function Layout() {
             Built for your next AFM sitting. Examiner-style technique, Spurs energy, zero filler.
           </p>
           <p className="mt-2 text-[11px] uppercase tracking-wider text-muted/70">
-            Press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">/</kbd> anywhere to summon Coach AI
+            Press <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border">/</kbd> anywhere to summon Coach AI
           </p>
         </footer>
       </div>

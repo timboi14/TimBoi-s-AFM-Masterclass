@@ -90,7 +90,7 @@ export function CoachTip({ title, children }: { title: string; children: ReactNo
       initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      className="relative my-4 rounded-xl border-2 border-dashed border-accent/60 bg-accent/[0.10] p-4"
+      className="relative my-4 rounded-xl border-2 border-dashed border-accent/60 bg-accent/10 p-4"
     >
       <div className="absolute -top-3 left-4 px-2.5 py-0.5 rounded-md bg-accent text-ink font-bold text-[11px] uppercase tracking-widest">
         <i className="fa-solid fa-chalkboard-user mr-1.5" /> {title}

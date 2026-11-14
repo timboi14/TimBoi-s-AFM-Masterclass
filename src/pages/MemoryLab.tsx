@@ -505,7 +505,7 @@ function FeynmanTab() {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={`Explain ${concept} in 4 plain-English sentences as if to a Year-10 student.`}
-        className="w-full px-3 py-2 rounded-lg border border-border bg-white text-[14px] focus:outline-none focus:border-primary"
+        className="w-full px-3 py-2 rounded-lg border border-border bg-white text-[14px] focus:outline-hidden focus:border-primary"
       />
       <button
         type="button"

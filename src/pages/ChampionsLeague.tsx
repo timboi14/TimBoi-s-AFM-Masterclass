@@ -559,10 +559,10 @@ const MATCHES: Match[] = [
 ];
 
 const GROUP_TONE: Record<string, string> = {
-  'A': 'from-primary/[0.08] via-white to-accent/[0.10]',
-  'B': 'from-accent/[0.10] via-white to-primary/[0.08]',
-  'C': 'from-primary/[0.12] via-white to-accent/[0.06]',
-  'D/E': 'from-accent/[0.06] via-white to-primary/[0.10]',
+  'A': 'from-primary/8 via-white to-accent/10',
+  'B': 'from-accent/10 via-white to-primary/8',
+  'C': 'from-primary/12 via-white to-accent/6',
+  'D/E': 'from-accent/6 via-white to-primary/10',
 };
 
 export function ChampionsLeaguePage() {
@@ -573,7 +573,7 @@ export function ChampionsLeaguePage() {
         variants={fadeUp}
         className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.10] via-white to-accent/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-white to-accent/10" />
         <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(245,184,0,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -603,7 +603,7 @@ export function ChampionsLeaguePage() {
       <SectionTitle icon="fa-solid fa-compass">How to read this page</SectionTitle>
       <motion.div variants={stagger} className="grid sm:grid-cols-3 gap-3">
         <motion.div variants={fadeUp}>
-          <Card className="!p-4 h-full">
+          <Card className="p-4! h-full">
             <div className="font-display text-lg uppercase tracking-wide text-primary">1. Jargon</div>
             <p className="mt-1.5 text-[13px] text-ink leading-relaxed">
               The technical name examiners use. Don't panic, it always has a plain meaning underneath.
@@ -611,7 +611,7 @@ export function ChampionsLeaguePage() {
           </Card>
         </motion.div>
         <motion.div variants={fadeUp}>
-          <Card className="!p-4 h-full">
+          <Card className="p-4! h-full">
             <div className="font-display text-lg uppercase tracking-wide text-primary">2. Plain English</div>
             <p className="mt-1.5 text-[13px] text-ink leading-relaxed">
               What it actually means, in normal words. If you can explain it back to a 13-year-old, you've got it.
@@ -619,7 +619,7 @@ export function ChampionsLeaguePage() {
           </Card>
         </motion.div>
         <motion.div variants={fadeUp}>
-          <Card className="!p-4 h-full">
+          <Card className="p-4! h-full">
             <div className="font-display text-lg uppercase tracking-wide text-primary">3. Football / life analogy</div>
             <p className="mt-1.5 text-[13px] text-ink leading-relaxed">
               A picture in your head. This is what survives exam-day stress when the formula doesn't.
@@ -642,7 +642,7 @@ export function ChampionsLeaguePage() {
 
           <motion.div
             variants={fadeUp}
-            className={`relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br ${GROUP_TONE[m.group]} p-5 mb-4`}
+            className={`relative overflow-hidden rounded-2xl border border-border bg-linear-to-br ${GROUP_TONE[m.group]} p-5 mb-4`}
           >
             <div className="text-[11px] uppercase tracking-wider text-muted font-bold mb-1">
               The big idea
@@ -656,7 +656,7 @@ export function ChampionsLeaguePage() {
           >
             {m.concepts.map((c) => (
               <motion.div key={c.jargon} variants={fadeUp}>
-                <Card className="!p-5 h-full">
+                <Card className="p-5! h-full">
                   <div className="flex items-start gap-2 flex-wrap">
                     <div className="font-display text-xl uppercase tracking-wide text-primary leading-tight">
                       {c.jargon}
@@ -669,7 +669,7 @@ export function ChampionsLeaguePage() {
                       </div>
                       <p className="text-[13.5px] text-ink leading-relaxed">{c.plain}</p>
                     </div>
-                    <div className="rounded-lg bg-accent/[0.10] border border-accent/40 px-3 py-2">
+                    <div className="rounded-lg bg-accent/10 border border-accent/40 px-3 py-2">
                       <div className="text-[10.5px] uppercase tracking-wider text-ink/70 font-bold mb-1">
                         <i className="fa-solid fa-futbol mr-1" /> Analogy
                       </div>
@@ -690,7 +690,7 @@ export function ChampionsLeaguePage() {
       ))}
 
       {/* Closing */}
-      <motion.section variants={fadeUp} className="mt-12 rounded-2xl border-2 border-dashed border-accent/60 bg-accent/[0.08] p-6 text-center">
+      <motion.section variants={fadeUp} className="mt-12 rounded-2xl border-2 border-dashed border-accent/60 bg-accent/8 p-6 text-center">
         <div className="font-display text-2xl uppercase tracking-wider text-ink">
           That's the group stage done.
         </div>

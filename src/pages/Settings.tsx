@@ -193,7 +193,7 @@ export function SettingsPage() {
                 placeholder="e.g. Sonny_07"
                 maxLength={24}
                 aria-label="Fan name"
-                className="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl bg-slate-50 border border-border focus:border-accent focus:outline-none text-ink"
+                className="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl bg-slate-50 border border-border focus:border-accent focus:outline-hidden text-ink"
               />
               <button
                 className="btn-primary disabled:opacity-50"

@@ -522,7 +522,7 @@ export function CoachVoice() {
               <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#fafbfd]">
                 {messages.length === 0 && (
                   <div className="space-y-3">
-                    <div className="rounded-2xl border border-accent/40 bg-accent/[0.08] p-4">
+                    <div className="rounded-2xl border border-accent/40 bg-accent/8 p-4">
                       <div className="text-[11px] uppercase tracking-wider text-accent-dark font-bold mb-1">
                         <i className="fa-solid fa-bullseye mr-1.5" /> Model Answer Mode available
                       </div>
@@ -619,7 +619,7 @@ export function CoachVoice() {
                     }}
                     rows={1}
                     placeholder={listening ? 'Speaking…' : `Or type: ${hint}`}
-                    className="flex-1 resize-none px-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-none focus:border-primary max-h-32"
+                    className="flex-1 resize-none px-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-hidden focus:border-primary max-h-32"
                   />
                   <button
                     onClick={() => send(text)}
@@ -632,9 +632,9 @@ export function CoachVoice() {
                 </div>
                 <div className="mt-2 text-[10px] text-muted flex items-center justify-between">
                   <span>
-                    <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">/</kbd> opens ·
-                    <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border ml-1">Hold Space</kbd> talk ·
-                    <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border ml-1">Enter</kbd> sends
+                    <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border">/</kbd> opens ·
+                    <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border ml-1">Hold Space</kbd> talk ·
+                    <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border ml-1">Enter</kbd> sends
                   </span>
                   <span>{supportsVoice ? 'Mic ready' : 'Mic unavailable'}</span>
                 </div>
@@ -729,7 +729,7 @@ function Bubble({ m, onReplay }: { m: Msg; onReplay: () => void }) {
   const meta = m.spotlight ? SPOTLIGHT_CATEGORY_LABELS[m.spotlight.category] : null;
   return (
     <div className="flex">
-      <div className="max-w-[92%] rounded-2xl px-3.5 py-3 bg-white border border-border shadow-sm w-full">
+      <div className="max-w-[92%] rounded-2xl px-3.5 py-3 bg-white border border-border shadow-xs w-full">
         {m.spotlight && meta && (
           <div className="flex items-center gap-2 mb-2">
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10.5px] font-bold uppercase tracking-wider"

@@ -56,10 +56,10 @@ const ToneContext = createContext<Tone>('white');
 export const useTone = () => useContext(ToneContext);
 
 const BG: Record<Tone, string> = {
-  white: 'bg-[var(--tone-white)] text-[var(--ink)]',
-  mist:  'bg-[var(--tone-mist)] text-[var(--ink)]',
-  navy:  'bg-[var(--tone-navy)] text-white',
-  black: 'bg-[var(--tone-black)] text-white',
+  white: 'bg-(--tone-white) text-(--ink)',
+  mist:  'bg-(--tone-mist) text-(--ink)',
+  navy:  'bg-(--tone-navy) text-white',
+  black: 'bg-(--tone-black) text-white',
 };
 
 interface SectionShellProps {

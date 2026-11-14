@@ -82,14 +82,14 @@ export function StickySubNav({ title, anchors, cta, dark = false, appearAfter = 
         'fixed left-0 right-0 z-40 h-14 border-b',
         dark
           ? 'bg-[rgba(10,15,30,0.7)] border-white/10 text-white backdrop-blur-xl backdrop-saturate-150'
-          : 'bg-white/85 border-[var(--mist-200)] text-[var(--navy-800)] backdrop-blur-xl backdrop-saturate-150',
+          : 'bg-white/85 border-(--mist-200) text-(--navy-800) backdrop-blur-xl backdrop-saturate-150',
       )}
     >
       <div className="mx-auto flex h-full max-w-[1240px] items-center gap-3 px-4 sm:px-6">
         <span
           className={cn(
             'shrink-0 truncate font-display text-[14px] uppercase tracking-[0.06em]',
-            dark ? 'text-white' : 'text-[var(--navy-900)]',
+            dark ? 'text-white' : 'text-(--navy-900)',
           )}
         >
           {title}
@@ -108,11 +108,11 @@ export function StickySubNav({ title, anchors, cta, dark = false, appearAfter = 
                 onClick={(e) => onAnchorClick(e, a)}
                 className={cn(
                   'relative inline-flex h-14 items-center px-3 text-[13px] font-semibold transition-colors sm:px-4',
-                  dark ? 'text-white/80 hover:text-white' : 'text-[var(--navy-800)]/80 hover:text-[var(--navy-900)]',
+                  dark ? 'text-white/80 hover:text-white' : 'text-(--navy-800)/80 hover:text-(--navy-900)',
                 )}
               >
                 {a.label}
-                <span className="pointer-events-none absolute bottom-3 left-3 right-3 h-[2px] origin-left scale-x-0 bg-[var(--gold-500)] transition-transform group-hover:scale-x-100" />
+                <span className="pointer-events-none absolute bottom-3 left-3 right-3 h-[2px] origin-left scale-x-0 bg-(--gold-500) transition-transform group-hover:scale-x-100" />
               </a>
             </li>
           ))}

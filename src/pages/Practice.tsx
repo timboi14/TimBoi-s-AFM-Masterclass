@@ -42,7 +42,7 @@ function PracticeIndex() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.div variants={fadeUp}>
-        <Card className="!p-7 border-l-4 border-l-primary">
+        <Card className="p-7! border-l-4 border-l-primary">
           <Pill variant="primary" className="mb-2">Practice exam centre</Pill>
           <h1 className="font-display text-4xl tracking-wide uppercase text-ink">{TBA_STATS.practiceExams} sets, {TBA_STATS.practiceMarks} marks</h1>
           <p className="mt-2 max-w-2xl">
@@ -165,9 +165,9 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
   return (
     <div>
       {/* HEADER BAR */}
-      <div className="sticky top-0 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 mb-4 bg-white/95 backdrop-blur border-b border-primary/30">
+      <div className="sticky top-0 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 mb-4 bg-white/95 backdrop-blur-sm border-b border-primary/30">
         <div className="flex flex-wrap items-center gap-3 text-text">
-          <Link to="/practice" className="btn-ghost !text-xs !py-1.5">
+          <Link to="/practice" className="btn-ghost text-xs! py-1.5!">
             <i className="fa-solid fa-arrow-left" /> All sets
           </Link>
           <Pill variant={set.section === 'A' ? 'accent' : 'primary'}>Section {set.section}</Pill>
@@ -178,20 +178,20 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
           <div className="ml-auto flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setCoachOpen(true)}
-              className="btn !py-1.5 !px-3 !text-xs bg-accent text-ink hover:bg-accent-dark"
+              className="btn py-1.5! px-3! text-xs! bg-accent text-ink hover:bg-accent-dark"
               title="Coach AI"
             >
               <i className="fa-solid fa-robot" /> Coach AI
             </button>
             <button
               onClick={() => setRunning(!running)}
-              className={cn('btn !py-1.5 !px-3 !text-xs', running ? 'bg-danger text-white' : 'btn-primary')}
+              className={cn('btn py-1.5! px-3! text-xs!', running ? 'bg-danger text-white' : 'btn-primary')}
             >
               <i className={`fa-solid ${running ? 'fa-stop' : 'fa-play'}`} /> {running ? 'Pause' : 'Start'}
             </button>
             <button
               onClick={() => { setSecs(set.minutes * 60); setRunning(false); }}
-              className="btn-outline !py-1.5 !px-3 !text-xs"
+              className="btn-outline py-1.5! px-3! text-xs!"
               title="Reset timer"
             >
               <i className="fa-solid fa-rotate-left" />
@@ -232,7 +232,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
                   onClick={() => setActiveReq(i)}
                   className={cn(
                     'text-left p-3 rounded-lg border transition-colors',
-                    activeReq === i ? 'border-primary bg-primary/[0.06]' : 'border-border hover:border-primary/50'
+                    activeReq === i ? 'border-primary bg-primary/6' : 'border-border hover:border-primary/50'
                   )}
                 >
                   <div className="flex items-baseline gap-2 mb-1">
@@ -242,7 +242,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
                 </button>
               ))}
             </div>
-            <div className="mt-4 p-3 rounded-lg bg-primary/[0.05] border border-primary/30 text-[13px]">
+            <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/30 text-[13px]">
               <i className="fa-solid fa-circle-info text-primary mr-1.5" />
               <b>Examiner note:</b> {set.examinerNote}
             </div>
@@ -297,7 +297,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
                 onChange={(e) => setWp(e.target.value)}
                 rows={14}
                 placeholder={`Write your answer here.\n\nExam tip: lead with the recommendation, quote scenario figures, head sub-sections by requirement (a), (b), (c).`}
-                className="w-full p-3 rounded-lg bg-slate-50 border border-border focus:border-primary focus:outline-none font-mono text-[13px] leading-relaxed resize-y"
+                className="w-full p-3 rounded-lg bg-slate-50 border border-border focus:border-primary focus:outline-hidden font-mono text-[13px] leading-relaxed resize-y"
               />
             </Card>
           )}
@@ -315,7 +315,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
                 onChange={(e) => setScratch(e.target.value)}
                 rows={6}
                 placeholder="Notes, working numbers, plan structure..."
-                className="w-full p-3 rounded-lg bg-accent/[0.06] border border-accent/40 focus:border-accent-dark focus:outline-none font-mono text-[13px] resize-y"
+                className="w-full p-3 rounded-lg bg-accent/6 border border-accent/40 focus:border-accent-dark focus:outline-hidden font-mono text-[13px] resize-y"
               />
             </Card>
           )}
@@ -327,7 +327,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
                 <span className="font-display text-lg tracking-wide uppercase text-ink">Hints</span>
                 <span className="ml-auto text-[11px] text-muted">For requirement ({String.fromCharCode(97 + activeReq)})</span>
               </div>
-              <div className="p-3.5 rounded-lg bg-accent/[0.10] border border-accent/40">
+              <div className="p-3.5 rounded-lg bg-accent/10 border border-accent/40">
                 <div className="text-[11px] uppercase tracking-[0.18em] text-accent-dark font-bold mb-1.5">
                   <i className="fa-solid fa-compass mr-1" /> Approach
                 </div>
@@ -335,20 +335,20 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
               </div>
               <div className="mt-3 flex gap-2 flex-wrap">
                 <button
-                  className="btn-accent !text-xs !py-2"
+                  className="btn-accent text-xs! py-2!"
                   onClick={() => askHint(activeReq)}
                   disabled={(reveal[activeReq] || 0) >= (set.requirements[activeReq]?.solution.length || 0)}
                 >
                   <i className="fa-solid fa-eye" /> Reveal next step
                 </button>
                 <button
-                  className="btn-outline !text-xs !py-2"
+                  className="btn-outline text-xs! py-2!"
                   onClick={() => setShowFullSolution((s) => ({ ...s, [activeReq]: !s[activeReq] }))}
                 >
                   <i className="fa-solid fa-bolt" /> {showFullSolution[activeReq] ? 'Hide' : 'Reveal full'} solution
                 </button>
                 <button
-                  className="btn-ghost !text-xs !py-2 ml-auto"
+                  className="btn-ghost text-xs! py-2! ml-auto"
                   onClick={() => setCoachOpen(true)}
                 >
                   <i className="fa-solid fa-robot" /> Ask Coach AI
@@ -363,7 +363,7 @@ function ExamSimulator({ set }: { set: PracticeSet }) {
                       key={i}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="p-2.5 rounded-md bg-primary/[0.06] border border-primary/30 text-[13px] leading-relaxed font-mono"
+                      className="p-2.5 rounded-md bg-primary/6 border border-primary/30 text-[13px] leading-relaxed font-mono"
                     >
                       <span className="text-primary font-bold mr-2">{i + 1}.</span>
                       {step}
@@ -569,7 +569,7 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
   const fontPx = Math.round(13 * (zoom / 100));
 
   const body = (
-    <Card className={cn(mode === 'docked' && '!rounded-none !border-0 !shadow-none h-full flex flex-col')}>
+    <Card className={cn(mode === 'docked' && 'rounded-none! border-0! shadow-none! h-full flex flex-col')}>
       <div className="flex flex-wrap items-center gap-2 mb-2">
         <i className="fa-solid fa-table-cells text-primary" />
         <span className="font-display text-lg tracking-wide uppercase text-ink">Spreadsheet</span>
@@ -577,7 +577,7 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
         <div className="ml-auto flex items-center gap-1.5 flex-wrap">
           <button
             onClick={() => setZoom(Math.max(60, zoom - 10))}
-            className="btn-outline !text-xs !py-1 !px-2"
+            className="btn-outline text-xs! py-1! px-2!"
             title="Zoom out"
           >
             <i className="fa-solid fa-magnifying-glass-minus" />
@@ -585,14 +585,14 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
           <span className="font-mono text-xs text-muted w-10 text-center">{zoom}%</span>
           <button
             onClick={() => setZoom(Math.min(200, zoom + 10))}
-            className="btn-outline !text-xs !py-1 !px-2"
+            className="btn-outline text-xs! py-1! px-2!"
             title="Zoom in"
           >
             <i className="fa-solid fa-magnifying-glass-plus" />
           </button>
           <button
             onClick={() => setMode(mode === 'docked' ? 'inline' : 'docked')}
-            className={cn('btn !text-xs !py-1 !px-2', mode === 'docked' ? 'btn-accent' : 'btn-outline')}
+            className={cn('btn text-xs! py-1! px-2!', mode === 'docked' ? 'btn-accent' : 'btn-outline')}
             title={mode === 'docked' ? 'Undock (Esc)' : 'Dock to bottom (resizable)'}
           >
             <i className={`fa-solid ${mode === 'docked' ? 'fa-window-maximize' : 'fa-window-restore'}`} />
@@ -601,7 +601,7 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
           {onClose && (
             <button
               onClick={onClose}
-              className="btn-outline !text-xs !py-1 !px-2"
+              className="btn-outline text-xs! py-1! px-2!"
               title="Close spreadsheet"
             >
               <i className="fa-solid fa-xmark" />
@@ -612,19 +612,19 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
 
       {/* Formula bar */}
       <div className="flex items-center gap-2 mb-2">
-        <span className="font-mono text-xs text-muted px-2 py-1 rounded bg-slate-100 min-w-[52px] text-center font-bold">
+        <span className="font-mono text-xs text-muted px-2 py-1 rounded-sm bg-slate-100 min-w-[52px] text-center font-bold">
           {activeRef}
         </span>
         <span className="font-mono text-xs text-muted">f<sub>x</sub></span>
         <input
           value={activeCell}
           onChange={(e) => active && update(active.r, active.c, e.target.value)}
-          className="flex-1 px-2 py-1.5 rounded-md bg-white border border-border focus:border-primary focus:outline-none font-mono text-[13px]"
+          className="flex-1 px-2 py-1.5 rounded-md bg-white border border-border focus:border-primary focus:outline-hidden font-mono text-[13px]"
           placeholder="Enter a value or =formula..."
         />
         <button
           onClick={() => setShowFns(!showFns)}
-          className={cn('btn !py-1.5 !px-3 !text-xs', showFns ? 'btn-accent' : 'btn-outline')}
+          className={cn('btn py-1.5! px-3! text-xs!', showFns ? 'btn-accent' : 'btn-outline')}
         >
           f<sub>x</sub> Functions
         </button>
@@ -632,7 +632,7 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
 
       {/* Active cell computed value */}
       {active && activeCell && activeCell.startsWith('=') && (
-        <div className="mb-2 px-2 py-1 rounded bg-primary/[0.05] border border-primary/30 text-[12px] font-mono">
+        <div className="mb-2 px-2 py-1 rounded-sm bg-primary/5 border border-primary/30 text-[12px] font-mono">
           <span className="text-muted">= </span>
           <span className={activeComputed?.ok ? 'text-primary' : 'text-danger'}>
             {activeComputed?.ok ? display(sheet, active.r, active.c) : (activeComputed?.err || 'error')}
@@ -653,7 +653,7 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search 30+ functions: NPV, IRR, BSCALL, WACC, UNGEAR..."
-              className="w-full px-3 py-2 rounded-md border border-border focus:border-primary focus:outline-none text-[13px] mb-2"
+              className="w-full px-3 py-2 rounded-md border border-border focus:border-primary focus:outline-hidden text-[13px] mb-2"
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 max-h-60 overflow-y-auto p-2 rounded-md bg-slate-50 border border-border">
               {fns.map((f) => (
@@ -710,13 +710,13 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
                   return (
                     <td
                       key={c}
-                      className={cn('border border-border p-0 align-middle', isActive && 'outline outline-2 outline-primary z-10 relative')}
+                      className={cn('border border-border p-0 align-middle', isActive && 'outline-solid outline-2 outline-primary z-10 relative')}
                       style={{ width: cellWidth, height: cellHeight }}
                     >
                       {showValue ? (
                         <button
                           onClick={() => setActive({ r, c })}
-                          className="w-full h-full px-2 text-left text-primary font-mono truncate hover:bg-primary/[0.05]"
+                          className="w-full h-full px-2 text-left text-primary font-mono truncate hover:bg-primary/5"
                           title={cell}
                         >
                           {computed}
@@ -727,8 +727,8 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
                           onFocus={() => setActive({ r, c })}
                           onChange={(e) => update(r, c, e.target.value)}
                           className={cn(
-                            'w-full h-full px-2 outline-none',
-                            isActive ? 'bg-primary/[0.05]' : 'bg-white'
+                            'w-full h-full px-2 outline-hidden',
+                            isActive ? 'bg-primary/5' : 'bg-white'
                           )}
                           style={{ fontSize: fontPx }}
                         />
@@ -743,17 +743,17 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
-        <button onClick={addRow} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> Row</button>
-        <button onClick={() => addRows(10)} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> +10 rows</button>
-        <button onClick={addCol} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> Column</button>
-        <button onClick={() => addCols(5)} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-plus" /> +5 cols</button>
-        <button onClick={removeRow} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-minus" /> Row</button>
-        <button onClick={removeCol} className="btn-outline !text-xs !py-1.5"><i className="fa-solid fa-minus" /> Column</button>
-        <button onClick={clearAll} className="btn-outline !text-xs !py-1.5 border-danger text-danger"><i className="fa-solid fa-trash" /> Clear</button>
+        <button onClick={addRow} className="btn-outline text-xs! py-1.5!"><i className="fa-solid fa-plus" /> Row</button>
+        <button onClick={() => addRows(10)} className="btn-outline text-xs! py-1.5!"><i className="fa-solid fa-plus" /> +10 rows</button>
+        <button onClick={addCol} className="btn-outline text-xs! py-1.5!"><i className="fa-solid fa-plus" /> Column</button>
+        <button onClick={() => addCols(5)} className="btn-outline text-xs! py-1.5!"><i className="fa-solid fa-plus" /> +5 cols</button>
+        <button onClick={removeRow} className="btn-outline text-xs! py-1.5!"><i className="fa-solid fa-minus" /> Row</button>
+        <button onClick={removeCol} className="btn-outline text-xs! py-1.5!"><i className="fa-solid fa-minus" /> Column</button>
+        <button onClick={clearAll} className="btn-outline text-xs! py-1.5! border-danger text-danger"><i className="fa-solid fa-trash" /> Clear</button>
       </div>
 
       <div className="mt-3 p-2.5 rounded-md bg-slate-50 border border-border text-[11px] text-muted">
-        <b>Tip:</b> hit <kbd className="px-1.5 py-0.5 rounded bg-white border border-border font-mono text-[10px]">Dock</kbd> to slide the sheet to the bottom of the screen, then drag the top edge up or down to balance it against the question above. Esc undocks. Zoom shrinks or grows every cell.
+        <b>Tip:</b> hit <kbd className="px-1.5 py-0.5 rounded-sm bg-white border border-border font-mono text-[10px]">Dock</kbd> to slide the sheet to the bottom of the screen, then drag the top edge up or down to balance it against the question above. Esc undocks. Zoom shrinks or grows every cell.
         Built-ins: <code className="text-primary">NPV</code>, <code className="text-primary">IRR</code>, <code className="text-primary">MIRR</code>, <code className="text-primary">BSCALL</code>, <code className="text-primary">WACC</code>, <code className="text-primary">UNGEAR</code>, <code className="text-primary">REGEAR</code>, <code className="text-primary">CAPM</code>, <code className="text-primary">FISHER</code>, <code className="text-primary">IRP</code>, <code className="text-primary">PPP</code>, <code className="text-primary">AF</code>, <code className="text-primary">PV</code>, <code className="text-primary">FV</code>, <code className="text-primary">PMT</code>.
       </div>
     </Card>
@@ -772,7 +772,7 @@ function SpreadsheetWS({ setId, onClose }: { setId: string; onClose?: () => void
           <div
             onMouseDown={onMouseDownDrag}
             onTouchStart={onTouchStartDrag}
-            className="h-3 cursor-row-resize bg-gradient-to-b from-primary/15 to-primary/0 border-b border-primary/30 flex items-center justify-center group"
+            className="h-3 cursor-row-resize bg-linear-to-b from-primary/15 to-primary/0 border-b border-primary/30 flex items-center justify-center group"
             title="Drag to resize. Pull up for more sheet, pull down for more question"
           >
             <span className="w-12 h-1 rounded-full bg-primary/40 group-hover:bg-primary transition-colors" />
@@ -828,7 +828,7 @@ function Calculator() {
         onChange={(e) => setExpr(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && evalExpr()}
         placeholder="e.g. NPV(0.09, 8, 11, 14, 16, 18)"
-        className="w-full p-2.5 rounded-lg bg-slate-50 border border-border focus:border-primary focus:outline-none font-mono"
+        className="w-full p-2.5 rounded-lg bg-slate-50 border border-border focus:border-primary focus:outline-hidden font-mono"
       />
       <div className="grid grid-cols-5 gap-1.5 mt-2">
         {KEYS.flat().map((k) => (
@@ -856,7 +856,7 @@ function Calculator() {
       {history.length > 0 && (
         <div className="mt-3 grid gap-1 text-[12px] font-mono max-h-32 overflow-y-auto">
           {history.map((h, i) => (
-            <div key={i} className="flex justify-between p-1.5 rounded bg-slate-50 border border-border/50">
+            <div key={i} className="flex justify-between p-1.5 rounded-sm bg-slate-50 border border-border/50">
               <span className="text-muted truncate pr-2">{h.e}</span>
               <span className="text-primary">{h.v}</span>
             </div>
@@ -900,12 +900,12 @@ function SampleAnswerPanel({ setId, reqIndex, reqLabel }: { setId: string; reqIn
       <div className="flex items-center gap-2 mb-2">
         <i className="fa-solid fa-trophy text-accent-dark" />
         <span className="font-display text-lg tracking-wide uppercase text-ink">Full-mark Sample Answer</span>
-        <span className="ml-auto pill bg-accent text-ink !text-[10px]">Examiner-grade</span>
+        <span className="ml-auto pill bg-accent text-ink text-[10px]!">Examiner-grade</span>
       </div>
       <div className="text-[11px] uppercase tracking-[0.18em] text-muted font-bold mb-1">For requirement</div>
       <p className="text-[13px] mb-3 italic">{reqLabel}</p>
 
-      <div className="p-3 rounded-lg bg-accent/[0.06] border border-accent/40 mb-4">
+      <div className="p-3 rounded-lg bg-accent/6 border border-accent/40 mb-4">
         <div className="text-[11px] uppercase tracking-[0.18em] text-accent-dark font-bold mb-1.5">
           <i className="fa-solid fa-bullseye mr-1" /> What earns full marks
         </div>
@@ -918,7 +918,7 @@ function SampleAnswerPanel({ setId, reqIndex, reqLabel }: { setId: string; reqIn
             <div className="flex items-start justify-between gap-3">
               <span>{line.text}</span>
               {typeof line.marks === 'number' && (
-                <span className="font-mono text-xs px-2 py-0.5 rounded bg-primary text-white shrink-0">
+                <span className="font-mono text-xs px-2 py-0.5 rounded-sm bg-primary text-white shrink-0">
                   {line.marks}m
                 </span>
               )}
@@ -927,7 +927,7 @@ function SampleAnswerPanel({ setId, reqIndex, reqLabel }: { setId: string; reqIn
         ))}
       </div>
 
-      <div className="mt-4 p-3 rounded-lg bg-primary/[0.06] border border-primary/30">
+      <div className="mt-4 p-3 rounded-lg bg-primary/6 border border-primary/30">
         <div className="text-[11px] uppercase tracking-[0.18em] text-primary font-bold mb-1.5">
           <i className="fa-solid fa-comment mr-1" /> Examiner commentary
         </div>
@@ -941,8 +941,8 @@ function SampleAnswerPanel({ setId, reqIndex, reqLabel }: { setId: string; reqIn
             {sample.profSkills.map((p, i) => (
               <div key={i} className="p-2.5 rounded-md border border-border bg-slate-50 text-[13px]">
                 <div className="flex items-center gap-2">
-                  <span className="pill bg-pink-100 text-pink-700 !text-[10px]">{p.skill}</span>
-                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-pink-500 text-white shrink-0">
+                  <span className="pill bg-pink-100 text-pink-700 text-[10px]!">{p.skill}</span>
+                  <span className="font-mono text-xs px-2 py-0.5 rounded-sm bg-pink-500 text-white shrink-0">
                     {p.marks}m
                   </span>
                 </div>
@@ -1000,7 +1000,7 @@ function CoachDrawer({ open, onClose, setContext }: { open: boolean; onClose: ()
       {open && (
         <>
           <motion.div
-            className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-xs"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -1013,7 +1013,7 @@ function CoachDrawer({ open, onClose, setContext }: { open: boolean; onClose: ()
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
           >
-            <div className="p-4 border-b border-border flex items-center gap-2 bg-gradient-to-br from-accent/10 via-white to-primary/5">
+            <div className="p-4 border-b border-border flex items-center gap-2 bg-linear-to-br from-accent/10 via-white to-primary/5">
               <div className="w-9 h-9 rounded-full bg-accent grid place-items-center text-ink">
                 <i className="fa-solid fa-robot" />
               </div>
@@ -1021,7 +1021,7 @@ function CoachDrawer({ open, onClose, setContext }: { open: boolean; onClose: ()
                 <div className="font-display text-lg tracking-wide uppercase text-ink leading-none">Coach AI</div>
                 <div className="text-[11px] text-muted mt-0.5">Expert AFM tutor, online</div>
               </div>
-              <button onClick={onClose} className="ml-auto btn-ghost !p-2">
+              <button onClick={onClose} className="ml-auto btn-ghost p-2!">
                 <i className="fa-solid fa-xmark" />
               </button>
             </div>
@@ -1045,7 +1045,7 @@ function CoachDrawer({ open, onClose, setContext }: { open: boolean; onClose: ()
                     <button
                       key={s}
                       onClick={() => send(s)}
-                      className="text-left p-2.5 rounded-lg border border-border hover:border-primary hover:bg-primary/[0.05] text-[13px]"
+                      className="text-left p-2.5 rounded-lg border border-border hover:border-primary hover:bg-primary/5 text-[13px]"
                     >
                       <i className="fa-solid fa-arrow-right text-primary mr-2 text-[10px]" /> {s}
                     </button>
@@ -1106,7 +1106,7 @@ function renderChatMarkup(text: string): ReactNode[] {
     if (m[2] !== undefined) {
       tokens.push(<b key={key++} className="text-primary">{m[2]}</b>);
     } else if (m[4] !== undefined) {
-      tokens.push(<code key={key++} className="bg-slate-100 px-1 rounded text-primary text-[12px]">{m[4]}</code>);
+      tokens.push(<code key={key++} className="bg-slate-100 px-1 rounded-sm text-primary text-[12px]">{m[4]}</code>);
     }
     lastIndex = re.lastIndex;
   }

@@ -24,10 +24,10 @@ interface TwoUpProps {
 }
 
 const PANEL_BG: Record<Tone, string> = {
-  white: 'bg-[var(--tone-white)] text-[var(--ink)]',
-  mist:  'bg-[var(--tone-mist)] text-[var(--ink)]',
-  navy:  'bg-[var(--tone-navy)] text-white',
-  black: 'bg-[var(--tone-black)] text-white',
+  white: 'bg-(--tone-white) text-(--ink)',
+  mist:  'bg-(--tone-mist) text-(--ink)',
+  navy:  'bg-(--tone-navy) text-white',
+  black: 'bg-(--tone-black) text-white',
 };
 
 const ease = [0.2, 0.8, 0.2, 1] as const;
@@ -56,8 +56,8 @@ function Panel({ data, delay }: { data: TwoUpPanel; delay: number }) {
           className={cn(
             'inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] mb-4',
             dark
-              ? 'border-[var(--gold-500)]/60 text-white'
-              : 'border-[var(--mist-200)] text-[var(--navy-800)] bg-white/60',
+              ? 'border-(--gold-500)/60 text-white'
+              : 'border-(--mist-200) text-(--navy-800) bg-white/60',
           )}
         >
           {data.eyebrow}
@@ -67,7 +67,7 @@ function Panel({ data, delay }: { data: TwoUpPanel; delay: number }) {
         style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.4rem)', lineHeight: 1.1 }}
         className={cn(
           'font-display uppercase tracking-[-0.005em] m-0',
-          dark ? 'text-white' : 'text-[var(--navy-900)]',
+          dark ? 'text-white' : 'text-(--navy-900)',
         )}
       >
         {data.headline}
@@ -75,7 +75,7 @@ function Panel({ data, delay }: { data: TwoUpPanel; delay: number }) {
       {data.subline && (
         <p
           style={{ fontSize: 'var(--fs-subline)', lineHeight: 'var(--lh-snug)' }}
-          className={cn('mt-3', dark ? 'text-white/80' : 'text-[var(--mist-500)]')}
+          className={cn('mt-3', dark ? 'text-white/80' : 'text-(--mist-500)')}
         >
           {data.subline}
         </p>

@@ -39,7 +39,7 @@ export function DebriefIndexPage() {
     <motion.div initial="hidden" animate="show" variants={stagger}>
       {/* Hero */}
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-500/[0.06] via-white to-primary/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-sky-500/6 via-white to-primary/10" />
         <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -63,7 +63,7 @@ export function DebriefIndexPage() {
           </div>
 
           {/* Disclaimer banner */}
-          <div className="mt-5 rounded-xl border-l-4 border-l-primary bg-primary/[0.05] p-4 text-[13px] leading-relaxed text-ink">
+          <div className="mt-5 rounded-xl border-l-4 border-l-primary bg-primary/5 p-4 text-[13px] leading-relaxed text-ink">
             <strong className="text-primary">Honour rule.</strong> Debrief is for AFTER your attempt — paste what
             you already wrote and we'll critique it against the eight examiner markers. Want a model answer to benchmark
             against? Open{' '}
@@ -78,7 +78,7 @@ export function DebriefIndexPage() {
         <>
           <SectionTitle icon="fa-solid fa-chart-line">Trends across {trends.total} session{trends.total === 1 ? '' : 's'}</SectionTitle>
           <motion.div variants={fadeUp}>
-            <Card className="!p-5">
+            <Card className="p-5!">
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="rounded-xl border border-border bg-white p-3.5">
                   <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">Avg structural score</div>
@@ -120,7 +120,7 @@ export function DebriefIndexPage() {
       </SectionTitle>
       {sessions.length === 0 && (
         <motion.div variants={fadeUp}>
-          <Card className="!p-6 text-center">
+          <Card className="p-6! text-center">
             <p className="text-ink/70 leading-relaxed">
               No debriefs yet. Sit a 25-mark practice question, submit it on the practice platform,
               then paste your answer here for a structural review.
@@ -235,7 +235,7 @@ export function DebriefNewPage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.div variants={fadeUp}>
-        <Card className="!p-5 mb-4">
+        <Card className="p-5! mb-4">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <Pill variant="primary"><i className="fa-solid fa-clipboard-check" /> Debrief workflow</Pill>
             <Pill>Step {step} of 5</Pill>
@@ -256,7 +256,7 @@ export function DebriefNewPage() {
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div key="s1" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-            <Card className="!p-6">
+            <Card className="p-6!">
               <h2 className="font-display text-2xl tracking-wide uppercase text-ink mb-4">Question metadata</h2>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Topic (free text — generic only)">
@@ -293,10 +293,10 @@ export function DebriefNewPage() {
 
         {step === 2 && (
           <motion.div key="s2" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-            <Card className="!p-6">
+            <Card className="p-6!">
               <h2 className="font-display text-2xl tracking-wide uppercase text-ink mb-2">Your own attempt</h2>
 
-              <div className="rounded-xl border-l-4 border-l-danger bg-danger/[0.04] p-4 mb-4 text-[13px] leading-relaxed text-ink">
+              <div className="rounded-xl border-l-4 border-l-danger bg-danger/4 p-4 mb-4 text-[13px] leading-relaxed text-ink">
                 <strong className="text-danger">Read first.</strong> Paste your <strong>own</strong> answer that you have <strong>already submitted</strong> on the ACCA Practice Platform.
                 This tool reviews technique only. It will not rewrite your answer.
               </div>
@@ -340,7 +340,7 @@ export function DebriefNewPage() {
 
         {step === 3 && (
           <motion.div key="s3" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-            <Card className="!p-6">
+            <Card className="p-6!">
               <h2 className="font-display text-2xl tracking-wide uppercase text-ink mb-1">Self-rating</h2>
               <p className="text-[13px] text-muted mb-4">Rate yourself before the tool gives you its view. Honest ratings beat optimistic ones.</p>
               <div className="space-y-3">
@@ -374,9 +374,9 @@ export function DebriefNewPage() {
 
         {step === 4 && (
           <motion.div key="s4" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-            <Card className="!p-6">
+            <Card className="p-6!">
               <h2 className="font-display text-2xl tracking-wide uppercase text-ink mb-2">Run structural critique</h2>
-              <div className="rounded-xl border-l-4 border-l-primary bg-primary/[0.05] p-4 mb-4 text-[13.5px] leading-relaxed text-ink">
+              <div className="rounded-xl border-l-4 border-l-primary bg-primary/5 p-4 mb-4 text-[13.5px] leading-relaxed text-ink">
                 <strong>What this does.</strong> Checks 8 structural signals on your answer: recommendation upfront,
                 working references, sensitivity, counter-arguments, scenario figures quoted, headings,
                 ESG mention, time discipline, depth.
@@ -400,7 +400,7 @@ export function DebriefNewPage() {
         {step === 5 && critique && (
           <motion.div key="s5" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
             <CritiquePanel critique={critique} />
-            <Card className="!p-6 mt-4">
+            <Card className="p-6! mt-4">
               <h2 className="font-display text-2xl tracking-wide uppercase text-ink mb-2">Action items</h2>
               <p className="text-[13px] text-muted mb-3">Three things you will do differently next time. Keep them concrete.</p>
               <div className="space-y-2">
@@ -441,7 +441,7 @@ export function DebriefViewPage() {
   return (
     <motion.div initial="hidden" animate="show" variants={stagger}>
       <motion.div variants={fadeUp}>
-        <Card className="!p-6">
+        <Card className="p-6!">
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <Pill variant="primary">W{session.weekNum}</Pill>
             <Pill>{session.marks}m</Pill>
@@ -468,7 +468,7 @@ export function DebriefViewPage() {
         <>
           <SectionTitle icon="fa-solid fa-list-check">Action items</SectionTitle>
           <motion.div variants={fadeUp}>
-            <Card className="!p-5">
+            <Card className="p-5!">
               <ol className="space-y-2 list-decimal pl-5 text-[14px] text-ink leading-relaxed">
                 {session.actionItems.map((a, i) => <li key={i}>{a}</li>)}
               </ol>
@@ -481,7 +481,7 @@ export function DebriefViewPage() {
       <motion.div variants={stagger} className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {(Object.keys(SKILL_LABELS) as Array<keyof typeof SKILL_LABELS>).map((k) => (
           <motion.div key={k} variants={fadeUp}>
-            <Card className="!p-4 text-center">
+            <Card className="p-4! text-center">
               <div className="text-[10.5px] uppercase tracking-wider text-muted font-bold">{SKILL_LABELS[k]}</div>
               <div className="font-display text-3xl text-primary mt-1">{session.selfRating[k]}</div>
               <div className="text-[10px] text-muted">/ 5</div>
@@ -497,7 +497,7 @@ function CritiquePanel({ critique }: { critique: StructuralCritique }) {
   const strong = critique.signals.filter((s) => s.verdict === 'strong').length;
   const pct = Math.round((strong / critique.signals.length) * 100);
   return (
-    <Card className="!p-6">
+    <Card className="p-6!">
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="w-16 h-16 rounded-2xl grid place-items-center font-display text-2xl text-white" style={{ background: 'linear-gradient(135deg, #00b54e 0%, #f5b800 140%)' }}>
           {pct}%
@@ -512,8 +512,8 @@ function CritiquePanel({ critique }: { critique: StructuralCritique }) {
           <div key={s.name} className={cn(
             'rounded-xl border px-3.5 py-2.5',
             s.verdict === 'strong' && 'border-primary/30 bg-primary/5',
-            s.verdict === 'weak' && 'border-accent/40 bg-accent/[0.06]',
-            s.verdict === 'absent' && 'border-danger/40 bg-danger/[0.04]',
+            s.verdict === 'weak' && 'border-accent/40 bg-accent/6',
+            s.verdict === 'absent' && 'border-danger/40 bg-danger/4',
           )}>
             <div className="flex items-center gap-2">
               <i className={cn(
@@ -529,7 +529,7 @@ function CritiquePanel({ critique }: { critique: StructuralCritique }) {
         ))}
       </div>
       {critique.professionalSkillsRisks.length > 0 && (
-        <div className="mt-4 rounded-xl border border-dashed border-danger/40 bg-danger/[0.04] p-4">
+        <div className="mt-4 rounded-xl border border-dashed border-danger/40 bg-danger/4 p-4">
           <div className="text-[11px] uppercase tracking-wider text-danger font-bold mb-2">
             <i className="fa-solid fa-triangle-exclamation" /> Professional skill marks at risk
           </div>
@@ -541,7 +541,7 @@ function CritiquePanel({ critique }: { critique: StructuralCritique }) {
         </div>
       )}
       {critique.techniqueGaps.length > 0 && (
-        <div className="mt-3 rounded-xl border border-primary/30 bg-primary/[0.04] p-4">
+        <div className="mt-3 rounded-xl border border-primary/30 bg-primary/4 p-4">
           <div className="text-[11px] uppercase tracking-wider text-primary font-bold mb-2">
             <i className="fa-solid fa-arrow-right" /> Technique to revisit
           </div>

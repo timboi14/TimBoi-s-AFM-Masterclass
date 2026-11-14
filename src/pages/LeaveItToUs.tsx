@@ -55,7 +55,7 @@ export function LeaveItToUsPage() {
               ['lock', 'One plan, one trusted stack', 'The route opens the exact supporting tool in Ke Finesse, so formulas, technique and papers stop competing for attention.'],
               ['fileCheck', 'Every session leaves evidence', 'The finish line is something observable: a recalled rule, a planned requirement, a timed response or a named repair.'],
             ].map(([icon, title, body]) => (
-              <article key={title} className="rounded-3xl border border-white/15 bg-white/[.055] p-6">
+              <article key={title} className="rounded-3xl border border-white/15 bg-white/5.5 p-6">
                 <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent text-ink"><AppIcon name={icon as 'compass' | 'lock' | 'fileCheck'} size={19} /></span>
                 <h3 className="mt-5 font-display text-2xl leading-tight">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-white/60">{body}</p>
@@ -103,7 +103,7 @@ export function LeaveItToUsPage() {
           </div>
           <div className="grid md:grid-cols-2 gap-4 mt-8">
             {PRIORITIES.map((item) => (
-              <Link key={item.rank} to={item.to} className="group rounded-3xl border border-border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
+              <Link key={item.rank} to={item.to} className="group rounded-3xl border border-border bg-white p-6 shadow-xs transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
                 <div className="flex items-center justify-between"><span className="text-xs font-black tracking-[.15em] text-primary">PRIORITY {item.rank}</span><span className="grid h-10 w-10 place-items-center rounded-xl bg-ink text-accent font-display">{item.code}</span></div>
                 <h3 className="font-display text-2xl text-ink mt-5">{item.title}</h3>
                 <p className="text-sm leading-6 text-muted mt-2">{item.body}</p>

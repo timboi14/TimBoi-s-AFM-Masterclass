@@ -198,7 +198,7 @@ export function CoursePage() {
         Key dates
       </SectionTitle>
       <motion.div variants={fadeUp}>
-        <Card className="!p-0 overflow-hidden">
+        <Card className="p-0! overflow-hidden">
           <table className="w-full text-[14px]">
             <thead className="bg-slate-50">
               <tr className="text-[11px] uppercase tracking-wider text-muted">
@@ -290,7 +290,7 @@ export function CoursePage() {
 
       {/* MANTRA */}
       <motion.div variants={fadeUp} className="mt-10">
-        <Card className="!p-7 text-center" glow>
+        <Card className="p-7! text-center" glow>
           <p className="font-display text-3xl md:text-4xl tracking-wide uppercase text-ink leading-tight">
             "Just keep swimming."
           </p>
@@ -326,7 +326,7 @@ function ThisWeekCard({ week, now, live }: { week: ShWeek; now: Date; live: bool
   const tbaTopics = week.tbaTopics.map((id) => TOPICS[id]).filter(Boolean);
 
   return (
-    <Card className="!p-6 border-l-4 border-l-primary shine">
+    <Card className="p-6! border-l-4 border-l-primary shine">
       <div className="flex items-start gap-4 flex-wrap">
         <div className="w-16 h-16 rounded-2xl bg-primary text-white grid place-items-center font-display text-2xl">
           W{week.num}
@@ -393,7 +393,7 @@ function WeekCard({ week, isCurrent, progress, onToggle }: { week: ShWeek; isCur
   const tbaTopics = week.tbaTopics.map((id) => TOPICS[id]).filter(Boolean);
 
   return (
-    <Card className={cn('!p-5', isCurrent && 'border-2 border-primary shadow-glow')}>
+    <Card className={cn('p-5!', isCurrent && 'border-2 border-primary shadow-glow')}>
       <button onClick={() => setOpen((o) => !o)} className="w-full text-left">
         <div className="flex items-center gap-4">
           <div className={cn(
@@ -417,7 +417,7 @@ function WeekCard({ week, isCurrent, progress, onToggle }: { week: ShWeek; isCur
           <i className={`fa-solid fa-chevron-${open ? 'up' : 'down'} text-muted ml-2`} />
         </div>
         <div className="mt-3 h-1.5 rounded-full bg-slate-100 overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${pct}%` }} />
+          <div className="h-full bg-linear-to-r from-primary to-accent transition-all" style={{ width: `${pct}%` }} />
         </div>
       </button>
       {open && (
@@ -442,7 +442,7 @@ function WeekCard({ week, isCurrent, progress, onToggle }: { week: ShWeek; isCur
                       )}
                     >
                       <span className={cn(
-                        'mt-0.5 w-4 h-4 rounded border-2 grid place-items-center shrink-0',
+                        'mt-0.5 w-4 h-4 rounded-sm border-2 grid place-items-center shrink-0',
                         done ? 'bg-primary border-primary text-white' : 'border-border',
                       )}>
                         {done && <i className="fa-solid fa-check text-[8px]" />}
@@ -485,7 +485,7 @@ function WeekCard({ week, isCurrent, progress, onToggle }: { week: ShWeek; isCur
 
 function BlackboscaCompanion() {
   return (
-    <Card className="!p-6">
+    <Card className="p-6!">
       <div className="flex flex-wrap items-center gap-2 mb-3">
         <Pill variant="primary">25 marks · 60 minutes</Pill>
         <Pill variant="accent">+5 PS marks</Pill>
@@ -523,7 +523,7 @@ function BlackboscaCompanion() {
         </div>
       </div>
 
-      <div className="mt-5 rounded-xl border border-dashed border-accent/60 bg-accent/[0.08] p-4">
+      <div className="mt-5 rounded-xl border border-dashed border-accent/60 bg-accent/8 p-4">
         <div className="text-[11px] uppercase tracking-wider text-accent-dark font-bold mb-1">
           <i className="fa-solid fa-trophy" /> Banker phrases to deploy
         </div>

@@ -96,7 +96,7 @@ export function CapabilityMap() {
                       <td className="px-3 py-2.5 font-mono font-bold text-primary">{row.ref}</td>
                       <td className="px-3 py-2.5 text-ink">
                         {linkTarget ? (
-                          <Link to={linkTarget} className="hover:text-primary focus:text-primary outline-none focus-visible:underline">
+                          <Link to={linkTarget} className="hover:text-primary focus:text-primary outline-hidden focus-visible:underline">
                             {row.capability}
                           </Link>
                         ) : (

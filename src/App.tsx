@@ -82,7 +82,7 @@ function RouteFallback() {
       <div className="flex flex-col items-center gap-3">
         <div
           aria-hidden
-          className="w-10 h-10 rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary)] animate-spin"
+          className="w-10 h-10 rounded-full border-[3px] border-(--border) border-t-(--primary) animate-spin"
         />
         <span className="text-[11px] uppercase tracking-[0.16em] text-muted font-bold">Loading…</span>
       </div>
