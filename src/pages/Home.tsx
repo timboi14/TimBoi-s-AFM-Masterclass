@@ -316,7 +316,7 @@ export function HomePage() {
             alt=""
             width="1040"
             height="580"
-            {...({ fetchpriority: 'high' } as { fetchpriority: 'high' })}
+            {...({ fetchPriority: 'high' } as { fetchPriority: 'high' })}
           />
         </picture>
         <div className="home-v3__hero-wash" aria-hidden="true" />

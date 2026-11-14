@@ -102,7 +102,7 @@ export function TabArtBanner() {
         loading="eager"
         decoding="async"
         // React's type for fetchPriority is recent; pass via a typed attr bag.
-        {...({ fetchpriority: 'high' } as { fetchpriority: 'high' })}
+        {...({ fetchPriority: 'high' } as { fetchPriority: 'high' })}
         onLoad={() => setLoaded(true)}
         style={{ opacity: loaded ? 0.11 : 0, transition: 'opacity 320ms ease-out' } as CSSProperties}
         className="w-full h-full object-contain object-right-top mix-blend-multiply select-none"

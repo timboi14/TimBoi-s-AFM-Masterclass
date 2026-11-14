@@ -103,22 +103,21 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    rollupOptions: {
+    // Vite 8 bundles with Rolldown. Named groups replace the old Rollup
+    // manualChunks function: the canonical data libraries are shared by many
+    // lazy routes, and without explicit groups they get hoisted into the
+    // entry chunk, which made Home download every paper and theory card.
+    rolldownOptions: {
       output: {
-        onlyExplicitManualChunks: true,
-        manualChunks(id) {
-          if (id.includes('/src/data/pastpapers/papers.ts')) return 'paper-bank';
-          const catalogModules = [
-            '/src/data/theory.ts',
-            '/src/data/topics.ts',
-            '/src/data/pitfalls.ts',
-            '/src/data/examiner.ts',
-            '/src/data/spotlights.ts',
-            '/src/data/war-room.ts',
-            '/src/lib/mnemonics.ts',
-          ];
-          if (catalogModules.some((modulePath) => id.includes(modulePath))) return 'academy-catalog';
-          return undefined;
+        codeSplitting: {
+          groups: [
+            { name: 'paper-bank', test: /\/src\/data\/pastpapers\/papers\.ts$/, priority: 20 },
+            {
+              name: 'academy-catalog',
+              test: /\/src\/(data\/(theory|topics|pitfalls|examiner|spotlights|war-room)|lib\/mnemonics)\.ts$/,
+              priority: 10,
+            },
+          ],
         },
       },
     },
