@@ -195,6 +195,42 @@ for (const name of ['mark', 'coach']) {
 }
 console.log = quiet; globalThis.fetch = realFetch;
 
+
+const library = await load('src/lib/study-library.ts');
+globalThis.window = { dispatchEvent: () => true };
+const learningTask = { id:'source-learn', title:'Learn', source:'text', start:1,end:8,topic:'Topic',kind:'learn',minutes:90,status:'current' };
+const practiceTask = { ...learningTask,id:'source-question',kind:'practice',minutes:65 };
+test('source planner: conserves workload across split sessions and reports overflow',()=>{
+ const settings={...library.DEFAULT_PLANNER,examDate:'2026-11-23',weekdayMinutes:30,saturdayMinutes:30,sundayMinutes:30};
+ const tasks=[learningTask,practiceTask,{...learningTask,id:'more',minutes:120}];
+ const plan=library.buildPlan(tasks,{},settings,new Date('2026-11-16T00:00:00'));
+ assert.equal(plan.capacity,120);assert.equal(plan.required,275);assert.equal(plan.backlogMinutes,155);
+ assert.equal(plan.slots.reduce((n,s)=>n+s.tasks.reduce((a,t)=>a+t.minutes,0),0),120);
+ assert.ok(plan.slots.some(s=>s.tasks.some(t=>t.continuation)));
+ for(const slot of plan.slots){const day=new Date(slot.date+'T12:00:00').getDay();assert.notEqual(day,5);if(day>0&&day<6)assert.ok(slot.start>='19:00');}
+});
+test('source planner: mixed material never enters the current schedule',()=>{
+ const plan=library.buildPlan([{...learningTask,status:'mixed'},{...practiceTask,status:'reference'}],{},library.DEFAULT_PLANNER,new Date('2026-11-16T00:00:00'));
+ assert.equal(plan.required,0);assert.ok(plan.slots.every(s=>s.tasks.length===0));
+});
+test('source planner: past exam and zero capacity do not conceal backlog',()=>{
+ const plan=library.buildPlan([learningTask],{}, {...library.DEFAULT_PLANNER,examDate:'2026-01-01'},new Date('2026-11-16'));
+ assert.equal(plan.slots.length,0);assert.equal(plan.backlogMinutes,90);
+});
+test('source learning: requires recall evidence and accepts genuine zero marks',()=>{
+ assert.throws(()=>library.completeReading(learningTask,{}),/memory/);
+ const p=library.saveAttempt(practiceTask,{}, {response:'Attempt',score:0,available:20,correction:'Repair method',minutes:20},new Date('2026-11-16T12:00:00').getTime());
+ assert.equal(p[practiceTask.id].attempts[0].score,0);assert.ok(p[practiceTask.id].fsrs.due);
+ assert.throws(()=>library.saveAttempt(practiceTask,p,{response:'Attempt',score:21,available:20,correction:'Repair',minutes:20}),/valid marks/);
+});
+test('source mastery: two same-day repeats do not imply secure knowledge',()=>{
+ const at=new Date('2026-11-16T12:00:00').getTime();const a={at,response:'Answer',score:18,available:20,correction:'Check',minutes:10};
+ const p={[practiceTask.id]:{response:'',recall:'',attempts:[a,{...a,at:at+1000}],fsrs:{due:at+86400000}}};
+ assert.equal(library.taskState(practiceTask,p,at+2000),'review scheduled');
+ p[practiceTask.id].attempts.push({...a,at:at-86400000});assert.equal(library.taskState(practiceTask,p,at+2000),'secure');
+ assert.equal(library.taskState(practiceTask,p,at+2*86400000),'due');
+});
+
 rmSync(dir, { recursive: true, force: true });
 for (const f of failures) console.error(f);
 console.log(`${failures.length ? '✘' : '✓'} unit: ${passed} passed, ${failures.length} failed`);

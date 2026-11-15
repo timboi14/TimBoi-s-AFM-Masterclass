@@ -4,7 +4,7 @@ import { AFM_SYLLABUS, type SyllabusCapability } from '@/data/syllabus';
 import { TOPICS } from '@/data/topics';
 
 /**
- * ACCA AFM Capability Map — every A1..E5 capability with its mapped TimBoi topic
+ * ACCA AFM Capability Map — every A1..G4 capability with its mapped TimBoi topic
  * and drill. Greyed rows are coverage gaps (next content sprint targets).
  *
  * Extracted from the former standalone Syllabus page so it can live inside the
@@ -65,6 +65,7 @@ export function CapabilityMap() {
 
   return (
     <div>
+      <p className="mb-4">The current syllabus runs from A to G. Topic links show related drills; the <Link to="/study-room?tab=Learn" className="underline">source-linked study room</Link> supplies the complete textbook chapters, including reconstruction.</p>
       {sections.map((sec) => (
         <div key={sec} className="mb-8">
           <h3 className="font-display text-xl tracking-wide uppercase text-ink mb-3">

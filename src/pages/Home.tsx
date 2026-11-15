@@ -1,3 +1,4 @@
+import { LibraryEntry } from '@/components/LibraryEntry';
 import { Momentum } from '@/components/momentum/Momentum';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -348,9 +349,9 @@ export function HomePage() {
             write to time and repair what cost marks.
           </p>
           <div className="home-v3__hero-actions">
-            <Link to={`/topic/${todaysMission.id}`} className="home-v3__button home-v3__button--gold">
+            <Link to="/study-room" className="home-v3__button home-v3__button--gold">
               <AppIcon name="zap" size={16} />
-              Start today&apos;s mission
+              Open my study plan
             </Link>
             <Link to="/past-papers" className="home-v3__button home-v3__button--glass">
               Sit a past paper <AppIcon name="arrowRight" size={16} />
@@ -402,6 +403,7 @@ export function HomePage() {
       {/* Habit evidence sits directly under the hero: the streak, the weekly
           goal and the next action are the reasons to come back tomorrow. */}
       <section className="home-v3__momentum" aria-label="Your momentum">
+        <LibraryEntry />
         <Momentum />
       </section>
 

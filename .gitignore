@@ -36,3 +36,7 @@ reports/tmp-jscpd/
 test-results/
 
 .vercel
+
+# Personal user-provided books, extracts and local build staging
+public/personal-library/
+.private-library-build/

@@ -1,3 +1,4 @@
+import { LibraryEntry } from '@/components/LibraryEntry';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -112,6 +113,7 @@ export function CoursePage() {
 
   return (
     <>
+      <LibraryEntry />
       <StickySubNav title="Course" anchors={anchors} />
 
       {/* HERO — Block A on tone-white per §12.3 */}

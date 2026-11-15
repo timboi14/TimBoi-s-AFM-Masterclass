@@ -1,3 +1,4 @@
+import { LibraryEntry } from '@/components/LibraryEntry';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -54,6 +55,7 @@ export function TrainingPage() {
 
   return (
     <>
+      <LibraryEntry />
       <StickySubNav title="Training Ground" anchors={anchors} />
 
       <SectionShell tone="mist" pad="lg">

@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -5,6 +6,7 @@ import path from 'node:path';
 
 export default defineConfig({
   plugins: [
+    { name: "exclude-personal-library-from-build", closeBundle() { fs.rmSync(path.resolve(__dirname, "dist/personal-library"), { recursive: true, force: true }); } },
     react(),
     VitePWA({
       registerType: 'autoUpdate',
@@ -54,6 +56,7 @@ export default defineConfig({
         // for hashed asset URLs (which would mask a stale-chunk 404).
         navigateFallbackDenylist: [/^\/afm-classroom\//, /^\/assets\//, /\/sw\.js$/, /\/workbox-.*\.js$/],
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        globIgnores: ['personal-library/**'],
         runtimeCaching: [
           {
             // SPA navigations: prefer the network so a fresh deploy's HTML

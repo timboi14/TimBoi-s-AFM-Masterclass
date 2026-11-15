@@ -30,6 +30,8 @@ const lazyWithRetry = <T extends React.ComponentType<unknown>>(
 const lazyNamed = <K extends string>(loader: () => Promise<Record<K, React.ComponentType<unknown>>>, name: K) =>
   lazyWithRetry(() => loader().then((m) => ({ default: m[name] })));
 
+const StudyLibraryPage = lazyNamed(() => import('@/pages/StudyLibrary'), 'StudyLibraryPage');
+
 const NameOverlay = lazyNamed(() => import('@/NameOverlay'), 'NameOverlay');
 const Onboarding = lazyNamed(() => import('@/components/Onboarding'), 'Onboarding');
 
@@ -103,6 +105,7 @@ export default function App() {
             element={
               <Suspense fallback={<RouteFallback />}>
                 <Routes>
+                  <Route path="/study-room" element={<StudyLibraryPage />} />
                   <Route path="/topic/:id" element={<TopicPage />} />
                   <Route path="/practice" element={<PracticePage />} />
                   <Route path="/practice/:id" element={<PracticePage />} />

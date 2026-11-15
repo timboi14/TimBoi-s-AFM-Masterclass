@@ -29,7 +29,7 @@ type NavItem = {
 // under More, keeping the global chrome calm without hiding the depth.
 const PRIMARY_NAV: NavItem[] = [
   { to: '/', label: 'Home', icon: 'home' },
-  { to: '/leave-it-to-us', label: 'Leave it to us', icon: 'sparkles', matches: ['/leave-it-to-us'] },
+  { to: '/study-room', label: 'My study plan', icon: 'book', matches: ['/study-room'] },
   { to: '/classroom-14', label: 'Classroom 14', icon: 'book', matches: ['/classroom-14'] },
   { to: '/classroom', label: 'Classroom', icon: 'book', matches: ['/classroom'] },
   { to: '/course', label: 'Learn', icon: 'graduation', matches: ['/course', '/champions-league', '/topic'] },
@@ -41,6 +41,7 @@ const PRIMARY_NAV: NavItem[] = [
 
 const MORE_NAV: NavItem[] = [
   { to: '/ke-finesse', label: 'ke finesse', icon: 'wand', matches: ['/ke-finesse'] },
+  { to: '/leave-it-to-us', label: 'Leave it to us', icon: 'sparkles', matches: ['/leave-it-to-us'] },
   { to: '/start', label: 'Start here', icon: 'compass', matches: ['/start'] },
   { to: '/champions-league', label: 'Plain-English concepts', icon: 'lightbulb', matches: ['/champions-league'] },
   { to: '/topic/adviser', label: 'Topic library', icon: 'list', matches: ['/topic'] },

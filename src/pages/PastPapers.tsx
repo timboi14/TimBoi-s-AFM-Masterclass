@@ -1,3 +1,4 @@
+import { LibraryEntry } from '@/components/LibraryEntry';
 import { useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PAPERS } from '@/data/pastpapers/papers';
@@ -30,7 +31,8 @@ export function PastPapersPage() {
   const complete = SITTINGS.filter((s) => s.complete).length;
 
   return <>
-    <StickySubNav title="Past papers" anchors={anchors} />
+    <LibraryEntry />
+      <StickySubNav title="Past papers" anchors={anchors} />
     <SectionShell tone="white" pad="xl">
       <CenteredHero
         eyebrow={<><span aria-hidden>★</span>{SITTINGS.length} sittings · {PAPERS.length} sourced questions · iAssess-style</>}

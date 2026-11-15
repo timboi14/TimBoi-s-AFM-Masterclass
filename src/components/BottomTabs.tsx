@@ -12,7 +12,7 @@ import { useEvents } from '@/lib/db/events';
  */
 const TABS: Array<{ to: string; label: string; icon: AppIconName; matches: string[] }> = [
   { to: '/', label: 'Home', icon: 'home', matches: [] },
-  { to: '/course', label: 'Learn', icon: 'graduation', matches: ['/course', '/champions-league', '/topic', '/theory', '/playbook'] },
+  { to: '/study-room', label: 'Study', icon: 'graduation', matches: ['/study-room', '/course', '/champions-league', '/topic', '/theory', '/playbook'] },
   { to: '/memory-lab', label: 'Recall', icon: 'brain', matches: ['/memory', '/boot-room', '/cards'] },
   { to: '/past-papers', label: 'Papers', icon: 'files', matches: ['/past-papers', '/training', '/practice', '/mock', '/debrief', '/revision'] },
   { to: '/form-guide', label: 'Progress', icon: 'chart', matches: ['/form-guide', '/progress', '/settings'] },
