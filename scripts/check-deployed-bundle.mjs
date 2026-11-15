@@ -77,13 +77,26 @@ async function collectScriptSources() {
   const indexRes = await fetch(`${base}/`, { redirect: 'follow' });
   if (!indexRes.ok) throw new Error(`HTTP ${indexRes.status} fetching ${base}/`);
   const html = await indexRes.text();
-  const scriptUrls = Array.from(html.matchAll(/<script[^>]+src=["']([^"']+)["']/g))
-    .map((m) => m[1])
-    .filter((u) => u.includes('/assets/') || u.endsWith('.js'))
-    .map((u) => (u.startsWith('http') ? u : new URL(u, base).toString()));
-  // Also pull every chunk reachable from the entry module's import map by
-  // fetching a sampling of assets via the live manifest if present.
-  return Promise.all(scriptUrls.map(async (url) => {
+  const scriptUrls = new Set(
+    Array.from(html.matchAll(/<script[^>]+src=["']([^"']+)["']/g))
+      .map((m) => m[1])
+      .filter((u) => u.includes('/assets/') || u.endsWith('.js'))
+      .map((u) => (u.startsWith('http') ? u : new URL(u, base).toString())),
+  );
+  // The entry <script> alone misses lazy route chunks (sheet-engine, PastPapers…),
+  // where most markers live. The Workbox service worker precaches EVERY chunk,
+  // so its manifest is the authoritative list of shipped JS.
+  const swRes = await fetch(`${base}/sw.js`);
+  if (swRes.ok) {
+    const sw = await swRes.text();
+    for (const m of sw.matchAll(/["']((?:assets\/)?[A-Za-z0-9@_./-]+\.js)["']/g)) {
+      const u = m[1].replace(/^\//, '');
+      if (u.startsWith('assets/')) scriptUrls.add(`${base}/${u}`);
+    }
+  } else {
+    process.stderr.write('Warning: sw.js not reachable — inspecting entry chunks only.\n');
+  }
+  return Promise.all(Array.from(scriptUrls).map(async (url) => {
     const res = await fetch(url);
     return { label: url.split('/').pop() || url, content: res.ok ? await res.text() : '' };
   }));
