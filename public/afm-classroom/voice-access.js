@@ -227,7 +227,7 @@
       for(const [el,btn]of controls){if(!visible(el)){btn.remove();controls.delete(el);}}
       const candidates=doc.querySelectorAll('main h1,main h2,main h3,main h4,main p,main li,main blockquote,main pre,main table,main .list-item,body>h1,body>h2,body>h3,body>p,body>table,body>.list-item,#slide-body,#slide-prompt');
       for(const el of candidates){
-        if(controls.has(el)||!visible(el)||el.closest('button,a,summary,[role="button"],label,.va-ui')||el.closest('[contenteditable="true"]')||el.parentElement?.closest('li,blockquote,pre,table,.list-item'))continue;
+        if(controls.has(el)||!visible(el)||el.closest('button,a,summary,[role="button"],label,.va-ui,[data-va-skip]')||el.closest('[contenteditable="true"]')||el.parentElement?.closest('li,blockquote,pre,table,.list-item'))continue;
         const text=textOf(el);if(!text)continue;
         const btn=doc.createElement('button');btn.type='button';btn.className='va-read';btn.textContent='Read aloud';btn.setAttribute('aria-label','Read aloud: '+text.slice(0,70));btn.disabled=!canRead;
         btn.onclick=()=>read(el,text.slice(0,45));el.after(btn);controls.set(el,btn);

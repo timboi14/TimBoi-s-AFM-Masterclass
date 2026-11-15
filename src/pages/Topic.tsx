@@ -26,7 +26,7 @@ export function TopicPage() {
     <motion.div initial="hidden" animate="show" variants={stagger}>
       {/* HEADER */}
       <motion.div variants={fadeUp}>
-        <Card className="!p-7 relative overflow-hidden border-l-4 border-l-primary">
+        <Card className="p-7! relative overflow-hidden border-l-4 border-l-primary">
           <div className="absolute top-0 right-0 px-4 py-1.5 bg-primary text-bg text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
             {topic.matchday}
           </div>
@@ -87,7 +87,7 @@ function NotesTab({ topic }: { topic: ReturnType<typeof getTopic> }) {
                 </div>
               ))}
             </div>
-            <div className="mt-4 p-3.5 rounded-xl border border-primary/30 bg-primary/[0.06]">
+            <div className="mt-4 p-3.5 rounded-xl border border-primary/30 bg-primary/6">
               <div className="text-[11px] uppercase tracking-[0.18em] text-primary font-bold mb-1">
                 <i className="fa-solid fa-bullseye mr-1" /> Apply
               </div>
@@ -163,7 +163,7 @@ function WorkedTab({ topic }: { topic: ReturnType<typeof getTopic> }) {
               <div className="text-accent text-[11px] uppercase tracking-[0.18em] font-bold">{s.label}</div>
               <div className="text-text/85 text-[14px] leading-relaxed">{s.detail}</div>
               {s.calc && (
-                <div className="mt-1 inline-block p-2 rounded bg-slate-50 border border-border font-mono text-primary text-[13.5px]">
+                <div className="mt-1 inline-block p-2 rounded-sm bg-slate-50 border border-border font-mono text-primary text-[13.5px]">
                   {s.calc}
                 </div>
               )}
@@ -171,7 +171,7 @@ function WorkedTab({ topic }: { topic: ReturnType<typeof getTopic> }) {
           </motion.li>
         ))}
       </ol>
-      <div className="mt-5 p-4 rounded-xl border-2 border-primary bg-primary/[0.08]">
+      <div className="mt-5 p-4 rounded-xl border-2 border-primary bg-primary/8">
         <div className="text-[11px] uppercase tracking-[0.18em] text-primary font-bold mb-1">Result</div>
         <div className="text-text font-bold leading-relaxed">{topic.worked.result}</div>
       </div>
@@ -278,11 +278,11 @@ function DrillCard({ drill }: { drill: Drill }) {
                 ))}
               </div>
             )}
-            <div className="mt-3 p-4 rounded-xl border-2 border-primary bg-primary/[0.08]">
+            <div className="mt-3 p-4 rounded-xl border-2 border-primary bg-primary/8">
               <div className="text-[11px] uppercase tracking-[0.18em] text-primary font-bold mb-1">Model answer</div>
               <p className="text-text leading-relaxed">{drill.answer}</p>
             </div>
-            <div className="mt-3 p-3.5 rounded-lg border border-danger/40 bg-danger/[0.06]">
+            <div className="mt-3 p-3.5 rounded-lg border border-danger/40 bg-danger/6">
               <div className="text-[11px] uppercase tracking-[0.18em] text-danger font-bold mb-1">
                 <i className="fa-solid fa-triangle-exclamation mr-1" /> Trap
               </div>

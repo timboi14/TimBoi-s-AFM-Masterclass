@@ -8,6 +8,9 @@ import { KeyboardHelp } from '@/components/KeyboardHelp';
 import { TabArtBanner, tabArtFor, prefetchTabArt } from '@/components/TabArt';
 import { AppIcon, type AppIconName } from '@/components/AppIcon';
 import { SH_KEY_DATES } from '@/data/shplus';
+import { SITTING } from '@/config/sitting';
+import { BottomTabs } from '@/components/BottomTabs';
+import { RecoveryBanner } from '@/components/RecoveryBanner';
 
 // Coach carries the local knowledge base, markdown renderer and paper lookup.
 // Delay it until after first paint so those hundreds of KB never block the
@@ -99,13 +102,15 @@ export function Layout() {
   const headerShellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (state.fanName) store.bumpStreak();
-  }, [state.fanName]);
+    store.bumpStreak();
+  }, []);
 
   useEffect(() => { window.dispatchEvent(new Event('afm-voice-navigation')); }, [location.pathname, location.search]);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Instant: a smooth scroll from deep in one page into the top of the next
+    // reads as lag, and fights the route-enter animation.
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setMenuOpen(false);
   }, [location.pathname]);
 
@@ -177,13 +182,14 @@ export function Layout() {
       {/* Skip link for keyboard / screen-reader users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-accent focus:text-ink focus:px-3 focus:py-2 focus:rounded-lg focus:font-bold focus:shadow-floodlight"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-60 focus:bg-accent focus:text-ink focus:px-3 focus:py-2 focus:rounded-lg focus:font-bold focus:shadow-floodlight"
       >
         Skip to main content
       </a>
       <div className="pointer-events-none fixed inset-0 z-0 pitch-grid floodlight" />
 
       <DeadlineBanner />
+      <RecoveryBanner />
 
       {/* Sticky glass header */}
       <div
@@ -199,14 +205,14 @@ export function Layout() {
             <NavLink to="/" className="flex items-center gap-3 group">
               <div className="relative w-11 h-11 grid place-items-center rounded-xl bg-ink overflow-hidden border border-ink/30">
                 <span className="font-display text-[15px] text-accent tracking-wider">TBA</span>
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-accent/10 to-primary/0 group-hover:via-accent/30 transition-colors" />
+                <div className="absolute inset-0 bg-linear-to-br from-primary/0 via-accent/10 to-primary/0 group-hover:via-accent/30 transition-colors" />
               </div>
               <div>
                 <div className="font-display text-xl md:text-2xl tracking-wider leading-none text-ink">
                   TIMBOI&apos;S <span className="text-primary">ACADEMY</span>
                 </div>
                 <div className="text-[10.5px] text-muted uppercase tracking-[0.18em] mt-1">
-                  ACCA AFM · September 2026
+                  ACCA AFM · {SITTING.label}
                 </div>
               </div>
             </NavLink>
@@ -352,12 +358,13 @@ export function Layout() {
             Built for your next AFM sitting. Examiner-style technique, Spurs energy, zero filler.
           </p>
           <p className="mt-2 text-[11px] uppercase tracking-wider text-muted/70">
-            Press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-border">/</kbd> anywhere to summon Coach AI
+            Press <kbd className="px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border">/</kbd> anywhere to summon Coach AI
           </p>
         </footer>
       </div>
 
       {/* Global voice-enabled coach + voice stop button + keyboard help */}
+      <BottomTabs />
       <DeferredCoach />
       <StopVoice />
       <KeyboardHelp />
@@ -397,7 +404,7 @@ function DeferredCoach() {
           window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#coach`);
           setReady(true);
         }}
-        className="fixed bottom-5 right-5 z-40 group h-14 w-14 md:h-16 md:w-16 rounded-2xl flex items-center justify-center text-white shadow-[0_18px_40px_-12px_rgba(0,163,71,0.55)] transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98]"
+        className="coach-fab fixed bottom-5 right-5 z-40 group h-14 w-14 md:h-16 md:w-16 rounded-2xl flex items-center justify-center text-white shadow-[0_18px_40px_-12px_rgba(0,163,71,0.55)] transition-transform duration-200 hover:scale-[1.04] active:scale-[0.98]"
         style={{ backgroundImage: 'linear-gradient(135deg, #00b54e 0%, #008f3d 55%, #f5b800 140%)' }}
         aria-label="Open Coach AI"
         title="Open Coach AI"

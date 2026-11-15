@@ -4,6 +4,7 @@
  */
 
 import { safeFanName } from './safe-storage';
+import { recordEvent } from './db/events';
 
 const KEY = {
   fanName: 'tba_fanName',
@@ -126,7 +127,8 @@ export const store = {
     Object.values(KEY).forEach((k) => localStorage.removeItem(k));
     rebuildAndNotify();
   },
-  awardCorrect(_id: string, base = 100) {
+  awardCorrect(id: string, base = 100) {
+    recordEvent('drill_correct', { ref: id });
     const cur = snapshot;
     const mult = 1 + Math.min(cur.streak * 0.05, 0.5);
     this.set({
@@ -134,31 +136,33 @@ export const store = {
       drills: cur.drills + 1,
     });
   },
-  awardShown(_id: string) {
+  awardShown(id: string) {
+    recordEvent('answer_shown', { ref: id });
     this.set({ points: snapshot.points + 50 });
   },
   markNoteRead(id: string) {
     const cur = snapshot;
     if (cur.notesRead.includes(id)) return;
+    recordEvent('note_read', { ref: id });
     this.set({ notesRead: [...cur.notesRead, id], points: cur.points + 5 });
   },
   markTheoryRead(id: string) {
     const cur = snapshot;
     if (cur.theoryRead.includes(id)) return;
+    recordEvent('theory_read', { ref: id });
     this.set({ theoryRead: [...cur.theoryRead, id], points: cur.points + 5 });
   },
+  /**
+   * Record today's visit. The streak itself is no longer counted here: it is
+   * derived from the study event log (src/lib/habits.ts) and mirrored back
+   * into `streak` by the bootstrap, so the header chip and the points
+   * multiplier keep working from one honest number.
+   */
   bumpStreak() {
     const today = new Date().toISOString().slice(0, 10);
-    const cur = snapshot;
-    if (cur.lastVisit === today) return;
-    if (!cur.lastVisit) {
-      this.set({ streak: 1, lastVisit: today });
-      return;
-    }
-    const prev = new Date(cur.lastVisit);
-    const cur0 = new Date(today);
-    const days = Math.round((+cur0 - +prev) / 86400000);
-    this.set({ streak: days === 1 ? cur.streak + 1 : 1, lastVisit: today });
+    if (snapshot.lastVisit === today) return;
+    recordEvent('visit');
+    this.set({ lastVisit: today });
   },
 };
 

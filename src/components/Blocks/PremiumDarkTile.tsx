@@ -40,7 +40,7 @@ export function PremiumDarkTile({ eyebrow, headline, subline, actions, artwork, 
           <span
             className={cn(
               'inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] mb-6',
-              'border-[var(--gold-500)]/60 text-white bg-transparent',
+              'border-(--gold-500)/60 text-white bg-transparent',
             )}
           >
             {eyebrow}
@@ -56,7 +56,7 @@ export function PremiumDarkTile({ eyebrow, headline, subline, actions, artwork, 
           }}
           className={cn(
             'font-display uppercase tracking-[-0.005em] max-w-[20ch] m-0',
-            dark ? 'text-white' : 'text-[var(--navy-900)]',
+            dark ? 'text-white' : 'text-(--navy-900)',
           )}
         >
           {headline}
@@ -67,7 +67,7 @@ export function PremiumDarkTile({ eyebrow, headline, subline, actions, artwork, 
         <Stagger delay={0.3} prefersReduced={prefersReduced}>
           <p
             style={{ fontSize: 'var(--fs-subline)', lineHeight: 'var(--lh-snug)' }}
-            className={cn('mt-4 max-w-[58ch]', dark ? 'text-[var(--mist-200)]' : 'text-[var(--mist-500)]')}
+            className={cn('mt-4 max-w-[58ch]', dark ? 'text-(--mist-200)' : 'text-(--mist-500)')}
           >
             {subline}
           </p>

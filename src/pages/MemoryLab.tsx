@@ -1,3 +1,4 @@
+import { recordEvent } from '@/lib/db/events';
 import { useEffect, useMemo, useState } from 'react';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
 import { CenteredHero, HeroGold, SectionShell } from '@/components/Blocks';
@@ -199,6 +200,7 @@ function LeitnerTab() {
   /** Unified grading — branches on active SR mode. */
   const handleGrade = (rating: Rating) => {
     if (!card) return;
+    recordEvent('card_review', { ref: card.id, value: rating });
     setStore((s) => {
       const cur = s.entries[card.id] ?? { cardId: card.id, stage: 0, nextDueIso: new Date(0).toISOString() };
       if (mode === 'fsrs') {
@@ -505,7 +507,7 @@ function FeynmanTab() {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={`Explain ${concept} in 4 plain-English sentences as if to a Year-10 student.`}
-        className="w-full px-3 py-2 rounded-lg border border-border bg-white text-[14px] focus:outline-none focus:border-primary"
+        className="w-full px-3 py-2 rounded-lg border border-border bg-white text-[14px] focus:outline-hidden focus:border-primary"
       />
       <button
         type="button"

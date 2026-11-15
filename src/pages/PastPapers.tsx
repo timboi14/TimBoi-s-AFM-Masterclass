@@ -45,7 +45,7 @@ export function PastPapersPage() {
       />
     </SectionShell>
     <SectionShell tone="mist" pad="md">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:divide-x divide-[var(--mist-200)]">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:divide-x divide-(--mist-200)">
         {view === 'sittings' ? <><Stat n={SITTINGS.length} label="Sittings" /><Stat n={complete} label="Complete 100m papers" /><Stat n={PAPERS.length} label="Questions inside" /><Stat n={TBA_STATS.topicGroups} label="Topic groups" /></> : <><Stat n={TBA_STATS.verifiedPapers} label="Sourced questions" /><Stat n={TBA_STATS.sectionA50m} label="Section A · 50m" /><Stat n={TBA_STATS.sectionB25m} label="Section B · 25m" /><Stat n={TBA_STATS.topicGroups} label="Topic groups" /></>}
       </div>
     </SectionShell>
@@ -54,5 +54,5 @@ export function PastPapersPage() {
 }
 
 function Stat({ n, label }: { n: number; label: string }) {
-  return <div className="flex flex-col items-center text-center md:px-6"><span className="font-display text-5xl text-[var(--navy-900)]">{n}</span><span className="mt-2 text-[11px] uppercase tracking-wider text-muted font-bold">{label}</span></div>;
+  return <div className="flex flex-col items-center text-center md:px-6"><span className="font-display text-5xl text-(--navy-900)">{n}</span><span className="mt-2 text-[11px] uppercase tracking-wider text-muted font-bold">{label}</span></div>;
 }

@@ -180,7 +180,7 @@ export const PITFALLS: PitfallEntry[] = [
   },
   {
     id: 'p-rounding-down',
-    symptom: 'I rounded contract count down to the nearest whole number.',
+    symptom: 'I rounded-sm contract count down to the nearest whole number.',
     why: 'Under-hedging leaves residual exposure. The over-hedge from rounding up is normally treated as preferable.',
     fix: 'Round UP. Mention the small residual position in the discussion.',
     topics: ['fx', 'ir'], marksAtRisk: 'mid', source: 'examiner',

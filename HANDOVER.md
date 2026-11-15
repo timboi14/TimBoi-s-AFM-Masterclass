@@ -1,6 +1,81 @@
 # TimBoi's Academy — Live Handover
 
-_Major overhaul deployed 13 July 2026; follow-up concept rooms are covered by the same release gate._
+_November 2026 overhaul is on a branch awaiting review. Last production deploy: 6 September 2026._
+
+## November 2026 overhaul (branch `agent/overhaul-2026-11`, not yet on `main`)
+
+The September sitting had passed, so the build guard was blocking every deploy. This pass fixes
+that, upgrades the stack, adds a real data layer and habit loop, and refreshes the interface.
+The same work was applied to the APM app (`~/Documents/apm-masterclass`); the new modules are
+identical file for file.
+
+### What changed
+
+- **Stack.** React 19, React Router 7, Vite 8 (Rolldown), Tailwind 4, TypeScript 7, vite-plugin-pwa 2.
+  Manual chunks became `build.rolldownOptions.output.codeSplitting.groups` in `vite.config.ts`.
+  `esbuild` is now a direct dev dependency because Vite 8 no longer ships it and the stats script needs it.
+  A clean install works from the lockfile. Adding or upgrading a package may need
+  `--legacy-peer-deps` while a Babel 7/8 peer conflict in the toolchain remains.
+- **Sitting is a list, and the learner chooses.** `src/config/sitting.ts` exports `SITTINGS`
+  (December 2026, Friday 11 December, and March 2027). `SITTING` resolves at module load from `tba_sitting_choice`;
+  the default is the first sitting whose entry is still open. `chooseSitting()` reloads the app.
+  `SITTING_TEXT` holds ready-made phrases so pages never hardcode a date. The build guard now fails
+  only when **no** listed sitting is upcoming. **March 2027 exam day is provisional**: ACCA has
+  published only the week (1 to 5 March). Update `examAt`, `examDayLabel` and `examDayConfirmed`
+  when the timetable appears, and add June 2027 (the final sitting of this exam format).
+- **Study event log.** `src/lib/db/` is the new data layer: `idb.ts` (IndexedDB wrapper, schema v1),
+  `events.ts` (append-only log with a synchronous write-ahead journal), `backup.ts`, `bootstrap.ts`.
+  Every study action calls `recordEvent()`: card reviews, drills, reading, question attempts, marked
+  answers, debriefs, the diagnostic. First run seeds the log from existing attempts and the old streak.
+- **Habits derive from the log.** `src/lib/habits.ts` is pure functions: streak with freezes (one
+  banked at the start, one earned per five study days, capped at two), weekly goal, twelve-week heat
+  map, weekly recap. Opening the app no longer counts as a study day. The bootstrap mirrors the
+  derived streak into `store.streak` so the header chip and points multiplier still work.
+- **Backups.** Settings has Download backup, Restore from file (validated, replaces, snapshots first)
+  and a list of automatic daily snapshots kept in IndexedDB. If localStorage is wiped but a snapshot
+  survives, `RecoveryBanner` offers a one-tap restore. The app asks the browser for persistent storage
+  after the first study event and sets the app-icon badge to the number of reviews due.
+- **Interface.** Momentum board under the Home hero; rebuilt Settings (sitting, weekly goal, display,
+  data); five-tab bottom bar on phones (`BottomTabs.tsx`); shared hero with a faster entrance and a
+  gold marker stroke on light surfaces; faded backdrop art. New styles live in
+  `src/styles/overhaul.css` and read the existing tokens, so dark and high-contrast follow.
+- **AI endpoints.** `api/mark.ts` and `api/coach.ts` no longer fail open: without Upstash they use an
+  in-memory per-IP daily limit plus an hourly budget per isolate, and they reject other sites' origins.
+  This is approximate. Provision Upstash and set `UPSTASH_REDIS_REST_URL` / `_TOKEN` for an exact cap.
+- **Marker score.** The marker ends with a `SCORE_JSON:` line. `src/lib/marker-score.ts` parses it,
+  falls back to the "Marks awarded" heading, and no longer mistakes a stray "50/50" for the score.
+  The feedback panel shows marks per marking point. **Not yet verified against the live model**: no
+  `DEEPSEEK_API_KEY` is available locally, so only the parser and the request path are tested.
+
+### Tests
+
+```bash
+npm run test:unit   # 27 logic tests: habits, sitting choice, backup validation, marker parser, API limits
+npm run test:e2e    # Playwright, now including tests/overhaul.spec.ts
+npm test            # both
+```
+
+### Not done, and why
+
+- **Cross-device sync.** Needs a hosted database and a login. The event log is the right shape to
+  sync later; backup files cover device moves until then.
+- **Product analytics and error reporting.** `src/lib/observability.ts` is still a no-op until
+  `VITE_POSTHOG_KEY` / `VITE_SENTRY_DSN` are set in Vercel.
+- **Push reminders.** Web push needs a server and a subscription store. The app badge is the
+  on-device substitute.
+- **Merging the APM and AFM codebases.** Both apps now share the same new modules file for file,
+  which makes a later merge easier, but the two Vercel projects were left as they are.
+- **Full move off localStorage.** Existing keys stay as the synchronous cache. New history goes to
+  IndexedDB, and snapshots protect the old keys.
+
+### AFM-specific notes
+
+- Backups include the `afm-` keys (classroom progress, reading preferences) as well as `tba` keys.
+- `public/afm-classroom/voice-access.js` now skips any element inside `[data-va-skip]`, so the
+  Momentum board and banners do not get "Read aloud" buttons. Settings cards still do.
+- On phones the voice dock sits above the new tab bar.
+- `api/speech.ts` keeps its own per-isolate budget and was not changed.
+- A local dev entry `afm-dev` (port 5176) was added to `~/Documents/.claude/launch.json`.
 
 ## July 2026 — Leave It To Us + Ke Finesse follow-up
 

@@ -202,7 +202,7 @@ export function ScoutPage() {
             </thead>
             <tbody>
               {sortedFindings.map((f) => (
-                <tr key={f.capability + '/' + f.topicId} className="border-b border-border/60 last:border-b-0 hover:bg-primary/[0.03]">
+                <tr key={f.capability + '/' + f.topicId} className="border-b border-border/60 last:border-b-0 hover:bg-primary/3">
                   <td className="p-3 font-mono font-bold text-primary">{f.capability}</td>
                   <td className="p-3">
                     <Link to={`/topic/${f.topicId}`} className="text-ink hover:text-primary underline-offset-4 hover:underline">

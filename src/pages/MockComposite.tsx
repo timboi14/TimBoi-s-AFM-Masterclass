@@ -189,7 +189,7 @@ export function MockSittingPage() {
 
   return (
     <SectionShell tone="white" pad="md">
-      <div className="sticky top-0 z-30 -mt-4 mb-4 py-3 bg-white/95 backdrop-blur border-b border-border flex items-center gap-3 flex-wrap">
+      <div className="sticky top-0 z-30 -mt-4 mb-4 py-3 bg-white/95 backdrop-blur-sm border-b border-border flex items-center gap-3 flex-wrap">
         <div
           className="font-display text-3xl font-bold"
           style={{ color: danger ? '#dc2626' : '#0a0f1e', animation: flashing ? 'cbeFlash 1s infinite' : 'none' }}
@@ -245,7 +245,7 @@ export function MockSittingPage() {
                   rows={12}
                   value={ans.word}
                   onChange={(e) => updateWord(p.id, e.target.value)}
-                  className="w-full resize-y px-3 py-2 rounded-lg border border-border bg-white text-[14px] focus:outline-none focus:border-primary font-mono leading-relaxed"
+                  className="w-full resize-y px-3 py-2 rounded-lg border border-border bg-white text-[14px] focus:outline-hidden focus:border-primary font-mono leading-relaxed"
                   placeholder={`Type your answer for ${p.name}. Markdown is fine.`}
                 />
               </div>
@@ -479,7 +479,7 @@ export function MockReportPage() {
         </div>
 
         {report.threeFixes.length > 0 && (
-          <div className="rounded-2xl border-l-4 border-l-accent bg-accent/[0.05] p-4 mb-5">
+          <div className="rounded-2xl border-l-4 border-l-accent bg-accent/5 p-4 mb-5">
             <h2 className="text-[11px] uppercase tracking-wider text-accent-dark font-bold mb-2">Three things to fix before next mock</h2>
             <ol className="list-decimal pl-5 space-y-1 text-[14px] text-ink">
               {report.threeFixes.map((f, i) => (

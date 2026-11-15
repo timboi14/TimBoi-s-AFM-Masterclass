@@ -82,7 +82,7 @@ export const EXAM_CASES: ExamCase[] = [
     traps: [
       {
         what: 'Option hedge mis-priced',
-        why: 'Wrong strike selected for the requirement; net premium computed in wrong currency; rounded contract count down instead of up.',
+        why: 'Wrong strike selected for the requirement; net premium computed in wrong currency; rounded-sm contract count down instead of up.',
         fix: 'Select strike based on requirement direction. Premium in same currency as the underlying. ALWAYS round contract count UP (over-hedge slightly to fully cover).',
       },
       {

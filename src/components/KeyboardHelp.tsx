@@ -114,7 +114,7 @@ export function KeyboardHelp() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="kbd-help-title"
-      className="fixed inset-0 z-[60] grid place-items-center px-4"
+      className="fixed inset-0 z-60 grid place-items-center px-4"
     >
       <div
         className="absolute inset-0 bg-ink/40 backdrop-blur-[2px]"
@@ -124,7 +124,7 @@ export function KeyboardHelp() {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative w-full max-w-[640px] max-h-[85vh] overflow-y-auto rounded-3xl bg-white border border-border shadow-[0_24px_60px_-20px_rgba(15,23,42,0.35)] p-6 outline-none"
+        className="relative w-full max-w-[640px] max-h-[85vh] overflow-y-auto rounded-3xl bg-white border border-border shadow-[0_24px_60px_-20px_rgba(15,23,42,0.35)] p-6 outline-hidden"
       >
         <div className="flex items-center justify-between mb-4">
           <h2 id="kbd-help-title" className="font-display text-2xl tracking-wide uppercase text-ink">
@@ -183,7 +183,7 @@ export function KeyboardHelp() {
 
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="inline-flex items-center justify-center min-w-[22px] px-1.5 py-0.5 rounded bg-slate-100 border border-border text-ink font-bold text-[11.5px]">
+    <kbd className="inline-flex items-center justify-center min-w-[22px] px-1.5 py-0.5 rounded-sm bg-slate-100 border border-border text-ink font-bold text-[11.5px]">
       {children}
     </kbd>
   );

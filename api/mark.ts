@@ -51,9 +51,8 @@ const RATE_LIMIT_TIMEOUT_MS = 1500;   // never wait longer than this for Upstash
 const DEEPSEEK_TIMEOUT_MS = 60_000;   // hard ceiling on the upstream connect
 
 export default async function handler(req: Request): Promise<Response> {
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
-  }
+  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
+  if (isForeignOrigin(req)) return new Response('Forbidden', { status: 403 });
 
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) {
@@ -101,7 +100,7 @@ export default async function handler(req: Request): Promise<Response> {
   // the Redis DB was provisioned in af-south-1 and the function ran in lhr1;
   // the long-haul fetch occasionally never resolved under Edge runtime.
   console.log('[mark] rate-limit start');
-  const rl = await raceWithTimeout(checkRateLimit(req), RATE_LIMIT_TIMEOUT_MS, null);
+  const rl = (await raceWithTimeout(checkRateLimit(req), RATE_LIMIT_TIMEOUT_MS, null)) ?? localRateLimit(req);
   console.log('[mark] rate-limit done; blocked=%s remaining=%s', rl?.blocked, rl?.remaining);
   if (rl?.blocked) {
     return new Response(
@@ -134,7 +133,7 @@ export default async function handler(req: Request): Promise<Response> {
         model,
         stream: true,
         temperature: 0.3,
-        max_tokens: 1600,
+        max_tokens: 1900,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
@@ -336,6 +335,71 @@ async function checkRateLimit(req: Request): Promise<RateLimitInfo | null> {
  * (e.g. lhr1 → af-south-1). Promise.race guarantees this call site can
  * never block longer than `timeoutMs`.
  */
+/**
+ * Fallback limiter for when Upstash is not configured or does not answer.
+ *
+ * The durable limiter used to fail open, which left this endpoint with no cap
+ * at all once the Upstash database was removed. This keeps a per-IP daily
+ * count and a global hourly budget in the isolate's memory instead. Isolates
+ * are recycled and not shared across regions, so the bound is approximate:
+ * it stops casual abuse and runaway loops, not a determined attacker. Set
+ * UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN for an exact cap.
+ */
+const localHits = new Map<string, number>();
+let localHour = -1;
+let localHourCount = 0;
+
+function clientIp(req: Request): string {
+  return (
+    (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ||
+    req.headers.get('x-real-ip') ||
+    'anon'
+  );
+}
+
+function localRateLimit(req: Request): RateLimitInfo {
+  const limit = numEnv('MARK_DAILY_LIMIT', DEFAULT_DAILY_LIMIT);
+  const hourlyBudget = numEnv('AI_ISOLATE_HOURLY_BUDGET', 60);
+  const now = Date.now();
+  const day = Math.floor(now / 86_400_000);
+  const hour = Math.floor(now / 3_600_000);
+  if (hour !== localHour) {
+    localHour = hour;
+    localHourCount = 0;
+    // Drop counters from previous days so the map cannot grow without bound.
+    for (const k of localHits.keys()) if (!k.endsWith(`:${day}`)) localHits.delete(k);
+  }
+  localHourCount += 1;
+  const key = `${clientIp(req)}:${day}`;
+  const count = (localHits.get(key) ?? 0) + 1;
+  localHits.set(key, count);
+  const secsToMidnight = 86_400 - Math.floor((now % 86_400_000) / 1000);
+  return {
+    blocked: count > limit || localHourCount > hourlyBudget,
+    limit,
+    remaining: Math.max(0, limit - count),
+    resetInSeconds: secsToMidnight,
+    resetInHours: Math.ceil(secsToMidnight / 3600),
+  };
+}
+
+/**
+ * Cheap abuse filter: a browser calling from another site sends that site's
+ * Origin. Requests with no Origin (curl, server-side) are still subject to
+ * the rate limit above.
+ */
+function isForeignOrigin(req: Request): boolean {
+  const origin = req.headers.get('origin');
+  if (!origin) return false;
+  try {
+    const host = new URL(origin).host;
+    const self = req.headers.get('host') ?? new URL(req.url).host;
+    return !(host === self || /^localhost(:\d+)?$/.test(host) || /^127\.0\.0\.1(:\d+)?$/.test(host));
+  } catch {
+    return true;
+  }
+}
+
 function raceWithTimeout<T>(
   promise: Promise<T>,
   timeoutMs: number,
@@ -364,6 +428,12 @@ One short paragraph (3–5 sentences) tying the feedback back to the examiner no
 
 **Next step**
 One sentence — the single most valuable thing this candidate should practise next to improve on this part.
+
+After the Next step section, finish with exactly one final line in this form and nothing after it:
+
+SCORE_JSON: {"awarded":X,"available":Y,"points":[{"n":1,"awarded":A,"available":B}]}
+
+X and Y must equal the numbers in the Marks awarded heading. "points" has one entry per line of the MARKING GUIDE, in order, where n is the 1-based line number; use an empty array when no marking guide was given. Numbers only, no trailing text, no code fence.
 
 Do not invent marking criteria the question did not include. Do not award marks for points outside the guide. If the candidate's answer is empty or unintelligible, award 0 and explain what a passing answer would have looked like.`;
 

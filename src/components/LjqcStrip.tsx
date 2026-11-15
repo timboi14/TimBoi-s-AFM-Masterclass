@@ -62,7 +62,7 @@ export function LjqcStrip() {
         type="button"
         aria-label="Dismiss rubric"
         onClick={dismiss}
-        className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 grid place-items-center rounded hover:bg-white/10 transition-colors"
+        className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 grid place-items-center rounded-sm hover:bg-white/10 transition-colors"
         style={{ color: '#f7c948', fontSize: '14px', lineHeight: 1 }}
       >
         ×

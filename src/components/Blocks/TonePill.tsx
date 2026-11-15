@@ -23,7 +23,7 @@ function classFor(tone: Tone, variant: Variant, size: Size, fullWidth: boolean) 
   const base = cn(
     'inline-flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-wider transition-colors whitespace-nowrap',
     'disabled:opacity-50 disabled:cursor-not-allowed',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gold-500)] focus-visible:ring-offset-2',
+    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-(--gold-500) focus-visible:ring-offset-2',
     fullWidth && 'w-full',
     sizeCls,
   );
@@ -32,8 +32,8 @@ function classFor(tone: Tone, variant: Variant, size: Size, fullWidth: boolean) 
     return cn(
       base,
       dark
-        ? 'bg-[var(--gold-500)] text-[var(--navy-900)] hover:bg-[var(--gold-600)]'
-        : 'bg-[var(--navy-800)] text-white hover:bg-[var(--navy-900)]',
+        ? 'bg-(--gold-500) text-(--navy-900) hover:bg-(--gold-600)'
+        : 'bg-(--navy-800) text-white hover:bg-(--navy-900)',
     );
   }
   if (variant === 'secondary') {
@@ -42,14 +42,14 @@ function classFor(tone: Tone, variant: Variant, size: Size, fullWidth: boolean) 
       'bg-transparent border',
       dark
         ? 'border-white text-white hover:bg-white/10'
-        : 'border-[var(--navy-800)] text-[var(--navy-800)] hover:bg-[var(--navy-800)]/[0.06]',
+        : 'border-(--navy-800) text-(--navy-800) hover:bg-(--navy-800)/6',
     );
   }
   // ghost
   return cn(
     base,
     'bg-transparent underline underline-offset-4 hover:no-underline',
-    dark ? 'text-white' : 'text-[var(--navy-800)]',
+    dark ? 'text-white' : 'text-(--navy-800)',
   );
 }
 

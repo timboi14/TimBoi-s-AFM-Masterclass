@@ -65,7 +65,7 @@ export function TopicTabs({
               className={cn(
                 'inline-flex items-center gap-2 px-3.5 py-2 text-sm font-bold rounded-xl transition-colors',
                 selected
-                  ? 'bg-white text-ink shadow-sm border border-border'
+                  ? 'bg-white text-ink shadow-xs border border-border'
                   : 'text-muted hover:text-ink hover:bg-white/60',
               )}
             >
@@ -90,7 +90,7 @@ export function TopicTabs({
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduce ? undefined : { opacity: 0, y: -4 }}
                 transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
-                className="focus:outline-none"
+                className="focus:outline-hidden"
               >
                 {t.render()}
               </motion.section>

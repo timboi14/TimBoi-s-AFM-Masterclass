@@ -1,10 +1,11 @@
+import { Momentum } from '@/components/momentum/Momentum';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FormGuideCompact } from '@/components/FormGuideCompact';
 import { AppIcon, type AppIconName } from '@/components/AppIcon';
 import { PUBLIC_STATS } from '@/data/public-stats.generated';
 import { HOME_MISSIONS } from '@/data/public-missions.generated';
-import { EXAM_DATE, SITTING, SYLLABUS } from '@/config/sitting';
+import { EXAM_DATE, SITTING, SITTING_TEXT, SYLLABUS } from '@/config/sitting';
 import { loadAttempts } from '@/lib/attempts';
 import { store, tierFor, useStore } from '@/lib/store';
 import { cn } from '@/lib/cn';
@@ -258,7 +259,7 @@ function EntryDeadlineBanner({ entered }: { entered: boolean }) {
         <strong>
           {lateWindow
             ? `Standard entry has closed — late entry ends in ${daysLeft}d (${shortDate(SITTING.lateEntryDeadlineAt)}, higher fee).`
-            : `Entered for ${SITTING.examDayLabel}? Standard entry closes in ${daysLeft}d (${shortDate(SITTING.entryDeadlineAt)}).`}
+            : `Entered for the ${SITTING.label} sitting? Standard entry closes in ${daysLeft}d (${shortDate(SITTING.entryDeadlineAt)}).`}
         </strong>
         <span>Being entered beats every study plan. Confirm it, then forget it.</span>
       </div>
@@ -316,7 +317,7 @@ export function HomePage() {
             alt=""
             width="1040"
             height="580"
-            {...({ fetchpriority: 'high' } as { fetchpriority: 'high' })}
+            {...({ fetchPriority: 'high' } as { fetchPriority: 'high' })}
           />
         </picture>
         <div className="home-v3__hero-wash" aria-hidden="true" />
@@ -325,9 +326,15 @@ export function HomePage() {
         <div className="home-v3__hero-copy">
           <div className="home-v3__live-line">
             <span><AppIcon name="circle" size={8} /> Live match plan</span>
-            <span>{countdown.days}d {countdown.hours}h to {SITTING.label}</span>
+            <Link
+              to="/settings#sitting"
+              className="home-v3__sitting-link"
+              title={SITTING.examDayConfirmed ? `Exam ${SITTING.examDayLabel}. Change sitting` : 'ACCA has not published the exam day yet, so this countdown is provisional. Change sitting'}
+            >
+              {SITTING.examDayConfirmed ? '' : '~'}{countdown.days}d {countdown.hours}h to {SITTING.label}
+            </Link>
             {state.examEntryConfirmedAt && (
-              <span className="home-v3__entered-chip" title={`Entry confirmed for ${SITTING.examDayLabel}`}>
+              <span className="home-v3__entered-chip" title={`Entry confirmed for ${SITTING_TEXT.examPhrase}`}>
                 Entered ✓
               </span>
             )}
@@ -390,6 +397,12 @@ export function HomePage() {
             <strong>{completedAttempts}</strong>
           </div>
         </div>
+      </section>
+
+      {/* Habit evidence sits directly under the hero: the streak, the weekly
+          goal and the next action are the reasons to come back tomorrow. */}
+      <section className="home-v3__momentum" aria-label="Your momentum">
+        <Momentum />
       </section>
 
       <section className="home-v3__section home-v3__session" aria-labelledby="session-title">

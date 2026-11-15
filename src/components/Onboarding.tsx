@@ -114,7 +114,7 @@ export function Onboarding() {
                     onClick={() => choose(p.id)}
                     className={
                       'text-left rounded-2xl border-2 px-4 py-3 transition-colors ' +
-                      (active ? 'border-primary bg-primary/[0.06]' : 'border-border bg-white hover:border-primary/50')
+                      (active ? 'border-primary bg-primary/6' : 'border-border bg-white hover:border-primary/50')
                     }
                   >
                     <div className="flex items-center gap-2.5">
@@ -134,7 +134,7 @@ export function Onboarding() {
             {pickedPath && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-                className="mt-4 rounded-xl border border-primary/30 bg-primary/[0.05] p-4 text-[13.5px] leading-relaxed text-ink"
+                className="mt-4 rounded-xl border border-primary/30 bg-primary/5 p-4 text-[13.5px] leading-relaxed text-ink"
               >
                 <i className="fa-solid fa-arrow-right text-primary mr-2" /> {pickedPath.copy}
               </motion.div>

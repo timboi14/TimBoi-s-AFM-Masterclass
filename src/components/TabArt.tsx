@@ -84,7 +84,7 @@ export function TabArtBanner() {
     <picture
       key={base}
       aria-hidden
-      className="pointer-events-none absolute top-0 right-0 block w-[54%] sm:w-[48%] md:w-[40%] max-w-[520px] h-[360px] sm:h-[480px] lg:h-[560px] overflow-hidden z-[1]"
+      className="tab-art pointer-events-none absolute top-0 right-0 block w-[54%] sm:w-[48%] md:w-[40%] max-w-[520px] h-[360px] sm:h-[480px] lg:h-[560px] overflow-hidden z-1"
       style={{ maskImage: 'linear-gradient(to left, black 64%, transparent 100%)' }}
     >
       <source
@@ -102,10 +102,10 @@ export function TabArtBanner() {
         loading="eager"
         decoding="async"
         // React's type for fetchPriority is recent; pass via a typed attr bag.
-        {...({ fetchpriority: 'high' } as { fetchpriority: 'high' })}
+        {...({ fetchPriority: 'high' } as { fetchPriority: 'high' })}
         onLoad={() => setLoaded(true)}
         style={{ opacity: loaded ? 0.11 : 0, transition: 'opacity 320ms ease-out' } as CSSProperties}
-        className="w-full h-full object-contain object-right-top mix-blend-multiply select-none"
+        className="w-full h-full object-contain object-top-right mix-blend-multiply select-none"
       />
     </picture>
   );

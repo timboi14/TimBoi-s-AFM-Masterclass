@@ -78,7 +78,7 @@ export function PitfallToasts({ feedback, busy }: Props) {
       {shown.map((t) => (
         <div
           key={t.id}
-          className="flex items-start gap-3 rounded-xl border-l-4 border-l-danger bg-danger/[0.04] px-3 py-2.5"
+          className="flex items-start gap-3 rounded-xl border-l-4 border-l-danger bg-danger/4 px-3 py-2.5"
         >
           <div className="flex-1 text-[13px] text-ink leading-snug">
             <strong className="text-danger">{t.title}</strong>

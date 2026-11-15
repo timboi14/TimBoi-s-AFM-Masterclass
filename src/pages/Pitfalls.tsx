@@ -44,7 +44,7 @@ export function PitfallsPage() {
     <motion.div initial="hidden" animate="show" variants={stagger}>
       {/* Hero */}
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-danger/[0.06] via-white to-accent/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-danger/6 via-white to-accent/10" />
         <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(220,38,38,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
@@ -109,7 +109,7 @@ export function PitfallsPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search symptoms, fixes, keywords…"
-            className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-none focus:border-primary"
+            className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-hidden focus:border-primary"
           />
         </div>
       </motion.div>
@@ -123,7 +123,7 @@ export function PitfallsPage() {
         ))}
         {list.length === 0 && (
           <motion.div variants={fadeUp} className="lg:col-span-2">
-            <Card className="!p-6 text-center text-muted">
+            <Card className="p-6! text-center text-muted">
               No pitfalls match those filters. Try widening the search.
             </Card>
           </motion.div>
@@ -132,7 +132,7 @@ export function PitfallsPage() {
 
       {/* Mantra */}
       <motion.div variants={fadeUp} className="mt-10">
-        <Card className="!p-7 text-center" glow>
+        <Card className="p-7! text-center" glow>
           <p className="font-display text-3xl md:text-4xl tracking-wide uppercase text-ink leading-tight">
             A trap caught in revision is a mark saved on exam day.
           </p>
@@ -146,7 +146,7 @@ function PitfallCard({ p }: { p: PitfallEntry }) {
   const riskColor = p.marksAtRisk === 'high' ? 'danger' : p.marksAtRisk === 'mid' ? 'accent' : 'outline';
   const meta = SOURCE_LABELS[p.source];
   return (
-    <Card className="h-full !p-5">
+    <Card className="h-full p-5!">
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <Pill variant={riskColor}>{p.marksAtRisk === 'high' ? 'High risk' : p.marksAtRisk === 'mid' ? 'Mid risk' : 'Low risk'}</Pill>
         <span className="chip text-muted" title={meta.tooltip}>
@@ -160,7 +160,7 @@ function PitfallCard({ p }: { p: PitfallEntry }) {
         </div>
       </div>
 
-      <div className="rounded-xl border-l-4 border-l-danger bg-danger/[0.04] px-3.5 py-2.5">
+      <div className="rounded-xl border-l-4 border-l-danger bg-danger/4 px-3.5 py-2.5">
         <div className="text-[10px] uppercase tracking-wider text-danger font-bold mb-1">
           <i className="fa-solid fa-quote-left" /> Symptom
         </div>

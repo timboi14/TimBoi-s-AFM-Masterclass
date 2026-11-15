@@ -150,7 +150,7 @@ function FormBandBar({ predicted, band, range }: BarProps) {
           </div>
         ))}
         <div
-          className="absolute top-0 bottom-0 w-1.5 bg-ink rounded-sm shadow-md"
+          className="absolute top-0 bottom-0 w-1.5 bg-ink rounded-xs shadow-md"
           style={{ left: `calc(${predicted}% - 3px)` }}
           aria-label={`Predicted ${predicted}`}
         />

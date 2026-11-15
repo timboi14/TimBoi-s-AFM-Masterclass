@@ -431,7 +431,7 @@ export const TOPICS: Record<string, Topic> = {
         intro: 'Sell the foreign currency you will receive. Buy the foreign currency you will pay.',
         bullets: [
           'GBP firm receiving USD: sell USD futures (which is buy GBP futures contractually)',
-          'Hedge ratio: number of contracts = exposure / contract size, rounded',
+          'Hedge ratio: number of contracts = exposure / contract size, rounded-sm',
           'Basis risk: futures may not perfectly match the spot at close, residual loss',
           'Always close out at the cash date and take the spot rate for the underlying',
         ],

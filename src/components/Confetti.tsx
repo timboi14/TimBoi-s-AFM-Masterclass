@@ -42,7 +42,7 @@ export function GoalBurst({ play, onDone }: { play: boolean; onDone?: () => void
             return (
               <motion.span
                 key={i}
-                className="absolute left-1/2 top-1/2 block w-2.5 h-2.5 rounded-sm"
+                className="absolute left-1/2 top-1/2 block w-2.5 h-2.5 rounded-xs"
                 style={{ background: color, boxShadow: `0 0 12px ${color}` }}
                 initial={{ x: 0, y: 0, scale: 1, rotate: 0, opacity: 1 }}
                 animate={{

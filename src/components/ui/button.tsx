@@ -5,17 +5,17 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors outline-offset-2 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-white shadow-sm shadow-black/5 hover:bg-primary-dark",
+        default: "bg-primary text-white shadow-xs shadow-black/5 hover:bg-primary-dark",
         destructive:
-          "bg-danger text-white shadow-sm shadow-black/5 hover:bg-danger/90",
+          "bg-danger text-white shadow-xs shadow-black/5 hover:bg-danger/90",
         outline:
-          "border border-border bg-white shadow-sm shadow-black/5 hover:bg-slate-50 hover:text-ink",
+          "border border-border bg-white shadow-xs shadow-black/5 hover:bg-slate-50 hover:text-ink",
         secondary:
-          "bg-slate-100 text-ink shadow-sm shadow-black/5 hover:bg-slate-200",
+          "bg-slate-100 text-ink shadow-xs shadow-black/5 hover:bg-slate-200",
         ghost: "hover:bg-slate-100 hover:text-ink",
         link: "text-primary underline-offset-4 hover:underline",
       },

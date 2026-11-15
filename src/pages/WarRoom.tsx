@@ -125,7 +125,7 @@ export function WarRoomPage() {
     <motion.div initial="hidden" animate="show" variants={stagger}>
       {/* Hero */}
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-        <div className="absolute inset-0 bg-gradient-to-br from-danger/[0.06] via-white to-accent/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-danger/6 via-white to-accent/10" />
         <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(220,38,38,0.45), transparent 70%)' }} />
         <div className="aurora w-72 h-72 -bottom-12 -left-12" style={{ background: 'radial-gradient(circle, rgba(245,184,0,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
@@ -150,7 +150,7 @@ export function WarRoomPage() {
               </div>
               <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-primary to-accent"
+                  className="h-full bg-linear-to-r from-primary to-accent"
                   initial={{ width: 0 }}
                   animate={{ width: `${pct}%` }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -169,7 +169,7 @@ export function WarRoomPage() {
       <motion.div variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {GROUPS.map((g) => (
           <motion.div key={g.id} variants={fadeUp}>
-            <Card className="h-full !p-5">
+            <Card className="h-full p-5!">
               <div className="flex items-center gap-3 mb-4">
                 <div className={cn(
                   'w-10 h-10 rounded-xl grid place-items-center text-white',
@@ -217,7 +217,7 @@ export function WarRoomPage() {
         Time budget
       </SectionTitle>
       <motion.div variants={fadeUp}>
-        <Card className="!p-0 overflow-hidden">
+        <Card className="p-0! overflow-hidden">
           <div className="war-table-scroll">
             <table className="war-table w-full text-[14px]">
               <thead className="bg-slate-50">
@@ -282,7 +282,7 @@ export function WarRoomPage() {
         AFM spreadsheet functions
       </SectionTitle>
       <motion.div variants={fadeUp}>
-        <Card className="!p-0 overflow-hidden">
+        <Card className="p-0! overflow-hidden">
           <div className="war-table-scroll">
             <table className="war-table w-full text-[13.5px]">
               <thead className="bg-slate-50">
@@ -324,7 +324,7 @@ export function WarRoomPage() {
 
       {/* Pass mantra */}
       <motion.div variants={fadeUp} className="mt-10">
-        <Card className="!p-7 text-center" glow>
+        <Card className="p-7! text-center" glow>
           <p className="font-display text-3xl md:text-4xl tracking-wide uppercase text-ink leading-tight">
             Lead. Justify. Quote. Comment.
           </p>

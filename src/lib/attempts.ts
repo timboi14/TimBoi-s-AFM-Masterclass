@@ -4,6 +4,7 @@
  */
 import type { AttemptLog, AttemptRating } from '@/data/papers/schema';
 import { safeReadJson, safeWriteJson } from '@/lib/safe-storage';
+import { recordEvent } from '@/lib/db/events';
 
 const KEY = 'tba_attempts_v1';
 
@@ -21,6 +22,11 @@ export function logAttempt(input: Omit<AttemptLog, 'id'>): AttemptLog {
   const att: AttemptLog = { id, ...input };
   all.unshift(att);
   save(all);
+  recordEvent('question_attempt', {
+    ref: att.questionId,
+    value: att.selfScore,
+    minutes: att.finishedAt ? Math.min(240, Math.max(0, (att.finishedAt - att.startedAt) / 60_000)) : undefined,
+  });
   return att;
 }
 

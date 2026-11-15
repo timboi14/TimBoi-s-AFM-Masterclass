@@ -1,3 +1,4 @@
+import { recordEvent } from '@/lib/db/events';
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Pill, SectionTitle, fadeUp, stagger } from '@/components/primitives';
@@ -101,7 +102,7 @@ export function MemoryPage() {
         variants={fadeUp}
         className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-soft"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-white to-accent/[0.10]" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/6 via-white to-accent/10" />
         <div className="aurora w-72 h-72 -top-12 -right-12" style={{ background: 'radial-gradient(circle, rgba(0,163,71,0.45), transparent 70%)' }} />
         <div className="aurora w-72 h-72 -bottom-12 -left-12" style={{ background: 'radial-gradient(circle, rgba(245,184,0,0.45), transparent 70%)' }} />
         <div className="relative p-6 md:p-10">
@@ -213,6 +214,8 @@ function SRQueue() {
   const handleGrade = (rating: Rating) => {
     if (!current) return;
     const { card, intervalDays } = gradeCard(current, rating);
+    recordEvent('card_review', { ref: current.id, value: rating });
+    recordEvent('card_review', { ref: current.id, value: rating });
     setItems((prev) => prev.map((i) => (i.id === current.id ? card : i)));
     setFlipped(false);
     setLastInterval(intervalDays);
@@ -228,7 +231,7 @@ function SRQueue() {
   };
 
   return (
-    <Card className="!p-6">
+    <Card className="p-6!">
       <div className="grid md:grid-cols-[1fr_220px] gap-6">
         <div>
           <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
@@ -455,7 +458,7 @@ function AbbreviationCheatsheet() {
   const shown = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <Card className="!p-6">
+    <Card className="p-6!">
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="relative flex-1 min-w-[220px]">
           <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[13px]" aria-hidden />
@@ -465,7 +468,7 @@ function AbbreviationCheatsheet() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Filter — type WACC, beta, hedge, rights…"
             aria-label="Filter abbreviations"
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-none focus:border-primary"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-hidden focus:border-primary"
           />
         </div>
         <span className="text-[12.5px] text-muted">
@@ -528,7 +531,7 @@ function Palace() {
   };
 
   return (
-    <Card className="!p-6">
+    <Card className="p-6!">
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <Pill variant="accent">10 rooms</Pill>
         <span className="text-[12.5px] text-muted">
@@ -551,7 +554,7 @@ function Palace() {
               key={r.id}
               className={cn(
                 'rounded-2xl border p-3 transition-all',
-                active ? 'border-accent bg-accent/[0.08] shadow-gold' : 'border-border bg-white',
+                active ? 'border-accent bg-accent/8 shadow-gold' : 'border-border bg-white',
               )}
             >
               <div className="flex items-center gap-2 mb-2">
@@ -567,7 +570,7 @@ function Palace() {
                 value={palace[r.id] || ''}
                 onChange={(e) => update(r.id, e.target.value)}
                 rows={3}
-                className="w-full text-[12.5px] leading-relaxed text-ink bg-transparent border-0 focus:outline-none resize-none"
+                className="w-full text-[12.5px] leading-relaxed text-ink bg-transparent border-0 focus:outline-hidden resize-none"
               />
             </div>
           );
@@ -600,7 +603,7 @@ function Feynman() {
   };
 
   return (
-    <Card className="!p-6">
+    <Card className="p-6!">
       <div className="grid md:grid-cols-[1fr_320px] gap-6">
         <div>
           <div className="text-[11px] uppercase tracking-wider text-muted font-bold mb-1">Topic</div>
@@ -619,7 +622,7 @@ function Feynman() {
             onChange={(e) => setText(e.target.value)}
             rows={7}
             placeholder={`No jargon. Use everyday words. Where you stumble, that's where you don't actually understand.\n\nExample for WACC: "It's the average cost of every pound the business uses..."`}
-            className="w-full px-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-none focus:border-primary"
+            className="w-full px-3 py-2.5 rounded-xl border border-border bg-white text-[14px] focus:outline-hidden focus:border-primary"
           />
           <div className="mt-3 flex flex-wrap gap-2">
             <button onClick={save} className="btn-primary"><i className="fa-solid fa-save" /> Save draft (+10 pts)</button>
