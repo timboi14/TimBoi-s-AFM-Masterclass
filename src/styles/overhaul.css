@@ -840,6 +840,15 @@ html.tba-reduce-motion .mo__ring-fill { transition: none; }
 .rb button.rb__quiet { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.3); }
 .rb button:disabled { opacity: 0.6; }
 
+/* ─── Chips in dark theme ───────────────────────────────────────────────── */
+
+/* The chip utility bakes in a white fill, so the generic dark override for
+   .bg-white never reaches it and light text ends up on white. */
+html.tba-dark .chip {
+  background: var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
 /* ─── Hero highlight on light surfaces ──────────────────────────────────── */
 
 .hero-gold--marker {
